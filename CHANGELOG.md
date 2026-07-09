@@ -1,5 +1,11 @@
 # Changelog — Kit Chema
 
+## v1.1 — 2026-07-09
+Contexto generalizado: el núcleo ahora lee toda la carpeta `~/.claude/contexto/`
+(empresa + nueva plantilla opcional `CONTEXTO-PERSONAL.md` para proyectos y
+preferencias personales); el instalador copia cada plantilla solo si no existe.
+Anonimizado el nombre de un cliente en los documentos de prueba (repo público).
+
 ## v1.0 — 2026-07-09
 Primera versión completa. Criterios de aceptación del spec: 8/8 —
 con dos notas ratificadas: C.A.2 quedó en 20/21 disparos (el caso frontera

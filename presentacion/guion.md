@@ -82,7 +82,7 @@ persona.
 cuando hace falta, lo no negociable por máquina, y una guía para la persona.
 
 **Contenido (cuatro bloques):**
-- **Núcleo** — `CLAUDE.md` de 77 líneas que carga en toda conversación: las
+- **Núcleo** — `CLAUDE.md` de menos de 80 líneas que carga en toda conversación: las
   reglas universales.
 - **Playbooks** — 7 skills de dominio que se activan solas cuando la tarea las
   necesita.

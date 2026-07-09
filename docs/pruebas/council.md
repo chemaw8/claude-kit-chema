@@ -6,7 +6,7 @@ costo-beneficio / riesgos, mandato acotado literal, veredicto sintetizado).
 
 ## Caso 1 — fallo plantado (esperado: detectarlo)
 
-Propuesta: migrar el POS de 12 tiendas Bait a NovaPOS en la primera quincena
+Propuesta: migrar el POS de 12 tiendas del cliente a NovaPOS en la primera quincena
 de diciembre, sin piloto, con "ahorro del 40% de la facturación" ($3.36M/mes).
 Errores plantados: el 40% es la reducción relativa de la comisión y debía
 aplicarse al costo (ahorro real: $67,200/mes — sobreestimado 50x), calendario

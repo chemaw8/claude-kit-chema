@@ -22,7 +22,7 @@ excepción.
 ## Instalación rápida
 
 ```bash
-git clone <url-del-repositorio> claude-kit-chema
+git clone https://github.com/chemaw8/claude-kit-chema.git claude-kit-chema
 cd claude-kit-chema
 ./instalar.sh
 ```
@@ -53,7 +53,7 @@ claude.ai web no lee `~/.claude/`, así que ahí el kit se instala a mano, por
 proyecto: pega el contenido de `nucleo/CLAUDE.md` como instrucciones del
 proyecto y sube como archivos del proyecto los `SKILL.md` de las skills que
 vayas a usar. Como en la web no existe `~/.claude/contexto/`, pega también el
-contenido de `contexto/CONTEXTO-EMPRESA.md` (ya rellenado con tus datos) al
+contenido de tus archivos de `contexto/` (empresa y, si lo usas, personal) al
 final de esas instrucciones del proyecto. Es una versión degradada (sin hooks
 ni carga automática de skills por descripción), pero conserva el criterio y el
 vocabulario del kit.

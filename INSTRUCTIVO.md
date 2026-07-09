@@ -9,7 +9,7 @@ El kit tiene tres tipos de pieza. El **núcleo** son las reglas universales que
 Claude aplica en toda conversación. Las **skills** son playbooks de dominio que
 se activan solos cuando la tarea los necesita. El **hook** es una regla que se
 cumple siempre porque la ejecuta la máquina, no depende de que Claude la
-recuerde. A eso se suman el **contexto de empresa** (tus datos) y `COMO-PEDIR.md`
+recuerde. A eso se suman el **contexto** (empresa y personal, tus datos) y `COMO-PEDIR.md`
 (para ti, no para Claude).
 
 ## 1. Mapa del kit
@@ -27,7 +27,7 @@ pieza, dónde queda y cómo notas que actúa.
 | **kit-propuestas** | `~/.claude/skills/kit-propuestas/` | Redactar o evaluar una propuesta o decisión; palabra `council` | Estructura problema / opciones / costos / recomendación / reversión; con `council` corre un panel con veredicto |
 | **kit-finanzas** | `~/.claude/skills/kit-finanzas/` | Cotización, presupuesto, proyección, margen, costos | Lista los supuestos aparte, recalcula cada cifra y entrega las proyecciones con escenarios, no con un número único |
 | **kit-automatizacion** | `~/.claude/skills/kit-automatizacion/` | Automatizar un proceso: cron, integración, bot, flujo que corre solo | Define disparador, entradas y salidas antes de construir y deja escrito cómo apagarlo |
-| **Contexto de empresa** (`contexto/CONTEXTO-EMPRESA.md`) | `~/.claude/contexto/CONTEXTO-EMPRESA.md` (solo se instala si no existe) | Antes de cualquier trabajo sustantivo | Claude usa tu tono, glosario y marca sin que se lo repitas cada vez |
+| **Contexto** (`contexto/*.md`: empresa y personal) | `~/.claude/contexto/` (cada plantilla solo se instala si no existe) | Antes de cualquier trabajo sustantivo | Claude usa tu tono, glosario y marca sin que se lo repitas cada vez |
 | **Hook anti-secretos** (`hooks/anti-secretos.sh`) | `~/.claude/hooks/` más una entrada en `settings.json` (opt-in) | Justo antes de un `git commit` que Claude ejecuta (solo dentro de Claude Code) | Intenta commitear un archivo con una clave y el commit se bloquea con un aviso del kit |
 | **COMO-PEDIR.md** | Se queda en el repo; no se instala en `~/.claude/` | Cuando tú redactas una petición | No cambia el comportamiento de Claude: te ayuda a ti a pedir mejor (anatomía de la petición, plantillas, palabras clave) |
 
@@ -81,7 +81,7 @@ versión degradada, pero conserva el criterio y el vocabulario del kit.
 - **Núcleo:** copia el contenido de `nucleo/CLAUDE.md` y pégalo como
   instrucciones del proyecto. Eso da a Claude las reglas universales. Como en la
   web no existe `~/.claude/contexto/`, pega también el contenido de
-  `contexto/CONTEXTO-EMPRESA.md` (ya rellenado) al final de esas instrucciones.
+  tus archivos de `contexto/` (ya rellenados) al final de esas instrucciones.
 - **Skills:** sube como archivos del proyecto los `SKILL.md` de las skills que
   vayas a usar en ese proyecto (por ejemplo el de presentaciones si es un deck).
   En la web no hay carga automática por descripción: subes tú lo que aplica.
@@ -103,7 +103,7 @@ El instalador es no destructivo. Solo reemplaza dos cosas: la sección del núcl
 marcada entre `<!-- kit-chema:inicio -->` y `<!-- kit-chema:fin -->` dentro de tu
 `~/.claude/CLAUDE.md`, y las carpetas `skills/kit-*`. Lo que tú hayas escrito en
 tu `CLAUDE.md` fuera de esos marcadores no se toca, y tu
-`CONTEXTO-EMPRESA.md` se respeta si ya existe. Antes de reescribir la sección del
+las plantillas de `contexto/` se respetan si ya existen. Antes de reescribir la sección del
 núcleo, guarda un respaldo de tu archivo anterior en `~/.claude/CLAUDE.md.pre-kit-chema.bak`,
 por si necesitas volver atrás.
 

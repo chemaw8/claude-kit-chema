@@ -54,13 +54,16 @@ for d in "$KIT"/skills/kit-*/; do
   echo "skill: $nombre"
 done
 
-# 3. Contexto: solo si no existe (es del usuario)
-if [ ! -f "$DIR/contexto/CONTEXTO-EMPRESA.md" ]; then
-  cp "$KIT/contexto/CONTEXTO-EMPRESA.md" "$DIR/contexto/"
-  echo "contexto: plantilla instalada — edítala con tus datos"
-else
-  echo "contexto: ya existe, no se toca"
-fi
+# 3. Contexto: cada plantilla solo si no existe (son del usuario)
+for plantilla in "$KIT"/contexto/*.md; do
+  nombre=$(basename "$plantilla")
+  if [ ! -f "$DIR/contexto/$nombre" ]; then
+    cp "$plantilla" "$DIR/contexto/"
+    echo "contexto: plantilla $nombre instalada — edítala con tus datos"
+  else
+    echo "contexto: $nombre ya existe, no se toca"
+  fi
+done
 
 # 4. Hooks: opt-in
 resp="${KIT_HOOKS:-}"

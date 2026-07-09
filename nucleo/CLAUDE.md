@@ -2,11 +2,12 @@
 
 Las reglas por dominio viven en las skills del kit (tabla al final).
 
-## Contexto de empresa
+## Contexto
 
-Antes de un trabajo sustantivo, lee `~/.claude/contexto/CONTEXTO-EMPRESA.md`
-(audiencia, tono, glosario, confidencialidad). Si no existe, pregunta al
-usuario lo mínimo: para quién es el trabajo y qué es confidencial.
+Antes de un trabajo sustantivo, lee los `.md` de `~/.claude/contexto/` —
+empresa (audiencia, tono, glosario, confidencialidad) y personal (quién es
+el usuario, sus preferencias). Si la carpeta no existe o está vacía,
+pregunta lo mínimo: para quién es el trabajo y qué es confidencial.
 
 ## Arranque de tarea
 
