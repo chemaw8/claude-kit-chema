@@ -1,5 +1,23 @@
 # Changelog — Kit Chema
 
+## v1.2 — 2026-07-09
+Plugin híbrido de Claude Code: se empaquetan las 7 skills y el hook anti-secretos
+como plugin (`.claude-plugin/plugin.json` + `marketplace.json`, `hooks/hooks.json`,
+slash command `/kit-chema:init-contexto`). El núcleo sigue instalándose aparte
+como `~/.claude/CLAUDE.md` porque un CLAUDE.md en la raíz de un plugin no se carga
+como contexto (doc oficial). La vía `git clone` + `./instalar.sh` sigue viva para
+todo. Ambas vías documentadas en README e INSTRUCTIVO.
+Salvaguardas anti-degradación: CI (`.github/workflows/ci.yml`) que corre en PR y
+en push a ramas != main con dos jobs, límites (`verificar.sh`) y secretos
+(gitleaks por binario de versión fija); `CODEOWNERS`; `GOBERNANZA.md` (cambios
+solo por PR, CI en verde, revisión de CODEOWNERS, rollback por revert); la
+mejora-por-corrección del núcleo entra como PR en borrador revisado por council.
+Guía de contexto: límite duro y regla de oro en las plantillas de contexto,
+ejemplos de tono así-sí/así-no, y sección "Cómo llenar tu contexto" en
+COMO-PEDIR.md.
+Bugfix: el YAML frontmatter de `kit-propuestas` se rompía por un `: ` en el
+description (la skill cargaba sin metadata); se entrecomilló el valor.
+
 ## v1.1 — 2026-07-09
 Contexto generalizado: el núcleo ahora lee toda la carpeta `~/.claude/contexto/`
 (empresa + nueva plantilla opcional `CONTEXTO-PERSONAL.md` para proyectos y
