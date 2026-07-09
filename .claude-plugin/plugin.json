@@ -6,5 +6,6 @@
     "name": "chemaw8"
   },
   "homepage": "https://github.com/chemaw8/claude-kit-chema",
-  "repository": "https://github.com/chemaw8/claude-kit-chema"
+  "repository": "https://github.com/chemaw8/claude-kit-chema",
+  "license": "MIT"
 }

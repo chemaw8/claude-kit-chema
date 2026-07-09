@@ -90,3 +90,21 @@ La regla que sostiene todo lo demás. Cada punto es verificable.
 - Colar "mejoras" o refactors que nadie pidió junto al cambio real.
 - Declarar la tarea lista sin haberla ejecutado ni una vez.
 - Dejar en el repo archivos-experimento, prints de debug o código muerto.
+
+## Compatibilidad con superpowers y pr-review-toolkit
+
+Solo aplica si esos plugins están instalados; si no, ignora esta sección. Como
+las skills del kit y las de superpowers dan guía sobre lo mismo, estas reglas
+evitan que se contradigan:
+
+- TDD: la política del kit es proporcional (no fuerces tests en scripts o
+  configuración de un solo uso). Con superpowers activo, para código con lógica
+  manda su test-driven-development; la excepción del kit para lo trivial se
+  canaliza por su propia salida de "consultar a tu human partner". No oscilar
+  entre "escribe el test primero" y "no hace falta test".
+- Arranque por tamaño: tarea chica → plan corto y directo; tarea grande (el plan
+  no cabe en pocas líneas) → cede a brainstorming→writing-plans de superpowers.
+- Revisión, cada una en su carril, nunca dos sobre el mismo diff: Council juzga
+  decisiones caras o irreversibles; requesting-code-review o /review-pr revisan
+  código ya escrito; kit-codigo revisa en línea si no hay plugins. Homologa el
+  veredicto al del kit: aprobada / aprobada con cambios / rechazada.
