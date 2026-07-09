@@ -1,6 +1,6 @@
 # Manuales de instrucciones y arquitecturas de prompts para Claude: mejores prácticas 2024–2026
 
-Reporte final de investigación para el diseño del Kit Innovattia para Claude. Fecha de consulta de todas las fuentes: 2026-07-08. Notación de votación: "3-0" significa que tres verificadores independientes confirmaron la afirmación contra la fuente primaria en ronda adversarial; "2-1" indica mayoría con un voto disidente (el matiz del disidente se recoge en la sección de Transparencia).
+Reporte final de investigación para el diseño del Kit Chema. Fecha de consulta de todas las fuentes: 2026-07-08. Notación de votación: "3-0" significa que tres verificadores independientes confirmaron la afirmación contra la fuente primaria en ronda adversarial; "2-1" indica mayoría con un voto disidente (el matiz del disidente se recoge en la sección de Transparencia).
 
 ---
 
@@ -74,7 +74,7 @@ Siete hallazgos cambian decisiones de diseño del kit:
 
 **Colecciones curadas.** awesome-claude-code (https://github.com/hesreallyhim/awesome-claude-code, fuente secundaria) y awesome-claude-code-toolkit (https://github.com/rohitg00/awesome-claude-code-toolkit) catalogan CLAUDE.md reales, comandos y flujos de trabajo de la comunidad. Su valor para el kit no es normativo sino de cantera: ejemplos concretos de los que extraer estructuras y frases gatillo ya probadas. Catalogadas; no verificadas individualmente.
 
-**El modelo oficial de distribución corporativa existe y es suficiente.** La combinación confirmada de (a) CLAUDE.md de política gestionada que se carga primero y no puede excluirse, (b) skills con divulgación progresiva y (c) hooks deterministas (todo 3-0, fuentes oficiales citadas en 2a) cubre íntegramente lo que el Kit Innovattia necesita para instalarse y gobernarse en una empresa sin depender de herramientas de terceros. La guía oficial de construcción de skills (PDF de Anthropic) documenta además el modelo de distribución vigente a enero de 2026.
+**El modelo oficial de distribución corporativa existe y es suficiente.** La combinación confirmada de (a) CLAUDE.md de política gestionada que se carga primero y no puede excluirse, (b) skills con divulgación progresiva y (c) hooks deterministas (todo 3-0, fuentes oficiales citadas en 2a) cubre íntegramente lo que el Kit Chema necesita para instalarse y gobernarse en una empresa sin depender de herramientas de terceros. La guía oficial de construcción de skills (PDF de Anthropic) documenta además el modelo de distribución vigente a enero de 2026.
 
 ### 2d. Verificación multi-agente y anti-complacencia
 
@@ -86,7 +86,7 @@ Siete hallazgos cambian decisiones de diseño del kit:
 
 ---
 
-## 3. Implicaciones concretas para el diseño del Kit Innovattia
+## 3. Implicaciones concretas para el diseño del Kit Chema
 
 | # | Hallazgo (votación) | Decisión de diseño para el kit |
 |---|---|---|
