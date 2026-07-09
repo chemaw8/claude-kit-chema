@@ -102,8 +102,10 @@ evitan que se contradigan:
   manda su test-driven-development; la excepción del kit para lo trivial se
   canaliza por su propia salida de "consultar a tu human partner". No oscilar
   entre "escribe el test primero" y "no hace falta test".
-- Arranque por tamaño: tarea chica → plan corto y directo; tarea grande (el plan
-  no cabe en pocas líneas) → cede a brainstorming→writing-plans de superpowers.
+- Arranque por tamaño: tarea chica → plan corto y directo; aquí el arranque
+  directo del kit tiene precedencia sobre el candado universal de brainstorming
+  (instrucción del usuario, que manda sobre las skills). Tarea grande (el plan no
+  cabe en pocas líneas) → cede a brainstorming→writing-plans de superpowers.
 - Revisión, cada una en su carril, nunca dos sobre el mismo diff: Council juzga
   decisiones caras o irreversibles; requesting-code-review o /review-pr revisan
   código ya escrito; kit-codigo revisa en línea si no hay plugins. Homologa el
