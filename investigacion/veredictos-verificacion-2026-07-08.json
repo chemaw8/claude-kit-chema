@@ -1,0 +1,265 @@
+{
+ "confirmadas": [
+  {
+   "claim": "Anthropic states that overly long ('bloated') CLAUDE.md files cause Claude to ignore instructions, and recommends a per-line pruning test: cut any line whose removal would not cause mistakes.",
+   "source": "https://code.claude.com/docs/en/best-practices",
+   "quote": "Keep it concise. For each line, ask: \"Would removing this cause Claude to make mistakes?\" If not, cut it. Bloated CLAUDE.md files cause Claude to ignore your actual instructions!",
+   "votos": "3-0 (ronda original)",
+   "status": "confirmada"
+  },
+  {
+   "claim": "Anthropic's official guidance is that CLAUDE.md should contain only broadly-applicable content because it is loaded every session, while occasional domain knowledge and workflows should live in skills that load on demand — the exact core-plus-skills architecture the kit contemplates.",
+   "source": "https://code.claude.com/docs/en/best-practices",
+   "quote": "CLAUDE.md is loaded every session, so only include things that apply broadly. For domain knowledge or workflows that are only relevant sometimes, use skills instead. Claude loads them on demand without bloating every conversation.",
+   "votos": "3-0 (ronda original)",
+   "status": "confirmada"
+  },
+  {
+   "claim": "Anthropic distinguishes enforcement mechanisms: CLAUDE.md instructions are merely advisory, whereas hooks are deterministic and guarantee execution — so rules that must always hold should be hooks, not prose instructions.",
+   "source": "https://code.claude.com/docs/en/best-practices",
+   "quote": "Unlike CLAUDE.md instructions which are advisory, hooks are deterministic and guarantee the action happens.",
+   "votos": "3-0 (ronda original)",
+   "status": "confirmada"
+  },
+  {
+   "claim": "Anthropic recommends adversarial review by a fresh-context subagent but warns of a known failure mode: a reviewer prompted to find gaps will report findings even when the work is sound, so reviewers must be scoped to correctness-affecting gaps to avoid over-engineering.",
+   "source": "https://code.claude.com/docs/en/best-practices",
+   "quote": "A reviewer prompted to find gaps will usually report some, even when the work is sound, because that is what it was asked to do. Chasing every finding leads to over-engineering: extra abstraction layers, defensive code, and tests for cases that can't happen.",
+   "votos": "3-0 (ronda original)",
+   "status": "confirmada"
+  },
+  {
+   "claim": "Anthropic officially recommends keeping each CLAUDE.md file under 200 lines, stating that longer files both consume more context and measurably reduce instruction adherence.",
+   "source": "https://code.claude.com/docs/en/memory",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La fuente dice textualmente: \"target under 200 lines per CLAUDE.md file. Longer files consume more context and reduce adherence\" y repite \"Files over 200 lines consume more context and may reduce adherence\". Coincide con la afirmación en sustancia; el único matiz es que la fuente no usa la palabra \"measurably\" (no cita datos de medición), pero no tergiversa el sentido general.",
+    "La página oficial dice literalmente: \"target under 200 lines per CLAUDE.md file. Longer files consume more context and reduce adherence.\" Esto sostiene fielmente la afirmación; el añadido \"measurably\" es un matiz menor de énfasis, no una exageración sustancial del contenido.",
+    "La página vigente (code.claude.com/docs/en/memory) dice literalmente: \"target under 200 lines per CLAUDE.md file. Longer files consume more context and reduce adherence\" y repite \"Files over 200 lines consume more context and may reduce adherence\". Coincide fielmente con la afirmación (el matiz \"may reduce\" vs \"measurably reduce\" no es sustancial)."
+   ]
+  },
+  {
+   "claim": "CLAUDE.md content is injected as a user message after the system prompt (not into the system prompt itself), so there is no guarantee of strict compliance; instructions that must always execute should be implemented as hooks, which are enforced by the client regardless of what the model decides.",
+   "source": "https://code.claude.com/docs/en/memory",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La página dice textualmente: \"CLAUDE.md content is delivered as a user message after the system prompt, not as part of the system prompt itself... there's no guarantee of strict compliance\", y recomienda usar hooks para lo que deba ejecutarse siempre: \"Hooks execute as shell commands at fixed lifecycle events and apply regardless of what Claude decides to do.\"",
+    "La fuente dice textualmente: \"CLAUDE.md content is delivered as a user message after the system prompt, not as part of the system prompt itself... there's no guarantee of strict compliance\" y recomienda usar hooks para lo que debe ejecutarse siempre, indicando \"Hooks execute as shell commands at fixed lifecycle events and apply regardless of what Claude decides to do\". La afirmación es fiel, sin exageración sustancial.",
+    "La fuente vigente dice literalmente: \"CLAUDE.md content is delivered as a user message after the system prompt, not as part of the system prompt itself. Claude reads it and tries to follow it, but there's no guarantee of strict compliance\". Y añade: \"If the instruction is something that must run at a specific point... write it as a hook instead. Hooks execute as shell commands at fixed lifecycle events and apply regardless of what Claude decides to do.\" Coincide fielmente con la afirmación."
+   ]
+  },
+  {
+   "claim": "Contradictory rules across CLAUDE.md files cause Claude to pick one arbitrarily, and Anthropic prescribes concrete, verifiable phrasing (e.g. 'Use 2-space indentation' instead of 'Format code properly') as the fix for poor adherence.",
+   "source": "https://code.claude.com/docs/en/memory",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La página dice textualmente: \"if two rules contradict each other, Claude may pick one arbitrarily\" y \"Look for conflicting instructions across CLAUDE.md files. If two files give different guidance for the same behavior, Claude may pick one arbitrarily.\" Además prescribe explícitamente el ejemplo: \"'Use 2-space indentation' instead of 'Format code properly'\" como guía de especificidad verificable. La afirmación es fiel a la fuente.",
+    "La página dice textualmente: \"if two rules contradict each other, Claude may pick one arbitrarily\" y recomienda \"Use 2-space indentation\" instead of \"Format code properly\" como ejemplo de instrucción verificable para mejorar la adherencia. La afirmación es fiel al contenido, sin exageración sustancial.",
+    "La página vigente cita textualmente: \"if two rules contradict each other, Claude may pick one arbitrarily\" y da el ejemplo exacto \"Use 2-space indentation\" instead of \"Format code properly\" como guía de especificidad. La afirmación es fiel al contenido actual de la fuente."
+   ]
+  },
+  {
+   "claim": "Splitting a CLAUDE.md into @path imports does NOT reduce context consumption because imported files (up to 4 hops deep) still load in full at launch; only path-scoped rules (.claude/rules/ with paths frontmatter) and skills load on demand, making them the correct mechanism for domain-specific instructions in a modular kit.",
+   "source": "https://code.claude.com/docs/en/memory",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La fuente dice textualmente: \"Splitting into @path imports helps organization but does not reduce context, since imported files load at launch\" y que las importaciones anidadas tienen \"a maximum depth of four hops\". También confirma que las rules con `paths` frontmatter \"only apply when Claude is working with files matching the specified patterns\" (carga condicional) y que los skills \"only load when you invoke them or when Claude determines they're relevant\". La afirmación es fiel a la fuente.",
+    "La fuente dice literalmente: \"Splitting into @path imports helps organization but does not reduce context, since imported files load at launch\" e \"Imported files can recursively import other files, with a maximum depth of four hops\". También confirma que \"Rules without paths frontmatter are loaded at launch with the same priority as .claude/CLAUDE.md\" mientras que rules con paths \"only load into context when Claude works with matching files\", y que skills \"only load when you invoke them or when Claude determines they're relevant\". La afirmación es fiel a la fuente, sin exageración.",
+    "La página vigente code.claude.com/docs/en/memory confirma textualmente: \"Splitting into @path imports helps organization but does not reduce context, since imported files load at launch\" y \"maximum depth of four hops\"; además describe que las rules con `paths` frontmatter y las skills solo cargan on-demand/cuando son relevantes, coincidiendo plenamente con la afirmación."
+   ]
+  },
+  {
+   "claim": "Organizations can deploy a centrally managed CLAUDE.md at a machine-level policy path (e.g. /etc/claude-code/CLAUDE.md on Linux, or via the claudeMd key in managed-settings.json) that loads before user and project CLAUDE.md files and cannot be excluded by individual user settings — the official mechanism for distributing company-wide AI usage standards.",
+   "source": "https://code.claude.com/docs/en/memory",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La fuente confirma explícitamente cada elemento: ruta de política gestionada en Linux \"/etc/claude-code/CLAUDE.md\" (y equivalentes en macOS/Windows); dice literalmente \"Precedence: same as a managed CLAUDE.md file. Loads before user and project CLAUDE.md\"; indica que \"This file cannot be excluded by individual settings\" y que \"Managed policy CLAUDE.md files cannot be excluded\"; y describe la clave \"claudeMd\" en managed-settings.json como forma alternativa de distribuir el contenido. También se presenta como el mecanismo oficial para \"Manage CLAUDE.md for large teams\" con estándares de código, compliance, etc.",
+    "La fuente sostiene literalmente cada elemento: rutas por SO (incl. /etc/claude-code/CLAUDE.md), la clave claudeMd en managed-settings.json, \"Loads before user and project CLAUDE.md\" y \"Managed policy CLAUDE.md files cannot be excluded... regardless of individual settings\", presentado como mecanismo oficial para instrucciones \"organization-wide\" (coding standards, compliance). Sin exageración.",
+    "La página vigente confirma textualmente todos los elementos: ruta \"/etc/claude-code/CLAUDE.md\" (Linux/WSL) bajo \"Managed policy\", la clave \"claudeMd\" en managed-settings.json, \"Precedence: same as a managed CLAUDE.md file. Loads before user and project CLAUDE.md\", y \"Managed policy CLAUDE.md files cannot be excluded. This ensures organization-wide instructions always apply regardless of individual settings.\""
+   ]
+  },
+  {
+   "claim": "Anthropic defines Agent Skills as folders of instructions, scripts, and resources (centered on a SKILL.md file with YAML frontmatter containing 'name' and 'description') that agents discover and load dynamically, rather than embedding all procedural knowledge in a single long prompt.",
+   "source": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La página confirma textualmente: skills son \"organized folders of instructions, scripts, and resources that agents can discover and load dynamically\", y que \"a skill is a directory that contains a SKILL.md file\" cuyo frontmatter YAML requiere 'name' y 'description', en contraste con cargar todo en un prompt único.",
+    "La fuente confirma textualmente que \"a skill is a directory containing a SKILL.md file that contains organized folders of instructions, scripts, and resources\", que el frontmatter YAML requiere 'name' y 'description', y que estos se cargan dinámicamente (\"progressive disclosure\") en lugar de embeber todo el conocimiento en el prompt. La afirmación es fiel, sin exageración sustancial.",
+    "La fuente describe Agent Skills como \"organized folders of instructions, scripts, and resources that agents can discover and load dynamically\", centradas en SKILL.md con YAML frontmatter (name, description), y contrasta esto explícitamente con incrustar todo el conocimiento procedimental en un único prompt largo mediante \"progressive disclosure\"."
+   ]
+  },
+  {
+   "claim": "Skills use a three-level progressive disclosure architecture: at startup the agent pre-loads only the name and description of every installed skill; the full SKILL.md body is read only when Claude judges the skill relevant to the current task; and bundled supplementary files (e.g., reference.md) are loaded only as needed.",
+   "source": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La fuente confirma el modelo de tres niveles: \"at startup, the agent pre-loads the name and description of every installed skill into its system prompt\"; luego \"it will load the skill by reading its full SKILL.md into context\" cuando es relevante; y los archivos adicionales del skill se cargan \"only as needed\". Coincide fielmente con la afirmación.",
+    "La fuente confirma los tres niveles: \"the agent pre-loads the name and description of every installed skill into its system prompt\"; el SKILL.md completo se lee \"when Claude judges the skill relevant\"; y archivos adicionales como forms.md se cargan solo cuando Claude los necesita. La afirmación es fiel, sin exageración sustancial.",
+    "La fuente confirma literalmente los tres niveles: \"At startup, the agent pre-loads the name and description of every installed skill\"; \"If Claude thinks the skill is relevant to the current task, it will load the skill by reading its full SKILL.md into context\"; y los archivos bundled (reference.md/forms.md) son el tercer nivel que Claude carga solo cuando lo necesita."
+   ]
+  },
+  {
+   "claim": "The 'name' and 'description' frontmatter fields are what Claude uses to decide whether to trigger a skill, so authors must invest particular care in writing them — a poorly written description causes the skill to not fire at the right moments.",
+   "source": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La página dice literalmente: \"Pay special attention to the name and description of your skill. Claude will use these when deciding whether to trigger the skill in response to its current task\", y que estos campos se precargan para dar \"just enough information for Claude to know when each skill should be used\". Esto sostiene fielmente la afirmación, incluyendo la necesidad de cuidado especial en su redacción.",
+    "La fuente dice literalmente que Claude usa 'name' y 'description' \"when deciding whether to trigger the skill\" y aconseja \"pay special attention\" a estos campos, coincidiendo con la afirmación. No hay exageración sustancial.",
+    "La fuente en vivo confirma: \"Claude will use these [name and description] when deciding whether to trigger the skill in response to its current task\" y recomienda explícitamente \"Pay special attention to the name and description of your skill\". La afirmación es fiel al contenido vigente del artículo, sin tergiversación."
+   ]
+  },
+  {
+   "claim": "Anthropic recommends splitting SKILL.md content into separate referenced files when it becomes unwieldy, because keeping mutually exclusive or rarely co-used contexts in separate files reduces token usage — a direct anti-bloat mechanism versus one monolithic instruction file; via the filesystem this makes the bundleable context 'effectively unbounded'.",
+   "source": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La fuente dice textualmente: \"When the SKILL.md file becomes unwieldy, split its content into separate files and reference them\" y \"If certain contexts are mutually exclusive or rarely used together, keeping the paths separate will reduce the token usage\", además de \"the amount of context that can be bundled into a skill is effectively unbounded\" (gracias al filesystem). Coincide fielmente con la afirmación.",
+    "La fuente confirma: \"When the SKILL.md file becomes unwieldy, split its content into separate files and reference them\"; \"If certain contexts are mutually exclusive or rarely used together, keeping the paths separate will reduce the token usage\"; y \"the amount of context that can be bundled into a skill is effectively unbounded\". La afirmación refleja fielmente estas citas sin exagerar.",
+    "La fuente sostiene fielmente la afirmación: cita casi textual \"When the SKILL.md file becomes unwieldy, split its content into separate files and reference them. If certain contexts are mutually exclusive or rarely used together, keeping the paths separate will reduce the token usage\", y confirma que \"the amount of context that can be bundled into a skill is effectively unbounded\" vía filesystem. Artículo vigente y aplicable a las skills de agentes actuales (2026)."
+   ]
+  },
+  {
+   "claim": "Anthropic's core prompting rule is that instructions must be explicit and self-sufficient: if a colleague with minimal context would be confused by the prompt, Claude will be too — so 'above and beyond' behavior must be explicitly requested, not assumed. This directly informs how a corporate CLAUDE.md/kit should be written and tested.",
+   "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La fuente confirma casi textualmente la afirmación: \"Claude responds well to clear, explicit instructions... If you want 'above and beyond' behavior, explicitly request it rather than relying on the model to infer this from vague prompts.\" y \"Golden rule: Show your prompt to a colleague with minimal context on the task and ask them to follow it. If they'd be confused, Claude will be too.\"",
+    "La fuente sostiene fielmente la afirmación: cita textual línea 35: \"Claude responds well to clear, explicit instructions... If you want 'above and beyond' behavior, explicitly request it rather than relying on the model to infer this from vague prompts.\" Y línea 39 (Golden rule): \"Show your prompt to a colleague with minimal context on the task and ask them to follow it. If they'd be confused, Claude will be too.\" No hay exageración; la afirmación parafrasea con precisión ambos puntos.",
+    "La fuente está vigente (aplica explícitamente a Claude Fable 5, Sonnet 5, Opus 4.8, etc.) y sostiene textualmente la afirmación: \"Claude responds well to clear, explicit instructions... If you want 'above and beyond' behavior, explicitly request it rather than relying on the model to infer this from vague prompts\" y \"Golden rule: Show your prompt to a colleague with minimal context on the task and ask them to follow it. If they'd be confused, Claude will be too.\""
+   ]
+  },
+  {
+   "claim": "Position effects in long prompts are real and quantified by Anthropic: with inputs of 20k+ tokens, long documents should go at the top of the prompt with the query/instructions at the end, which improved response quality by up to 30% in Anthropic's tests — relevant to ordering content in large instruction files and context-heavy workflows.",
+   "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La fuente en vivo, sección \"Long context prompting\", dice literalmente: \"When working with large documents or data-rich inputs (20k+ tokens)... Put longform data at the top: Place your long documents and inputs near the top of your prompt, above your query, instructions, and examples... Queries at the end can improve response quality by up to 30% in tests, especially with complex, multi-document inputs.\" La afirmación es fiel al texto y alcance.",
+    "La página cita textualmente: \"When working with large documents or data-rich inputs (20k+ tokens)... Put longform data at the top... Queries at the end can improve response quality by up to 30% in tests, especially with complex, multi-document inputs.\" La afirmación refleja fielmente el umbral, la recomendación de orden y la cifra del 30%, sin exagerar.",
+    "La página vigente (docs actuales, incluye modelos 2026 como Sonnet 5) dice literalmente: \"When working with large documents or data-rich inputs (20k+ tokens)... Put longform data at the top... Queries at the end can improve response quality by up to 30% in tests\". Coincide con la afirmación sin tergiversación."
+   ]
+  },
+  {
+   "claim": "Aggressive emphasis (ALL-CAPS 'CRITICAL: You MUST...') in instructions written for older models now causes overtriggering on Claude Opus 4.5/4.6 and later, and Anthropic explicitly recommends dialing it back to plain phrasing — evidence that instruction-file 'shouting' and anti-laziness over-prompting is an anti-pattern for current models.",
+   "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La fuente dice textualmente: \"Claude Opus 4.5 and Claude Opus 4.6 are also more responsive to the system prompt than previous models. If your prompts were designed to reduce undertriggering on tools or skills, these models may now overtrigger. The fix is to dial back any aggressive language. Where you might have said 'CRITICAL: You MUST use this tool when...', you can use more normal prompting like 'Use this tool when...'.\" También añade en migración: \"Tune anti-laziness prompting: If your prompts previously encouraged the model to be more thorough or use tools more aggressively, dial back that guidance.\" Esto respalda fielmente la afirmación.",
+    "La fuente dice textualmente: \"Claude Opus 4.5 and Claude Opus 4.6 are also more responsive to the system prompt than previous models. If your prompts were designed to reduce undertriggering on tools or skills, these models may now overtrigger. The fix is to dial back any aggressive language. Where you might have said 'CRITICAL: You MUST use this tool when...', you can use more normal prompting like 'Use this tool when...'.\" Además, la sección de migración dice: \"Tune anti-laziness prompting: If your prompts previously encouraged the model to be more thorough or use tools more aggressively, dial back that guidance. Claude 4.6 models are more proactive and may overtrigger on instructions that were needed for previous models.\" Esto sostiene fielmente la afirmación (el ejemplo de \"CRITICAL...MUST\" es casi cita literal y coincide con Opus 4.5/4.6).",
+    "La página vigente (modelos Fable 5, Opus 4.8/4.7/4.6, Sonnet 5, etc.) dice literalmente: \"Claude Opus 4.5 and Claude Opus 4.6 are also more responsive to the system prompt than previous models... The fix is to dial back any aggressive language. Where you might have said 'CRITICAL: You MUST use this tool when...', you can use more normal prompting like 'Use this tool when...'\". Además, el punto 6 de la sección de migración indica explícitamente \"Tune anti-laziness prompting: ...dial back that guidance. Claude 4.6 models are more proactive and may overtrigger on instructions that were needed for previous models.\""
+   ]
+  },
+  {
+   "claim": "El rendimiento de los LLM se degrada a medida que crece la ventana de contexto ('context rot'): la capacidad del modelo para recuperar información con precisión disminuye conforme aumenta el número de tokens, lo que implica que los archivos de instrucciones largos (p.ej. CLAUDE.md inflados) reducen la fiabilidad del output.",
+   "source": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La fuente dice textualmente: \"as the number of tokens in the context window increases, the model's ability to accurately recall information from that context decreases\" (context rot), respaldando la afirmación. La extensión a archivos de instrucciones largos es coherente con el énfasis del artículo en usar \"el conjunto más pequeño posible de tokens de alta señal\", no una tergiversación.",
+    "La fuente afirma textualmente: \"as the number of tokens in the context window increases, the model's ability to accurately recall information from that context decreases\" (context rot), atribuido a estudios needle-in-a-haystack en todos los modelos. También discute CLAUDE.md como archivo cargado proactivamente en el contexto. La afirmación es fiel al contenido sin exageración sustancial.",
+    "La fuente está vigente y sostiene la afirmación de forma literal: \"As the number of tokens in the context window increases, the model's ability to accurately recall information from that context decreases\" (context rot), atribuido a menor exposición de entrenamiento a secuencias largas, lo que respalda la implicación de que archivos de instrucciones muy largos degradan la fiabilidad."
+   ]
+  },
+  {
+   "claim": "Anthropic recomienda que los system prompts se escriban a la 'altitud' correcta: lo bastante específicos para guiar el comportamiento pero flexibles como heurísticas; codificar lógica compleja y rígida en el prompt es un anti-patrón que genera fragilidad y coste de mantenimiento.",
+   "source": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "El artículo dice literalmente que el system prompt debe estar en la \"altitud\" correcta, \"specific enough to guide behavior effectively, yet flexible enough to provide the model with strong heuristics\", y explícitamente critica \"hardcoding complex, brittle logic in their prompts\" como fuente de fragilidad y carga de mantenimiento. La afirmación es fiel al contenido.",
+    "La fuente afirma textualmente que el objetivo es hallar \"la altitud correcta\": prompts \"specific enough to guide behavior effectively, yet flexible enough to provide the model with strong heuristics\", y advierte contra \"hardcoding complex, brittle logic in their prompts\" como fuente de fragilidad/mantenimiento. Coincide fielmente con la afirmación, sin exageración.",
+    "La fuente sigue publicada y respalda la afirmación casi textualmente: describe la \"altitud correcta\" como \"specific enough to guide behavior effectively, yet flexible enough to provide the model with strong heuristics\", y señala como anti-patrón \"hardcoding complex, brittle logic in their prompts to elicit exact agentic behavior\", generando fragilidad. No hay tergiversación sustancial ni indicios de que el contenido esté obsoleto para 2026."
+   ]
+  },
+  {
+   "claim": "La regla de oro del context engineering según Anthropic es encontrar el conjunto más pequeño posible de tokens de alta señal que maximice la probabilidad del resultado deseado, en lugar de acumular listas exhaustivas de casos borde ('laundry list of edge cases') en las instrucciones.",
+   "source": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "La fuente dice textualmente: \"good context engineering means finding the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome\", y advierte explícitamente contra \"laundry list of edge cases into a prompt\". El artículo no usa la frase \"golden rule\", pero el contenido citado es fiel; llamarlo \"regla de oro\" es una etiqueta razonable, no una tergiversación.",
+    "La fuente cita literalmente: \"find the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome\", y menciona explícitamente evitar \"stuff a laundry list of edge cases into a prompt\". La afirmación es fiel al contenido, sin exageración sustancial.",
+    "El artículo (vigente en anthropic.com/engineering) dice textualmente: \"good context engineering means finding the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome\", y advierte explícitamente contra \"stuff a laundry list of edge cases into a prompt\". La afirmación es fiel al contenido actual."
+   ]
+  },
+  {
+   "claim": "Anthropic recomienda la recuperación de contexto 'just-in-time' con divulgación progresiva: mantener identificadores ligeros (rutas de archivo, enlaces) y cargar datos en tiempo de ejecución mediante herramientas en vez de pre-cargar todo — el fundamento arquitectónico de un sistema de skills por dominio frente a un CLAUDE.md monolítico.",
+   "source": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+   "votos": "2-1 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "El artículo dice textualmente: \"agents built with the 'just in time' approach maintain lightweight identifiers (file paths, stored queries, web links, etc.) and use these references to dynamically load data into context at runtime using tools\" y menciona explícitamente \"progressive disclosure\". La afirmación central es fiel a la fuente; la extensión sobre \"skills por dominio vs CLAUDE.md monolítico\" es una aplicación/inferencia del usuario no mencionada literalmente en el artículo, pero no tergiversa el contenido citado.",
+    "La fuente sí describe la estrategia JIT con identificadores ligeros y carga en runtime vía herramientas, tal como se afirma. Pero la fuente NO establece esto como \"fundamento arquitectónico de skills por dominio frente a CLAUDE.md monolítico\" — de hecho cita explícitamente CLAUDE.md como parte de un modelo híbrido válido en Claude Code (\"CLAUDE.md files are naively dropped into context up front... while primitives like glob and grep allow it to navigate... just-in-time\"), no como algo a reemplazar por skills. La conclusión sobre \"skills vs CLAUDE.md monolítico\" es una extrapolación no sostenida por el texto.",
+    "La fuente está publicada y vigente en el sitio oficial de Anthropic. Confirma textualmente: \"agents built with the 'just in time' approach maintain lightweight identifiers (file paths, stored queries, web links, etc.) and use these references to dynamically load data into context at runtime using tools\", y menciona explícitamente \"progressive disclosure\". La afirmación es fiel; la referencia a skills vs CLAUDE.md monolítico es una aplicación razonable, no una tergiversación."
+   ]
+  },
+  {
+   "claim": "Anthropic prescribe una arquitectura de 'progressive disclosure' de tres niveles para skills (frontmatter YAML siempre cargado, cuerpo de SKILL.md cargado solo cuando es relevante, archivos enlazados descubiertos bajo demanda) como mecanismo explícito para minimizar el uso de tokens manteniendo la expertise especializada.",
+   "source": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "Página 5 del PDF dice textualmente: \"Progressive Disclosure — Skills use a three-level system: First level (YAML frontmatter): Always loaded... Second level (SKILL.md body): Loaded when Claude thinks the skill is relevant... Third level (Linked files): Additional files... discover only as needed. This progressive disclosure minimizes token usage while maintaining specialized expertise.\" La afirmación es fiel al texto y alcance.",
+    "Página 5 del PDF describe literalmente el sistema de tres niveles (frontmatter YAML siempre cargado en el system prompt, cuerpo de SKILL.md cargado cuando es relevante, archivos enlazados descubiertos bajo demanda) y concluye: \"This progressive disclosure minimizes token usage while maintaining specialized expertise\", frase casi idéntica a la afirmación evaluada.",
+    "La fuente (p.5) describe explícitamente \"Progressive Disclosure: Skills use a three-level system\" con First level (YAML frontmatter, always loaded), Second level (SKILL.md body, loaded when relevant) y Third level (Linked files, discovered/navigated only as needed), afirmando \"This progressive disclosure minimizes token usage while maintaining specialized expertise.\" El documento además se refiere explícitamente al \"current distribution model (January 2026)\" (p.19), confirmando su vigencia para 2026."
+   ]
+  },
+  {
+   "claim": "El campo 'description' del frontmatter es el factor decisivo para que Claude cargue una skill: debe incluir obligatoriamente QUÉ hace y CUÁNDO usarla (con frases gatillo literales que diría el usuario), tener menos de 1024 caracteres, y descripciones vagas como 'Helps with projects' provocan que la skill nunca se active.",
+   "source": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "El PDF confirma explícitamente: el campo description es crítico/decisivo para la carga de la skill, debe incluir qué hace y cuándo usarla con frases gatillo literales, tiene un límite de 1024 caracteres, y cita textualmente 'Helps with projects' como ejemplo de descripción vaga que falla en activar la skill.",
+    "La fuente dice literalmente \"The YAML frontmatter is how Claude decides whether to load your skill\" y exige description \"MUST include BOTH: What the skill does - When to use it (trigger conditions)\", \"Under 1024 characters\", \"Include specific tasks users might say\". También incluye el ejemplo textual \"# Too vague / description: Helps with projects.\" como mal ejemplo. La afirmación es fiel, no exagerada.",
+    "La fuente (guía oficial de Anthropic, vigente, menciona explícitamente \"enero 2026\" y una actualización de diciembre 2025) confirma la afirmación casi literalmente. Página 10: \"YAML frontmatter: The most important part... how Claude decides whether to load your skill\"; description (required) \"MUST include BOTH: What the skill does / When to use it (trigger conditions)\", \"Under 1024 characters\". Página 12 incluye el ejemplo textual \"# Too vague / description: Helps with projects.\" como mal ejemplo, y páginas 11-12 muestran ejemplos buenos con frases gatillo literales entre comillas."
+   ]
+  },
+  {
+   "claim": "Anthropic da límites cuantitativos contra el bloat de instrucciones: mantener SKILL.md por debajo de 5.000 palabras moviendo la documentación detallada a references/, y revisar si hay más de 20-50 skills habilitadas simultáneamente, porque el contenido excesivo degrada las respuestas y ralentiza al modelo.",
+   "source": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "Página 27 del PDF, sección \"Large context issues\" (Symptom: \"Skill seems slow or responses degraded\"): \"Solutions: 1. Optimize SKILL.md size - Move detailed docs to references/ - Link to references instead of inline - Keep SKILL.md under 5,000 words. 2. Reduce enabled skills - Evaluate if you have more than 20-50 skills enabled simultaneously - Recommend selective enablement\". La afirmación es fiel al texto y al alcance.",
+    "La fuente (pág. 27, sección \"Large context issues\") sostiene la afirmación casi literalmente: bajo \"Solutions\" lista \"Optimize SKILL.md size: Keep SKILL.md under 5,000 words\" y \"Move detailed docs to references/\", y \"Reduce enabled skills: Evaluate if you have more than 20-50 skills enabled simultaneously\". Estas soluciones responden al síntoma \"Skill seems slow or responses degraded\", cuyas causas listadas incluyen \"Skill content too large\", \"Too many skills enabled simultaneously\" y \"All content loaded instead of progressive disclosure\" — coincide con \"degrada las respuestas y ralentiza al modelo\".",
+    "El PDF en la URL declarada está publicado y accesible (descargado y extraído con pdftotext). Contiene literalmente la sección \"Large context issues\" que dice: \"Keep SKILL.md under 5,000 words\", \"Move detailed docs to references/\" y \"Evaluate if you have more than 20 - 50 skills enabled simultaneously\", justificado por \"Skill seems slow or responses degraded\". La afirmación es fiel al contenido, sin exageración."
+   ]
+  },
+  {
+   "claim": "Cuando Claude ignora instrucciones, Anthropic identifica tres causas (verbosidad, instrucciones enterradas, lenguaje ambiguo) y prescribe remedios de posición y redundancia — instrucciones críticas al inicio, cabeceras '## Important'/'## Critical', repetir puntos clave — y recomienda sustituir validaciones críticas en lenguaje natural por scripts ejecutables porque 'el código es determinista; la interpretación del lenguaje no'.",
+   "source": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "El PDF (sección \"Instructions not followed\") lista exactamente las tres causas: \"1. Instructions too verbose\", \"2. Instructions buried\" y \"3. Ambiguous language\", con remedios \"Put critical instructions at the top\", \"Use ## Important or ## Critical headers\", \"Repeat key points if needed\". Y la técnica avanzada dice textualmente: \"consider bundling a script that performs the checks programmatically rather than relying on language instructions. Code is deterministic; language interpretation isn't.\" La afirmación es fiel al texto.",
+    "La fuente confirma la afirmación con precisión: en la sección 'Instructions not followed' lista exactamente las tres causas (1. Instructions too verbose, 2. Instructions buried, 3. Ambiguous language) y los remedios de posición/redundancia ('Put critical instructions at the top', 'Use ## Important or ## Critical headers', 'Repeat key points if needed'), y contiene la cita literal 'Code is deterministic; language interpretation isn't' junto con la recomendación de bundlear un script para validaciones críticas. No hay exageración ni tergiversación.",
+    "El PDF (descargado y leído con pdftotext) contiene textualmente: \"Common causes: 1. Instructions too verbose... 2. Instructions buried – Put critical instructions at the top – Use ## Important or ## Critical headers – Repeat key points if needed 3. Ambiguous language\" y \"Advanced technique: For critical validations, consider bundling a script that performs the checks programmatically rather than relying on language instructions. Code is deterministic; language interpretation isn't.\" La afirmación es fiel a la fuente vigente y accesible; no hay tergiversación."
+   ]
+  },
+  {
+   "claim": "Contra la 'pereza' del modelo, Anthropic recomienda añadir aliento explícito ('Take your time to do this thoroughly', 'Quality is more important than speed', 'Do not skip validation steps'), y afirma que colocar esas notas en el prompt del usuario es más efectivo que ponerlas en SKILL.md — un dato relevante para decidir qué va en el kit estático versus la guía humana de prompteo.",
+   "source": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
+   "votos": "3-0 (accesibles 3/3)",
+   "status": "confirmada",
+   "evidencia": [
+    "El PDF (p. ~26) dice textualmente: \"4. Model 'laziness' Add explicit encouragement: - Take your time to do this thoroughly - Quality is more important than speed - Do not skip validation steps\" seguido de \"Note: Adding this to user prompts is more effective than in SKILL.md\". La afirmación coincide exactamente con el texto de la fuente.",
+    "La fuente (pág. ~26 del PDF) tiene una sección titulada \"Model 'laziness'\" que recomienda \"Add explicit encouragement\" con las frases exactas citadas: \"Take your time to do this thoroughly\", \"Quality is more important than speed\", \"Do not skip validation steps\". Inmediatamente después dice literalmente: \"Note: Adding this to user prompts is more effective than in SKILL.md\" — coincide fielmente con la afirmación, sin exageración.",
+    "El PDF (descargado vía curl, extraído con pdftotext) contiene la sección \"4. Model 'laziness' Add explicit encouragement:\" con las frases exactas \"Take your time to do this thoroughly\", \"Quality is more important than speed\", \"Do not skip validation steps\", seguidas de la nota literal \"Note: Adding this to user prompts is more effective than in SKILL.md\". La afirmación es fiel al contenido vigente de la fuente, sin exageración."
+   ]
+  }
+ ],
+ "refutadas": [],
+ "sinVerificar": []
+}

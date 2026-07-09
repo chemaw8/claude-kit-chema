@@ -40,7 +40,11 @@ por dominio + guía humana. Diseñado en conversación con José el 2026-07-08.
 ## Estado
 
 1. ✅ Brainstorming y diseño aprobados por José.
-2. 🔄 Investigación deep-research — estado al 2026-07-08 ~21:00:
+2. ✅ Investigación deep-research COMPLETA (2026-07-08 ~21:15): 25/25
+   afirmaciones confirmadas (24 unánimes, 1 por mayoría 2-1), 0 refutadas.
+   Reporte final: `investigacion/reporte-mejores-practicas.md`. Veredictos:
+   `investigacion/veredictos-verificacion-2026-07-08.json`.
+   Historial técnico (por si hay que reanudar workflows en el futuro):
    - La corrida original (`wf_c55ab737-fbd`) terminó PARCIAL: se agotó el límite
      de gasto mensual a mitad de la verificación. Resultado rescatado: 4
      afirmaciones confirmadas 3-0, 21 extraídas sin verificar, 22 fuentes
@@ -61,9 +65,10 @@ por dominio + guía humana. Diseñado en conversación con José el 2026-07-08.
      (la corrida original quemó ~727k tokens por esto).
    - Si la sesión se perdió: el JSON del repo tiene las afirmaciones; solo falta
      verificar las 21 pendientes y sintetizar — no repetir búsquedas.
-3. ⬜ Incorporar hallazgos de la investigación al diseño.
-4. ⬜ Escribir spec formal en `docs/superpowers/specs/2026-07-08-claude-kit-design.md`,
-   auto-revisión, revisión de José.
+3. ✅ Hallazgos incorporados al diseño (10 principios P1-P10 en el spec).
+4. 🔄 Spec escrito y auto-revisado:
+   `docs/superpowers/specs/2026-07-08-claude-kit-design.md`.
+   PENDIENTE: revisión de José antes de pasar al plan.
 5. ⬜ Plan de implementación (skill superpowers:writing-plans).
 6. ⬜ Implementar el kit (núcleo, playbooks, guías, instalador, presentación).
 7. ⬜ Council/revisión adversarial del propio manual antes de v1.0.
