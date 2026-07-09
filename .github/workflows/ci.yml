@@ -1,17 +1,17 @@
 name: ci
 
-# Se dispara en cada pull request y en pushes a ramas que NO sean main.
+# Se dispara en cada pull request contra cualquier rama y bajo demanda.
 # A propósito NO usamos `pull_request_target`: ese evento corre con permisos y
 # secretos del repo base y, si se combina con checkout del código del fork, abre
 # el vector "pwn request" (ejecución de código no confiable con acceso a
 # secretos). Con `pull_request` el workflow corre sin secretos y con permisos de
 # solo lectura, que es justo lo que necesitamos para validar límites y escanear
-# secretos.
+# secretos. La puerta de calidad es el PR: como todo cambio a main entra por PR
+# (ver GOBERNANZA.md), no hace falta correr también en cada push y así no se
+# duplica el CI mientras un PR está abierto.
 on:
   pull_request:
-  push:
-    branches-ignore:
-      - main
+  workflow_dispatch:
 
 # Sin permisos de escritura: el CI solo lee el código. No hay secretos definidos.
 permissions:

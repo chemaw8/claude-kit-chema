@@ -41,3 +41,13 @@ Activar **branch protection** en `main` (requiere permisos de administrador y no
 se hace desde este repo): exigir PR antes de fusionar, exigir que el CI pase y
 exigir la revisión de CODEOWNERS. Sin branch protection, estas reglas son un
 acuerdo; con ella, son un mecanismo que GitHub hace cumplir.
+
+## Diferido a v1.3 (no bloqueante)
+
+- Plugin "lean": hoy el paquete se distribuye con `source "./"` (viaja el repo
+  entero — docs, CI, deck). Claude Code solo activa skills/commands/hooks, así
+  que es inofensivo, pero conviene empaquetar solo lo necesario cuando haya un
+  mecanismo de exclusión claro.
+- Reemplazar el hook anti-secretos por una vía sin dependencia de python3.
+- Equipo de 2+ revisores en CODEOWNERS (hoy un único dueño es punto único de
+  fallo).
