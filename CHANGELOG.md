@@ -1,5 +1,13 @@
 # Changelog — Kit Chema
 
+## v1.3 — 2026-07-09
+Licencia MIT (LICENSE + campo license en plugin.json y marketplace.json): el
+repo público ya es legalmente reutilizable. Bloque de compatibilidad en
+kit-codigo que zanja tres choques reales con superpowers/pr-review-toolkit
+cuando están instalados (TDD proporcional vs Ley de Hierro, arranque por
+tamaño, carriles de revisión con veredicto homologado). Sin acoplamiento duro:
+la sección solo aplica si esos plugins existen.
+
 ## v1.2 — 2026-07-09
 Plugin híbrido de Claude Code: se empaquetan las 7 skills y el hook anti-secretos
 como plugin (`.claude-plugin/plugin.json` + `marketplace.json`, `hooks/hooks.json`,

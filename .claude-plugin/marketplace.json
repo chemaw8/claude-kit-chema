@@ -8,7 +8,8 @@
     {
       "name": "kit-chema",
       "source": "./",
-      "description": "Kit Chema: 7 skills de dominio + hook anti-secretos. El núcleo se instala aparte como ~/.claude/CLAUDE.md (ver README)."
+      "description": "Kit Chema: 7 skills de dominio + hook anti-secretos. El núcleo se instala aparte como ~/.claude/CLAUDE.md (ver README).",
+      "license": "MIT"
     }
   ]
 }
