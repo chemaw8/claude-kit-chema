@@ -59,7 +59,6 @@ Antes de entregar, con las fuentes y el reporte delante:
 - ¿Cada cita tiene su URL y su fecha de consulta?
 - ¿Marqué qué es consenso, qué está en disputa y qué es opinión o dato único?
 - ¿Dije qué no encontré o qué quedó sin confirmar?
-- ¿El resumen ejecutivo va primero y responde la pregunta?
 
 ## Errores típicos
 
