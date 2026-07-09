@@ -46,7 +46,9 @@ jobs:
           curl -sSfL "$url" -o gitleaks.tar.gz
           tar -xzf gitleaks.tar.gz gitleaks
           chmod +x gitleaks
-          # `dir` escanea los archivos del checkout; --exit-code por defecto es 1,
-          # así que cualquier hallazgo hace fallar el build. --redact no imprime
-          # el secreto en los logs públicos del CI.
-          ./gitleaks dir . --redact --no-banner --exit-code 1
+          # `dir` escanea los archivos del checkout; --exit-code 1 hace fallar el
+          # build ante cualquier hallazgo. --redact no imprime el secreto en los
+          # logs públicos del CI. -c usa nuestro .gitleaks.toml, que extiende el
+          # ruleset por defecto y allowlista solo las claves-señuelo de la doc
+          # (sin cegar ninguna ruta).
+          ./gitleaks dir . -c .gitleaks.toml --redact --no-banner --exit-code 1

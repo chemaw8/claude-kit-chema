@@ -1,0 +1,20 @@
+# Configuración de gitleaks para el CI del Kit Chema.
+#
+# Extiende el ruleset por defecto (no lo reemplaza) y solo allowlista los
+# secretos de ejemplo, deliberadamente falsos, que aparecen en la documentación
+# para mostrar cómo se prueba el hook anti-secretos (p. ej. la clave señuelo
+# AKIAABCDEFGHIJKLMNOP1234, un alfabeto en secuencia).
+#
+# A propósito NO se allowlista ninguna ruta completa: el escaneo sigue activo en
+# todo el repo, solo se ignoran estos valores-señuelo concretos. Si mañana se
+# documenta otra clave de ejemplo, hay que añadirla aquí a mano — esa fricción es
+# deseada: obliga a un humano a confirmar que cada excepción es de verdad falsa.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Claves de ejemplo (falsas) para documentar/probar el hook anti-secretos"
+regexTarget = "line"
+regexes = [
+  '''AKIAABCDEFGHIJKLMNOP1234''',
+]
