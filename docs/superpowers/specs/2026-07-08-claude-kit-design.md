@@ -1,4 +1,4 @@
-# Spec — Kit Innovattia para Claude
+# Spec — Kit Chema (para Claude)
 
 Fecha: 2026-07-08 · Estado: borrador para revisión de José
 Respaldo empírico: `investigacion/reporte-mejores-practicas.md` (25 afirmaciones
@@ -73,7 +73,7 @@ primaria (ver reporte):
 ## 4. Arquitectura del paquete
 
 ```
-claude-kit-innovattia/
+claude-kit-chema/
 ├── README.md                  → qué es, filosofía, instalación (3 pasos + manual)
 ├── INSTRUCTIVO.md             → qué es cada pieza y cómo se usa a diario
 ├── COMO-PEDIR.md              → guía humana: anatomía de una buena petición,
@@ -237,7 +237,7 @@ opt-in: `instalar.sh` pregunta antes de activarlos.
 ### 5.8 Instalador (`instalar.sh`)
 
 1. Copia `nucleo/CLAUDE.md` a `~/.claude/CLAUDE.md`; si ya existe uno, NO lo
-   pisa: añade el contenido bajo un marcador `<!-- kit-innovattia vX.Y -->` (y
+   pisa: añade el contenido bajo un marcador `<!-- kit-chema vX.Y -->` (y
    si el marcador ya existe, reemplaza solo esa sección → actualizaciones
    limpias).
 2. Copia (no symlink, para que sobreviva a borrar el clone) cada skill a

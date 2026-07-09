@@ -1,4 +1,4 @@
-# CONTINUAR — Kit Innovattia para Claude
+# CONTINUAR — Kit Chema
 
 Actualizado: 2026-07-08
 
