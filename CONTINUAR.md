@@ -1,81 +1,61 @@
 # CONTINUAR — Kit Chema
 
-Actualizado: 2026-07-08
+Actualizado: 2026-07-09
 
-## Qué es este proyecto
+## Estado: CONSTRUIDO y probado — v1.0
 
-Kit distribuible para que cualquier persona de Innovattia obtenga el mejor output
-posible de Claude: un `CLAUDE.md` núcleo (principios universales) + skills/playbooks
-por dominio + guía humana. Diseñado en conversación con José el 2026-07-08.
+El kit está completo y verificado. La versión **v1.0** se declaró el
+**2026-07-09** (ver `CHANGELOG.md`), con los 8 criterios de aceptación del spec
+cumplidos y dos notas ratificadas por el council de dogfooding (C.A.2 en 20/21
+disparos y C.A.7 condicional a la marca oficial). Rama de construcción:
+`construccion-v1.0`.
 
-## Diseño aprobado (resumen)
+## Qué contiene el kit
 
-- **Núcleo `CLAUDE.md`** (~2 págs): protocolo de arranque (aclarar propósito/
-  audiencia/formato/criterio de éxito antes de trabajar; máx 2-3 preguntas),
-  anti-complacencia (formato: qué está bien / qué preocupa / qué haría yo),
-  calibración por riesgo (trivial→directo; estándar→checklist; alto impacto→council),
-  definición de "terminado" (nada se entrega sin verificar), continuidad
-  (CONTINUAR.md, fechas absolutas), escalera de modelos (Haiku→Sonnet→Opus 4.8→
-  Fable 5 según peso de la tarea), índice de playbooks, regla "cero residuos".
-- **7 playbooks** (skills): presentaciones, analisis-datos, research, codigo
-  (flujo dev completo: entender→plan→TDD→implementar→review→verificación e2e; git
-  atómico; debugging sistemático; higiene anti-contaminación: reutilizar antes de
-  crear, respetar patrones del repo, cambios mínimos, cero residuos, dependencias
-  justificadas, nada sensible), propuestas (estructura problema→opciones→costos→
-  riesgos→recomendación; aquí vive el Council), finanzas (recalcular todo,
-  supuestos explícitos, escenarios), automatizacion (trigger/input/output, manejo
-  de errores, probada en real, documentada).
-- **Council**: 3-5 evaluadores independientes con lentes distintos (viabilidad,
-  costo/beneficio, riesgos, abogado del diablo) y mandato de refutar; veredicto
-  aprobada/con cambios/rechazada. Automático en decisiones caras/irreversibles o
-  material que sale de la empresa; manual con la palabra "council". Evaluadores en
-  Opus 4.8, veredicto en Fable 5. En claude.ai web degrada a evaluación secuencial.
-- **Extras**: `COMO-PEDIR.md` (guía humana de peticiones + plantillas + palabras
-  clave), `INSTRUCTIVO.md` (qué es cada pieza del kit y cómo se usa),
-  `contexto/CONTEXTO-EMPRESA.md` (plantilla: qué hace Innovattia, clientes, tono,
-  glosario, confidencialidad), bitácora `DECISIONES.md` por proyecto, presentación
-  del kit (deck dentro del repo), `CHANGELOG.md` + ciclo de mejora (2 correcciones
-  iguales → regla nueva), `instalar.sh` (no pisa CLAUDE.md existente).
+- **Núcleo** `nucleo/CLAUDE.md` (77 líneas): reglas universales que cargan en
+  toda conversación (arranque, evaluación crítica, esfuerzo por riesgo,
+  terminado = verificado, continuidad, escalera de modelos).
+- **7 skills** en `skills/`: presentaciones, análisis-datos, research, código,
+  propuestas (con el Council), finanzas, automatización.
+- **Hook opt-in** `hooks/anti-secretos.sh`: bloquea `git commit` con
+  credenciales dentro de Claude Code.
+- **Guías humanas**: `COMO-PEDIR.md`, `INSTRUCTIVO.md` y la plantilla
+  `contexto/CONTEXTO-EMPRESA.md`.
+- **Instalador** `instalar.sh` (no destructivo) y verificador `verificar.sh`.
+- **Presentación** en `presentacion/` (deck `kit-chema.pptx` + `guion.md`).
 
-## Estado
+## Pruebas pasadas (evidencia en docs/pruebas/)
 
-1. ✅ Brainstorming y diseño aprobados por José.
-2. ✅ Investigación deep-research COMPLETA (2026-07-08 ~21:15): 25/25
-   afirmaciones confirmadas (24 unánimes, 1 por mayoría 2-1), 0 refutadas.
-   Reporte final: `investigacion/reporte-mejores-practicas.md`. Veredictos:
-   `investigacion/veredictos-verificacion-2026-07-08.json`.
-   Historial técnico (por si hay que reanudar workflows en el futuro):
-   - La corrida original (`wf_c55ab737-fbd`) terminó PARCIAL: se agotó el límite
-     de gasto mensual a mitad de la verificación. Resultado rescatado: 4
-     afirmaciones confirmadas 3-0, 21 extraídas sin verificar, 22 fuentes
-     catalogadas. TODO el estado está guardado en este repo:
-     `investigacion/estado-investigacion-2026-07-08.json`.
-   - Continuación en curso: workflow `wf_17308ba1-f43` (script
-     `research-kit-continuacion-*.js` en la carpeta workflows/scripts de la
-     sesión) — verifica las 21 pendientes con 3 votos Sonnet esfuerzo bajo
-     (lentes: fidelidad/exageración/vigencia) y sintetiza el reporte final con
-     Fable. Incluye sondeo Haiku anti-"sin créditos" al inicio.
-   - Al terminar: guardar el reporte en `investigacion/reporte-mejores-practicas.md`
-     de este repo, actualizar este archivo y pasar al spec.
-   - ⚠️ Lecciones de reanudación de workflows: (1) el resume NO guarda `args` —
-     hay que repasarlos idénticos o se invalida la caché / falla el run;
-     (2) `args` puede llegar como string JSON → parsear con
-     `typeof args === 'string' ? JSON.parse(args) : args`;
-     (3) los votos de verificación van en Sonnet esfuerzo bajo, NO en Fable
-     (la corrida original quemó ~727k tokens por esto).
-   - Si la sesión se perdió: el JSON del repo tiene las afirmaciones; solo falta
-     verificar las 21 pendientes y sintetizar — no repetir búsquedas.
-3. ✅ Hallazgos incorporados al diseño (10 principios P1-P10 en el spec).
-4. 🔄 Spec escrito y auto-revisado:
-   `docs/superpowers/specs/2026-07-08-claude-kit-design.md`.
-   PENDIENTE: revisión de José antes de pasar al plan.
-5. ⬜ Plan de implementación (skill superpowers:writing-plans).
-6. ⬜ Implementar el kit (núcleo, playbooks, guías, instalador, presentación).
-7. ⬜ Council/revisión adversarial del propio manual antes de v1.0.
+1. **`verificar.sh`** → exit 0: núcleo < 150 líneas, descriptions < 1024
+   caracteres, skills < 5000 palabras, sin énfasis gritado.
+2. **Disparo de descriptions** → 20/21 peticiones naturales activaron la skill
+   correcta (criterio ≥ 19/21). `docs/pruebas/disparo-descriptions.md`.
+3. **Council plantado/control** → cazó un error de cálculo 50× (rechazada) y
+   aprobó una propuesta sólida sin inventar objeciones. `docs/pruebas/council.md`.
+4. **Dogfooding del propio kit** → council adversarial sobre el manual;
+   hallazgos aplicados en esta v1.0. `docs/pruebas/aceptacion.md` resume los 8
+   criterios y su evidencia.
 
-## Reglas de trabajo acordadas con José
+## Siguiente paso (José)
 
-- Nada de "yes sir": evaluar críticamente sus propuestas antes de ejecutar.
-- Escalera de modelos en subagentes: Haiku (trivial) → Sonnet (mecánico) →
-  Opus 4.8 (pesado intermedio) → Fable 5 (síntesis/juicio crítico únicamente).
-- Todo en español; portable a colegas (no depender de la config personal de José).
+1. Revisa la rama `construccion-v1.0`.
+2. Haz merge a `main` (el tag `v1.0` lo pone el controlador tras la revisión).
+3. Instala con `./instalar.sh` en tu equipo.
+4. Presenta el deck `presentacion/kit-chema.pptx`.
+
+## Futuro — v1.1
+
+- `desinstalar.sh` (quitar el kit limpio).
+- Aviso de drift de versión (avisar si el `~/.claude/` instalado quedó atrás).
+- Vía de instalación en Windows.
+- Marca oficial cuando existan activos en `~/Trabajo/recursos/marca`.
+
+## Historial (comprimido)
+
+Diseño con José 2026-07-08; deep-research 25/25 afirmaciones confirmadas.
+Lecciones de reanudación de workflows: el resume NO guarda `args` (repasarlos
+idénticos o falla la caché); `args` puede llegar como string JSON (parsear con
+`typeof args === 'string' ? JSON.parse(args) : args`); los votos de verificación
+van en Sonnet esfuerzo bajo, no en Fable (la corrida original quemó ~727k tokens
+por eso). Estado íntegro de la investigación en
+`investigacion/estado-investigacion-2026-07-08.json`.
