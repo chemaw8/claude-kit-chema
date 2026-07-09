@@ -36,11 +36,19 @@ disparos y C.A.7 condicional a la marca oficial). Rama de construcción:
    hallazgos aplicados en esta v1.0. `docs/pruebas/aceptacion.md` resume los 8
    criterios y su evidencia.
 
+## Estado final (2026-07-09)
+
+Hecho: revisión final de rama ("ready to merge"), merge a `main`, tag `v1.0`,
+rama de construcción eliminada, e **instalado en el `~/.claude` de José**
+(sin hook). Las 7 skills `kit-*` ya aparecen activas en Claude Code.
+
 ## Siguiente paso (José)
 
-1. Revisa la rama `construccion-v1.0`.
-2. Haz merge a `main` (el tag `v1.0` lo pone el controlador tras la revisión).
-3. Instala con `./instalar.sh` en tu equipo.
+1. Rellena `~/.claude/contexto/CONTEXTO-EMPRESA.md` con los datos reales de
+   Innovattia (es lo que elimina el output genérico).
+2. Decide el hook anti-secretos: `KIT_HOOKS=s ./instalar.sh` para activarlo.
+3. Sube el repo a GitHub (privado) y rellena la URL en el README para que
+   los colegas instalen con `git clone`.
 4. Presenta el deck `presentacion/kit-chema.pptx`.
 
 ## Futuro — v1.1
