@@ -35,17 +35,17 @@ uno, añade una sección marcada al final en vez de reemplazarlo.
 
 ## Instalación manual
 
-Si prefieres no correr el instalador, copia cada pieza a mano:
+Si prefieres no correr el instalador, copia cada pieza a mano.
+
+Si ya tienes un `~/.claude/CLAUDE.md`, no uses `cp` (lo pisaría) — usa
+`./instalar.sh` o pega el contenido de `nucleo/CLAUDE.md` al final a mano.
 
 ```bash
+mkdir -p ~/.claude/skills ~/.claude/contexto
 cp nucleo/CLAUDE.md ~/.claude/CLAUDE.md
 cp -r skills/kit-* ~/.claude/skills/
-mkdir -p ~/.claude/contexto && cp contexto/* ~/.claude/contexto/
+cp contexto/* ~/.claude/contexto/
 ```
-
-Si ya tienes un `~/.claude/CLAUDE.md` propio, pega el contenido de
-`nucleo/CLAUDE.md` al final del tuyo en vez de sobrescribirlo: el núcleo del
-kit está pensado para convivir con instrucciones personales.
 
 ## Uso en claude.ai web
 

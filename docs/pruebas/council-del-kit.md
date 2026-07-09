@@ -50,5 +50,5 @@ oficial en el deck cuando existan activos en `~/Trabajo/recursos/marca/`.
 - C.A.7 (deck "con marca") se cumple en forma condicional: paleta tomada del
   deck del grupo 2026-07 porque la carpeta de marca está vacía.
 
-Evidencia íntegra: journal del workflow `wf_21c2505a-8ed` (sesión de
-construcción 2026-07-09) y reportes en `.superpowers/sdd/task-19-report.md`.
+Evidencia íntegra: journal del workflow `wf_21c2505a-8ed` y la bitácora de la
+sesión de construcción 2026-07-09.

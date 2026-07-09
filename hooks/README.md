@@ -13,7 +13,11 @@ Un solo hook de ejemplo, opcional: `anti-secretos.sh`. Es un hook
 `PreToolUse` sobre `Bash` que revisa el diff staged antes de un `git commit`;
 si encuentra un patrón de credencial (clave API, token, llave
 privada), bloquea el comando con salida 2 y explica por qué en stderr, que
-Claude ve y puede corregir. Cualquier otro comando pasa sin tocarlo.
+Claude ve y puede corregir. Cualquier otro comando pasa sin tocarlo. Ojo: esto
+protege solo dentro de Claude Code (commits hechos a mano fuera de él no
+pasan por el hook) y solo escanea el diff staged del repo en el directorio de
+trabajo de la sesión — un `git commit` que apunte a otro repo (`cd /otro/repo
+&& git commit` o `git -C /otro/repo commit`) no queda escaneado.
 
 ## Eventos disponibles en Claude Code
 

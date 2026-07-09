@@ -220,7 +220,8 @@ adivinar; el kit trae la guía y dos palabras clave que cambian el trabajo.
   2. `cd claude-kit-chema`
   3. `./instalar.sh`
 - **No pisa nada:** si ya tienes un `~/.claude/CLAUDE.md`, añade una sección
-  marcada al final y respalda el anterior.
+  marcada al final sin tocar lo tuyo; en actualizaciones posteriores respalda
+  antes de reescribir su sección.
 - **Hook opt-in:** actívalo con `KIT_HOOKS=s ./instalar.sh`.
 - **claude.ai web también:** pega el núcleo como instrucciones del proyecto y
   sube los `SKILL.md` que uses (versión degradada, mismo criterio).
