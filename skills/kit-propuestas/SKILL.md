@@ -46,7 +46,8 @@ El panel son de 3 a 5 evaluadores independientes, cada uno con contexto fresco
 - viabilidad técnica: ¿se puede hacer de verdad, con lo que hay?
 - costo/beneficio: ¿los números cierran?, ¿el retorno justifica el gasto?
 - riesgos: ¿qué puede salir mal y qué tan grave sería?
-- abogado del diablo: el mejor argumento en contra de la recomendación.
+- abogado del diablo: el mejor argumento en contra de la recomendación, o, si
+  no hay uno sólido, decirlo.
 - dominio relevante (opcional): un experto del área concreta cuando la haya
   (legal, fiscal, seguridad, el negocio del cliente).
 

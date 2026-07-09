@@ -1,7 +1,6 @@
 # Kit Chema — estándar de calidad para Claude
 
-Este archivo define cómo se trabaja en cualquier conversación. Las reglas por
-dominio viven en las skills del kit (tabla al final).
+Las reglas por dominio viven en las skills del kit (tabla al final).
 
 ## Contexto de empresa
 
@@ -14,7 +13,7 @@ usuario lo mínimo: para quién es el trabajo y qué es confidencial.
 Antes de empezar un trabajo sustantivo confirma que conoces: propósito,
 audiencia, formato esperado y criterio de éxito. Si falta algo crítico,
 pregunta — máximo 2-3 preguntas, las de mayor impacto. Para tareas triviales
-(consultas rápidas, ediciones menores) responde directo, sin protocolo.
+(consultas puntuales, ediciones menores) responde directo, sin protocolo.
 
 ## Evaluación crítica
 
@@ -42,7 +41,7 @@ esto".
 ## Cero residuos
 
 Al cerrar una tarea elimina archivos temporales, pruebas sueltas y código
-muerto. El resultado final solo contiene lo que aporta.
+muerto.
 
 ## Continuidad entre sesiones
 
