@@ -28,7 +28,7 @@ pieza, dónde queda y cómo notas que actúa.
 | **kit-finanzas** | `~/.claude/skills/kit-finanzas/` | Cotización, presupuesto, proyección, margen, costos | Lista los supuestos aparte, recalcula cada cifra y entrega las proyecciones con escenarios, no con un número único |
 | **kit-automatizacion** | `~/.claude/skills/kit-automatizacion/` | Automatizar un proceso: cron, integración, bot, flujo que corre solo | Define disparador, entradas y salidas antes de construir y deja escrito cómo apagarlo |
 | **Contexto de empresa** (`contexto/CONTEXTO-EMPRESA.md`) | `~/.claude/contexto/CONTEXTO-EMPRESA.md` (solo se instala si no existe) | Antes de cualquier trabajo sustantivo | Claude usa tu tono, glosario y marca sin que se lo repitas cada vez |
-| **Hook anti-secretos** (`hooks/anti-secretos.sh`) | `~/.claude/hooks/` más una entrada en `settings.json` (opt-in) | Justo antes de un `git commit` o `git push` | Intenta commitear un archivo con una clave y el commit se bloquea con un aviso del kit |
+| **Hook anti-secretos** (`hooks/anti-secretos.sh`) | `~/.claude/hooks/` más una entrada en `settings.json` (opt-in) | Justo antes de un `git commit` o `git push` que Claude ejecuta (solo dentro de Claude Code) | Intenta commitear un archivo con una clave y el commit se bloquea con un aviso del kit |
 | **COMO-PEDIR.md** | Se queda en el repo; no se instala en `~/.claude/` | Cuando tú redactas una petición | No cambia el comportamiento de Claude: te ayuda a ti a pedir mejor (anatomía de la petición, plantillas, palabras clave) |
 
 Las siete skills viven en `~/.claude/skills/` y Claude elige cuál usar por su
@@ -66,9 +66,10 @@ de trabajar. Cada fila es una señal de que sí, y su señal de alarma cuando no
   `CONTEXTO-EMPRESA.md`, ese archivo está vacío o no lo está leyendo.
 - **Terminado significa verificado.** Al cerrar, Claude te reporta lo que quedó
   fuera o lo que no pudo comprobar, no solo un "listo" a secas.
-- **Hook.** Intentas commitear un archivo con una clave o token y el commit se
-  detiene con un mensaje del kit. Si el commit pasa sin avisar, el hook no está
-  instalado; actívalo con `KIT_HOOKS=s ./instalar.sh`.
+- **Hook.** Intentas commitear un archivo con una clave o token cuando Claude
+  ejecuta el commit por ti (no protege commits hechos a mano fuera de Claude Code)
+  y el commit se detiene con un mensaje del kit. Si el commit pasa sin avisar, el
+  hook no está instalado; actívalo con `KIT_HOOKS=s ./instalar.sh`.
 
 Si no ves ninguna de estas señales en una conversación nueva, lo más probable es
 que el kit no esté instalado en este `~/.claude/`, o que estés en claude.ai web
