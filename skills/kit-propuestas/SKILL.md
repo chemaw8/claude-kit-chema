@@ -68,13 +68,18 @@ siguiente. La mecánica cambia según dónde corras:
 Este texto se pasa literal a cada evaluador, sin cambiarlo:
 
 "Reporta solo hallazgos que cambien la corrección o la decisión, cada uno con
-evidencia concreta. 'Sin hallazgos relevantes' es una respuesta válida y
-esperada. No rellenes por cumplir."
+evidencia concreta. Pondera cada hallazgo contra el tamaño, costo y
+reversibilidad de la propuesta: una mejora deseable no es una condición, y
+exigir controles de nivel corporativo a una solución pequeña es
+sobre-ingeniería, no rigor. 'Sin hallazgos relevantes' es una respuesta válida
+y esperada. No rellenes por cumplir."
 
 La razón es concreta: a un revisor al que se le pide "encuentra fallos" los
 inventa para justificar su presencia. "Sin hallazgos relevantes" es un
 resultado plenamente válido y esperado, no un fracaso del evaluador. Un panel
-que siempre encuentra algo no es riguroso, es teatral.
+que siempre encuentra algo no es riguroso, es teatral. La proporcionalidad es
+la misma disciplina aplicada a la escala: un hallazgo real sobre una propuesta
+pequeña no justifica exigirle el estándar de una infraestructura crítica.
 
 ## Veredicto
 
