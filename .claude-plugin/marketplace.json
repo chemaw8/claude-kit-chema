@@ -1,0 +1,14 @@
+{
+  "name": "kit-chema",
+  "owner": {
+    "name": "chemaw8"
+  },
+  "description": "Marketplace del Kit Chema: estándar de calidad de Innovattia para Claude Code (skills de dominio + hook anti-secretos).",
+  "plugins": [
+    {
+      "name": "kit-chema",
+      "source": "./",
+      "description": "Kit Chema: 7 skills de dominio + hook anti-secretos. El núcleo se instala aparte como ~/.claude/CLAUDE.md (ver README)."
+    }
+  ]
+}

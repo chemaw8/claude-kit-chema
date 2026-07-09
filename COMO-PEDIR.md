@@ -139,3 +139,34 @@ tienes que usar todos; cuantos más completes, mejor sale.
   arregles en silencio: dile la regla. El kit aprende — cuando corriges dos
   veces lo mismo, esa corrección se puede volver regla permanente y dejas de
   pelear con ella para siempre.
+
+## 7. Cómo llenar tu contexto
+
+Los archivos de `~/.claude/contexto/` (empresa y, opcional, personal) son lo que
+Claude lee antes de cada trabajo. Bien llenados ahorran repetir lo mismo en cada
+petición; mal llenados solo estorban.
+
+**Regla de oro para cada línea:** "¿si quito esta línea, Claude cometería un
+error?". Si la respuesta es no, sóbrala. Un campo vacío es mejor que relleno
+vacuo: el relleno de adorno diluye lo que sí importa y hace que Claude lo pase
+por alto.
+
+**Los tres campos que más rinden** (si solo llenas tres, que sean estos):
+
+- **Audiencias, con su nivel técnico.** No "clientes", sino "dirección del grupo
+  (no técnica, decide por retorno)" o "equipo de sistemas (técnico, quiere el
+  detalle)". Es lo que evita que Claude escriba genérico.
+- **Tono, con un ejemplo así-sí / así-no.** Un adjetivo como "formal" o
+  "cercano" lo interpreta cada quien distinto. Una frase de muestra de cómo sí y
+  cómo no quieres que suene vale más que cinco adjetivos.
+- **Glosario, solo de términos internos.** Las siglas, nombres de sistemas o
+  productos que Claude no puede adivinar. No metas palabras del diccionario.
+
+**Qué NO incluir:**
+
+- Datos confidenciales reales (nombres de clientes, cifras de negocio,
+  credenciales). El contexto puede terminar en ejemplos, commits o servicios
+  externos; deja ahí solo la *regla* ("nunca menciones clientes por nombre"), no
+  el dato.
+- Narrativa institucional (misión, visión, historia de la empresa). No cambia
+  cómo se hace el trabajo, así que solo ocupa espacio.

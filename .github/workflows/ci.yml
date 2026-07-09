@@ -1,0 +1,54 @@
+name: ci
+
+# Se dispara en cada pull request contra cualquier rama y bajo demanda.
+# A propósito NO usamos `pull_request_target`: ese evento corre con permisos y
+# secretos del repo base y, si se combina con checkout del código del fork, abre
+# el vector "pwn request" (ejecución de código no confiable con acceso a
+# secretos). Con `pull_request` el workflow corre sin secretos y con permisos de
+# solo lectura, que es justo lo que necesitamos para validar límites y escanear
+# secretos. La puerta de calidad es el PR: como todo cambio a main entra por PR
+# (ver GOBERNANZA.md), no hace falta correr también en cada push y así no se
+# duplica el CI mientras un PR está abierto.
+on:
+  pull_request:
+  workflow_dispatch:
+
+# Sin permisos de escritura: el CI solo lee el código. No hay secretos definidos.
+permissions:
+  contents: read
+
+jobs:
+  limites:
+    name: límites del kit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: verificar.sh (núcleo < 150 líneas, descriptions, sin gritos)
+        run: bash verificar.sh
+
+  secretos:
+    name: escaneo de secretos (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: gitleaks
+        # Elegimos bajar el binario de gitleaks por versión fija en vez de usar
+        # la action `gitleaks/gitleaks-action@v2`. Justificación: (1) evita meter
+        # una acción de terceros en el supply chain del CI; (2) esa action exige
+        # una GITLEAKS_LICENSE para repos de organización, que aquí no queremos
+        # administrar; (3) anclar versión (y no un tag móvil) hace el build
+        # reproducible. El coste es que hay que subir la versión a mano cuando se
+        # quiera actualizar.
+        run: |
+          set -euo pipefail
+          VER=8.28.0
+          url="https://github.com/gitleaks/gitleaks/releases/download/v${VER}/gitleaks_${VER}_linux_x64.tar.gz"
+          curl -sSfL "$url" -o gitleaks.tar.gz
+          tar -xzf gitleaks.tar.gz gitleaks
+          chmod +x gitleaks
+          # `dir` escanea los archivos del checkout; --exit-code 1 hace fallar el
+          # build ante cualquier hallazgo. --redact no imprime el secreto en los
+          # logs públicos del CI. -c usa nuestro .gitleaks.toml, que extiende el
+          # ruleset por defecto y allowlista solo las claves-señuelo de la doc
+          # (sin cegar ninguna ruta).
+          ./gitleaks dir . -c .gitleaks.toml --redact --no-banner --exit-code 1

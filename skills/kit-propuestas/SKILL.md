@@ -1,6 +1,6 @@
 ---
 name: kit-propuestas
-description: Estándar Kit Chema para redactar o evaluar propuestas y decisiones — propuestas de desarrollo, de inversión, de arquitectura, cotizaciones, o cualquier "¿hacemos X o Y?". Úsala al escribir una propuesta, al evaluar una idea del usuario con consecuencias reales, y siempre que se pida "council". Frases gatillo "hazme la propuesta", "¿te parece bien esta idea?", "evalúa esta decisión", "council". Incluye el protocolo Council: panel de evaluadores independientes con veredicto aprobada / con cambios / rechazada.
+description: 'Estándar Kit Chema para redactar o evaluar propuestas y decisiones — propuestas de desarrollo, de inversión, de arquitectura, cotizaciones, o cualquier "¿hacemos X o Y?". Úsala al escribir una propuesta, al evaluar una idea del usuario con consecuencias reales, y siempre que se pida "council". Frases gatillo "hazme la propuesta", "¿te parece bien esta idea?", "evalúa esta decisión", "council". Incluye el protocolo Council: panel de evaluadores independientes con veredicto aprobada / con cambios / rechazada.'
 ---
 
 # Propuestas y decisiones — estándar Kit Chema

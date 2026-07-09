@@ -111,7 +111,34 @@ Después de actualizar puedes comprobar que el kit cumple sus límites con
 `bash verificar.sh`: imprime una línea `OK` o `FALLA` por chequeo y sale con
 código 0 si todo pasó.
 
-## 5. Para IT (a futuro)
+## 5. Instalación como plugin de Claude Code
+
+Desde v1.2 el kit se puede instalar de dos formas, y ambas funcionan:
+
+- **(A) Como plugin de Claude Code.** Dentro de Claude Code:
+  `/plugin marketplace add chemaw8/claude-kit-chema` y luego
+  `/plugin install kit-chema@kit-chema`. El plugin empaqueta las **7 skills** y
+  el **hook anti-secretos**. Con el plugin, las skills se invocan con namespace
+  (`/kit-chema:kit-codigo`, `/kit-chema:kit-presentaciones`, etc.), pero el
+  auto-disparo por descripción no cambia: describes la tarea y Claude elige la
+  skill sola, igual que en la vía B.
+- **(B) Con `git clone` + `./instalar.sh`.** La vía de siempre; instala el kit
+  completo de una vez y sigue soportada para todo.
+
+El plugin **no** incluye el núcleo. Un `CLAUDE.md` en la raíz de un plugin no se
+carga como contexto de proyecto —es un hecho de la doc oficial de Claude Code:
+*"A CLAUDE.md file at the plugin root is not loaded as project context"*—, así
+que las reglas universales tienen que vivir en `~/.claude/CLAUDE.md`. Por eso el
+diseño es híbrido: el plugin aporta lo que sí puede empaquetar (skills y hook) y
+el núcleo se instala aparte. Tras instalar el plugin, añade el núcleo con
+`./instalar.sh` (o pegando `nucleo/CLAUDE.md` al final de tu `~/.claude/CLAUDE.md`)
+y deja las plantillas de contexto con el slash command `/kit-chema:init-contexto`,
+que copia `contexto/*.md` a `~/.claude/contexto/` solo si no existen.
+
+Señal de que el plugin cargó: `/plugin` lo lista como `kit-chema` habilitado, y
+al escribir `/kit-chema:` aparecen las skills en el autocompletado.
+
+## 6. Para IT (a futuro)
 
 Cuando el kit se despliegue a toda la empresa, Claude Code trae una vía oficial
 que no depende de que cada persona corra el instalador: un `CLAUDE.md` de
