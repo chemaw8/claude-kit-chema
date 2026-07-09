@@ -51,8 +51,8 @@ Antes de mandar tu petición, revisa si puedes sumar tres cosas:
 
 ## 3. Palabras clave del kit
 
-El kit reconoce unas pocas palabras que cambian cómo trabaja Claude. Úsalas a
-propósito cuando quieras ese efecto:
+Tres palabras cambian el protocolo de Claude (las define el núcleo); dos más
+son convenciones útiles para marcar en qué punto del trabajo estás:
 
 | Palabra | Qué hace |
 |---|---|

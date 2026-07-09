@@ -53,7 +53,7 @@ persona.
 **Contenido:**
 - Subtítulo: instrucciones de calidad que cualquiera instala y usa, sin depender
   de la configuración de nadie.
-- Sello inferior: repositorio `claude-kit-chema` · versión v0.9 · 2026-07-09.
+- Sello inferior: repositorio `claude-kit-chema` · versión v1.0 · 2026-07-09.
 - Fondo navy con el degradado de marca (azul→ámbar) como acento.
 
 ---

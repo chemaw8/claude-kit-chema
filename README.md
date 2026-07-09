@@ -31,6 +31,8 @@ El instalador copia el núcleo, las skills y la plantilla de contexto a
 `~/.claude/`. Nunca sobrescribe un `~/.claude/CLAUDE.md` existente: si ya hay
 uno, añade una sección marcada al final en vez de reemplazarlo.
 
+¿No usas terminal? Ve directo a la sección de claude.ai web más abajo.
+
 ## Instalación manual
 
 Si prefieres no correr el instalador, copia cada pieza a mano:
@@ -50,8 +52,11 @@ kit está pensado para convivir con instrucciones personales.
 claude.ai web no lee `~/.claude/`, así que ahí el kit se instala a mano, por
 proyecto: pega el contenido de `nucleo/CLAUDE.md` como instrucciones del
 proyecto y sube como archivos del proyecto los `SKILL.md` de las skills que
-vayas a usar. Es una versión degradada (sin hooks ni carga automática de
-skills por descripción), pero conserva el criterio y el vocabulario del kit.
+vayas a usar. Como en la web no existe `~/.claude/contexto/`, pega también el
+contenido de `contexto/CONTEXTO-EMPRESA.md` (ya rellenado con tus datos) al
+final de esas instrucciones del proyecto. Es una versión degradada (sin hooks
+ni carga automática de skills por descripción), pero conserva el criterio y el
+vocabulario del kit.
 
 ## Más documentación
 

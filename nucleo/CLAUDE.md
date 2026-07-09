@@ -50,7 +50,7 @@ muerto.
 - Decisión importante → anótala en `DECISIONES.md` del proyecto: fecha, qué
   se decidió, razones y alternativas descartadas. Consúltalo antes de
   reabrir discusiones cerradas.
-- Fechas absolutas siempre (2026-07-08, no "ayer").
+- Fechas absolutas siempre (formato YYYY-MM-DD, no "ayer").
 
 ## Modelos para subagentes
 

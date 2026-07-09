@@ -28,7 +28,7 @@ pieza, dónde queda y cómo notas que actúa.
 | **kit-finanzas** | `~/.claude/skills/kit-finanzas/` | Cotización, presupuesto, proyección, margen, costos | Lista los supuestos aparte, recalcula cada cifra y entrega las proyecciones con escenarios, no con un número único |
 | **kit-automatizacion** | `~/.claude/skills/kit-automatizacion/` | Automatizar un proceso: cron, integración, bot, flujo que corre solo | Define disparador, entradas y salidas antes de construir y deja escrito cómo apagarlo |
 | **Contexto de empresa** (`contexto/CONTEXTO-EMPRESA.md`) | `~/.claude/contexto/CONTEXTO-EMPRESA.md` (solo se instala si no existe) | Antes de cualquier trabajo sustantivo | Claude usa tu tono, glosario y marca sin que se lo repitas cada vez |
-| **Hook anti-secretos** (`hooks/anti-secretos.sh`) | `~/.claude/hooks/` más una entrada en `settings.json` (opt-in) | Justo antes de un `git commit` o `git push` que Claude ejecuta (solo dentro de Claude Code) | Intenta commitear un archivo con una clave y el commit se bloquea con un aviso del kit |
+| **Hook anti-secretos** (`hooks/anti-secretos.sh`) | `~/.claude/hooks/` más una entrada en `settings.json` (opt-in) | Justo antes de un `git commit` que Claude ejecuta (solo dentro de Claude Code) | Intenta commitear un archivo con una clave y el commit se bloquea con un aviso del kit |
 | **COMO-PEDIR.md** | Se queda en el repo; no se instala en `~/.claude/` | Cuando tú redactas una petición | No cambia el comportamiento de Claude: te ayuda a ti a pedir mejor (anatomía de la petición, plantillas, palabras clave) |
 
 Las siete skills viven en `~/.claude/skills/` y Claude elige cuál usar por su
@@ -79,7 +79,9 @@ se instala solo: se monta a mano dentro de cada proyecto y funciona en una
 versión degradada, pero conserva el criterio y el vocabulario del kit.
 
 - **Núcleo:** copia el contenido de `nucleo/CLAUDE.md` y pégalo como
-  instrucciones del proyecto. Eso da a Claude las reglas universales.
+  instrucciones del proyecto. Eso da a Claude las reglas universales. Como en la
+  web no existe `~/.claude/contexto/`, pega también el contenido de
+  `contexto/CONTEXTO-EMPRESA.md` (ya rellenado) al final de esas instrucciones.
 - **Skills:** sube como archivos del proyecto los `SKILL.md` de las skills que
   vayas a usar en ese proyecto (por ejemplo el de presentaciones si es un deck).
   En la web no hay carga automática por descripción: subes tú lo que aplica.

@@ -56,7 +56,7 @@ siguiente. La mecánica cambia según dónde corras:
 
 - En Claude Code: lanza los evaluadores como subagentes en paralelo, con modelo
   Opus 4.8 cada uno. El hilo principal recoge sus reportes y sintetiza un solo
-  veredicto.
+  veredicto con el modelo principal de la sesión (Fable 5).
 - En claude.ai (web): no hay subagentes, así que evalúa secuencialmente en la
   misma conversación, tomando un lente a la vez y marcando cada sección con su
   nombre ("Viabilidad técnica:", "Riesgos:", ...). Trata cada lente como una

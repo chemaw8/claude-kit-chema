@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Hook PreToolUse (Bash) del Kit Chema: bloquea git commit/push si el diff
+# Hook PreToolUse (Bash) del Kit Chema: bloquea git commit si el diff
 # staged contiene patrones de credenciales. Exit 2 = bloquear (stderr al modelo).
 set -uo pipefail
 input=$(cat)
@@ -9,7 +9,7 @@ if [ -z "$cmd" ] && [ -n "$input" ]; then
   cmd="$input"
 fi
 case "$cmd" in
-  *"git commit"*|*"git push"*) ;;
+  *"git commit"*) ;;
   *) exit 0 ;;
 esac
 patron='(api[_-]?key|secret|token|passw(or)?d)["'"'"']?[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9_/+.-]{12,}|AKIA[0-9A-Z]{16}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----'

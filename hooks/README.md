@@ -10,8 +10,8 @@ determinista, no en prosa que Claude interpreta.
 ## Qué trae el kit
 
 Un solo hook de ejemplo, opcional: `anti-secretos.sh`. Es un hook
-`PreToolUse` sobre `Bash` que revisa el diff staged antes de un `git commit`
-o `git push`; si encuentra un patrón de credencial (clave API, token, llave
+`PreToolUse` sobre `Bash` que revisa el diff staged antes de un `git commit`;
+si encuentra un patrón de credencial (clave API, token, llave
 privada), bloquea el comando con salida 2 y explica por qué en stderr, que
 Claude ve y puede corregir. Cualquier otro comando pasa sin tocarlo.
 

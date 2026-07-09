@@ -67,7 +67,10 @@ resp="${KIT_HOOKS:-}"
 if [ -z "$resp" ] && [ -t 0 ]; then
   read -r -p "¿Instalar hook anti-secretos (bloquea commits con credenciales)? [s/N] " resp || true
 fi
-if [ "${resp,,}" = "s" ]; then
+if [ "${resp,,}" = "s" ] && ! command -v python3 >/dev/null 2>&1; then
+  echo "hooks: omitidos — el hook anti-secretos necesita python3 para fusionar settings.json y no se encontró en este sistema."
+  echo "hooks: instala python3 y vuelve a correr KIT_HOOKS=s ./instalar.sh para activarlo."
+elif [ "${resp,,}" = "s" ]; then
   cp "$KIT/hooks/anti-secretos.sh" "$DIR/hooks/" && chmod +x "$DIR/hooks/anti-secretos.sh"
   python3 - "$DIR/settings.json" "$KIT/hooks/settings-fragment.json" <<'PY'
 import json, sys, os
