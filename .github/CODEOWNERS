@@ -1,0 +1,14 @@
+# CODEOWNERS del Kit Chema.
+#
+# Lo ideal es que estas rutas las revise un equipo de 2 o más personas, no una
+# sola: una sola persona es un punto único de fallo (y no puede aprobar sus
+# propios PR bajo branch protection). En cuanto haya un segundo revisor, cámbiese
+# `@chemaw8` por un equipo, p. ej. `@chemaw8/kit-mantenedores`.
+#
+# Estas rutas concentran el comportamiento del kit: núcleo, skills, hook y el
+# propio CI/gobernanza. Un cambio ahí exige revisión del dueño de la ruta.
+
+/nucleo/     @chemaw8
+/skills/     @chemaw8
+/hooks/      @chemaw8
+/.github/    @chemaw8

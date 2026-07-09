@@ -63,7 +63,9 @@ Fable 5 solo para síntesis final y juicio crítico.
 ## Mejora del kit
 
 Si el usuario corrige dos veces lo mismo, propón convertir esa corrección en
-regla del kit (repo claude-kit-chema, con entrada en su CHANGELOG).
+regla del kit (repo claude-kit-chema). El cambio entra siempre como PR en
+borrador que revisa un council, nunca como commit directo a main; al aprobarse
+se anota en el CHANGELOG (ver GOBERNANZA.md).
 
 ## Playbooks por dominio
 
