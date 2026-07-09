@@ -56,11 +56,11 @@ propósito cuando quieras ese efecto:
 
 | Palabra | Qué hace |
 |---|---|
-| `council` | Fuerza el panel de evaluación: varios evaluadores independientes juzgan el trabajo y dan un veredicto (aprobada / con cambios / rechazada). Úsala en decisiones caras o irreversibles y en material que sale de la empresa. |
+| `council` | Fuerza el panel de evaluación: varios evaluadores independientes juzgan el trabajo y dan un veredicto (aprobada / aprobada con cambios / rechazada). Úsala en decisiones caras o irreversibles y en material que sale de la empresa. |
 | `rápido` | Salta ese panel, bajo tu responsabilidad, cuando la decisión no lo amerita y prefieres velocidad. |
 | `hazlo directo` | Salta la evaluación crítica: Claude ejecuta tu idea sin decirte antes qué le preocupa. Úsala solo cuando ya lo pensaste y no quieres que lo cuestione. |
 | `borrador` | Pide velocidad sobre pulido: un primer intento para reaccionar, sin acabado final. |
-| `final` | Exige el checklist completo del playbook del dominio: la versión revisada y lista para entregar. |
+| `final` | Exige el checklist completo del playbook (la guía de calidad) del dominio: la versión revisada y lista para entregar. |
 
 Las tres primeras están definidas en el núcleo del kit y funcionan en cualquier
 conversación. `borrador` y `final` marcan en qué punto del trabajo estás: pide
@@ -106,7 +106,7 @@ tienes que usar todos; cuantos más completes, mejor sale.
 **Código**
 > Necesito [script/función/arreglo] que [qué debe hacer].
 > Contexto: [proyecto, lenguaje, dónde vive el código].
-> Formato: [entregable: script corriendo / PR / explicación].
+> Formato: [entregable: script corriendo / PR (propuesta de cambios lista para revisión) / explicación].
 > Está bien si [criterio, p. ej. pasa estos casos]. Fecha: [límite].
 
 **Propuestas**
