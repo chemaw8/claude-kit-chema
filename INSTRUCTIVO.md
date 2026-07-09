@@ -66,10 +66,7 @@ de trabajar. Cada fila es una señal de que sí, y su señal de alarma cuando no
   `CONTEXTO-EMPRESA.md`, ese archivo está vacío o no lo está leyendo.
 - **Terminado significa verificado.** Al cerrar, Claude te reporta lo que quedó
   fuera o lo que no pudo comprobar, no solo un "listo" a secas.
-- **Hook.** Intentas commitear un archivo con una clave o token cuando Claude
-  ejecuta el commit por ti (no protege commits hechos a mano fuera de Claude Code)
-  y el commit se detiene con un mensaje del kit. Si el commit pasa sin avisar, el
-  hook no está instalado; actívalo con `KIT_HOOKS=s ./instalar.sh`.
+- **Hook.** Intentas commitear un archivo con una clave o token cuando Claude ejecuta el commit por ti y el commit se detiene con un mensaje del kit (no protege commits hechos a mano fuera de Claude Code). Si el commit pasa sin avisar, el hook no está instalado; actívalo con `KIT_HOOKS=s ./instalar.sh`.
 
 Si no ves ninguna de estas señales en una conversación nueva, lo más probable es
 que el kit no esté instalado en este `~/.claude/`, o que estés en claude.ai web
