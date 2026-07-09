@@ -14,10 +14,10 @@ if [ -f nucleo/CLAUDE.md ]; then
   [ "$lineas" -lt 150 ]; chk "nucleo/CLAUDE.md tiene $lineas líneas (< 150)" $?
 fi
 
-# 2. Descriptions < 1024 caracteres y con frases gatillo
+# 2. Descriptions < 1024 caracteres (las frases gatillo se validan aparte, con jueces)
 for f in skills/*/SKILL.md; do
   [ -e "$f" ] || continue
-  desc=$(awk '/^description:/{sub(/^description:[ ]*/,""); print; exit}' "$f")
+  desc=$(awk '/^description:/{sub(/^description:[ ]*/,""); gsub(/^["'"'"']|["'"'"']$/,""); print; exit}' "$f")
   n=${#desc}
   [ "$n" -gt 0 ] && [ "$n" -lt 1024 ]; chk "$f description $n chars (0<n<1024)" $?
 done
