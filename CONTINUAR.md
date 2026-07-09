@@ -40,14 +40,27 @@ por dominio + guía humana. Diseñado en conversación con José el 2026-07-08.
 ## Estado
 
 1. ✅ Brainstorming y diseño aprobados por José.
-2. 🔄 Deep-research en curso: mejores prácticas de CLAUDE.md/prompts/kits
-   corporativos/verificación multi-agente.
-   - Run ID: `wf_c55ab737-fbd`
-   - Script: `~/.claude/projects/-home-chema/7ed46562-6128-418f-894a-f796055bdf11/workflows/scripts/deep-research-wf_c55ab737-fbd.js`
-   - Journal (resultados parciales): `~/.claude/projects/-home-chema/7ed46562-6128-418f-894a-f796055bdf11/subagents/workflows/wf_c55ab737-fbd/journal.jsonl`
-   - Para reanudar (misma sesión): `Workflow({scriptPath: <script>, resumeFromRunId: "wf_c55ab737-fbd"})` — lo completado sale de caché.
-   - Si la sesión se perdió: el journal conserva los resultados; leerlo y sintetizar
-     desde ahí en lugar de repetir las búsquedas.
+2. 🔄 Investigación deep-research — estado al 2026-07-08 ~21:00:
+   - La corrida original (`wf_c55ab737-fbd`) terminó PARCIAL: se agotó el límite
+     de gasto mensual a mitad de la verificación. Resultado rescatado: 4
+     afirmaciones confirmadas 3-0, 21 extraídas sin verificar, 22 fuentes
+     catalogadas. TODO el estado está guardado en este repo:
+     `investigacion/estado-investigacion-2026-07-08.json`.
+   - Continuación en curso: workflow `wf_17308ba1-f43` (script
+     `research-kit-continuacion-*.js` en la carpeta workflows/scripts de la
+     sesión) — verifica las 21 pendientes con 3 votos Sonnet esfuerzo bajo
+     (lentes: fidelidad/exageración/vigencia) y sintetiza el reporte final con
+     Fable. Incluye sondeo Haiku anti-"sin créditos" al inicio.
+   - Al terminar: guardar el reporte en `investigacion/reporte-mejores-practicas.md`
+     de este repo, actualizar este archivo y pasar al spec.
+   - ⚠️ Lecciones de reanudación de workflows: (1) el resume NO guarda `args` —
+     hay que repasarlos idénticos o se invalida la caché / falla el run;
+     (2) `args` puede llegar como string JSON → parsear con
+     `typeof args === 'string' ? JSON.parse(args) : args`;
+     (3) los votos de verificación van en Sonnet esfuerzo bajo, NO en Fable
+     (la corrida original quemó ~727k tokens por esto).
+   - Si la sesión se perdió: el JSON del repo tiene las afirmaciones; solo falta
+     verificar las 21 pendientes y sintetizar — no repetir búsquedas.
 3. ⬜ Incorporar hallazgos de la investigación al diseño.
 4. ⬜ Escribir spec formal en `docs/superpowers/specs/2026-07-08-claude-kit-design.md`,
    auto-revisión, revisión de José.

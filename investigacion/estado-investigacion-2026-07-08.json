@@ -1,0 +1,282 @@
+{
+ "question": "¿Cuáles son las mejores prácticas (2024-2026) para crear manuales de instrucciones y arquitecturas de prompts que maximicen la calidad del output de Claude? Cubrir: (1) guía oficial de Anthropic sobre prompt engineering, CLAUDE.md, memoria y skills de Claude Code; (2) hallazgos de la comunidad sobre qué funciona y qué falla en archivos CLAUDE.md e instrucciones largas (bloat, instrucciones ignoradas, efectos de posición); (3) ejemplos reales de kits/playbooks corporativos de uso de IA y sistemas de skills exitosos (p.ej. superpowers de obra, awesome-claude-code); (4) técnicas comprobadas anti-complacencia y de verificación multi-agente (paneles de jueces, evaluación adversarial). El objetivo: diseñar un kit distribuible en una empresa (CLAUDE.md núcleo + skills por dominio + guía humana) que produzca output de alta calidad consistente.",
+ "summary": "Synthesis step was skipped or failed — returning 4 verified claims unmerged.",
+ "findings": [],
+ "confirmed": [
+  {
+   "claim": "Anthropic states that overly long ('bloated') CLAUDE.md files cause Claude to ignore instructions, and recommends a per-line pruning test: cut any line whose removal would not cause mistakes.",
+   "source": "https://code.claude.com/docs/en/best-practices",
+   "quote": "Keep it concise. For each line, ask: \"Would removing this cause Claude to make mistakes?\" If not, cut it. Bloated CLAUDE.md files cause Claude to ignore your actual instructions!",
+   "vote": "3-0"
+  },
+  {
+   "claim": "Anthropic's official guidance is that CLAUDE.md should contain only broadly-applicable content because it is loaded every session, while occasional domain knowledge and workflows should live in skills that load on demand — the exact core-plus-skills architecture the kit contemplates.",
+   "source": "https://code.claude.com/docs/en/best-practices",
+   "quote": "CLAUDE.md is loaded every session, so only include things that apply broadly. For domain knowledge or workflows that are only relevant sometimes, use skills instead. Claude loads them on demand without bloating every conversation.",
+   "vote": "3-0"
+  },
+  {
+   "claim": "Anthropic distinguishes enforcement mechanisms: CLAUDE.md instructions are merely advisory, whereas hooks are deterministic and guarantee execution — so rules that must always hold should be hooks, not prose instructions.",
+   "source": "https://code.claude.com/docs/en/best-practices",
+   "quote": "Unlike CLAUDE.md instructions which are advisory, hooks are deterministic and guarantee the action happens.",
+   "vote": "3-0"
+  },
+  {
+   "claim": "Anthropic recommends adversarial review by a fresh-context subagent but warns of a known failure mode: a reviewer prompted to find gaps will report findings even when the work is sound, so reviewers must be scoped to correctness-affecting gaps to avoid over-engineering.",
+   "source": "https://code.claude.com/docs/en/best-practices",
+   "quote": "A reviewer prompted to find gaps will usually report some, even when the work is sound, because that is what it was asked to do. Chasing every finding leads to over-engineering: extra abstraction layers, defensive code, and tests for cases that can't happen.",
+   "vote": "3-0"
+  }
+ ],
+ "refuted": [],
+ "unverified": [
+  {
+   "claim": "Anthropic officially recommends keeping each CLAUDE.md file under 200 lines, stating that longer files both consume more context and measurably reduce instruction adherence.",
+   "erroredVotes": 2,
+   "validVotes": 1,
+   "source": "https://code.claude.com/docs/en/memory"
+  },
+  {
+   "claim": "CLAUDE.md content is injected as a user message after the system prompt (not into the system prompt itself), so there is no guarantee of strict compliance; instructions that must always execute should be implemented as hooks, which are enforced by the client regardless of what the model decides.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://code.claude.com/docs/en/memory"
+  },
+  {
+   "claim": "Contradictory rules across CLAUDE.md files cause Claude to pick one arbitrarily, and Anthropic prescribes concrete, verifiable phrasing (e.g. 'Use 2-space indentation' instead of 'Format code properly') as the fix for poor adherence.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://code.claude.com/docs/en/memory"
+  },
+  {
+   "claim": "Splitting a CLAUDE.md into @path imports does NOT reduce context consumption because imported files (up to 4 hops deep) still load in full at launch; only path-scoped rules (.claude/rules/ with paths frontmatter) and skills load on demand, making them the correct mechanism for domain-specific instructions in a modular kit.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://code.claude.com/docs/en/memory"
+  },
+  {
+   "claim": "Organizations can deploy a centrally managed CLAUDE.md at a machine-level policy path (e.g. /etc/claude-code/CLAUDE.md on Linux, or via the claudeMd key in managed-settings.json) that loads before user and project CLAUDE.md files and cannot be excluded by individual user settings — the official mechanism for distributing company-wide AI usage standards.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://code.claude.com/docs/en/memory"
+  },
+  {
+   "claim": "Anthropic defines Agent Skills as folders of instructions, scripts, and resources (centered on a SKILL.md file with YAML frontmatter containing 'name' and 'description') that agents discover and load dynamically, rather than embedding all procedural knowledge in a single long prompt.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills"
+  },
+  {
+   "claim": "Skills use a three-level progressive disclosure architecture: at startup the agent pre-loads only the name and description of every installed skill; the full SKILL.md body is read only when Claude judges the skill relevant to the current task; and bundled supplementary files (e.g., reference.md) are loaded only as needed.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills"
+  },
+  {
+   "claim": "The 'name' and 'description' frontmatter fields are what Claude uses to decide whether to trigger a skill, so authors must invest particular care in writing them — a poorly written description causes the skill to not fire at the right moments.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills"
+  },
+  {
+   "claim": "Anthropic recommends splitting SKILL.md content into separate referenced files when it becomes unwieldy, because keeping mutually exclusive or rarely co-used contexts in separate files reduces token usage — a direct anti-bloat mechanism versus one monolithic instruction file; via the filesystem this makes the bundleable context 'effectively unbounded'.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills"
+  },
+  {
+   "claim": "Anthropic's core prompting rule is that instructions must be explicit and self-sufficient: if a colleague with minimal context would be confused by the prompt, Claude will be too — so 'above and beyond' behavior must be explicitly requested, not assumed. This directly informs how a corporate CLAUDE.md/kit should be written and tested.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  },
+  {
+   "claim": "Position effects in long prompts are real and quantified by Anthropic: with inputs of 20k+ tokens, long documents should go at the top of the prompt with the query/instructions at the end, which improved response quality by up to 30% in Anthropic's tests — relevant to ordering content in large instruction files and context-heavy workflows.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  },
+  {
+   "claim": "Aggressive emphasis (ALL-CAPS 'CRITICAL: You MUST...') in instructions written for older models now causes overtriggering on Claude Opus 4.5/4.6 and later, and Anthropic explicitly recommends dialing it back to plain phrasing — evidence that instruction-file 'shouting' and anti-laziness over-prompting is an anti-pattern for current models.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+  },
+  {
+   "claim": "El rendimiento de los LLM se degrada a medida que crece la ventana de contexto ('context rot'): la capacidad del modelo para recuperar información con precisión disminuye conforme aumenta el número de tokens, lo que implica que los archivos de instrucciones largos (p.ej. CLAUDE.md inflados) reducen la fiabilidad del output.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  },
+  {
+   "claim": "Anthropic recomienda que los system prompts se escriban a la 'altitud' correcta: lo bastante específicos para guiar el comportamiento pero flexibles como heurísticas; codificar lógica compleja y rígida en el prompt es un anti-patrón que genera fragilidad y coste de mantenimiento.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  },
+  {
+   "claim": "La regla de oro del context engineering según Anthropic es encontrar el conjunto más pequeño posible de tokens de alta señal que maximice la probabilidad del resultado deseado, en lugar de acumular listas exhaustivas de casos borde ('laundry list of edge cases') en las instrucciones.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  },
+  {
+   "claim": "Anthropic recomienda la recuperación de contexto 'just-in-time' con divulgación progresiva: mantener identificadores ligeros (rutas de archivo, enlaces) y cargar datos en tiempo de ejecución mediante herramientas en vez de pre-cargar todo — el fundamento arquitectónico de un sistema de skills por dominio frente a un CLAUDE.md monolítico.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+  },
+  {
+   "claim": "Anthropic prescribe una arquitectura de 'progressive disclosure' de tres niveles para skills (frontmatter YAML siempre cargado, cuerpo de SKILL.md cargado solo cuando es relevante, archivos enlazados descubiertos bajo demanda) como mecanismo explícito para minimizar el uso de tokens manteniendo la expertise especializada.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf"
+  },
+  {
+   "claim": "El campo 'description' del frontmatter es el factor decisivo para que Claude cargue una skill: debe incluir obligatoriamente QUÉ hace y CUÁNDO usarla (con frases gatillo literales que diría el usuario), tener menos de 1024 caracteres, y descripciones vagas como 'Helps with projects' provocan que la skill nunca se active.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf"
+  },
+  {
+   "claim": "Anthropic da límites cuantitativos contra el bloat de instrucciones: mantener SKILL.md por debajo de 5.000 palabras moviendo la documentación detallada a references/, y revisar si hay más de 20-50 skills habilitadas simultáneamente, porque el contenido excesivo degrada las respuestas y ralentiza al modelo.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf"
+  },
+  {
+   "claim": "Cuando Claude ignora instrucciones, Anthropic identifica tres causas (verbosidad, instrucciones enterradas, lenguaje ambiguo) y prescribe remedios de posición y redundancia — instrucciones críticas al inicio, cabeceras '## Important'/'## Critical', repetir puntos clave — y recomienda sustituir validaciones críticas en lenguaje natural por scripts ejecutables porque 'el código es determinista; la interpretación del lenguaje no'.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf"
+  },
+  {
+   "claim": "Contra la 'pereza' del modelo, Anthropic recomienda añadir aliento explícito ('Take your time to do this thoroughly', 'Quality is more important than speed', 'Do not skip validation steps'), y afirma que colocar esas notas en el prompt del usuario es más efectivo que ponerlas en SKILL.md — un dato relevante para decidir qué va en el kit estático versus la guía humana de prompteo.",
+   "erroredVotes": 3,
+   "validVotes": 0,
+   "source": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf"
+  }
+ ],
+ "sources": [
+  {
+   "url": "https://code.claude.com/docs/en/best-practices",
+   "quality": "primary",
+   "claimCount": 5
+  },
+  {
+   "url": "https://code.claude.com/docs/en/memory",
+   "quality": "primary",
+   "claimCount": 5
+  },
+  {
+   "url": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+   "quality": "primary",
+   "claimCount": 5
+  },
+  {
+   "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+   "quality": "primary",
+   "claimCount": 5
+  },
+  {
+   "url": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents",
+   "quality": "primary",
+   "claimCount": 5
+  },
+  {
+   "url": "https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
+   "quality": "primary",
+   "claimCount": 5
+  },
+  {
+   "url": "https://news.ycombinator.com/item?id=46102048",
+   "quality": "forum",
+   "claimCount": 5
+  },
+  {
+   "url": "https://www.humanlayer.dev/blog/writing-a-good-claude-md",
+   "quality": "blog",
+   "claimCount": 5
+  },
+  {
+   "url": "https://news.ycombinator.com/item?id=46098838",
+   "quality": "forum",
+   "claimCount": 5
+  },
+  {
+   "url": "https://www.shareuhack.com/en/posts/claude-code-claude-md-setup-guide-2026",
+   "quality": "blog",
+   "claimCount": 5
+  },
+  {
+   "url": "https://ranthebuilder.cloud/blog/claude-code-best-practices-lessons-from-real-projects/",
+   "quality": "blog",
+   "claimCount": 5
+  },
+  {
+   "url": "https://github.com/obra/superpowers",
+   "quality": "primary",
+   "claimCount": 5
+  },
+  {
+   "url": "https://blog.fsck.com/2025/10/09/superpowers/",
+   "quality": "blog",
+   "claimCount": 5
+  },
+  {
+   "url": "https://github.com/hesreallyhim/awesome-claude-code",
+   "quality": "secondary",
+   "claimCount": 5
+  },
+  {
+   "url": "https://github.com/rohitg00/awesome-claude-code-toolkit",
+   "quality": "blog",
+   "claimCount": 5
+  },
+  {
+   "url": "https://arxiv.org/abs/2307.03172",
+   "quality": "primary",
+   "claimCount": 4
+  },
+  {
+   "url": "https://arxiv.org/abs/2507.11538",
+   "quality": "primary",
+   "claimCount": 5
+  },
+  {
+   "url": "https://research.trychroma.com/context-rot",
+   "quality": "primary",
+   "claimCount": 5
+  },
+  {
+   "url": "https://arxiv.org/html/2601.03269v1",
+   "quality": "primary",
+   "claimCount": 5
+  },
+  {
+   "url": "https://github.com/wan-huiyan/agent-review-panel",
+   "quality": "blog",
+   "claimCount": 5
+  },
+  {
+   "url": "https://asdlc.io/patterns/adversarial-code-review/",
+   "quality": "blog",
+   "claimCount": 5
+  },
+  {
+   "url": "https://orq.ai/blog/llm-juries-in-practice",
+   "quality": "blog",
+   "claimCount": 5
+  }
+ ],
+ "stats": {
+  "angles": 5,
+  "sources": 22,
+  "claims": 109,
+  "verified": 25,
+  "confirmed": 4,
+  "killed": 0,
+  "unverified": 21,
+  "afterSynthesis": 0
+ }
+}
