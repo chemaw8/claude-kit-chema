@@ -32,6 +32,10 @@ verificado, por convincente que suene.
 Este es el orden. El primer paso es el que más se salta y el que decide si el
 resto sirve para algo.
 
+0. Revisar el material que ya aportó el usuario. Revisa primero los documentos,
+   datos y contexto que el usuario ya puso en la conversación antes de salir a
+   buscar fuentes externas; no dupliques ni contradigas sin querer lo que ya
+   estaba sobre la mesa.
 1. Definir la pregunta y qué decisión alimenta. Antes de buscar nada, escribe qué
    se pregunta exactamente y qué decisión va a tomar quien lee con la respuesta.
    Investigar sin saber qué decisión alimenta produce datos sueltos que no ayudan

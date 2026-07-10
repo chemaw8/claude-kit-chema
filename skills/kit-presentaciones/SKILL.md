@@ -68,6 +68,9 @@ Antes de dar por terminado, con el archivo abierto delante:
   empresa?
 - ¿Abriste el archivo generado y lo revisaste lámina por lámina, no solo la
   primera?
+- Si el encargo produce varios documentos para la misma decisión (deck + resumen
+  + correo, deck + one-pager), ¿las cifras clave coinciden entre todos, no solo
+  cada una con su fuente?
 
 ## Errores típicos
 

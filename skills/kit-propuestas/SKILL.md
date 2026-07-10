@@ -52,7 +52,11 @@ El panel son de 3 a 5 evaluadores independientes, cada uno con contexto fresco
   (legal, fiscal, seguridad, el negocio del cliente).
 
 A cada evaluador se le entrega la propuesta y el mandato acotado de la sección
-siguiente. La mecánica cambia según dónde corras:
+siguiente. Antes de lanzar a los evaluadores, el hilo principal fija en una
+frase su postura inicial sobre la propuesta, sin haber leído ningún reporte; al
+sintetizar el veredicto dice explícitamente si los evaluadores le hicieron
+cambiar de opinión y en qué (que lo diga confirma que el council aportó y no fue
+teatral). La mecánica cambia según dónde corras:
 
 - En Claude Code: lanza los evaluadores como subagentes en paralelo, con modelo
   Opus 4.8 cada uno. El hilo principal recoge sus reportes y sintetiza un solo
@@ -76,10 +80,13 @@ y esperada. No rellenes por cumplir."
 
 La razón es concreta: a un revisor al que se le pide "encuentra fallos" los
 inventa para justificar su presencia. "Sin hallazgos relevantes" es un
-resultado plenamente válido y esperado, no un fracaso del evaluador. Un panel
-que siempre encuentra algo no es riguroso, es teatral. La proporcionalidad es
-la misma disciplina aplicada a la escala: un hallazgo real sobre una propuesta
-pequeña no justifica exigirle el estándar de una infraestructura crítica.
+resultado plenamente válido y esperado, no un fracaso del evaluador. A cada
+evaluador se le entrega solo la propuesta y su mandato, nunca el hilo completo
+de la conversación: pasar el historial contamina el juicio independiente y anula
+el anti-anclaje. Un panel que siempre encuentra algo no es riguroso, es
+teatral. La proporcionalidad es la misma disciplina aplicada a la escala: un
+hallazgo real sobre una propuesta pequeña no justifica exigirle el estándar de
+una infraestructura crítica.
 
 ## Veredicto
 
