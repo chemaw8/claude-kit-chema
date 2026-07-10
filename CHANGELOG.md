@@ -1,5 +1,12 @@
 # Changelog — Kit Chema
 
+## v1.5 — 2026-07-10
+Nueva skill kit-redaccion (comunicación escrita: correos, minutas/actas, memos,
+comunicados, documentación y estatus informativo). Aprobada por council con
+cambios y validada por un gate de disparo 10/10 sin confusiones de frontera:
+"informe" se queda en kit-presentaciones y kit-propuestas reclama ahora los
+mensajes que piden aprobar/autorizar (cierre de frontera por ambos lados).
+
 ## v1.4 — 2026-07-10
 Hook de contexto (`hooks/kit-chema-contexto.sh`, evento `SessionStart`): autocarga
 el contenido de `~/.claude/contexto/` (empresa, personal y base de conocimiento)

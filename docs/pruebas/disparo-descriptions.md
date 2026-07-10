@@ -41,3 +41,28 @@ práctica: el proceso de kit-automatizacion aplica kit-codigo en su paso de
 construcción, así que la higiene de código opera igual. No se reescribe ninguna
 description: el criterio se cumple y engordar las descriptions por un caso
 frontera va contra el principio anti-bloat del kit (P1/P4 del spec).
+
+## Re-corrida a 8 skills — 2026-07-10 (entrada de kit-redaccion)
+
+Tras añadir kit-redaccion, gate de disparo en las fronteras críticas. Primer
+intento: 25/26, con 1 confusión de frontera ("un mensaje a dirección para que
+aprueben contratar" → redacción en vez de propuestas). Se cerró la frontera por
+ambos lados: kit-redaccion excluye explícitamente lo que pide aprobar, y
+kit-propuestas ahora reclama los mensajes/correos que piden aprobar/autorizar
+(antes solo redacción los rechazaba, y el juez waffleaba). Re-corrida enfocada
+(10 fronteras): **10/10, cero confusiones**. "informe" se queda en
+kit-presentaciones; correo/minuta/memo/documentación → kit-redaccion;
+aprobar/decidir → kit-propuestas; estatus informativo → kit-redaccion.
+
+| # | Petición | Esperada | Resultado |
+|---|---|---|---|
+| 1 | Mostrar avance a Ordenaris | kit-presentaciones | ✅ |
+| 2 | Presentar resultados a dirección | kit-presentaciones | ✅ |
+| 3 | Propuesta para cliente | kit-propuestas | ✅ |
+| 4 | Reporte que se mande solo | kit-automatizacion | ✅ |
+| 5 | Correo al proveedor | kit-redaccion | ✅ |
+| 6 | Minuta con acuerdos | kit-redaccion | ✅ |
+| 7 | Mensaje de estatus a dirección | kit-redaccion | ✅ |
+| 8 | Informe con láminas | kit-presentaciones | ✅ |
+| 9 | Mensaje para que aprueben contratar | kit-propuestas | ✅ |
+| 10 | Documenta el proceso | kit-redaccion | ✅ |
