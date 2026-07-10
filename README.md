@@ -32,7 +32,7 @@ Hay dos vías y ambas funcionan; elige una:
 ## (A) Instalación como plugin de Claude Code
 
 Desde v1.2 el kit se distribuye también como plugin. El plugin empaqueta las
-7 skills de dominio y los dos hooks (contexto y anti-secretos). Dentro de Claude Code:
+8 skills de dominio y los dos hooks (contexto y anti-secretos). Dentro de Claude Code:
 
 ```
 /plugin marketplace add chemaw8/claude-kit-chema
