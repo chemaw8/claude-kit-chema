@@ -18,6 +18,10 @@ humano la haya visto y el CI la haya validado.
    `/hooks/`, `/.github/`) tienen dueño en `.github/CODEOWNERS` y su aprobación
    es obligatoria para fusionar. Lo ideal es que sea un equipo de 2+ revisores,
    no una sola persona.
+4. **Gate de disparo cuando toca el disparo.** Todo PR que añada una skill nueva,
+   edite la `description` de un SKILL.md, o cambie el núcleo debe pasar el gate de
+   disparo (ver `docs/pruebas/RUNBOOK.md`) antes de salir de borrador/mergear. Los
+   PR que solo tocan cuerpos de skill, docs o scripts no lo requieren.
 
 ## Mejora del kit por corrección (no es una excepción)
 

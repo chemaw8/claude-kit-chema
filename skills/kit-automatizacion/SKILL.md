@@ -59,6 +59,8 @@ Antes de entregar, con la automatización corriendo delante:
 - ¿Es idempotente: correrla dos veces no duplica efectos?
 - ¿Está documentada (cómo correrla, cómo verificarla, cómo apagarla)?
 - ¿El dueño humano que la mantiene está definido?
+- Si lleva tiempo corriendo, ¿alguien verifica periódicamente que sigue
+  funcionando, sigue siendo necesaria y no quedó huérfana (dueño vigente)?
 
 ## Errores típicos
 

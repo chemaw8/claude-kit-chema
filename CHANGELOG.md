@@ -1,5 +1,22 @@
 # Changelog — Kit Chema
 
+## v1.6 — 2026-07-10
+Lote de mejoras cosechadas de la comparativa con ECC y vetadas por council, todas
+como adiciones de 1-2 líneas a cuerpos y checklists de skills (ninguna description
+ni el núcleo se tocaron): silent-failure en kit-codigo (ningún catch/except vacío)
+y test RED que falla por la razón correcta; en kit-propuestas, evaluador que
+recibe solo propuesta+mandato sin el hilo completo, y postura previa del hilo
+principal fijada antes de leer reportes; coherencia de cifras entre documentos de
+una misma decisión (kit-presentaciones); estado real del correo declarado con
+lenguaje preciso (kit-redaccion); paneles de dashboard accionables (kit-analisis-
+datos); paso 0 de research que revisa primero el material ya aportado; y ciclo de
+vida de la automatización (revisión periódica de que sigue viva y con dueño).
+Eval-harness formalizado: banco canónico (`docs/pruebas/banco/disparo.md`),
+`docs/pruebas/RUNBOOK.md` (juez Sonnet esfuerzo bajo, contexto fresco, criterio
+≥ 19/21 + cero confusiones de frontera) y disparador del gate en `GOBERNANZA.md`.
+Se descartó por bloat lo pesado de ECC: tablas de evidencia de TDD, roles fijos de
+council, ADR en carpeta, plantillas de reporte y dependencias de MCP.
+
 ## v1.5 — 2026-07-10
 Nueva skill kit-redaccion (comunicación escrita: correos, minutas/actas, memos,
 comunicados, documentación y estatus informativo). Aprobada por council con

@@ -62,6 +62,9 @@ Antes de enviar, con el texto delante:
   kit-propuestas.
 - ¿Nombres de clientes y cifras reales tratados según la confidencialidad del
   contexto?
+- ¿El estado del mensaje está declarado con lenguaje preciso ("borrador listo
+  para tu revisión" vs "enviado")? Nunca afirmes que un correo se envió si no se
+  envió.
 
 ## Errores típicos
 

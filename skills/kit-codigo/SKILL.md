@@ -34,9 +34,12 @@ Este es el orden; el primer paso es el que más se salta y el que más cuesta.
    qué vas a hacer. Si el plan no cabe en unas líneas, la tarea es más grande de
    lo que parece: divídela.
 3. TDD cuando hay lógica que probar. Escribe un test que falle, luego la
-   implementación mínima que lo hace pasar, luego confirma que pasa. Para código
-   sin lógica (config, scripts de un solo uso, ajustes triviales) no fuerces
-   tests; para parsers, cálculos, reglas de negocio, sí.
+   implementación mínima que lo hace pasar, luego confirma que pasa. Comprueba
+   que el test en rojo falla por la razón correcta —el bug o la implementación
+   ausente—, no por un import roto, una dependencia faltante o una configuración
+   de test mal armada: verifica ese fallo esperado antes de tocar el código de
+   producción. Para código sin lógica (config, scripts de un solo uso, ajustes
+   triviales) no fuerces tests; para parsers, cálculos, reglas de negocio, sí.
 4. Verificación end-to-end real. Corre la app o el script con datos verdaderos y
    mira la salida. Un script de datos se ejecuta contra el archivo real; un
    endpoint se llama y se revisa la respuesta.
@@ -63,6 +66,9 @@ La regla que sostiene todo lo demás. Cada punto es verificable.
 - Dependencias justificadas. Cada dependencia nueva se justifica en una línea
   (qué problema resuelve y por qué no basta con lo que ya hay), y antes de
   añadirla verificas que el proyecto no tenga ya una equivalente.
+- Errores nunca en silencio. Ningún bloque catch/except queda vacío ni solo con
+  un print: cada uno maneja el error, lo relanza, o lo loguea con contexto.
+  Tragar errores en silencio es el bug más caro.
 - Revisar el diff completo antes del commit final. Lee todo lo que vas a
   commitear. Lo que no aporte a la tarea, fuera.
 

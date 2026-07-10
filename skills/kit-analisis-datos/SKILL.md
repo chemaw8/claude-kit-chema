@@ -61,6 +61,8 @@ Antes de entregar, con los datos y el análisis delante:
 - ¿Los scripts están guardados y se pueden re-ejecutar para llegar al mismo
   resultado?
 - ¿Las gráficas van sin trucos visuales (ejes desde cero, periodo completo)?
+- En un dashboard, ¿cada panel responde una pregunta operativa que alguien
+  necesita para decidir, sin paneles decorativos que no cambian ninguna decisión?
 
 ## Errores típicos
 
