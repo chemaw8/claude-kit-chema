@@ -137,7 +137,7 @@ El plugin **no** incluye el núcleo. Un `CLAUDE.md` en la raíz de un plugin no 
 carga como contexto de proyecto —es un hecho de la doc oficial de Claude Code:
 *"A CLAUDE.md file at the plugin root is not loaded as project context"*—, así
 que las reglas universales tienen que vivir en `~/.claude/CLAUDE.md`. Por eso el
-diseño es híbrido: el plugin aporta lo que sí puede empaquetar (skills y hook) y
+diseño es híbrido: el plugin aporta lo que sí puede empaquetar (skills y los dos hooks) y
 el núcleo se instala aparte. Tras instalar el plugin, añade el núcleo con
 `./instalar.sh` (o pegando `nucleo/CLAUDE.md` al final de tu `~/.claude/CLAUDE.md`)
 y deja las plantillas de contexto con el slash command `/kit-chema:init-contexto`,

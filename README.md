@@ -24,15 +24,15 @@ excepción.
 Hay dos vías y ambas funcionan; elige una:
 
 - **(A) Como plugin de Claude Code** — la más cómoda si usas Claude Code. Trae
-  las skills y el hook; el núcleo se añade en un paso corto aparte.
+  las skills y los dos hooks; el núcleo se añade en un paso corto aparte.
 - **(B) Con `git clone` + `./instalar.sh`** — instala todo el kit de una vez
-  (núcleo, skills, plantillas de contexto y, opcional, el hook). Es la vía de
-  siempre y sigue viva.
+  (núcleo, skills, plantillas de contexto y el hook de contexto por defecto; el
+  hook anti-secretos es opcional). Es la vía de siempre y sigue viva.
 
 ## (A) Instalación como plugin de Claude Code
 
 Desde v1.2 el kit se distribuye también como plugin. El plugin empaqueta las
-7 skills de dominio y el hook anti-secretos. Dentro de Claude Code:
+7 skills de dominio y los dos hooks (contexto y anti-secretos). Dentro de Claude Code:
 
 ```
 /plugin marketplace add chemaw8/claude-kit-chema
