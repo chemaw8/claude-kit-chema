@@ -17,6 +17,13 @@ Eval-harness formalizado: banco canónico (`docs/pruebas/banco/disparo.md`),
 Se descartó por bloat lo pesado de ECC: tablas de evidencia de TDD, roles fijos de
 council, ADR en carpeta, plantillas de reporte y dependencias de MCP.
 
+Operación (mismo día, seguimiento a v1.6): se activó la **branch protection** en
+`main` —PR obligatorio, los dos checks de CI en verde, rama al día, aplica a
+administradores, sin force-push ni borrado; documentada en `GOBERNANZA.md`— y se
+sincronizó el manifiesto del plugin (`.claude-plugin/plugin.json`) a **1.6.0**,
+que había quedado en 1.5.0 pese a que v1.6 cambió cuerpos de skill que el plugin
+empaqueta.
+
 ## v1.5 — 2026-07-10
 Nueva skill kit-redaccion (comunicación escrita: correos, minutas/actas, memos,
 comunicados, documentación y estatus informativo). Aprobada por council con

@@ -1,18 +1,20 @@
 # CONTINUAR — Kit Chema
 
-Actualizado: 2026-07-09
+Actualizado: 2026-07-10
 
-## Estado: CONSTRUIDO y probado — v1.0
+## Estado: EN USO — v1.6, `main` con branch protection activa
 
-El kit está completo y verificado. La versión **v1.0** se declaró el
-**2026-07-09** (ver `CHANGELOG.md`), con los 8 criterios de aceptación del spec
-cumplidos y dos notas ratificadas por el council de dogfooding (C.A.2 en 20/21
-disparos y C.A.7 condicional a la marca oficial). Rama de construcción:
-`construccion-v1.0`.
+El kit está completo, verificado, instalado en el `~/.claude` de José y público
+en github.com/chemaw8/claude-kit-chema. Historia por versión en `CHANGELOG.md`
+(v1.0 → v1.6). Desde el **2026-07-10** `main` tiene **branch protection activa**:
+todo cambio —incluido el del dueño— entra por PR con los dos checks de CI en
+verde (`límites del kit`, `escaneo de secretos (gitleaks)`); ver `GOBERNANZA.md`.
+v1.0 se declaró el 2026-07-09 con los 8 criterios de aceptación del spec
+cumplidos (rama de construcción `construccion-v1.0`, ya eliminada).
 
 ## Qué contiene el kit
 
-- **Núcleo** `nucleo/CLAUDE.md` (77 líneas): reglas universales que cargan en
+- **Núcleo** `nucleo/CLAUDE.md` (81 líneas): reglas universales que cargan en
   toda conversación (arranque, evaluación crítica, esfuerzo por riesgo,
   terminado = verificado, continuidad, escalera de modelos).
 - **8 skills** en `skills/`: presentaciones, análisis-datos, research, código, redacción,
@@ -36,26 +38,32 @@ disparos y C.A.7 condicional a la marca oficial). Rama de construcción:
    hallazgos aplicados en esta v1.0. `docs/pruebas/aceptacion.md` resume los 8
    criterios y su evidencia.
 
-## Estado final (2026-07-09)
+## Hecho después de v1.0
 
-Hecho: revisión final de rama ("ready to merge"), merge a `main`, tag `v1.0`,
-rama de construcción eliminada, e **instalado en el `~/.claude` de José**
-(sin hook). Las 8 skills `kit-*` ya aparecen activas en Claude Code.
+- v1.1 contexto generalizado (empresa + personal); v1.2 plugin híbrido +
+  salvaguardas (CI, CODEOWNERS, GOBERNANZA); v1.3 licencia MIT + compatibilidad
+  con superpowers/pr-review-toolkit; v1.4 hook de contexto (SessionStart); v1.5
+  skill kit-redaccion (8ª skill, gate de disparo 10/10); v1.6 mejoras de cuerpos
+  cosechadas de ECC y vetadas por council + eval-harness formalizado.
+- Contexto real de Innovattia ya cargado en `~/.claude/contexto/` (empresa +
+  personal + base de conocimiento); el hook de contexto lo autocarga.
+- **Branch protection activada en `main`** (2026-07-10) y el plugin quedó
+  sincronizado en 1.6.0.
 
 ## Siguiente paso (José)
 
-1. Rellena `~/.claude/contexto/CONTEXTO-EMPRESA.md` con los datos reales de
-   Innovattia (es lo que elimina el output genérico).
-2. Decide el hook anti-secretos: `KIT_HOOKS=s ./instalar.sh` para activarlo.
-3. (Hecho) Repo público en github.com/chemaw8/claude-kit-chema; los colegas
-   instalan con `git clone`.
-4. Presenta el deck `presentacion/kit-chema.pptx`.
+1. Presentar el deck `presentacion/kit-chema.pptx` a los colegas del grupo.
+2. Decidir si activa el hook anti-secretos (`KIT_HOOKS=s ./instalar.sh`); el de
+   contexto ya se instala por defecto.
+3. Cuando haya 2+ colaboradores, subir aprobaciones requeridas a 1–2 y activar
+   `require_code_owner_reviews` (ver `GOBERNANZA.md`).
 
-## Futuro — v1.1
+## Futuro (no bloqueante)
 
 - `desinstalar.sh` (quitar el kit limpio).
 - Aviso de drift de versión (avisar si el `~/.claude/` instalado quedó atrás).
 - Vía de instalación en Windows.
+- Plugin "lean" y hook anti-secretos sin dependencia de python3.
 - Marca oficial cuando existan activos en `~/Trabajo/recursos/marca`.
 
 ## Historial (comprimido)

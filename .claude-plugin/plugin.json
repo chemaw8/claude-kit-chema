@@ -1,6 +1,6 @@
 {
   "name": "kit-chema",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Estándar de calidad Kit Chema para Claude Code: empaqueta las 8 skills de dominio (presentaciones, análisis de datos, research, código, propuestas, finanzas, automatización, redacción) y dos hooks: anti-secretos (bloquea commits con credenciales) y el de contexto (SessionStart, autocarga tu contexto de ~/.claude/contexto). El núcleo de reglas universales no viaja en el plugin (un CLAUDE.md en la raíz de un plugin no se carga como contexto): se instala aparte como ~/.claude/CLAUDE.md.",
   "author": {
     "name": "chemaw8"
