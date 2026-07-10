@@ -75,6 +75,7 @@ se anota en el CHANGELOG (ver GOBERNANZA.md).
 | Análisis o exploración de datos | kit-analisis-datos |
 | Investigación con fuentes | kit-research |
 | Código, scripts, desarrollo | kit-codigo |
-| Propuesta o decisión a evaluar | kit-propuestas |
+| Propuesta, decisión o pedir aprobación | kit-propuestas |
 | Números, proyecciones, dinero | kit-finanzas |
 | Automatizar un proceso | kit-automatizacion |
+| Correo, minuta, memo, comunicado, documentación | kit-redaccion |
