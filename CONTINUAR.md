@@ -17,8 +17,8 @@ disparos y C.A.7 condicional a la marca oficial). Rama de construcción:
   terminado = verificado, continuidad, escalera de modelos).
 - **8 skills** en `skills/`: presentaciones, análisis-datos, research, código, redacción,
   propuestas (con el Council), finanzas, automatización.
-- **Hook opt-in** `hooks/anti-secretos.sh`: bloquea `git commit` con
-  credenciales dentro de Claude Code.
+- **Dos hooks**: `kit-chema-contexto.sh` (SessionStart, autocarga tu contexto,
+  por defecto) y `anti-secretos.sh` (opt-in, bloquea commits con credenciales).
 - **Guías humanas**: `COMO-PEDIR.md`, `INSTRUCTIVO.md` y la plantilla
   `contexto/CONTEXTO-EMPRESA.md`.
 - **Instalador** `instalar.sh` (no destructivo) y verificador `verificar.sh`.
@@ -47,8 +47,8 @@ rama de construcción eliminada, e **instalado en el `~/.claude` de José**
 1. Rellena `~/.claude/contexto/CONTEXTO-EMPRESA.md` con los datos reales de
    Innovattia (es lo que elimina el output genérico).
 2. Decide el hook anti-secretos: `KIT_HOOKS=s ./instalar.sh` para activarlo.
-3. Sube el repo a GitHub (privado) y rellena la URL en el README para que
-   los colegas instalen con `git clone`.
+3. (Hecho) Repo público en github.com/chemaw8/claude-kit-chema; los colegas
+   instalan con `git clone`.
 4. Presenta el deck `presentacion/kit-chema.pptx`.
 
 ## Futuro — v1.1

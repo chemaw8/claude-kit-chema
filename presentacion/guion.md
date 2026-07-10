@@ -84,7 +84,7 @@ cuando hace falta, lo no negociable por máquina, y una guía para la persona.
 **Contenido (cuatro bloques):**
 - **Núcleo** — `CLAUDE.md` de menos de 80 líneas que carga en toda conversación: las
   reglas universales.
-- **Playbooks** — 7 skills de dominio que se activan solas cuando la tarea las
+- **Playbooks** — 8 skills de dominio que se activan solas cuando la tarea las
   necesita.
 - **Hook anti-secretos** — regla determinista (opt-in) que la ejecuta la
   máquina, no la memoria de Claude.
@@ -112,9 +112,9 @@ visibles.
 
 ---
 
-## Lámina 5 — Los siete playbooks
+## Lámina 5 — Los ocho playbooks
 
-**Título:** Siete playbooks: cada dominio con lo que garantiza
+**Título:** Ocho playbooks: cada dominio con lo que garantiza
 
 **Idea:** la calidad específica de cada tipo de trabajo vive en su skill, que
 se carga sola por la descripción de la tarea.
@@ -128,6 +128,7 @@ se carga sola por la descripción de la tarea.
 | Código | lee el código antes de escribir; corre con datos reales; higiene anti-contaminación |
 | Propuestas | problema, opciones, costos, recomendación y reversión; council con veredicto |
 | Finanzas | supuestos aparte; recalcula cada cifra; escenarios, no un número único |
+| Redacción | correo con pedido claro; minuta con acuerdos, responsables y fechas; sin invadir deck ni propuesta |
 | Automatización | define disparador, entradas y salidas; deja escrito cómo apagarlo |
 
 - Pie: no tienes que nombrarlas; basta describir la tarea.
@@ -216,13 +217,13 @@ adivinar; el kit trae la guía y dos palabras clave que cambian el trabajo.
 
 **Contenido:**
 - **Tres pasos:**
-  1. `git clone <url> claude-kit-chema`
+  1. `git clone https://github.com/chemaw8/claude-kit-chema.git claude-kit-chema`
   2. `cd claude-kit-chema`
   3. `./instalar.sh`
 - **No pisa nada:** si ya tienes un `~/.claude/CLAUDE.md`, añade una sección
   marcada al final sin tocar lo tuyo; en actualizaciones posteriores respalda
   antes de reescribir su sección.
-- **Hook opt-in:** actívalo con `KIT_HOOKS=s ./instalar.sh`.
+- **Hooks:** el de contexto se instala por defecto; el anti-secretos es opt-in con `KIT_HOOKS=s ./instalar.sh`.
 - **claude.ai web también:** pega el núcleo como instrucciones del proyecto y
   sube los `SKILL.md` que uses (versión degradada, mismo criterio).
 
