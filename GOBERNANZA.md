@@ -39,14 +39,30 @@ Si un cambio ya fusionado resulta dañino, el rollback es **revertir el PR**
 (`git revert` del merge o el botón "Revert" de GitHub) con su propio PR. No se
 reescribe la historia de `main`.
 
-## Pendiente del dueño del repo
+## Branch protection (activa desde 2026-07-10)
 
-Activar **branch protection** en `main` (requiere permisos de administrador y no
-se hace desde este repo): exigir PR antes de fusionar, exigir que el CI pase y
-exigir la revisión de CODEOWNERS. Sin branch protection, estas reglas son un
-acuerdo; con ella, son un mecanismo que GitHub hace cumplir.
+`main` está protegida en GitHub, así que las reglas de arriba dejan de ser un
+acuerdo y son un mecanismo que GitHub hace cumplir. Configuración vigente:
 
-## Diferido a v1.3 (no bloqueante)
+- **PR obligatorio**: no se acepta `git push` directo a `main`; todo entra por PR.
+- **Checks de CI requeridos** (deben salir en verde para poder fusionar):
+  `límites del kit` y `escaneo de secretos (gitleaks)`.
+- **Rama al día** (`strict`): el PR debe estar actualizado con `main` antes de
+  fusionar.
+- **Aplica también a administradores** (`enforce_admins`): el dueño del repo
+  tampoco se la salta.
+- **Sin force-push ni borrado** de `main`.
+- **Aprobaciones requeridas: 0.** Hoy el repo tiene un único mantenedor, así que
+  se auto-fusiona su propio PR una vez que el CI pasa; no se exige revisión de
+  CODEOWNERS todavía. Cuando haya 2+ colaboradores, subir las aprobaciones a 1–2
+  y activar `require_code_owner_reviews` (ver "Diferido").
+
+Operación: crea una rama, abre el PR, espera a que los dos checks estén en verde
+y fusiona. Emergencia: como el dueño sigue siendo admin, puede desactivar la
+protección temporalmente en GitHub → Settings → Branches; es reversible y
+deliberadamente incómodo (esa fricción es el punto).
+
+## Diferido (no bloqueante)
 
 - Plugin "lean": hoy el paquete se distribuye con `source "./"` (viaja el repo
   entero — docs, CI, deck). Claude Code solo activa skills/commands/hooks, así
@@ -54,4 +70,5 @@ acuerdo; con ella, son un mecanismo que GitHub hace cumplir.
   mecanismo de exclusión claro.
 - Reemplazar el hook anti-secretos por una vía sin dependencia de python3.
 - Equipo de 2+ revisores en CODEOWNERS (hoy un único dueño es punto único de
-  fallo).
+  fallo); al lograrlo, subir aprobaciones requeridas a 1–2 y activar
+  `require_code_owner_reviews` en la branch protection.
