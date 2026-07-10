@@ -1,5 +1,18 @@
 # Changelog — Kit Chema
 
+## v1.4 — 2026-07-10
+Hook de contexto (`hooks/kit-chema-contexto.sh`, evento `SessionStart`): autocarga
+el contenido de `~/.claude/contexto/` (empresa, personal y base de conocimiento)
+al abrir cada sesión, para no depender de que Claude recuerde leerlo. Cierra el
+hueco de la regla "leer el contexto antes de un trabajo sustantivo". Se instala
+por defecto (bajo riesgo, alto valor); el hook anti-secretos sigue opt-in. Envuelve
+el texto en JSON con python3 (`json.dumps`), no con `jq`, para no añadir una
+dependencia extra y ser consistente con el resto del kit; si falta python3 sale 0
+sin romper la sesión (falla segura, solo se pierde la autocarga). Añadido a las dos
+vías de instalación: `instalar.sh` (fusiona la entrada `SessionStart` en
+`settings.json`) y plugin (`hooks/hooks.json` con `${CLAUDE_PLUGIN_ROOT}`).
+Documentado en INSTRUCTIVO (fila del mapa y señal de que funciona).
+
 ## v1.3 — 2026-07-09
 Licencia MIT (LICENSE + campo license en plugin.json y marketplace.json): el
 repo público ya es legalmente reutilizable. Bloque de compatibilidad en

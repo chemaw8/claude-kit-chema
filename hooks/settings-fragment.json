@@ -7,6 +7,13 @@
           { "type": "command", "command": "$HOME/.claude/hooks/anti-secretos.sh" }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "$HOME/.claude/hooks/kit-chema-contexto.sh", "timeout": 10 }
+        ]
+      }
     ]
   }
 }

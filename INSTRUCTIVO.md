@@ -28,7 +28,8 @@ pieza, dónde queda y cómo notas que actúa.
 | **kit-finanzas** | `~/.claude/skills/kit-finanzas/` | Cotización, presupuesto, proyección, margen, costos | Lista los supuestos aparte, recalcula cada cifra y entrega las proyecciones con escenarios, no con un número único |
 | **kit-automatizacion** | `~/.claude/skills/kit-automatizacion/` | Automatizar un proceso: cron, integración, bot, flujo que corre solo | Define disparador, entradas y salidas antes de construir y deja escrito cómo apagarlo |
 | **Contexto** (`contexto/*.md`: empresa y personal) | `~/.claude/contexto/` (cada plantilla solo se instala si no existe) | Antes de cualquier trabajo sustantivo | Claude usa tu tono, glosario y marca sin que se lo repitas cada vez |
-| **Hook anti-secretos** (`hooks/anti-secretos.sh`) | `~/.claude/hooks/` más una entrada en `settings.json` (opt-in) | Justo antes de un `git commit` que Claude ejecuta (solo dentro de Claude Code) | Intenta commitear un archivo con una clave y el commit se bloquea con un aviso del kit |
+| **Hook de contexto** (`hooks/kit-chema-contexto.sh`) | `~/.claude/hooks/` más una entrada `SessionStart` en `settings.json` (se instala por defecto) | Al abrir o reanudar cada sesión, antes del primer turno | Al iniciar una conversación nueva Claude ya conoce tu empresa, tono y proyectos sin que pegues nada; si te pregunta datos que están en `~/.claude/contexto/`, el hook no cargó (revisa la entrada `SessionStart` en `settings.json` y que exista `python3`) |
+| **Hook anti-secretos** (`hooks/anti-secretos.sh`) | `~/.claude/hooks/` más una entrada `PreToolUse` en `settings.json` (opt-in) | Justo antes de un `git commit` que Claude ejecuta (solo dentro de Claude Code) | Intenta commitear un archivo con una clave y el commit se bloquea con un aviso del kit |
 | **COMO-PEDIR.md** | Se queda en el repo; no se instala en `~/.claude/` | Cuando tú redactas una petición | No cambia el comportamiento de Claude: te ayuda a ti a pedir mejor (anatomía de la petición, plantillas, palabras clave) |
 
 Las siete skills viven en `~/.claude/skills/` y Claude elige cuál usar por su
@@ -66,7 +67,13 @@ de trabajar. Cada fila es una señal de que sí, y su señal de alarma cuando no
   `CONTEXTO-EMPRESA.md`, ese archivo está vacío o no lo está leyendo.
 - **Terminado significa verificado.** Al cerrar, Claude te reporta lo que quedó
   fuera o lo que no pudo comprobar, no solo un "listo" a secas.
-- **Hook.** Intentas commitear un archivo con una clave o token cuando Claude ejecuta el commit por ti y el commit se detiene con un mensaje del kit (no protege commits hechos a mano fuera de Claude Code). Si el commit pasa sin avisar, el hook no está instalado; actívalo con `KIT_HOOKS=s ./instalar.sh`.
+- **Contexto al arrancar.** Abres una conversación nueva y Claude ya trae cargado
+  tu contexto de empresa, personal y base de conocimiento sin que lo pegues, porque
+  el hook `SessionStart` lo inyecta al iniciar la sesión. Si arranca sin saber quién
+  eres ni tu empresa —o pide datos que ya están en `~/.claude/contexto/`—, el hook
+  no cargó: revisa que `settings.json` tenga la entrada `SessionStart` y que exista
+  `python3` (sin él el hook sale sin romper la sesión, pero no autocarga nada).
+- **Hook anti-secretos.** Intentas commitear un archivo con una clave o token cuando Claude ejecuta el commit por ti y el commit se detiene con un mensaje del kit (no protege commits hechos a mano fuera de Claude Code). Si el commit pasa sin avisar, el hook no está instalado; actívalo con `KIT_HOOKS=s ./instalar.sh`.
 
 Si no ves ninguna de estas señales en una conversación nueva, lo más probable es
 que el kit no esté instalado en este `~/.claude/`, o que estés en claude.ai web
@@ -118,7 +125,8 @@ Desde v1.2 el kit se puede instalar de dos formas, y ambas funcionan:
 - **(A) Como plugin de Claude Code.** Dentro de Claude Code:
   `/plugin marketplace add chemaw8/claude-kit-chema` y luego
   `/plugin install kit-chema@kit-chema`. El plugin empaqueta las **7 skills** y
-  el **hook anti-secretos**. Con el plugin, las skills se invocan con namespace
+  los **dos hooks** (contexto en `SessionStart` y anti-secretos en `PreToolUse`).
+  Con el plugin, las skills se invocan con namespace
   (`/kit-chema:kit-codigo`, `/kit-chema:kit-presentaciones`, etc.), pero el
   auto-disparo por descripción no cambia: describes la tarea y Claude elige la
   skill sola, igual que en la vía B.
