@@ -65,7 +65,39 @@ for plantilla in "$KIT"/contexto/*.md; do
   fi
 done
 
-# 4. Hooks: opt-in
+# 4. Hooks. Fusiona en $DIR/settings.json solo los eventos indicados del
+# fragmento, sin pisar hooks que ya tengas y sin duplicar si ya están.
+fusionar_hooks() { # fusionar_hooks <evento> [evento...]
+  python3 - "$DIR/settings.json" "$KIT/hooks/settings-fragment.json" "$@" <<'PY'
+import json, sys, os
+destino, fragmento = sys.argv[1], sys.argv[2]
+solo = set(sys.argv[3:])  # eventos a fusionar; si va vacío, se fusionan todos
+s = json.load(open(destino)) if os.path.exists(destino) else {}
+f = json.load(open(fragmento))
+hooks = s.setdefault("hooks", {})
+for evento, entradas in f["hooks"].items():
+    if solo and evento not in solo:
+        continue
+    actuales = hooks.setdefault(evento, [])
+    for e in entradas:
+        if e not in actuales:
+            actuales.append(e)
+json.dump(s, open(destino, "w"), indent=2, ensure_ascii=False)
+PY
+}
+
+# 4a. Hook de contexto (SessionStart): por defecto. Es de bajo riesgo (solo
+# inyecta texto al arrancar) y alto valor (Claude arranca con tu contexto).
+if command -v python3 >/dev/null 2>&1; then
+  cp "$KIT/hooks/kit-chema-contexto.sh" "$DIR/hooks/" && chmod +x "$DIR/hooks/kit-chema-contexto.sh"
+  fusionar_hooks SessionStart
+  echo "hook contexto: instalado (SessionStart autocarga tu contexto al abrir sesión)"
+else
+  echo "hook contexto: omitido — necesita python3 para fusionar settings.json y no se encontró en este sistema."
+  echo "hook contexto: instala python3 y vuelve a correr ./instalar.sh para activarlo."
+fi
+
+# 4b. Hook anti-secretos (PreToolUse): opt-in, sigue preguntando.
 resp="${KIT_HOOKS:-}"
 if [ -z "$resp" ] && [ -t 0 ]; then
   read -r -p "¿Instalar hook anti-secretos (bloquea commits con credenciales)? [s/N] " resp || true
@@ -76,26 +108,14 @@ case "$resp" in
 esac
 
 if [ "$activar_hooks" -eq 1 ] && ! command -v python3 >/dev/null 2>&1; then
-  echo "hooks: omitidos — el hook anti-secretos necesita python3 para fusionar settings.json y no se encontró en este sistema."
-  echo "hooks: instala python3 y vuelve a correr KIT_HOOKS=s ./instalar.sh para activarlo."
+  echo "hook anti-secretos: omitido — necesita python3 para fusionar settings.json y no se encontró en este sistema."
+  echo "hook anti-secretos: instala python3 y vuelve a correr KIT_HOOKS=s ./instalar.sh para activarlo."
 elif [ "$activar_hooks" -eq 1 ]; then
   cp "$KIT/hooks/anti-secretos.sh" "$DIR/hooks/" && chmod +x "$DIR/hooks/anti-secretos.sh"
-  python3 - "$DIR/settings.json" "$KIT/hooks/settings-fragment.json" <<'PY'
-import json, sys, os
-destino, fragmento = sys.argv[1], sys.argv[2]
-s = json.load(open(destino)) if os.path.exists(destino) else {}
-f = json.load(open(fragmento))
-hooks = s.setdefault("hooks", {})
-for evento, entradas in f["hooks"].items():
-    actuales = hooks.setdefault(evento, [])
-    for e in entradas:
-        if e not in actuales:
-            actuales.append(e)
-json.dump(s, open(destino, "w"), indent=2, ensure_ascii=False)
-PY
-  echo "hooks: anti-secretos activado"
+  fusionar_hooks PreToolUse
+  echo "hook anti-secretos: activado"
 else
-  echo "hooks: omitidos (KIT_HOOKS=s ./instalar.sh para activarlos)"
+  echo "hook anti-secretos: omitido (KIT_HOOKS=s ./instalar.sh para activarlo)"
 fi
 
 echo

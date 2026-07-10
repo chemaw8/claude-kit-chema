@@ -7,6 +7,13 @@
           { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/anti-secretos.sh" }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/kit-chema-contexto.sh", "timeout": 10 }
+        ]
+      }
     ]
   }
 }

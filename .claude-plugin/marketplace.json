@@ -3,12 +3,12 @@
   "owner": {
     "name": "chemaw8"
   },
-  "description": "Marketplace del Kit Chema: estándar de calidad de Innovattia para Claude Code (skills de dominio + hook anti-secretos).",
+  "description": "Marketplace del Kit Chema: estándar de calidad de Innovattia para Claude Code (skills de dominio + hooks de contexto y anti-secretos).",
   "plugins": [
     {
       "name": "kit-chema",
       "source": "./",
-      "description": "Kit Chema: 7 skills de dominio + hook anti-secretos. El núcleo se instala aparte como ~/.claude/CLAUDE.md (ver README).",
+      "description": "Kit Chema: 7 skills de dominio + dos hooks (contexto en SessionStart y anti-secretos). El núcleo se instala aparte como ~/.claude/CLAUDE.md (ver README).",
       "license": "MIT"
     }
   ]
