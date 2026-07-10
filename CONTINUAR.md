@@ -15,7 +15,7 @@ disparos y C.A.7 condicional a la marca oficial). Rama de construcción:
 - **Núcleo** `nucleo/CLAUDE.md` (77 líneas): reglas universales que cargan en
   toda conversación (arranque, evaluación crítica, esfuerzo por riesgo,
   terminado = verificado, continuidad, escalera de modelos).
-- **7 skills** en `skills/`: presentaciones, análisis-datos, research, código,
+- **8 skills** en `skills/`: presentaciones, análisis-datos, research, código, redacción,
   propuestas (con el Council), finanzas, automatización.
 - **Hook opt-in** `hooks/anti-secretos.sh`: bloquea `git commit` con
   credenciales dentro de Claude Code.
@@ -40,7 +40,7 @@ disparos y C.A.7 condicional a la marca oficial). Rama de construcción:
 
 Hecho: revisión final de rama ("ready to merge"), merge a `main`, tag `v1.0`,
 rama de construcción eliminada, e **instalado en el `~/.claude` de José**
-(sin hook). Las 7 skills `kit-*` ya aparecen activas en Claude Code.
+(sin hook). Las 8 skills `kit-*` ya aparecen activas en Claude Code.
 
 ## Siguiente paso (José)
 
