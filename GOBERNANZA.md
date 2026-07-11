@@ -33,6 +33,33 @@ aprobada / con cambios / rechazada). Solo si el council aprueba, el PR se saca d
 borrador y sigue el flujo normal (CI + CODEOWNERS). Así el mecanismo que hace
 "aprender" al kit no es también la vía por la que se degrada sin control.
 
+## Crear una skill nueva
+
+El oficio para que una skill dispare bien y no degrade el kit. Antes de
+escribirla, confirma que el dominio no lo cubre ya una skill existente: si solo
+falta un matiz, es una adición de 1-2 líneas a esa skill, no una skill nueva.
+
+1. **La description primero.** Escríbela antes que el cuerpo: qué es, cuándo
+   usarla con las frases gatillo típicas del usuario, y el "cuándo no usarla"
+   cediendo explícitamente a la skill vecina. Las fronteras se cierran por
+   ambos lados: la vecina también reclama lo suyo (ejemplo vivo: kit-redaccion
+   cede los informes a kit-presentaciones y los mensajes que piden aprobación a
+   kit-propuestas, y kit-propuestas los reclama).
+2. **Cuerpo mínimo.** Sigue la anatomía de las skills existentes (bien hecho
+   significa / proceso / checklist / errores típicos). Empieza corto: es más
+   fácil añadir la línea que faltó que detectar la que sobra — primero prueba,
+   luego engorda.
+3. **Los límites los dicta `verificar.sh`.** Córrelo; él es la autoridad de
+   líneas, caracteres y palabras (no se copian aquí: deben poder cambiar en un
+   solo lugar).
+4. **Gate de disparo.** Añade al banco (`docs/pruebas/banco/disparo.md`) 1-2
+   casos de frontera con sus vecinas reales y corre el gate según
+   `docs/pruebas/RUNBOOK.md`. El criterio del núcleo (≥ 19/21) no se mueve: las
+   skills nuevas se cubren por fronteras, como se hizo con kit-redaccion.
+5. **PR + council**, como todo cambio (sección "Cómo entra un cambio"). Una
+   skill nueva toca el disparo, así que el gate es obligatorio antes de sacar
+   el PR de borrador.
+
 ## Rollback
 
 Si un cambio ya fusionado resulta dañino, el rollback es **revertir el PR**
@@ -72,3 +99,8 @@ deliberadamente incómodo (esa fricción es el punto).
 - Equipo de 2+ revisores en CODEOWNERS (hoy un único dueño es punto único de
   fallo); al lograrlo, subir aprobaciones requeridas a 1–2 y activar
   `require_code_owner_reviews` en la branch protection.
+- Meta-skill `kit-crea-skills` (la sección "Crear una skill nueva" convertida
+  en skill que dispara al pedir "crea una skill del kit"). Su detonante es que
+  exista un segundo autor real del kit: hoy sería una skill siempre listada
+  para una audiencia de un solo mantenedor, con una frontera de disparo nueva
+  que mantener (council 2026-07-10).

@@ -1,5 +1,6 @@
 ---
 name: kit-automatizacion
+license: MIT
 description: Estándar Kit Chema para automatizar procesos — tareas recurrentes, integraciones, cron jobs, flujos que corren solos, bots, scripts programados. Úsala al pedir "automatiza", "que se haga solo", "cada semana genera", "conecta X con Y", "un proceso que corra". Obliga a definir disparador, entradas y salidas antes de construir, manejar errores explícitamente y probar en real antes de entregar.
 ---
 

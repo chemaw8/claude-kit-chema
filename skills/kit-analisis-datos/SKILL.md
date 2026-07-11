@@ -1,5 +1,6 @@
 ---
 name: kit-analisis-datos
+license: MIT
 description: Estándar Kit Chema para analizar o explorar datos — ventas, métricas, encuestas, archivos CSV/Excel, bases de datos, dashboards. Úsala antes de abrir los datos, al pedir "analiza estos datos", "qué dicen estas ventas", "explora este archivo", "hazme un dashboard o gráfica". Obliga a evaluar la calidad del dato antes de sacar conclusiones y a entregar hallazgos con evidencia, magnitud e implicación accionable.
 ---
 

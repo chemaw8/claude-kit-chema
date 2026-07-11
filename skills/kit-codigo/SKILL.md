@@ -1,5 +1,6 @@
 ---
 name: kit-codigo
+license: MIT
 description: Estándar Kit Chema para escribir, modificar o revisar código, scripts y proyectos de desarrollo. Úsala siempre antes de tocar código — al crear una función o proyecto, arreglar un bug, hacer un script, refactorizar o revisar un PR. Frases gatillo típicas "haz un script que", "arregla este error", "crea el proyecto", "revisa este código", "automatiza con código". Incluye la higiene anti-contaminación (reutilizar antes de crear, cero residuos, dependencias justificadas) y el flujo entender→plan→TDD→implementar→verificar de verdad.
 ---
 

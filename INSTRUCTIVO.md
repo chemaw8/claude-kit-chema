@@ -36,6 +36,13 @@ pieza, dónde queda y cómo notas que actúa.
 Las ocho skills viven en `~/.claude/skills/` y Claude elige cuál usar por su
 `description`: no tienes que nombrarlas, basta con describir la tarea.
 
+Una nota sobre ese mecanismo: el listado de skills que Claude ve tiene un
+presupuesto global (~16,000 caracteres sumando todas las skills instaladas, del
+kit y ajenas); al rebasarlo, algunas skills se vuelven invisibles sin aviso. Las
+del kit suman ~4,000 —lejos del tope— y `verificar.sh` vigila que esa suma no
+engorde, pero si un día una skill deja de dispararse, sospecha primero de
+cuántas skills tienes instaladas en total, no solo de las del kit.
+
 ## 2. Señales de que está funcionando
 
 La prueba más rápida es pedir un trabajo normal y ver si Claude cambia su forma
@@ -82,22 +89,30 @@ que el kit no esté instalado en este `~/.claude/`, o que estés en claude.ai we
 
 ## 3. Uso en claude.ai web
 
-claude.ai en el navegador no lee tu carpeta `~/.claude/`, así que ahí el kit no
-se instala solo: se monta a mano dentro de cada proyecto y funciona en una
-versión degradada, pero conserva el criterio y el vocabulario del kit.
+claude.ai en el navegador no lee tu carpeta `~/.claude/`, así que el kit no se
+instala solo. Pero las skills sí tienen vía real en la web —con disparo
+automático por description, como en Claude Code—; lo que no viaja es el núcleo
+y los hooks.
 
-- **Núcleo:** copia el contenido de `nucleo/CLAUDE.md` y pégalo como
-  instrucciones del proyecto. Eso da a Claude las reglas universales. Como en la
-  web no existe `~/.claude/contexto/`, pega también el contenido de
-  tus archivos de `contexto/` (ya rellenados) al final de esas instrucciones.
-- **Skills:** sube como archivos del proyecto los `SKILL.md` de las skills que
-  vayas a usar en ese proyecto (por ejemplo el de presentaciones si es un deck).
-  En la web no hay carga automática por descripción: subes tú lo que aplica.
-- **Council:** corre en secuencial, no en paralelo. El panel funciona igual, solo
-  que un evaluador después de otro; espera que tarde un poco más.
-- **Hook:** no aplica en la web (no hay `git` local que interceptar). La regla de
-  no filtrar credenciales sigue como consejo en el núcleo, pero sin el bloqueo
-  automático que da el hook en tu equipo.
+- **Skills (vía real, con disparo automático):** en claude.ai ve a Settings →
+  Capabilities y activa "Code execution" y "File creation"; luego, en Skills,
+  sube un `.zip` de la carpeta de la skill (por ejemplo, comprime
+  `skills/kit-codigo/` con su `SKILL.md` dentro: `zip -r kit-codigo.zip
+  skills/kit-codigo/`). La skill se activa sola por su description, igual que
+  en Claude Code. En planes Team/Enterprise, el dueño de la organización puede
+  aprovisionarlas a toda la empresa de una vez (Organization settings →
+  Skills). El paso a paso vigente manda en la doc oficial —el flujo es de
+  Anthropic y puede cambiar—:
+  https://support.claude.com/en/articles/12512198-creating-custom-skills
+- **Núcleo y contexto:** eso no viaja (en la web no hay `CLAUDE.md` ni hooks).
+  Copia el contenido de `nucleo/CLAUDE.md` como instrucciones del proyecto y
+  pega al final tus archivos de `contexto/` (ya rellenados).
+- **Council:** corre en secuencial, no en paralelo (en la web no hay
+  subagentes). El panel funciona igual, un evaluador después de otro; espera
+  que tarde un poco más.
+- **Hook:** no aplica en la web (no hay `git` local que interceptar). La regla
+  de no filtrar credenciales sigue como consejo en el núcleo, pero sin el
+  bloqueo automático que da el hook en tu equipo.
 
 ## 4. Actualizar el kit
 
