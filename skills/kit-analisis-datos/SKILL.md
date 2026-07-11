@@ -36,7 +36,10 @@ resto sirve.
 1. Entender el dato antes de analizarlo. Antes de calcular nada, revisa qué
    tienes: el esquema (qué columnas hay y qué significan), el periodo que cubre,
    los huecos (valores vacíos, fechas faltantes), los duplicados y las unidades
-   (pesos o dólares, con o sin IVA, diario o mensual). Reporta lo que encuentres:
+   (pesos o dólares, con o sin IVA, diario o mensual). Confirma también el
+   grano: qué representa exactamente una fila (¿una venta, un renglón de ticket,
+   un cliente, un día?); agregar o cruzar tablas sin saberlo es la causa típica
+   de sumas dobles. Reporta lo que encuentres:
    la calidad del dato es parte del entregable, no un paso escondido.
 2. Preguntas que el análisis debe responder. Escribe las preguntas concretas
    antes de sumergirte en los números. Sin preguntas, "explorar" se vuelve pasear
@@ -79,3 +82,6 @@ Antes de entregar, con los datos y el análisis delante:
 - Gráficas con ejes recortados. Empezar el eje en 90 en vez de 0 para que una
   diferencia pequeña parezca enorme. Es la forma más común de mentir con una
   gráfica siendo técnicamente cierto el dato.
+- Explicar ruido como si fuera señal. Buscar la causa de una variación que cabe
+  dentro de la fluctuación normal de la métrica. Antes de explicar un cambio,
+  confirma que supera la variación habitual; si no, es ruido, no hallazgo.

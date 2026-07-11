@@ -37,7 +37,11 @@ resto sirve.
 
 1. Listar supuestos primero. Antes de calcular nada, escribe los supuestos con su
    valor: precios unitarios, tasas (interés, impuestos, comisión), plazos y el
-   tipo de cambio con su fecha. Sin esta lista, el cálculo es una caja negra que
+   tipo de cambio con su fecha. Si los números de entrada vienen de fuera (el
+   Excel del cliente, una lista de precios, un estado financiero), revísalos
+   antes de calcular: sin campos vacíos ni valores implausibles (costo en cero,
+   margen negativo sin explicación) — recalcular perfecto sobre entrada corrupta
+   da resultado corrupto. Sin esta lista, el cálculo es una caja negra que
    nadie puede auditar ni actualizar.
 2. Construir el cálculo con pasos visibles. Haz las operaciones en una tabla o un
    script que quede a la vista, no en aritmética mental. Cada monto debe poder
@@ -59,7 +63,9 @@ resto sirve.
 Antes de entregar, con los números y el cálculo delante:
 
 - ¿Los supuestos están explícitos y listados aparte?
-- ¿Los cálculos están a la vista y se pueden re-ejecutar?
+- ¿Los cálculos están a la vista y se pueden re-ejecutar? Si el entregable es
+  una hoja de cálculo: fórmulas vivas en las celdas calculadas, no valores
+  pegados — cambiar un supuesto debe actualizar el resultado sin rehacer nada.
 - ¿Los totales se verificaron dos veces, por caminos distintos?
 - ¿Las proyecciones traen escenarios, no una sola cifra?
 - ¿Están declaradas la moneda y la fecha del tipo de cambio?

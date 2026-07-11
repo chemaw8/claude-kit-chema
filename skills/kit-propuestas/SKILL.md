@@ -105,6 +105,11 @@ El Council cierra con uno de tres veredictos exactos:
 Si el panel no puede decidir, no inventes un veredicto: di qué evidencia
 concreta falta para poder decidir.
 
+Al sintetizar, verifica los hallazgos antes de heredarlos al veredicto: un
+hallazgo que no resista una verificación rápida (dato erróneo, fuera de alcance,
+ya resuelto) se descarta explicando por qué. Que venga de un evaluador no lo
+hace verdad por sí solo.
+
 ## Errores típicos
 
 - Council teatral: inventar fallos para parecer riguroso. Si no hay hallazgos,
