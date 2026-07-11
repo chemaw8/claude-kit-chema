@@ -1,5 +1,25 @@
 # Changelog — Kit Chema
 
+## v1.7 — 2026-07-10
+Ajustes del council de "arquitectura de skills" (registro en
+`docs/pruebas/council-v1.7.md`; investigación con fuentes en
+`investigacion/2026-07-10-skills-*.md`). De cinco ítems propuestos, el council
+desagregó: (1) el oficio de crear skills queda como sección "Crear una skill
+nueva" de GOBERNANZA — la meta-skill kit-crea-skills se difiere con detonante
+explícito (que exista un segundo autor del kit); (2) el INSTRUCTIVO corrige la
+vía de claude.ai: documentaba el método degradado (pegar archivos a mano) cuando
+existe la subida real de skills con disparo automático (Settings → Capabilities
+→ zip), y ahora enlaza la doc oficial en vez de reproducir su click-path; (3)
+`verificar.sh` reporta siempre la suma de caracteres de las descriptions y avisa
+—sin bloquear— si rebasa 6,000 (higiene del footprint propio; el presupuesto
+real del listado es global, ~16k sobre todas las skills instaladas, y un linter
+de repo no puede verlo); (4) las 8 skills declaran `license: MIT` en su
+frontmatter (metadato del estándar abierto agentskills.io; campos extra
+verificados inofensivos en vivo) y el linter ahora lo exige; (5) el juez Haiku
+se rechazó como gate (mediría un lector más débil que el router real y empujaría
+a engordar descriptions) y queda solo como sonda opcional no bloqueante en el
+RUNBOOK. Plugin a 1.7.0.
+
 ## v1.6 — 2026-07-10
 Lote de mejoras cosechadas de la comparativa con ECC y vetadas por council, todas
 como adiciones de 1-2 líneas a cuerpos y checklists de skills (ninguna description

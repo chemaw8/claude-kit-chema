@@ -1,5 +1,6 @@
 ---
 name: kit-presentaciones
+license: MIT
 description: Estándar Kit Chema para presentaciones, decks, láminas e informes con audiencia. Úsala siempre antes de crear o editar un deck, pptx, presentación, informe para cliente o material de reunión — antes de escribir la primera lámina. Frases gatillo "hazme una presentación", "un deck para", "láminas sobre", "prepara el informe", "algo para presentarle a". Obliga a definir audiencia, objetivo y narrativa antes que el diseño, y cierra con checklist de cifras y visual.
 ---
 

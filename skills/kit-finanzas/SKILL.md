@@ -1,5 +1,6 @@
 ---
 name: kit-finanzas
+license: MIT
 description: Estándar Kit Chema para trabajo con dinero y números de negocio — cotizaciones, presupuestos, proyecciones, márgenes, costos, análisis financiero. Úsala al pedir "cotiza", "presupuesto para", "proyección de", "cuánto nos cuesta", "margen de". Obliga a recalcular toda cifra (nunca confiar en números de memoria o del prompt), declarar supuestos y presentar escenarios.
 ---
 

@@ -1,5 +1,6 @@
 ---
 name: kit-propuestas
+license: MIT
 description: 'Estándar Kit Chema para redactar o evaluar propuestas y decisiones — propuestas de desarrollo, de inversión, de arquitectura, cotizaciones, o cualquier "¿hacemos X o Y?"; también todo mensaje o correo que pide aprobar, autorizar o decidir algo (aunque vaya a dirección). Úsala al escribir una propuesta, al evaluar una idea del usuario con consecuencias reales, al pedir aprobación de algo, y siempre que se pida "council". Frases gatillo "hazme la propuesta", "¿te parece bien esta idea?", "evalúa esta decisión", "que aprueben/autoricen X", "council". Incluye el protocolo Council: panel de evaluadores independientes con veredicto aprobada / con cambios / rechazada.'
 ---
 

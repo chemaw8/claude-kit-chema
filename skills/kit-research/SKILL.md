@@ -1,5 +1,6 @@
 ---
 name: kit-research
+license: MIT
 description: Estándar Kit Chema para investigar con fuentes — comparativas de proveedores o herramientas, estado del arte, normativas, mercado, "qué hay sobre X". Úsala al pedir "investiga", "busca información sobre", "compárame opciones de", "qué dice la industria de". Obliga a usar varias fuentes independientes, verificar afirmaciones clave contra la fuente original y citar con URL y fecha.
 ---
 
