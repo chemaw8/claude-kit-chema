@@ -70,6 +70,9 @@ La regla que sostiene todo lo demás. Cada punto es verificable.
 - Errores nunca en silencio. Ningún bloque catch/except queda vacío ni solo con
   un print: cada uno maneja el error, lo relanza, o lo loguea con contexto.
   Tragar errores en silencio es el bug más caro.
+- Mocks solo para aislar, nunca para aprobar. No afirmes sobre el propio mock
+  —eso prueba que existe, no que el código funciona— y no dejes en clases de
+  producción métodos que solo usan las pruebas.
 - Revisar el diff completo antes del commit final. Lee todo lo que vas a
   commitear. Lo que no aporte a la tarea, fuera.
 
@@ -81,6 +84,9 @@ La regla que sostiene todo lo demás. Cada punto es verificable.
   confirma o descarta, y solo entonces aplica el fix.
 - No "arregles" código que no entiendes. Cambiar cosas al azar hasta que parezca
   funcionar deja bugs escondidos; primero entiende por qué falla.
+- Si van tres intentos de fix seguidos sin resolver el bug, para: probablemente
+  estás parchando el síntoma y no la causa. Replantea la hipótesis de origen, o
+  el diseño de fondo, antes de un cuarto intento.
 
 ## Checklist final
 
@@ -90,6 +96,8 @@ La regla que sostiene todo lo demás. Cada punto es verificable.
 - ¿Sin secretos ni datos reales de clientes en el código o los commits?
 - ¿Commits atómicos con mensajes claros?
 - Si es algo nuevo, ¿documenté cómo correrlo?
+- Si delegaste en un subagente, ¿revisaste su diff u output real, no solo su
+  reporte de "listo"?
 
 ## Errores típicos
 

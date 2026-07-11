@@ -1,5 +1,22 @@
 # Changelog — Kit Chema
 
+## v1.8 — 2026-07-11
+Cosecha de cuerpos contra otros autores (comparativa en
+`investigacion/2026-07-10-skills-comparativa-cuerpos.md`; council de veto en
+`docs/pruebas/council-v1.8.md`): de 15 candidatas entran 14 —2 fusionadas en
+texto existente— y se corta 1 por redundancia. Adiciones de 1-2 líneas a cuerpos,
+cero cambios de description (sin gate). Lo más valioso: dos correcciones —el
+formato Estatus gana su esqueleto en kit-redaccion (era el único formato sin él)
+y kit-automatizacion deja de pedir pruebas "con datos verdaderos" que dispararían
+el efecto real (correo/cobro)—; mocks que no aprueban, tope de tres intentos de
+fix, y diff real del subagente en kit-codigo; lector fresco en el ensayo de
+kit-presentaciones; verificación de hallazgos de evaluador antes de heredarlos
+al veredicto en kit-propuestas; vigencia de fuentes en kit-research; grano del
+dato y ruido-vs-señal en kit-analisis-datos; validación de entrada externa y
+fórmulas vivas en kit-finanzas; heartbeat de última corrida en
+kit-automatizacion. GOBERNANZA gana la regla "Rondas de cosecha" (tope
+prospectivo de 2 adiciones netas por skill por ronda). Plugin a 1.8.0.
+
 ## v1.7 — 2026-07-10
 Ajustes del council de "arquitectura de skills" (registro en
 `docs/pruebas/council-v1.7.md`; investigación con fuentes en

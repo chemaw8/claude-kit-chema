@@ -61,7 +61,8 @@ resto sirve para algo.
 Antes de entregar, con las fuentes y el reporte delante:
 
 - ¿Las afirmaciones clave están respaldadas por 2 o más fuentes independientes?
-- ¿Cada cita tiene su URL y su fecha de consulta?
+- ¿Cada cita tiene su URL y su fecha de consulta, y señalé si alguna fuente
+  clave quedó vieja para lo rápido que cambia el tema?
 - ¿Marqué qué es consenso, qué está en disputa y qué es opinión o dato único?
 - ¿Dije qué no encontré o qué quedó sin confirmar?
 

@@ -2,11 +2,11 @@
 
 Actualizado: 2026-07-10
 
-## Estado: EN USO — v1.7, `main` con branch protection activa
+## Estado: EN USO — v1.8, `main` con branch protection activa
 
 El kit está completo, verificado, instalado en el `~/.claude` de José y público
 en github.com/chemaw8/claude-kit-chema. Historia por versión en `CHANGELOG.md`
-(v1.0 → v1.7). Desde el **2026-07-10** `main` tiene **branch protection activa**:
+(v1.0 → v1.8). Desde el **2026-07-10** `main` tiene **branch protection activa**:
 todo cambio —incluido el del dueño— entra por PR con los dos checks de CI en
 verde (`límites del kit`, `escaneo de secretos (gitleaks)`); ver `GOBERNANZA.md`.
 v1.0 se declaró el 2026-07-09 con los 8 criterios de aceptación del spec
@@ -54,6 +54,10 @@ cumplidos (rama de construcción `construccion-v1.0`, ya eliminada).
   autor), vía real de claude.ai corregida en el INSTRUCTIVO, presupuesto de
   descriptions en `verificar.sh` (aviso no bloqueante), `license: MIT` en las 8
   skills (exigido por el linter) y sonda Haiku opcional en el RUNBOOK.
+- v1.8 (2026-07-11): cosecha de cuerpos vs otros autores (superpowers,
+  anthropics/skills, comunidad) — 14 adiciones de 1-2 líneas repartidas en las
+  8 skills tras council de veto (1 cortada por redundancia); regla "Rondas de
+  cosecha" en GOBERNANZA (tope prospectivo 2/skill/ronda).
 
 ## Siguiente paso (José)
 

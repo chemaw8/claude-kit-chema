@@ -60,6 +60,15 @@ falta un matiz, es una adición de 1-2 líneas a esa skill, no una skill nueva.
    skill nueva toca el disparo, así que el gate es obligatorio antes de sacar
    el PR de borrador.
 
+## Rondas de cosecha
+
+Cuando una comparativa contra otros autores (u otra investigación) produzca un
+lote de mejoras a los cuerpos, cada adición pasa primero la prueba "¿ya está
+dicho en el texto completo de la skill?", y entran como máximo 2 adiciones netas
+por skill por ronda — lo que exceda espera a la siguiente. El tope existe para
+que las skills no crezcan a golpe de comparativas hasta volverse ilegibles
+(council 2026-07-10; rige desde la ronda siguiente a v1.8).
+
 ## Rollback
 
 Si un cambio ya fusionado resulta dañino, el rollback es **revertir el PR**

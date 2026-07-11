@@ -32,7 +32,8 @@ que se hojea.
   sigue la misma regla: lo mínimo para que alguien que no estuvo entienda, y nada
   más.
 - **Estatus a dirección**: la conclusión y los números primero; el detalle
-  después y solo si aporta. Informa, no pide aprobar. En cuanto el mensaje
+  después y solo si aporta. Los números van concretos, no en adjetivos ("mejoró
+  mucho" → "bajó de 60 a 15 horas al mes"). Informa, no pide aprobar. En cuanto el mensaje
   propone opciones con sus costos y espera un sí o un no, dejó de ser estatus y
   es una propuesta (kit-propuestas).
 
@@ -47,6 +48,8 @@ que se hojea.
 3. Estructura según el formato. Correo: asunto útil, pedido, contexto mínimo.
    Minuta: acuerdos, responsables y fechas, pendientes; con la decisión separada
    de la discusión. Memo o nota: idea principal, contexto, siguiente paso.
+   Estatus: conclusión y números arriba; luego avances, próximos pasos y riesgos
+   o bloqueos.
 4. Corta. Relee y quita relleno: saludos de más, "espero que este correo te
    encuentre bien", adjetivos vacíos, repeticiones. Cada palabra defiende su
    lugar.

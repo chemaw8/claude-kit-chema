@@ -55,6 +55,9 @@ deciden si el resto sirve.
 6. Ensayo de flujo. Al terminar, lee el deck de corrido usando solo los títulos.
    Si la historia se entiende y lleva al objetivo, el esqueleto aguanta; si se
    traba o salta, el problema es de narrativa y se arregla antes de pulir nada.
+   Mejor aún: pruébalo con un lector fresco —alguien o un subagente sin el
+   contexto de esta conversación—, porque tú ya conoces la historia y no puedes
+   leerla como quien la ve por primera vez.
 
 ## Checklist final
 

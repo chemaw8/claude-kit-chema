@@ -39,14 +39,19 @@ resto sirve.
 2. Diseñar el manejo de errores. Decide antes de programar qué ocurre cuando algo
    falla: cuántos reintentos, a quién se avisa y por qué medio, y dónde queda el
    registro de lo que pasó. El manejo de errores se diseña, no se improvisa
-   cuando ya reventó.
+   cuando ya reventó. Y como el manejo de errores dentro del proceso no detecta
+   el proceso que nunca corrió, define además una señal externa —un heartbeat o
+   una marca de "última corrida exitosa" que alguien revise— que avise si la
+   ejecución no ocurrió cuando tocaba.
 3. Construir. Aquí aplica kit-codigo: entender lo que ya hay, plan corto, TDD
    donde haya lógica y cero residuos. La automatización es código y se sostiene
    con esas mismas reglas.
 4. Probar en real al menos una vez. Ejecútala con datos verdaderos y mira la
-   salida y el comportamiento ante un error provocado. Que el código parezca
-   correcto no prueba que el flujo completo funcione; probarlo una vez de verdad,
-   sí.
+   salida y el comportamiento ante un error provocado. Si produce efectos
+   visibles hacia afuera (correo, mensaje, cobro, publicación), la prueba usa
+   destinatarios o datos seguros, o pide confirmación explícita antes de correr:
+   la prueba no debe disparar el efecto real. Que el código parezca correcto no
+   prueba que el flujo completo funcione; probarlo una vez de verdad, sí.
 5. Documentar. Deja escrito cómo correrla, cómo saber que funcionó, cómo apagarla
    y quién la mantiene. Sin esto queda una automatización que solo su autor
    entiende y nadie más puede operar.
