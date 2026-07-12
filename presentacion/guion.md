@@ -53,7 +53,7 @@ persona.
 **Contenido:**
 - Subtítulo: instrucciones de calidad que cualquiera instala y usa, sin depender
   de la configuración de nadie.
-- Sello inferior: repositorio `claude-kit-chema` · versión v1.0 · 2026-07-09.
+- Sello inferior: repositorio `claude-kit-chema` · versión v1.8 · 2026-07-11.
 - Fondo navy con el degradado de marca (azul→ámbar) como acento.
 
 ---
@@ -224,8 +224,9 @@ adivinar; el kit trae la guía y dos palabras clave que cambian el trabajo.
   marcada al final sin tocar lo tuyo; en actualizaciones posteriores respalda
   antes de reescribir su sección.
 - **Hooks:** el de contexto se instala por defecto; el anti-secretos es opt-in con `KIT_HOOKS=s ./instalar.sh`.
-- **claude.ai web también:** pega el núcleo como instrucciones del proyecto y
-  sube los `SKILL.md` que uses (versión degradada, mismo criterio).
+- **claude.ai web también:** las skills se suben como zip (Settings →
+  Capabilities) y disparan solas por su description; el núcleo se pega como
+  instrucciones del proyecto (hooks y subagentes no viajan).
 
 ---
 
