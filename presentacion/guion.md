@@ -11,7 +11,7 @@ título, la idea única que defiende y el contenido concreto que la sostiene.
 - **Narrativa en tres actos:**
   - Situación (láminas 1–2): hoy Claude nos ayuda, pero repite fallos.
   - Complicación (lámina 2): esos fallos cuestan tiempo y confianza.
-  - Resolución (láminas 3–12): el kit los ataca, así funciona, así se instala,
+  - Resolución (láminas 3–13): el kit los ataca, así funciona, así se instala,
     y está respaldado.
 - **Regla de títulos:** cada título afirma algo; leídos en fila cuentan el
   argumento completo, sin necesidad del contenido.
@@ -261,3 +261,25 @@ intuición; instálalo con confianza.
 - **Council probado:** cazó un error de 50× plantado y aprobó una propuesta
   sólida sin inventar objeciones.
 - Cierre: instálalo hoy — `git clone` + `./instalar.sh`.
+
+---
+
+## Lámina 13 — El ecosistema
+
+**Título:** El kit no está solo: el stack completo, probado junto
+
+**Idea:** el Kit Chema es el principal (criterio y gobernanza); a su alrededor
+hay capas complementarias ya evaluadas y compatibles entre sí.
+
+**Contenido (cuatro columnas + cierre):**
+- **Kit Chema — el principal:** criterio y calidad en 8 dominios; gobernado por
+  council, CI y branch protection.
+- **superpowers (MIT):** metodología de desarrollo (brainstorming, planes, TDD,
+  debugging). Compatible: kit-codigo trae el bloque que reparte los carriles.
+- **find-skills:** descubre e instala skills nuevas del ecosistema abierto
+  cuando falta una capacidad — con el presupuesto de disparo en mente.
+- **Añadibles ya evaluadas:** document-skills oficiales (Excel/Word/PDF/PPT con
+  fórmulas vivas), security-guidance (revisión de seguridad en cada commit),
+  pr-review-toolkit y commit-commands.
+- Cierre: cada capa en su carril — el kit pone el criterio, superpowers el
+  método, los plugins la mecánica; sin choques.
