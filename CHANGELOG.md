@@ -1,5 +1,17 @@
 # Changelog — Kit Chema
 
+## v1.9 — 2026-07-15
+Mejora por uso (council en `docs/pruebas/council-v1.9.md`): se añade la plantilla
+`contexto/BASE-CONOCIMIENTO.md`, el tercer archivo de contexto que el hook
+`kit-chema-contexto.sh` ya esperaba pero que el kit no traía —el instalador solo
+copiaba EMPRESA y PERSONAL, así que una base de conocimiento (p.ej. un vault por
+el MCP basic-memory) quedaba "dormida" sin señal para el usuario. La plantilla es
+genérica y fill-in, al estilo de `CONTEXTO-PERSONAL` (regla de oro por línea,
+límite de 40-60 líneas), con basic-memory/vault como ejemplo y no como requisito.
+Cambio aditivo, no destructivo (respeta archivos existentes) y reversible. Council
+a favor por unanimidad (viabilidad, riesgos, abogado del diablo); único ajuste:
+alinear el estilo con las otras dos plantillas. Plugin a 1.9.0.
+
 ## v1.8 — 2026-07-11
 Cosecha de cuerpos contra otros autores (comparativa en
 `investigacion/2026-07-10-skills-comparativa-cuerpos.md`; council de veto en
