@@ -27,6 +27,41 @@ Una propuesta útil se lee en este orden y no le falta ninguna pieza:
    distingue una apuesta barata de una jugada irreversible y fija cuánto rigor
    merece la decisión.
 
+## Acercamiento personalizado a un contacto
+
+Aplica cuando el usuario quiere acercarse a una persona concreta de otra
+empresa —para una presentación, una propuesta o cerrar una venta— y busca
+subir el % de aceptación personalizando el mensaje o el material para esa
+persona específica. El orden importa: primero se confirma quién es el
+contacto, después se investiga, y al final se produce el entregable.
+
+1. Identifica y confirma al contacto antes de personalizar cualquier cosa.
+   Con el nombre, la empresa y el puesto que dé el usuario, busca por web
+   (no hay API de LinkedIn para buscar terceros: el scope self-serve solo
+   da acceso al perfil propio y a publicar/reaccionar/comentar). Si aparece
+   más de una persona plausible —dos con el mismo puesto, nombres
+   parecidos, empresas con el mismo nombre en países distintos—, preséntale
+   las opciones al usuario con lo que las distingue y que él confirme cuál
+   es antes de seguir. Personalizar sobre el contacto equivocado es peor
+   que no personalizar: nunca avances con una identidad sin confirmar.
+2. Investiga al contacto y a su empresa ya confirmados: rol y prioridades
+   del puesto, movimientos o noticias recientes de la empresa, cualquier
+   señal pública que conecte con lo que se le quiere ofrecer. Usa solo lo
+   verificable; no rellenes con supuestos sobre la persona para que suene
+   más personalizado.
+3. Pregunta el formato de salida si no es obvio por la conversación —
+   mensaje corto de acercamiento, propuesta completa o presentación— y
+   aplica el kit que corresponda (`kit-redaccion`, esta misma skill o
+   `kit-presentaciones`). La personalización es una capa sobre esa
+   estructura, no la reemplaza: un mensaje de acercamiento sigue siendo
+   breve y accionable, una propuesta sigue llevando sus cinco piezas.
+4. Personaliza con evidencia concreta de la investigación, conectada al
+   problema u opción real que ya trae el entregable — no con halagos
+   genéricos que aplicarían a cualquier destinatario.
+5. Antes de enviar o publicar cualquier cosa a nombre del usuario (mensaje,
+   correo, comentario en LinkedIn), confirma con él el contenido final: es
+   una acción que sale de la empresa y llega a un tercero real.
+
 ## Cuándo corre un Council
 
 No toda decisión necesita panel. Corre un Council cuando:
@@ -120,3 +155,7 @@ hace verdad por sí solo.
   de cada opción encima de la mesa.
 - Reabrir decisiones cerradas: discutir de nuevo lo que ya está en
   `DECISIONES.md` sin evidencia nueva que lo justifique.
+- Personalizar sin confirmar identidad: avanzar con un contacto ambiguo (dos
+  personas con el mismo puesto) sin que el usuario haya confirmado cuál es.
+- Personalización de relleno: usar datos no verificados o halagos genéricos
+  que aplicarían a cualquier destinatario, en vez de evidencia concreta.
