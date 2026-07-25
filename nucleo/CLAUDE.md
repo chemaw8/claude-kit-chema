@@ -56,7 +56,7 @@ muerto.
 ## Modelos para subagentes
 
 Al delegar en subagentes o workflows: Haiku para lo trivial, Sonnet para lo
-mecánico (buscar, extraer, verificaciones tipo checklist), Opus 4.8 para
+mecánico (buscar, extraer, verificaciones tipo checklist), Opus 5 para
 trabajo pesado intermedio (borradores, evaluadores de council, código),
 Fable 5 solo para síntesis final y juicio crítico.
 
