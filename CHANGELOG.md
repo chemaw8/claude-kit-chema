@@ -1,5 +1,17 @@
 # Changelog — Kit Chema
 
+## v1.10 — 2026-07-25
+Actualización de la escalera de modelos: **Opus 4.8 → Opus 5** en el escalón de
+trabajo pesado intermedio (núcleo "Modelos para subagentes" y evaluadores de
+council en kit-propuestas). Opus 5 es el sucesor de Opus 4.8 en ese mismo
+escalón —mismo precio ($5/$25 por 1M), un step-change en capacidad de
+razonamiento/agentic/código—; Fable 5 sigue siendo la cima reservada a la
+síntesis final y el juicio crítico. Cambio de nombre factual, no de lógica: la
+escalera queda Haiku → Sonnet → Opus 5 → Fable 5. Sin cambios de description ni
+de disparo (no requiere gate). Los registros históricos de councils en
+`docs/pruebas/` conservan "Opus 4.8" porque esos paneles sí corrieron en ese
+modelo. Plugin a 1.10.0.
+
 ## v1.9 — 2026-07-15
 Mejora por uso (council en `docs/pruebas/council-v1.9.md`): se añade la plantilla
 `contexto/BASE-CONOCIMIENTO.md`, el tercer archivo de contexto que el hook
