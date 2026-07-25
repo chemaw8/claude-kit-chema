@@ -1,12 +1,12 @@
 # CONTINUAR — Kit Chema
 
-Actualizado: 2026-07-10
+Actualizado: 2026-07-25
 
-## Estado: EN USO — v1.8, `main` con branch protection activa
+## Estado: EN USO — v1.10, `main` con branch protection activa
 
 El kit está completo, verificado, instalado en el `~/.claude` de José y público
 en github.com/chemaw8/claude-kit-chema. Historia por versión en `CHANGELOG.md`
-(v1.0 → v1.8). Desde el **2026-07-10** `main` tiene **branch protection activa**:
+(v1.0 → v1.10). Desde el **2026-07-10** `main` tiene **branch protection activa**:
 todo cambio —incluido el del dueño— entra por PR con los dos checks de CI en
 verde (`límites del kit`, `escaneo de secretos (gitleaks)`); ver `GOBERNANZA.md`.
 v1.0 se declaró el 2026-07-09 con los 8 criterios de aceptación del spec
@@ -58,6 +58,13 @@ cumplidos (rama de construcción `construccion-v1.0`, ya eliminada).
   anthropics/skills, comunidad) — 14 adiciones de 1-2 líneas repartidas en las
   8 skills tras council de veto (1 cortada por redundancia); regla "Rondas de
   cosecha" en GOBERNANZA (tope prospectivo 2/skill/ronda).
+- v1.9 (2026-07-16): plantilla `contexto/BASE-CONOCIMIENTO.md` (3er archivo de
+  contexto que el hook ya esperaba pero el kit no traía; salió del onboarding de
+  colegas al vault); council a favor por unanimidad. Plugin 1.9.0.
+- v1.10 (2026-07-25): escalera de modelos **Opus 4.8 → Opus 5** en el escalón de
+  trabajo pesado intermedio (núcleo + evaluadores de council en kit-propuestas);
+  Fable 5 sigue en la cima para síntesis y juicio. Cambio de nombre factual, no
+  de lógica; sin gate de disparo. Plugin 1.10.0.
 
 ## Siguiente paso (José)
 
