@@ -33,9 +33,25 @@ arquitectura de contexto (MEMORY.md, hook de contexto, vault, subagentes).
    CONTINUAR, DECISIONES, docs de los 24 proyectos — está fuera de toda capa de
    recuperación: solo se alcanza si ya sabes la ruta.
 
+4. **Se delega 444 veces cada seis semanas, siempre al agente genérico.** Sobre
+   1,487 transcripts de uso real: `general-purpose` 444 invocaciones, y **cero** a
+   los 9 agentes especializados que se pagan en cada sesión. Con un sobrecosto
+   multi-agente del orden de 15×, ese es casi con seguridad el mayor consumo de
+   tokens del setup, y hoy ninguna de esas delegaciones lleva instrucciones de rol.
+
+5. **Los plugins pueden alcanzarse por proyecto.** Verificado en la documentación:
+   `enabledPlugins` tiene alcance "Any file". Vercel cuesta ~2,220 tokens por sesión
+   y se usó **2 veces en seis semanas**; los 6 agentes de pr-review-toolkit cuestan
+   ~1,570 y se usaron **cero**. No hay que desinstalarlos: hay que encenderlos donde
+   se usan.
+
 **Recomendación principal:** el trabajo de mayor retorno no es reescribir skills, es
-(a) reestructurar `MEMORY.md` y (b) darle mecanismo a lo que el núcleo ya declara.
-Las fichas de proyecto (diseño del 2026-08-22) son la pieza que conecta el punto 3.
+(a) darle mecanismo a lo que el núcleo ya declara y (b) mover a alcance por proyecto
+lo que hoy se paga globalmente. Las fichas de proyecto (diseño del 2026-08-22) son la
+pieza que habilita los puntos 3 y 5.
+
+**Efecto acumulado de lo propuesto:** arranque de sesión de 35,692 → ~29,200 tokens
+(−18%), sin perder ninguna capacidad.
 
 ---
 
@@ -83,6 +99,53 @@ tokens); el tope del kit es 5,000 palabras y la mayor usa el 24%.
 - 3,609 líneas acumuladas de `CONTINUAR.md`; la mayor, 911 líneas (~12k tokens).
 - `~/.claude/agents/`, `~/.claude/commands/`, `~/.claude/workflows/`: **vacíos**.
 - `claude doctor` → sin problemas de instalación.
+
+### Uso real, medido sobre 1,487 transcripts (2026-07-08 → 2026-08-22)
+
+Seis semanas de trabajo real. Esto convierte varias decisiones de opinión en
+evidencia.
+
+**Skills — el kit es el caballo de batalla:**
+
+| Skill | Invocaciones |
+|---|---:|
+| kit-research | 64 |
+| kit-codigo | 24 |
+| kit-redaccion | 16 |
+| kit-presentaciones | 15 |
+| superpowers:brainstorming | 15 |
+| kit-propuestas | 14 |
+| claude-api | 14 |
+| kit-analisis-datos | 12 |
+| document-skills:xlsx | 11 |
+| **Total kit-\*** | **156** |
+| **Total vercel:\* (30 skills cargadas)** | **2** |
+
+**Subagentes — 444 delegaciones, todas genéricas:**
+
+| Tipo | Invocaciones |
+|---|---:|
+| `general-purpose` | 444 |
+| `claude` | 7 |
+| `claude-code-guide` | 2 |
+| **Los 9 agentes especializados de plugins** | **0** |
+
+**MCP — todos se usan:** claude-in-chrome 303, Google/Gmail 179, basic-memory 120,
+scrapling ~220, context7 18. **No hay ningún MCP que cortar.**
+
+**Tres lecturas:**
+
+1. **El kit se gana su lugar con holgura:** 156 invocaciones contra 2 del plugin más
+   caro. Cualquier duda sobre si vale la pena mantenerlo queda contestada con datos.
+2. **Vercel cuesta ~2,220 tokens en cada sesión y se usó 2 veces en seis semanas.**
+   Es el desperdicio más claro del setup — pero José tiene tres proyectos en Vercel,
+   así que la respuesta no es desinstalarlo (ver P6).
+3. **444 delegaciones, todas a `general-purpose`; cero a los 9 agentes especializados
+   que se pagan cada sesión (~1,770 tokens).** José delega constantemente y ninguna
+   delegación recibe instrucciones de rol. Esto valida los tres subagentes de v1.11
+   con datos duros: no se añade una capacidad nueva, se le da propósito a algo que ya
+   ocurre 444 veces cada seis semanas — y que a ~15× de sobrecosto es, con casi total
+   seguridad, el mayor consumo de tokens del setup.
 
 ---
 
@@ -301,7 +364,29 @@ sobre los proyectos. La evidencia dice que para corpus bajo ~200k tokens el
 contexto completo con caché le gana a construir infraestructura de recuperación, y
 los proyectos de José entran holgadamente en ese rango uno por uno.
 
-### P5 — Lo que NO hay que hacer
+### P5 — Alcance de plugins por proyecto (hallazgo nuevo, alto retorno)
+
+**Verificado el 2026-08-22 en la documentación oficial:** la clave `enabledPlugins`
+tiene alcance **"Any file"** — se puede declarar en el `.claude/settings.json` de un
+proyecto, no solo en el global. Los `deny` de permisos, además, aplican de inmediato
+sin esperar a que se confíe la carpeta.
+
+**Qué habilita:** el `.claude/settings.json` de la ficha no es solo para permisos.
+Puede decidir **qué plugins se cargan en este proyecto**.
+
+| Plugin | Costo por sesión | Uso en 6 semanas | Acción propuesta |
+|---|---:|---:|---|
+| vercel (30 skills + 3 agentes) | ~2,220 tok | 2 | apagar global; encender en `homologador-tpu`, `verne-web`, `broukn-web` |
+| pr-review-toolkit (6 agentes) | ~1,570 tok | 0 agentes | apagar global; encender donde se revise código de verdad |
+
+**Ahorro combinado con P1: ~6,500 tokens por sesión**, de 35,692 a ~29,200 (−18%),
+sin perder ninguna capacidad — solo se paga donde se usa.
+
+**Precaución:** apagar un plugin globalmente significa que en una carpeta sin ficha
+no está disponible. Por eso esto va **después** de las fichas, no antes: sin ficha
+en los tres proyectos de Vercel, apagarlo global es una regresión, no una mejora.
+
+### P6 — Lo que NO hay que hacer
 
 | Tentación | Por qué no |
 |---|---|
@@ -315,12 +400,17 @@ los proyectos de José entran holgadamente en ese rango uno por uno.
 
 ## 5. Orden de ejecución sugerido
 
-1. **Fichas de proyecto** (diseño ya aprobado, 2026-08-22) — habilita P1 y P4.
-2. **P3, regla de presupuesto de contexto** — 60 tokens, entra en el mismo PR del kit.
-3. **P1, `MEMORY.md` jerárquico** — con la medición de recall como gate.
-4. **P2, los tres subagentes** — frente C, ya con la evidencia del 15× incorporada.
+| # | Qué | Ahorro / efecto | Bloqueado por |
+|---|---|---|---|
+| 1 | **P2 + P3** — kit v1.11: tres subagentes, presupuesto de contexto, puerta de delegación | da propósito a 444 delegaciones/6 semanas | council (GOBERNANZA) |
+| 2 | **Fichas de proyecto** (diseño 2026-08-22) | habilita P1, P4 y P5 | revisión del spec por José |
+| 3 | **P1** — `MEMORY.md` jerárquico | −2,700 tok/sesión | fichas + prueba de recall ≥9/10 |
+| 4 | **P5** — plugins por proyecto | −3,800 tok/sesión | fichas en los 3 proyectos de Vercel |
 
-P4 no lleva trabajo propio: se cumple solo cuando 1 esté hecho.
+P4 (RAG) no lleva trabajo propio: se cumple solo cuando 2 esté hecho.
+
+**Efecto acumulado si todo entra:** arranque de sesión de 35,692 → ~29,200 tokens
+(−18%), y las 444 delegaciones dejan de ser genéricas. Ninguna capacidad se pierde.
 
 ---
 
