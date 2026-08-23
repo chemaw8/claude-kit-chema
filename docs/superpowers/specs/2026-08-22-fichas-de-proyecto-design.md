@@ -155,6 +155,23 @@ historial ni respaldo. El caso de `pentest-ordenaris` es el más serio por el
 material que contiene. Inicializarles repo local (sin remoto, por el material) es
 prerrequisito de su ficha, pero **no** de este diseño: los tres caen en la ola 2 o 3.
 
+**Alcance de plugins por proyecto (añadido 2026-08-22).** Verificado en la
+documentación oficial: la clave `enabledPlugins` tiene alcance **"Any file"**, así
+que el `.claude/settings.json` de la ficha también decide **qué plugins carga este
+proyecto**. Eso convierte la ficha en la palanca de contexto más grande del setup:
+
+| Plugin | Costo por sesión | Uso medido en 6 semanas | Dónde debería vivir |
+|---|---:|---:|---|
+| vercel (30 skills + 3 agentes) | ~2,220 tok | 2 invocaciones | `homologador-tpu`, `verne-web`, `broukn-web` |
+| pr-review-toolkit (6 agentes) | ~1,570 tok | 0 invocaciones | donde se revise código de verdad |
+
+Medición sobre 1,487 transcripts; detalle en
+`investigacion/2026-08-22-context-engineering-attention-rag.md`.
+
+**Orden obligatorio:** primero las fichas de esos proyectos, después se apaga el
+plugin globalmente. Al revés es una regresión — el proyecto se queda sin la
+capacidad antes de tener dónde recuperarla.
+
 **Guardarraíl de confidencialidad (nuevo).** En los proyectos con material NDA o
 sensible (`pci-innovattia`, `poc-memoria-contratos`, `seguimiento-mensajeria`,
 `pentest-ordenaris`), el `settings.json` incluye:
