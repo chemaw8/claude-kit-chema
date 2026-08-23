@@ -1,8 +1,38 @@
 # CONTINUAR — Kit Chema
 
-Actualizado: 2026-07-25
+Actualizado: 2026-08-22
 
-## Estado: EN USO — v1.10, `main` con branch protection activa
+## SIGUIENTE PASO (leer esto primero)
+
+Hay **tres ramas sin mergear** esperando decisión de José. Ninguna se subió ni
+tiene PR abierto todavía.
+
+| Rama | Qué trae | Qué necesita |
+|---|---|---|
+| `v1.11-mecanismo` | 3 subagentes + regla de presupuesto de contexto + puerta de delegación | **council** (toca el núcleo) |
+| `spec-fichas-de-proyecto` | diseño de fichas de proyecto | que José revise el spec |
+| `investigacion-context-engineering` | investigación que respalda las otras dos | nada, es soporte |
+
+**Orden de ejecución recomendado** (detalle en §5 de la investigación):
+
+1. Council sobre `v1.11-mecanismo` → merge.
+2. José revisa el spec de fichas → plan de implementación → piloto en
+   `ventas-sucursales`.
+3. `MEMORY.md` jerárquico — la propuesta ya está escrita en
+   `~/.claude/projects/-home-chema/memory/MEMORY.md.propuesta` (el original
+   intacto). **No adoptar sin correr la prueba de recall de 10 preguntas que
+   viene en el propio archivo; criterio ≥9/10.**
+4. Apagar vercel y pr-review-toolkit globalmente y encenderlos por proyecto —
+   **solo después** de que existan las fichas de esos proyectos.
+
+Efecto acumulado si todo entra: arranque de sesión de 35,692 → ~29,200 tokens
+(−18%), y las 444 delegaciones cada seis semanas dejan de ser genéricas.
+
+**Pendiente aparte, no del kit:** `pentest-ordenaris`, `kreditera-bait` y
+`catalogo-conceptos-cdmx` no tienen git. El de pentest contiene el informe con
+el hallazgo crítico de BD de producción expuestas y no tiene respaldo alguno.
+
+## Estado: EN USO — v1.10 en `main`; v1.11 en rama, pendiente de council
 
 El kit está completo, verificado, instalado en el `~/.claude` de José y público
 en github.com/chemaw8/claude-kit-chema. Historia por versión en `CHANGELOG.md`
