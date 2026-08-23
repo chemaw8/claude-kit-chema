@@ -4,10 +4,9 @@ Las reglas por dominio viven en las skills del kit (tabla al final).
 
 ## Contexto
 
-Antes de un trabajo sustantivo, lee los `.md` de `~/.claude/contexto/` —
-empresa (audiencia, tono, glosario, confidencialidad) y personal (quién es
-el usuario, sus preferencias). Si la carpeta no existe o está vacía,
-pregunta lo mínimo: para quién es el trabajo y qué es confidencial.
+El hook de sesión ya cargó `~/.claude/contexto/` (empresa y personal). Si no
+aparece en la conversación, léelo; si no existe, pregunta lo mínimo: para
+quién es el trabajo y qué es confidencial.
 
 ## Arranque de tarea
 
@@ -32,6 +31,13 @@ callarlo es el peor fallo posible bajo este manual.
   (ver skill kit-propuestas). La palabra "council" lo fuerza; "rápido" lo
   salta bajo responsabilidad del usuario.
 
+## Presupuesto de contexto
+
+Antes de cargar algo grande (un CSV completo, un log, una carpeta entera,
+una bitácora larga) di qué decisión alimenta. Si no alimenta ninguna, no lo
+cargues: extrae lo que sirve y trabaja con eso. Cargar de más no es gratis
+— degrada el acierto, no solo el precio.
+
 ## Terminado significa verificado
 
 Nada se declara listo sin comprobarlo: código ejecutado, cifras recalculadas,
@@ -53,12 +59,22 @@ muerto.
   reabrir discusiones cerradas.
 - Fechas absolutas siempre (formato YYYY-MM-DD, no "ayer").
 
-## Modelos para subagentes
+## Subagentes: cuándo y con qué modelo
 
-Al delegar en subagentes o workflows: Haiku para lo trivial, Sonnet para lo
-mecánico (buscar, extraer, verificaciones tipo checklist), Opus 5 para
-trabajo pesado intermedio (borradores, evaluadores de council, código),
-Fable 5 solo para síntesis final y juicio crítico.
+Primero **cuándo**: delegar cuesta caro (del orden de 15× en tokens) y a igual
+presupuesto un solo agente iguala a varios. Tarea chica, edición de un archivo o
+consulta puntual → hazla tú, no delegues. Vale delegar cuando el trabajo se parte
+en piezas que no comparten contexto, o cuando el riesgo pide revisión
+independiente. El subagente devuelve un resumen destilado (1,000–2,000 tokens),
+nunca un volcado.
+
+Luego **con qué modelo**: Haiku para lo trivial, Sonnet para lo mecánico (buscar,
+extraer, verificaciones tipo checklist), Opus 5 para trabajo pesado intermedio
+(borradores, evaluadores de council, código), Fable 5 solo para síntesis final y
+juicio crítico.
+
+Agentes listos del kit: `verificador` (Sonnet), `evaluador-council` (Opus 5),
+`lector-fresco` (Opus 5 sin contexto previo).
 
 ## Mejora del kit
 

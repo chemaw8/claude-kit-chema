@@ -1,5 +1,45 @@
 # Changelog — Kit Chema
 
+## v1.11 — 2026-08-22 (PENDIENTE DE COUNCIL)
+Primera versión que añade **mecanismo** en vez de afinar prosa. Sale de la
+investigación `investigacion/2026-08-22-context-engineering-attention-rag.md`,
+que contrasta el estado del arte 2026 (Anthropic, Chroma, arXiv 2608.11888,
+Microsoft SkillOpt) contra la medición real del setup: 35,692 tokens de arranque
+por sesión.
+
+Tres cambios:
+
+1. **Tres subagentes en `agents/`** — `verificador` (Sonnet), `evaluador-council`
+   (Opus 5) y `lector-fresco` (Opus 5 sin contexto previo). La escalera de modelos
+   existía en el núcleo desde v1.0 pero `~/.claude/agents/` estaba vacío: era una
+   regla sin nada que la aplicara. `lector-fresco` formaliza algo que ya funcionó
+   a mano (QA del deck de sucursales, 2026-08-19, forzó tres correcciones).
+   Costo: ~242 tokens de descriptions siempre cargadas; los cuerpos son diferidos.
+
+2. **Regla "Presupuesto de contexto" en el núcleo** — la omisión más notable del
+   kit dado el cuerpo de evidencia sobre context rot (18 modelos evaluados por
+   Chroma; en LongMemEval un prompt enfocado de ~300 tokens supera a uno completo
+   de ~113k en la misma tarea). ~50 palabras.
+
+3. **La sección "Subagentes" ahora dice cuándo, no solo con qué modelo** —
+   incorpora el hallazgo de ~15× de sobrecosto multi-agente y que a igual
+   presupuesto un solo agente iguala a varios. Tarea chica → no se delega.
+
+Y un recorte: la sección "Contexto" del núcleo mandaba leer `~/.claude/contexto/`,
+cosa que el hook de SessionStart ya hace desde v1.4. Era letra muerta que además
+inducía lecturas redundantes.
+
+Núcleo: 84 → 97 líneas, 527 → 628 palabras (+19%). El crecimiento se defiende
+porque ambas adiciones son heurísticas que evitan errores caros —el tipo de
+contenido que las reglas de Claude 5 dicen conservar— y no reglas rígidas. Aun
+así el council debe pronunciarse sobre el saldo.
+
+**Candidato a recorte que NO se aplicó:** la tabla "Playbooks por dominio" (12
+líneas) duplica lo que ya declaran las descriptions de las 8 skills, y repetir
+instrucciones en ambos lugares está marcado como deprecado para la generación
+Claude 5. No se toca sin correr antes el gate de disparo de 21 peticiones: el
+20/21 de v1.0 pudo depender de esa tabla. Plugin a 1.11.0.
+
 ## v1.10 — 2026-07-25
 Actualización de la escalera de modelos: **Opus 4.8 → Opus 5** en el escalón de
 trabajo pesado intermedio (núcleo "Modelos para subagentes" y evaluadores de
