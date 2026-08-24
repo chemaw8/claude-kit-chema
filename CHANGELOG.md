@@ -1,16 +1,40 @@
 # Changelog — Kit Chema
 
-## v1.12 — 2026-08-24 (PENDIENTE DE COUNCIL)
-Novena skill: **kit-sugerencias**. Para los momentos de "tú dime cómo" o cuando
-la petición trae poca información: en vez de adivinar en silencio o preguntar en
-abstracto, ofrecer 2-4 opciones reales con su costo y una recomendación, y dejar
-elegir. Sale de un pedido de José ("algo similar a superpowers para elegir mediante
-sugerencias"). Se distingue de kit-propuestas (esa es para decisiones caras o
-irreversibles, con Council) y del núcleo ("pregunta 2-3"): esta OFRECE opciones
-curadas, no preguntas abiertas. Description 590 chars, 742 palabras, verificar.sh
-exit 0. Gate de disparo pendiente + council antes de merge (toca el núcleo: añade
-fila a la tabla de playbooks). Independiente de v1.11 (otra rama).
+## v1.12 — 2026-08-24
+Mejora de la regla "Arranque de tarea" del núcleo + comando `/revisar-salud`.
 
+Sale de un pedido de José ("algo similar a superpowers para elegir mediante
+sugerencias ante poca info"). Se propuso primero como una novena skill
+(`kit-sugerencias`); el **council la rechazó como skill por unanimidad (4/4,
+aprobada con cambios)** y la reubicó en el núcleo. Registro en
+`docs/pruebas/council-v1.12.md`.
+
+Por qué núcleo y no skill (convergencia de los 4 lentes): es una **disposición
+transversal** (aplica a cualquier dominio ante ambigüedad), no un playbook de
+dominio. El kit ya pone lo transversal en el núcleo ("Arranque de tarea",
+"Evaluación crítica"). Como skill sería a la vez más cara (590 chars siempre en
+el listado) y menos fiable (solo dispara si el dispatcher la elige — y en el caso
+que más importa, la petición vaga sin "dame opciones", no dispararía). El delta
+real sobre lo ya existente era una cláusula; el resto duplicaba kit-propuestas
+(opciones/costos/recomendación) y la propia regla de arranque.
+
+Qué entra:
+- **Núcleo "Arranque de tarea"**: ante info faltante, primero cerrar la ambigüedad
+  con lo que se pueda reunir (archivos, contexto, memoria, la conversación); sobre
+  lo que quede abierto con varios caminos materiales, **ofrecer 2-4 opciones con
+  costo y recomendación en vez de preguntar en abstracto o adivinar**; pregunta
+  abierta solo si ni eso se puede proponer. Incorpora los dos hallazgos del
+  council: "investigar antes de ofrecer" (riesgos) y "opciones curadas, no
+  formulario en blanco" (el delta genuino).
+- **kit-propuestas**: description aclarada — "¿X o Y?" **con consecuencias reales**
+  (caro/irreversible) es propuestas; la elección ligera la resuelve el núcleo.
+  Cierra la colisión de disparo asimétrica que señaló el lente de diseño.
+- **Comando `/revisar-salud`** (`commands/`): flujo de revisión-y-corrección de la
+  observabilidad — lee el reporte más reciente, reporta tendencia, separa errores
+  arreglables de ruido externo y propone arreglos para aprobar.
+
+Sin skill nueva → sin gate de disparo, sin costo permanente de listado. Núcleo
+81→~90 líneas (< 150). verificar.sh exit 0.
 
 ## v1.10 — 2026-07-25
 Actualización de la escalera de modelos: **Opus 4.8 → Opus 5** en el escalón de
