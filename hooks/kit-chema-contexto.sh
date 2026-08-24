@@ -13,11 +13,25 @@ set -uo pipefail
 # Sin python3 no se puede construir el JSON: se sale limpio (exit 0).
 command -v python3 >/dev/null 2>&1 || exit 0
 
-{
-  echo "# Contexto Kit Chema (cargado automáticamente al iniciar sesión)"
+# El encabezado va DENTRO del bucle (primer archivo encontrado): si no hay
+# ningún archivo de contexto, no se imprime nada. Un encabezado solo haría
+# creer que el contexto se cargó cuando no había nada que cargar —fallo
+# silencioso sobre las reglas de confidencialidad (council v1.11, H-2).
+salida=$(
+  primero=1
   for f in "$HOME/.claude/contexto/CONTEXTO-EMPRESA.md" \
            "$HOME/.claude/contexto/CONTEXTO-PERSONAL.md" \
            "$HOME/.claude/contexto/BASE-CONOCIMIENTO.md"; do
-    [ -f "$f" ] && { echo; echo "=== $(basename "$f") ==="; cat "$f"; }
+    [ -f "$f" ] && [ -s "$f" ] || continue
+    if [ "$primero" -eq 1 ]; then
+      echo "# Contexto Kit Chema (cargado automáticamente al iniciar sesión)"
+      primero=0
+    fi
+    echo; echo "=== $(basename "$f") ==="; cat "$f"
   done
-} | python3 -c 'import json, sys; texto = sys.stdin.read(); print(json.dumps({"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": texto}}, ensure_ascii=False))'
+)
+
+# Nada que inyectar: se sale limpio y el núcleo pedirá el contexto por su cuenta.
+[ -n "$salida" ] || exit 0
+
+printf '%s' "$salida" | python3 -c 'import json, sys; texto = sys.stdin.read(); print(json.dumps({"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": texto}}, ensure_ascii=False))'

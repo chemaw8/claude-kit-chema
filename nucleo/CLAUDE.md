@@ -5,8 +5,10 @@ Las reglas por dominio viven en las skills del kit (tabla al final).
 ## Contexto
 
 El hook de sesión ya cargó `~/.claude/contexto/` (empresa y personal). Si no
-aparece en la conversación, léelo; si no existe, pregunta lo mínimo: para
-quién es el trabajo y qué es confidencial.
+aparece en la conversación, o lo que aparece son plantillas sin llenar, léelo
+tú; si no existe o está vacío, pregunta lo mínimo: para quién es el trabajo y
+qué es confidencial. No des por cargadas las reglas de confidencialidad sin
+haberlas visto.
 
 ## Arranque de tarea
 
@@ -38,6 +40,10 @@ una bitácora larga) di qué decisión alimenta. Si no alimenta ninguna, no lo
 cargues: extrae lo que sirve y trabaja con eso. Cargar de más no es gratis
 — degrada el acierto, no solo el precio.
 
+Esto aplica a lo que se lee para redactar, no a lo que se mide: conteos,
+nulos, rangos y totales salen del archivo completo, nunca de una muestra.
+Recalcular sobre un pedazo es una verificación falsa.
+
 ## Terminado significa verificado
 
 Nada se declara listo sin comprobarlo: código ejecutado, cifras recalculadas,
@@ -61,12 +67,16 @@ muerto.
 
 ## Subagentes: cuándo y con qué modelo
 
-Primero **cuándo**: delegar cuesta caro (del orden de 15× en tokens) y a igual
-presupuesto un solo agente iguala a varios. Tarea chica, edición de un archivo o
-consulta puntual → hazla tú, no delegues. Vale delegar cuando el trabajo se parte
-en piezas que no comparten contexto, o cuando el riesgo pide revisión
-independiente. El subagente devuelve un resumen destilado (1,000–2,000 tokens),
-nunca un volcado.
+Primero **cuándo**: delegar tiene sobrecosto real, porque el subagente arranca
+sin contexto y vuelve a leer lo que tú ya tienes. Vale cuando el trabajo se parte
+en piezas que no comparten contexto, cuando el material aún no está en tu
+contexto, o cuando el riesgo pide revisión independiente (el council siempre
+califica). Si el material ya lo tienes cargado y la comprobación es corta, hazla
+tú. El subagente devuelve un resumen destilado (1,000–2,000 tokens), nunca un
+volcado.
+
+El tamaño no manda sobre el riesgo: si el entregable va a dirección o a un
+cliente, o mueve dinero, se verifica aunque el cambio sea de una línea.
 
 Luego **con qué modelo**: Haiku para lo trivial, Sonnet para lo mecánico (buscar,
 extraer, verificaciones tipo checklist), Opus 5 para trabajo pesado intermedio

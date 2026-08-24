@@ -28,6 +28,7 @@ pieza, dónde queda y cómo notas que actúa.
 | **kit-finanzas** | `~/.claude/skills/kit-finanzas/` | Cotización, presupuesto, proyección, margen, costos | Lista los supuestos aparte, recalcula cada cifra y entrega las proyecciones con escenarios, no con un número único |
 | **kit-automatizacion** | `~/.claude/skills/kit-automatizacion/` | Automatizar un proceso: cron, integración, bot, flujo que corre solo | Define disparador, entradas y salidas antes de construir y deja escrito cómo apagarlo |
 | **kit-redaccion** | `~/.claude/skills/kit-redaccion/` | Correo, minuta/acta, memo, comunicado, documentación, estatus informativo | Claude estructura el correo con un pedido claro, o la minuta con acuerdos/responsables/fechas, en vez de prosa suelta |
+| **Subagentes** (`agents/`) | `~/.claude/agents/` | Cuando Claude delega: verificar cifras, evaluar en council, o leer un entregable como su destinatario | Pides verificar un análisis y corre `verificador` (Sonnet) en vez del modelo principal; antes de mandar un deck, `lector-fresco` reporta qué no se entiende |
 | **Contexto** (`contexto/*.md`: empresa y personal) | `~/.claude/contexto/` (cada plantilla solo se instala si no existe) | Antes de cualquier trabajo sustantivo | Claude usa tu tono, glosario y marca sin que se lo repitas cada vez |
 | **Hook de contexto** (`hooks/kit-chema-contexto.sh`) | `~/.claude/hooks/` más una entrada `SessionStart` en `settings.json` (se instala por defecto) | Al abrir o reanudar cada sesión, antes del primer turno | Al iniciar una conversación nueva Claude ya conoce tu empresa, tono y proyectos sin que pegues nada; si te pregunta datos que están en `~/.claude/contexto/`, el hook no cargó (revisa la entrada `SessionStart` en `settings.json` y que exista `python3`) |
 | **Hook anti-secretos** (`hooks/anti-secretos.sh`) | `~/.claude/hooks/` más una entrada `PreToolUse` en `settings.json` (opt-in) | Justo antes de un `git commit` que Claude ejecuta (solo dentro de Claude Code) | Intenta commitear un archivo con una clave y el commit se bloquea con un aviso del kit |
@@ -42,6 +43,11 @@ kit y ajenas); al rebasarlo, algunas skills se vuelven invisibles sin aviso. Las
 del kit suman ~4,000 —lejos del tope— y `verificar.sh` vigila que esa suma no
 engorde, pero si un día una skill deja de dispararse, sospecha primero de
 cuántas skills tienes instaladas en total, no solo de las del kit.
+
+**Ojo con el nombre de los subagentes según la vía de instalación:** por
+`instalar.sh` se invocan por su nombre pelón (`verificador`); instalados como
+plugin quedan con prefijo (`kit-chema:verificador`). El núcleo usa el nombre
+pelón porque `instalar.sh` es la vía por defecto.
 
 ## 2. Señales de que está funcionando
 
