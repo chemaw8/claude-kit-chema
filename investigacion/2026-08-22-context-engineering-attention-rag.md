@@ -292,7 +292,7 @@ sobra es el catálogo completo cargado siempre.
 - Cómo trabajo — [usuario](usuario-jose.md) · [idioma](preferencia-idioma-voz.md) · [modelos](politica-modelos-subagentes.md)
 - Infraestructura — [repos](repos-y-respaldos.md) · [stack Claude](stack-claude-empresa.md) · [vault](proyecto-vault-conocimiento.md)
 - Fixes de esta laptop — [btrfs/InnoDB] · [basic-memory/Python] · [xlsx/LibreOffice] · [GPU BIOS] · [LaTeX]
-- Negocio MVNO — [contrato AT&T] · [regulación SIM] · [Neto] · [Simi] · [Verne]
+- Terreno del negocio — [contratos] · [regulación del sector] · [cuentas]
 - Proyectos activos (12) → ver ~/Trabajo/proyectos/<nombre>/CLAUDE.md
 - Proyectos cerrados (9) → [índice-cerrados.md]
 ```
