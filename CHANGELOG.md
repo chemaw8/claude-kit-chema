@@ -1,5 +1,41 @@
 # Changelog — Kit Chema
 
+## v1.12 — 2026-08-24
+Mejora de la regla "Arranque de tarea" del núcleo + comando `/revisar-salud`.
+
+Sale de un pedido de José ("algo similar a superpowers para elegir mediante
+sugerencias ante poca info"). Se propuso primero como una novena skill
+(`kit-sugerencias`); el **council la rechazó como skill por unanimidad (4/4,
+aprobada con cambios)** y la reubicó en el núcleo. Registro en
+`docs/pruebas/council-v1.12.md`.
+
+Por qué núcleo y no skill (convergencia de los 4 lentes): es una **disposición
+transversal** (aplica a cualquier dominio ante ambigüedad), no un playbook de
+dominio. El kit ya pone lo transversal en el núcleo ("Arranque de tarea",
+"Evaluación crítica"). Como skill sería a la vez más cara (590 chars siempre en
+el listado) y menos fiable (solo dispara si el dispatcher la elige — y en el caso
+que más importa, la petición vaga sin "dame opciones", no dispararía). El delta
+real sobre lo ya existente era una cláusula; el resto duplicaba kit-propuestas
+(opciones/costos/recomendación) y la propia regla de arranque.
+
+Qué entra:
+- **Núcleo "Arranque de tarea"**: ante info faltante, primero cerrar la ambigüedad
+  con lo que se pueda reunir (archivos, contexto, memoria, la conversación); sobre
+  lo que quede abierto con varios caminos materiales, **ofrecer 2-4 opciones con
+  costo y recomendación en vez de preguntar en abstracto o adivinar**; pregunta
+  abierta solo si ni eso se puede proponer. Incorpora los dos hallazgos del
+  council: "investigar antes de ofrecer" (riesgos) y "opciones curadas, no
+  formulario en blanco" (el delta genuino).
+- **kit-propuestas**: description aclarada — "¿X o Y?" **con consecuencias reales**
+  (caro/irreversible) es propuestas; la elección ligera la resuelve el núcleo.
+  Cierra la colisión de disparo asimétrica que señaló el lente de diseño.
+- **Comando `/revisar-salud`** (`commands/`): flujo de revisión-y-corrección de la
+  observabilidad — lee el reporte más reciente, reporta tendencia, separa errores
+  arreglables de ruido externo y propone arreglos para aprobar.
+
+Sin skill nueva → sin gate de disparo, sin costo permanente de listado. Núcleo
+81→~90 líneas (< 150). verificar.sh exit 0.
+
 ## v1.11 — 2026-08-23
 Primera versión que añade **mecanismo** en vez de afinar prosa. Sale de la
 investigación `investigacion/2026-08-22-context-engineering-attention-rag.md`,
