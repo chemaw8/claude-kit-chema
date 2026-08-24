@@ -1,5 +1,125 @@
 # Changelog — Kit Chema
 
+## v1.12 — 2026-08-24
+Mejora de la regla "Arranque de tarea" del núcleo + comando `/revisar-salud`.
+
+Sale de un pedido de José ("algo similar a superpowers para elegir mediante
+sugerencias ante poca info"). Se propuso primero como una novena skill
+(`kit-sugerencias`); el **council la rechazó como skill por unanimidad (4/4,
+aprobada con cambios)** y la reubicó en el núcleo. Registro en
+`docs/pruebas/council-v1.12.md`.
+
+Por qué núcleo y no skill (convergencia de los 4 lentes): es una **disposición
+transversal** (aplica a cualquier dominio ante ambigüedad), no un playbook de
+dominio. El kit ya pone lo transversal en el núcleo ("Arranque de tarea",
+"Evaluación crítica"). Como skill sería a la vez más cara (590 chars siempre en
+el listado) y menos fiable (solo dispara si el dispatcher la elige — y en el caso
+que más importa, la petición vaga sin "dame opciones", no dispararía). El delta
+real sobre lo ya existente era una cláusula; el resto duplicaba kit-propuestas
+(opciones/costos/recomendación) y la propia regla de arranque.
+
+Qué entra:
+- **Núcleo "Arranque de tarea"**: ante info faltante, primero cerrar la ambigüedad
+  con lo que se pueda reunir (archivos, contexto, memoria, la conversación); sobre
+  lo que quede abierto con varios caminos materiales, **ofrecer 2-4 opciones con
+  costo y recomendación en vez de preguntar en abstracto o adivinar**; pregunta
+  abierta solo si ni eso se puede proponer. Incorpora los dos hallazgos del
+  council: "investigar antes de ofrecer" (riesgos) y "opciones curadas, no
+  formulario en blanco" (el delta genuino).
+- **kit-propuestas**: description aclarada — "¿X o Y?" **con consecuencias reales**
+  (caro/irreversible) es propuestas; la elección ligera la resuelve el núcleo.
+  Cierra la colisión de disparo asimétrica que señaló el lente de diseño.
+- **Comando `/revisar-salud`** (`commands/`): flujo de revisión-y-corrección de la
+  observabilidad — lee el reporte más reciente, reporta tendencia, separa errores
+  arreglables de ruido externo y propone arreglos para aprobar.
+
+Sin skill nueva → sin gate de disparo, sin costo permanente de listado. Núcleo
+81→~90 líneas (< 150). verificar.sh exit 0.
+
+## v1.11 — 2026-08-23
+Primera versión que añade **mecanismo** en vez de afinar prosa. Sale de la
+investigación `investigacion/2026-08-22-context-engineering-attention-rag.md`,
+que contrasta el estado del arte 2026 (Anthropic, Chroma, arXiv 2608.11888,
+Microsoft SkillOpt) contra la medición real del setup: 35,692 tokens de arranque
+por sesión y, sobre 1,487 transcripts de seis semanas, 444 delegaciones al agente
+genérico y cero a los nueve agentes especializados que ya se pagaban.
+
+**Council de cuatro evaluadores (viabilidad técnica, costo/beneficio, riesgos,
+abogado del diablo): aprobada con cambios, por unanimidad.** Registro en
+`docs/pruebas/council-v1.11.md`. Los cuatro cambios exigidos ya están aplicados
+y verificados; tres de los cuatro evaluadores señalaron el mismo bloqueante.
+
+Qué entra:
+
+1. **Tres subagentes en `agents/`** — `verificador` (Sonnet, `tools: Read, Grep,
+   Glob, Bash`), `evaluador-council` (Opus 5) y `lector-fresco` (Opus 5,
+   `tools: Read, Grep, Glob`). La escalera de modelos existía en el núcleo desde
+   v1.0 pero `~/.claude/agents/` estaba vacío: era una regla sin nada que la
+   aplicara. `lector-fresco` es cosecha, no invención: ya funcionó a mano el
+   2026-08-19 en el QA de un deck y forzó tres correcciones.
+2. **Regla "Presupuesto de contexto" en el núcleo** — la omisión más notable del
+   kit dado el cuerpo de evidencia sobre context rot (18 modelos evaluados por
+   Chroma; en LongMemEval un prompt enfocado de ~300 tokens supera a uno completo
+   de ~113k). Incluye la cláusula que pidió el council: el presupuesto aplica a
+   lo que se lee para redactar, no a lo que se mide — conteos, nulos y rangos
+   salen del archivo completo, nunca de una muestra.
+3. **La sección de subagentes ahora dice cuándo, no solo con qué modelo** — y
+   con la cláusula "el tamaño no manda sobre el riesgo": lo que va a dirección o
+   a un cliente se verifica aunque el cambio sea de una línea.
+4. **El instalador y el linter ahora cubren `agents/`** — `instalar.sh` crea e
+   instala `~/.claude/agents/` copiando archivo por archivo (nunca `rm -rf` del
+   directorio, para no pisar agentes propios del usuario; probado en sandbox), y
+   `verificar.sh` gana 15 comprobaciones: que cada agente prometido por el núcleo
+   exista, que `name` coincida con el archivo, que `model` sea válido, que la
+   `description` esté bajo 1024 caracteres, y que el instalador siga instalándolos.
+
+Y dos recortes:
+
+- La sección "Contexto" del núcleo mandaba leer `~/.claude/contexto/`, cosa que
+  el hook de SessionStart ya hace desde v1.4. Era letra muerta que inducía
+  relecturas.
+- Se quitó del núcleo la cifra "15×" de sobrecosto por delegar. Dos evaluadores
+  independientes la marcaron como cita mal aplicada: la medición de Anthropic es
+  de sistemas multi-agente frente a chat, no de una delegación frente a hacerlo
+  en línea, donde el orden real es 2–4×. Puesta como hecho general habría
+  suprimido delegaciones que sí valen, incluidas las tres que esta versión
+  introduce. La regla queda con el criterio y sin el número.
+
+**Correcciones de cifras propias que encontró el council** (importan en un kit
+cuyo lema es "terminado significa verificado"):
+
+- El crecimiento del núcleo que se reportó primero (+19%) comparaba el archivo
+  instalado de antes —que trae tres líneas de marcadores— contra el archivo crudo
+  de después. Crudo contra crudo, y ya con las cláusulas que exigió el council,
+  el número final es **505 → 728 palabras: +44%**.
+- El "linter en verde" que se citó como respaldo **no cubría nada de lo nuevo**:
+  `verificar.sh` solo iteraba `skills/*/SKILL.md` y el único chequeo del núcleo
+  era el de <150 líneas. Ese hueco es justo lo que arregla el punto 4.
+
+**Condición de retiro (la misma vara que se le exige a las demás propuestas):**
+a las cuatro semanas del merge se cuentan las invocaciones de los tres agentes.
+El que esté en cero se borra y su regla se queda. Sin métrica no entra mecanismo.
+
+**Candidato a recorte que NO se aplicó:** la tabla "Playbooks por dominio" (12
+líneas) duplica lo que ya declaran las descriptions de las 8 skills, y repetir
+instrucciones en ambos lugares está marcado como deprecado para la generación
+Claude 5. No se toca sin correr antes el gate de disparo de 21 peticiones: el
+20/21 de v1.0 pudo depender de esa tabla.
+
+**Sobre el tamaño, sin adornos:** el núcleo pasa de 81 a 107 líneas y de 505 a
+728 palabras (+44%). El argumento que se usó al proponer esta versión —"527
+palabras, casi las 514 a las que llegó Anthropic tras recortar su system
+prompt"— **ya no se sostiene**: 728 queda 42% por encima de esa referencia y no
+se puede invocar la coincidencia como aval y luego pasarla de largo. Lo que
+defiende el crecimiento es otra cosa: son heurísticas permisivas y cláusulas de
+seguridad que el council exigió, no reglas rígidas —que es lo que Anthropic
+diagnosticó como sobre-restricción—. Aun así el saldo queda pendiente de
+compensar con el recorte de la tabla "Playbooks", y quien decida el merge debe
+saber que entra con esa deuda.
+
+`verificar.sh` exit 0 con las 15 comprobaciones nuevas. Plugin y marketplace a
+1.11.0.
+
 ## v1.10 — 2026-07-25
 Actualización de la escalera de modelos: **Opus 4.8 → Opus 5** en el escalón de
 trabajo pesado intermedio (núcleo "Modelos para subagentes" y evaluadores de

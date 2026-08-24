@@ -7,7 +7,7 @@ INI="<!-- kit-chema:inicio -->"
 FIN="<!-- kit-chema:fin -->"
 VER=$(grep -m1 -oE '## v[0-9]+\.[0-9]+' "$KIT/CHANGELOG.md" | cut -d' ' -f2)
 
-mkdir -p "$DIR" "$DIR/skills" "$DIR/contexto" "$DIR/hooks"
+mkdir -p "$DIR" "$DIR/skills" "$DIR/contexto" "$DIR/hooks" "$DIR/agents"
 
 # 1. Núcleo dentro de marcadores
 bloque=$(printf '%s\n<!-- Kit Chema %s — no editar dentro de los marcadores; se actualiza con instalar.sh -->\n%s\n%s' "$INI" "$VER" "$(cat "$KIT/nucleo/CLAUDE.md")" "$FIN")
@@ -52,6 +52,14 @@ for d in "$KIT"/skills/kit-*/; do
   rm -rf "$DIR/skills/$nombre"
   cp -r "$d" "$DIR/skills/$nombre"
   echo "skill: $nombre"
+done
+
+# 2b. Subagentes del kit (sobrescribe solo los del kit, por nombre)
+for a in "$KIT"/agents/*.md; do
+  [ -f "$a" ] || continue
+  nombre=$(basename "$a")
+  cp "$a" "$DIR/agents/$nombre"
+  echo "agente: ${nombre%.md}"
 done
 
 # 3. Contexto: cada plantilla solo si no existe (son del usuario)

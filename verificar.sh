@@ -46,11 +46,37 @@ for f in skills/*/SKILL.md; do
   [ "$palabras" -lt 5000 ]; chk "$f tiene $palabras palabras (< 5000)" $?
 done
 
+# 3b. Subagentes: los que el núcleo promete tienen que existir, ser válidos y
+# ser instalables. Sin esto el kit puede anunciar agentes que nadie instala
+# (council v1.11, hallazgo H-1: instalar.sh no copiaba agents/).
+prometidos=$(awk '/^Agentes listos del kit:/,/^$/' nucleo/CLAUDE.md | grep -oE '`[a-z-]+`' | tr -d '`' | sort -u)
+for nombre in $prometidos; do
+  f="agents/$nombre.md"
+  [ -f "$f" ]; chk "el núcleo promete '$nombre' y existe $f" $?
+done
+for f in agents/*.md; do
+  [ -e "$f" ] || continue
+  fm=$(awk '/^---$/{c++;next} c==1' "$f")
+  # name coincide con el nombre de archivo
+  nm=$(printf '%s\n' "$fm" | awk '/^name:/{sub(/^name:[ ]*/,"");print;exit}')
+  [ "$nm" = "$(basename "$f" .md)" ]; chk "$f name '$nm' coincide con el archivo" $?
+  # model válido
+  mdl=$(printf '%s\n' "$fm" | awk '/^model:/{sub(/^model:[ ]*/,"");print;exit}')
+  case "$mdl" in haiku|sonnet|opus|fable|inherit) ok=0 ;; *) ok=1 ;; esac
+  chk "$f model '$mdl' es válido" $ok
+  # description presente y < 1024 chars (mismo presupuesto que las skills)
+  d=$(printf '%s\n' "$fm" | awk '/^description:/{sub(/^description:[ ]*/,"");print;exit}')
+  n=${#d}
+  [ "$n" -gt 0 ] && [ "$n" -lt 1024 ]; chk "$f description $n chars (0<n<1024)" $?
+done
+# el instalador debe copiar agents/ (si no, los agentes nunca llegan a ~/.claude)
+grep -q 'DIR/agents' instalar.sh; chk "instalar.sh instala agents/" $?
+
 # 4. Sin gritos: mayúsculas de énfasis prohibidas en contenido instalable
-if grep -rnE '(CRITICAL|IMPORTANTE:|OBLIGATORIO:|NUNCA HAGAS|SIEMPRE DEBES)' nucleo/ skills/ 2>/dev/null | grep -v ':#'; then
-  chk "sin énfasis gritado en nucleo/ y skills/" 1
+if grep -rnE '(CRITICAL|IMPORTANTE:|OBLIGATORIO:|NUNCA HAGAS|SIEMPRE DEBES)' nucleo/ skills/ agents/ 2>/dev/null | grep -v ':#'; then
+  chk "sin énfasis gritado en nucleo/, skills/ y agents/" 1
 else
-  chk "sin énfasis gritado en nucleo/ y skills/" 0
+  chk "sin énfasis gritado en nucleo/, skills/ y agents/" 0
 fi
 
 exit $fallas
