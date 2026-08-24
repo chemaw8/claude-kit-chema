@@ -28,9 +28,10 @@ tiene PR abierto todavía.
 Efecto acumulado si todo entra: arranque de sesión de 35,692 → ~29,200 tokens
 (−18%), y las 444 delegaciones cada seis semanas dejan de ser genéricas.
 
-**Pendiente aparte, no del kit:** `pentest-ordenaris`, `kreditera-bait` y
-`catalogo-conceptos-cdmx` no tienen git. El de pentest contiene el informe con
-el hallazgo crítico de BD de producción expuestas y no tiene respaldo alguno.
+**Resuelto el 2026-08-23 (fuera del kit):** los tres proyectos que no tenían
+git ya lo tienen, y los 24 del directorio de trabajo quedaron con remoto privado
+en GitHub. Detalle en la memoria `repos-y-respaldos`, no aquí: este repo es
+público.
 
 ## Estado: EN USO — v1.10 en `main`; v1.11 en rama, pendiente de council
 
