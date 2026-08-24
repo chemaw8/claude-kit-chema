@@ -26,7 +26,7 @@ cada proyecto.
 | Con carpeta `.claude/` (permisos, skills) | **0** |
 | Con repo propio y remoto | 13 |
 | Con repo propio local (sin remoto) | 8 |
-| **Sin git alguno** | **3** — `pentest-ordenaris`, `kreditera-bait`, `catalogo-conceptos-cdmx` |
+| **Sin git alguno** | **3** (uno de ellos con material sensible) |
 | Con `CONTINUAR.md` | 25 |
 | Con `DECISIONES.md` | 19 |
 | Líneas totales de `CONTINUAR.md` | 3,609 |
@@ -148,12 +148,10 @@ ningún proyecto confidencial está rastreado por el repo padre**. Los proyectos
 git propio (los 3 de §1) quedan por tanto fuera de todo control de versiones: sus
 fichas no se versionan hasta que se les inicialice repo.
 
-**Prerrequisito detectado:** `pentest-ordenaris`, `kreditera-bait` y
-`catalogo-conceptos-cdmx` no tienen git, lo cual viola la regla de
-`~/Trabajo/CLAUDE.md` ("una carpeta por repo, con git inicializado") y los deja sin
-historial ni respaldo. El caso de `pentest-ordenaris` es el más serio por el
-material que contiene. Inicializarles repo local (sin remoto, por el material) es
-prerrequisito de su ficha, pero **no** de este diseño: los tres caen en la ola 2 o 3.
+**Prerrequisito detectado (resuelto el 2026-08-23):** tres proyectos no tenían
+git, lo cual violaba la regla de `~/Trabajo/CLAUDE.md` ("una carpeta por repo,
+con git inicializado") y los dejaba sin historial ni respaldo. Ya se resolvió
+fuera de este diseño; los tres caen en la ola 2 o 3 para su ficha.
 
 **Alcance de plugins por proyecto (añadido 2026-08-22).** Verificado en la
 documentación oficial: la clave `enabledPlugins` tiene alcance **"Any file"**, así
@@ -173,8 +171,7 @@ plugin globalmente. Al revés es una regresión — el proyecto se queda sin la
 capacidad antes de tener dónde recuperarla.
 
 **Guardarraíl de confidencialidad (nuevo).** En los proyectos con material NDA o
-sensible (`pci-innovattia`, `poc-memoria-contratos`, `seguimiento-mensajeria`,
-`pentest-ordenaris`), el `settings.json` incluye:
+sensible (los que llevan material NDA o de seguridad), el `settings.json` incluye:
 
 ```json
 { "permissions": { "deny": ["WebFetch", "WebSearch"] } }
@@ -250,7 +247,7 @@ Por olas. Nunca de golpe.
 | Ola | Proyectos | Método |
 |---|---|---|
 | **1 — piloto** | `ventas-sucursales` | a mano, midiendo, para calibrar la plantilla y el tope de 40 líneas |
-| **2 — activos** | `callcenter-converzia`, `seguimiento-mensajeria`, `rcs-demo-ia`, `homologador-tpu`, `pci-innovattia`, `pentest-ordenaris` | con `/proyecto-init` ya calibrado |
+| **2 — activos** | los seis proyectos que se tocan cada semana | con `/proyecto-init` ya calibrado |
 | **3 — resto** | los demás | `/proyecto-init` **al volver a entrar** al proyecto, no antes |
 
 **Criterio de exclusión:** proyecto sin toque en 60 días y sin siguiente paso
