@@ -1,5 +1,17 @@
 # Changelog — Kit Chema
 
+## v1.12 — 2026-08-24 (PENDIENTE DE COUNCIL)
+Novena skill: **kit-sugerencias**. Para los momentos de "tú dime cómo" o cuando
+la petición trae poca información: en vez de adivinar en silencio o preguntar en
+abstracto, ofrecer 2-4 opciones reales con su costo y una recomendación, y dejar
+elegir. Sale de un pedido de José ("algo similar a superpowers para elegir mediante
+sugerencias"). Se distingue de kit-propuestas (esa es para decisiones caras o
+irreversibles, con Council) y del núcleo ("pregunta 2-3"): esta OFRECE opciones
+curadas, no preguntas abiertas. Description 590 chars, 742 palabras, verificar.sh
+exit 0. Gate de disparo pendiente + council antes de merge (toca el núcleo: añade
+fila a la tabla de playbooks). Independiente de v1.11 (otra rama).
+
+
 ## v1.10 — 2026-07-25
 Actualización de la escalera de modelos: **Opus 4.8 → Opus 5** en el escalón de
 trabajo pesado intermedio (núcleo "Modelos para subagentes" y evaluadores de

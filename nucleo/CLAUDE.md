@@ -79,3 +79,4 @@ se anota en el CHANGELOG (ver GOBERNANZA.md).
 | Números, proyecciones, dinero | kit-finanzas |
 | Automatizar un proceso | kit-automatizacion |
 | Correo, minuta, memo, comunicado, documentación | kit-redaccion |
+| Ayudar a elegir, dar opciones, petición con poca info | kit-sugerencias |
