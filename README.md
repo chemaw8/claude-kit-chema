@@ -66,10 +66,23 @@ cd claude-kit-chema
 ./instalar.sh
 ```
 
-El instalador copia el núcleo, las skills y la plantilla de contexto a
-`~/.claude/`. Nunca sobrescribe un `~/.claude/CLAUDE.md` existente: si ya hay
-uno, añade una sección marcada al final en vez de reemplazarlo. Esta vía instala
-el kit completo, con o sin plugin.
+El instalador copia el núcleo, las skills, los subagentes, los comandos con sus
+scripts y la plantilla de contexto a `~/.claude/`. Nunca sobrescribe un
+`~/.claude/CLAUDE.md` existente: si ya hay uno, añade una sección marcada al final
+en vez de reemplazarlo. Esta vía instala el kit completo, con o sin plugin.
+
+## Comandos
+
+| Comando | Cuándo |
+|---|---|
+| `/proyecto-init` | Una vez por proyecto: le crea su ficha `CLAUDE.md` (qué es, stack, cómo correr, trampas, confidencialidad) y propone permisos. Verifica los comandos corriéndolos; en repos sensibles pide confirmación antes de ejecutar. |
+| `/cierre` | Al terminar o pausar el trabajo: deja `CONTINUAR.md` con el estado mínimo para reanudar en frío y archiva el detalle viejo en `docs/bitacora.md` sin perder nada. |
+| `/revisar-salud` | Revisa el reporte de observabilidad y propone arreglos a los errores recurrentes. |
+| `/init-contexto` | Copia las plantillas de contexto a `~/.claude/contexto/` sin pisar las tuyas. |
+
+`/proyecto-init` y `/cierre` son un par: el primero crea la ficha, el segundo la
+mantiene viva. Se apoyan en `scripts/rotar-continuar.sh`, que garantiza —y
+verifica— que al archivar el detalle viejo no se pierda ninguna línea.
 
 ¿No usas terminal? Ve directo a la sección de claude.ai web más abajo.
 

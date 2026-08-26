@@ -1,5 +1,63 @@
 # Changelog — Kit Chema
 
+## v1.13 — 2026-08-26
+Comandos `/proyecto-init` y `/cierre` — las fichas de proyecto pasan de método
+manual a comando, con un contrato de reanudación que sobrevive a que la sesión
+muera.
+
+Sale de la pregunta de José al aprobar el diseño: *"cuando cierro, ¿cómo lo
+continúo si es que se necesita continuar?"*. El spec anterior de fichas definía
+cómo se **recorta** `CONTINUAR.md` (tope de 40 líneas) pero no qué debe
+**garantizar** para poder reanudar. Un tope de líneas es una regla de tamaño; le
+faltaba la de contenido.
+
+**Council de 4 evaluadores** (modos de falla · viabilidad de flujo · abogado del
+diablo · contrato de reanudación): **aprobada con cambios, unánime**. Diseño en
+`docs/superpowers/specs/2026-08-26-comandos-ficha-design.md`.
+
+El hallazgo que cambió el diseño (3 de 4 lentes, por separado): atar la
+reanudación a que `/cierre` corra es un punto único de falla — la sesión que muere
+por crash, cierre de terminal o agotamiento de contexto nunca cierra, y es
+justo el caso donde más se necesita el estado.
+
+Qué entra:
+- **`/cierre`**: reconstruye el estado desde artefactos durables (git diff,
+  archivos tocados) y no desde la memoria de la sesión, que pudo compactarse;
+  escribe `CONTINUAR.md` con el contrato mínimo; archiva el detalle en
+  `docs/bitacora.md`. Es **silencioso en los no-ops**: solo toca ficha,
+  `DECISIONES.md` o vault si de verdad cambiaron.
+- **`/proyecto-init`**: genera la ficha con comandos **verificados corriéndolos**,
+  propone permisos sin aplicarlos, y trae una **puerta de seguridad** — en repos
+  con NDA, PCI, pentest o BD de producción lista los comandos y pide confirmación
+  en vez de ejecutar a ciegas.
+- **`scripts/rotar-continuar.sh`**: helper determinista compartido por ambos
+  comandos. `rotar` garantiza y **verifica línea por línea** que nada se pierde
+  (aborta sin tocar nada si algo se perdería); `anclar` estampa fecha + commit;
+  `reconciliar` detecta el estado rancio; `contrato` valida los campos blindados;
+  `autotest` se prueba solo y lo corre `verificar.sh`.
+- **Contrato de reanudación** en `CONTINUAR.md`: dónde vamos · siguiente paso
+  ejecutable · cómo retomar · bloqueadores · (frentes abiertos) · última decisión,
+  con fecha y ancla de git en el encabezado. El tope de 40 líneas se vuelve
+  **blando**: recorta por prioridad, nunca ampute el contrato.
+- **Regla que mata la causa raíz del drift**: `CONTINUAR.md` no repite hechos
+  estables (repo, remoto, stack) — esos viven en `CLAUDE.md`. Una ficha llegó a
+  decir "sin remoto" cuando ya tenía remoto: ese dato envejeció porque vivía donde
+  no debía.
+
+Arreglos:
+- **`instalar.sh` no instalaba `commands/` ni `scripts/`.** Mismo fallo que el
+  council v1.11 encontró con `agents/` (H-1): el kit publicaba `/revisar-salud` e
+  `/init-contexto` y nunca llegaban a `~/.claude`. Ahora se instalan, y
+  `verificar.sh` lo comprueba para que no vuelva a pasar sin que nadie lo note.
+- **Referencia muerta**: `/revisar-salud` invocaba la skill `kit-sugerencias`, que
+  el council de v1.12 eliminó al fundirla en el núcleo. `verificar.sh` ahora falla
+  si un comando menciona una skill inexistente.
+
+Nota de protocolo: la síntesis del council se hizo con el modelo de sesión
+(Opus 4.8) y no con Fable 5 como pide `kit-propuestas`. Los 4 reportes
+convergieron sin contradicciones y los hallazgos se verificaron uno a uno, pero
+queda anotado.
+
 ## v1.12 — 2026-08-24
 Mejora de la regla "Arranque de tarea" del núcleo + comando `/revisar-salud`.
 
