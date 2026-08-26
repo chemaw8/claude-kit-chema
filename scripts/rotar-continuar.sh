@@ -90,12 +90,47 @@ cmd_reconciliar() {
   fi
 
   commit_real="$(git -C "$dir" rev-parse --short HEAD 2>/dev/null)"
+  # Papeleo del propio cierre: /cierre escribe CONTINUAR.md, rota a la bitácora,
+  # y de paso puede corregir la ficha (CLAUDE.md) o anotar en DECISIONES.md; graba
+  # el ancla con el HEAD de ANTES y luego commitea, así que HEAD queda un paso
+  # adelante aunque no haya trabajo real pendiente. El estado sigue fresco si lo
+  # ÚNICO que cambió desde el ancla son esos archivos narrativos del kit — el
+  # "trabajo real" que sí delata un estado rancio es código, datos, scripts.
+  local PAPELEO='(^|/)(CONTINUAR|CLAUDE|DECISIONES)\.md$|(^|/)docs/bitacora\.md$'
+
   if [ "$commit_esc" != "$commit_real" ]; then
-    err "el estado apunta a $commit_esc pero HEAD es $commit_real — hubo trabajo después del último cierre"
-    echo "  → revisa: git -C '$dir' log --oneline $commit_esc..HEAD" >&2
+    local cambiados otros
+    cambiados="$(git -C "$dir" diff --name-only "$commit_esc..HEAD" 2>/dev/null)"
+    if [ $? -ne 0 ]; then
+      # el ancla ya no existe en el árbol (rebase, historia reescrita)
+      err "el ancla $commit_esc no está en el historial — no se puede reconciliar; revisa a mano"
+      return 1
+    fi
+    # grep devuelve 1 si no queda nada tras filtrar el papeleo: es el caso fresco,
+    # no un error — por eso se filtra sobre la variable, sin mirar su $?.
+    otros="$(printf '%s\n' "$cambiados" | grep -vE "$PAPELEO")"
+    if [ -n "$otros" ]; then
+      err "hubo trabajo real después del último cierre — archivos fuera del papeleo cambiaron:"
+      printf '%s\n' "$otros" | sed 's/^/     · /' >&2
+      echo "  → revisa: git -C '$dir' log --oneline $commit_esc..HEAD" >&2
+      return 1
+    fi
+  fi
+
+  # Cambios SIN commitear que no sean el papeleo también son trabajo sin cerrar.
+  local sucios
+  sucios="$(git -C "$dir" status --porcelain 2>/dev/null | awk '{print $2}' | grep -vE "$PAPELEO")"
+  if [ -n "$sucios" ]; then
+    err "hay cambios sin commitear después del cierre:"
+    printf '%s\n' "$sucios" | sed 's/^/     · /' >&2
     return 1
   fi
-  ok "estado fresco (ancla $commit_esc coincide con HEAD)"
+
+  if [ "$commit_esc" = "$commit_real" ]; then
+    ok "estado fresco (ancla $commit_esc coincide con HEAD)"
+  else
+    ok "estado fresco (desde el ancla $commit_esc solo se movió el papeleo del cierre)"
+  fi
   return 0
 }
 
@@ -114,19 +149,30 @@ cmd_contrato() {
   # El siguiente paso tiene que decir algo, no quedar en el encabezado vacío.
   awk '/^## +Siguiente paso/{f=1;next} /^## /{f=0} f&&NF{n++} END{exit !(n>0)}' "$f" \
     || { err "'## Siguiente paso' está vacío"; faltan=1; }
-  # Los archivos que se citan para retomar tienen que existir. Un "cómo retomar"
-  # que apunta a un script inexistente no es ejecutable, y eso un tope de líneas
-  # no lo ve: lo detectó un lector en frío antes que cualquier chequeo.
+  # Lo que se cita para RETOMAR (abrir/correr) tiene que existir. Un "cómo retomar"
+  # que apunta a un script inexistente no es ejecutable, y eso un tope de líneas no
+  # lo ve. Se revisa SOLO "Cómo retomar" — no "Siguiente paso", donde es normal
+  # nombrar un archivo que aún no existe porque el paso es crearlo — y solo
+  # extensiones de código/doc, no de datos (un .csv suele ser una salida futura).
   python3 - "$f" "${1:-.}" <<'PY' || faltan=1
 import re, sys, os
 doc, raiz = sys.argv[1], sys.argv[2]
 texto = open(doc, encoding="utf-8").read()
-tramos = re.findall(r"^## +(?:Cómo retomar|Siguiente paso)\n(.*?)(?=^## |\Z)",
-                    texto, re.M | re.S)
+tramos = re.findall(r"^## +Cómo retomar\n(.*?)(?=^## |\Z)", texto, re.M | re.S)
+# La extensión debe terminar en frontera (?![\w.]) — si no, `.js` matchea dentro
+# de `.jsonl`. El token arranca en \w, así que un `./` o `/` inicial no se captura.
+EXT = r"(?:py|sh|md|sql|R|rb|go|js|mjs|ts|tsx|ipynb)"
+PAT = re.compile(rf"[\w][\w./-]*\.{EXT}(?![\w.])")
 citados, faltantes = set(), []
 for t in tramos:
-    for m in re.findall(r"[\w./-]+\.(?:py|sh|md|sql|R|js|ts|ipynb|xlsx|csv)", t):
-        citados.add(m.strip("`.,;:"))
+    for linea in t.splitlines():
+        if "*" in linea or "?" in linea:   # globs: son patrones, no archivos
+            continue
+        for m in PAT.findall(linea):
+            c = m.strip("`.,;:")
+            if c.startswith("/"):           # rutas absolutas: no se validan
+                continue
+            citados.add(c[2:] if c.startswith("./") else c)
 for c in sorted(citados):
     if not os.path.exists(os.path.join(raiz, c)):
         faltantes.append(c)
@@ -303,6 +349,26 @@ EOF
   # "Cómo retomar" que cita un archivo inexistente: no es ejecutable, debe fallar.
   printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Correr: `scripts/99-no-existe.py`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
   if cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: debió cazar el archivo citado inexistente"; f=1; fi
+
+  # Sin falsos positivos: glob, .jsonl (que contiene '.js') y un script que SÍ
+  # existe, más un archivo futuro en 'Siguiente paso' que NO debe validarse.
+  mkdir -p "$p/scripts"; : > "$p/scripts/run.py"
+  printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] crear `salida/reporte-2026.csv`\n\n## Cómo retomar\n- Correr: `python scripts/run.py`\n- Logs: `tests/*.spec.js`\n- Estado: `registro-envios.jsonl`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
+  if ! cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: falso positivo (glob/.jsonl/paso-futuro no deben fallar)"; f=1; fi
+
+  # Reconciliación tras el commit de cierre. El ancla se graba con el HEAD de
+  # ANTES de commitear, así que el commit del cierre deja HEAD un paso adelante.
+  # 1) último trabajo real = HEAD actual (ese es el ancla).
+  ( cd "$p" && git add -A && git commit -qm "trabajo real previo" )
+  W="$(cd "$p" && git rev-parse --short HEAD)"
+  # 2) /cierre escribe CONTINUAR anclado en W y commitea solo el papeleo.
+  printf '# CONTINUAR — x  ·  cierre 2026-08-26  ·  commit %s  ·  cierre limpio: sí\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Correr: `python scripts/run.py`\n\n## Bloqueadores / esperas\n- Ninguno\n' "$W" > "$p/CONTINUAR.md"
+  ( cd "$p" && git add CONTINUAR.md && git commit -qm "cierre: papeleo" )
+  # 3) HEAD adelante solo por el papeleo → FRESCO.
+  if ! cmd_reconciliar "$p" >/dev/null 2>&1; then err "autotest: el papeleo del cierre no debe marcar rancio"; f=1; fi
+  # 4) trabajo real (otro archivo) tras el cierre → RANCIO.
+  : > "$p/otro.txt"; ( cd "$p" && git add otro.txt && git commit -qm "trabajo real" )
+  if cmd_reconciliar "$p" >/dev/null 2>&1; then err "autotest: trabajo real tras el cierre debió marcar rancio"; f=1; fi
 
   # Estado rancio: el ancla no coincide con HEAD → debe detectarlo.
   printf '# CONTINUAR — x  ·  cierre 2026-08-26  ·  commit 0000000  ·  cierre limpio: sí\n' > "$p/CONTINUAR.md"
