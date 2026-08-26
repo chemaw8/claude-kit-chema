@@ -72,6 +72,37 @@ done
 # el instalador debe copiar agents/ (si no, los agentes nunca llegan a ~/.claude)
 grep -q 'DIR/agents' instalar.sh; chk "instalar.sh instala agents/" $?
 
+# 3c. Comandos y scripts: mismo riesgo que los agentes — el kit puede publicar
+# comandos que el instalador nunca copia (pasó con /revisar-salud hasta v1.13).
+grep -q 'DIR/commands' instalar.sh; chk "instalar.sh instala commands/" $?
+grep -q 'DIR/scripts' instalar.sh;  chk "instalar.sh instala scripts/" $?
+
+for f in commands/*.md; do
+  [ -e "$f" ] || continue
+  d=$(awk '/^---$/{c++;next} c==1 && /^description:/{sub(/^description:[ ]*/,"");print;exit}' "$f")
+  n=${#d}
+  [ "$n" -gt 0 ] && [ "$n" -lt 1024 ]; chk "$f description $n chars (0<n<1024)" $?
+done
+
+# Los comandos no deben invocar skills que ya no existen (referencia muerta).
+for f in commands/*.md; do
+  [ -e "$f" ] || continue
+  muertas=0
+  for s in $(grep -oE 'skill kit-[a-z-]+' "$f" | awk '{print $2}' | sort -u); do
+    [ -d "skills/$s" ] || { echo "      $f menciona la skill inexistente '$s'"; muertas=1; }
+  done
+  chk "$f no invoca skills inexistentes" $muertas
+done
+
+# Los scripts auxiliares deben ser ejecutables y pasar su propia prueba.
+for f in scripts/*.sh; do
+  [ -e "$f" ] || continue
+  [ -x "$f" ]; chk "$f es ejecutable" $?
+  if grep -q '^  autotest)' "$f"; then
+    bash "$f" autotest >/dev/null 2>&1; chk "$f pasa su autotest" $?
+  fi
+done
+
 # 4. Sin gritos: mayúsculas de énfasis prohibidas en contenido instalable
 if grep -rnE '(CRITICAL|IMPORTANTE:|OBLIGATORIO:|NUNCA HAGAS|SIEMPRE DEBES)' nucleo/ skills/ agents/ 2>/dev/null | grep -v ':#'; then
   chk "sin énfasis gritado en nucleo/, skills/ y agents/" 1

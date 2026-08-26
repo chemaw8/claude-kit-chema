@@ -24,8 +24,9 @@ Flujo de revisión-y-corrección de la observabilidad del agente. Al invocarlo:
    - Tracebacks recurrentes en un proyecto → ir al script y arreglarlo.
    - Switches `[cyber]` frecuentes → identificar qué lenguaje los dispara y ajustar.
 
-5. **Aplica solo lo que José apruebe.** Presenta los arreglos como opciones (usa la
-   skill kit-sugerencias): qué arreglar, qué cuesta, cuál recomiendas. No toques
+5. **Aplica solo lo que el usuario apruebe.** Presenta los arreglos como opciones,
+   según la regla de arranque del núcleo: qué arreglar, qué cuesta, cuál
+   recomiendas. No toques
    nada sin visto bueno; los arreglos que cambian settings o permisos son sensibles.
 
 6. **Cierra anotando** qué se arregló, para que la próxima semana se vea si bajó la
