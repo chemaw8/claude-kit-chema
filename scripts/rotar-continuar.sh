@@ -133,7 +133,7 @@ cmd_rotar() {
   fi
 
   python3 - "$viejo" "$nuevo" "$bit" "$HOY" "$DRY" <<'PY'
-import sys, os
+import sys, os, shutil
 
 viejo, nuevo, bit, hoy, dry = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5] == "1"
 
@@ -144,10 +144,16 @@ def lineas(p):
 def norm(l):
     return l.strip()
 
-# Contenido real: se ignoran líneas vacías y separadores, que no son información.
+# Contenido real: se ignoran líneas vacías, separadores y el título de nivel 1.
+# El H1 es la etiqueta del documento, nunca información — y archivarlo metería
+# un encabezado de nivel 1 en medio de la bitácora y le rompería la estructura.
 def sustantiva(l):
     n = norm(l)
-    return bool(n) and set(n) != {"-"} and not n.startswith("<!--")
+    if not n or set(n) == {"-"} or n.startswith("<!--"):
+        return False
+    if n.startswith("# ") and not n.startswith("## "):
+        return False
+    return True
 
 v, n = lineas(viejo), lineas(nuevo)
 conservadas = {norm(x) for x in n}
@@ -159,11 +165,17 @@ for l in v:
         desplazado.append(l)
         vistas.add(norm(l))
 
+# `nuevo` suele estar en otro sistema de archivos (un temporal en /tmp), donde
+# os.replace falla con "Invalid cross-device link". copyfile sí cruza.
+def aplicar(origen, destino):
+    shutil.copyfile(origen, destino)
+    os.remove(origen)
+
 if not desplazado:
     if dry:
         print("[dry-run] nada que rotar; solo se reemplazaría CONTINUAR.md")
         sys.exit(0)
-    os.replace(nuevo, viejo)
+    aplicar(nuevo, viejo)
     print("✓ CONTINUAR.md actualizado (no hubo detalle que rotar)")
     sys.exit(0)
 
@@ -175,6 +187,21 @@ if dry:
         print(f"   … y {len(desplazado)-5} más")
     sys.exit(0)
 
+# Verificación ANTES de escribir nada: cada línea sustantiva del viejo tiene que
+# sobrevivir, o en el nuevo o en la bitácora. Se comprueba en memoria para que un
+# fallo no deje a medias ni la bitácora ni CONTINUAR.md.
+ya_en_bitacora = {norm(x) for x in lineas(bit)} if os.path.exists(bit) else set()
+sobrevive = conservadas | ya_en_bitacora | {norm(x) for x in desplazado}
+perdidas = [l for l in v if sustantiva(l) and norm(l) not in sobrevive]
+if perdidas:
+    print(f"✗ ABORTADO: {len(perdidas)} líneas se habrían perdido. No se tocó nada.",
+          file=sys.stderr)
+    for l in perdidas[:5]:
+        print("   ·", l[:90], file=sys.stderr)
+    sys.exit(1)
+
+# Orden a prueba de fallos: primero archivar, después reemplazar. Si algo fallara
+# en medio, el peor caso es una entrada repetida en la bitácora — nunca una pérdida.
 os.makedirs(os.path.dirname(bit), exist_ok=True)
 if not os.path.exists(bit):
     with open(bit, "w", encoding="utf-8") as fh:
@@ -186,19 +213,7 @@ with open(bit, "a", encoding="utf-8") as fh:
     for l in desplazado:
         fh.write(l + "\n")
 
-# Verificación: cada línea sustantiva del viejo sigue existiendo, o en el nuevo
-# o en la bitácora. Si no, se aborta SIN tocar CONTINUAR.md.
-en_bitacora = {norm(x) for x in lineas(bit)}
-perdidas = [l for l in v if sustantiva(l)
-            and norm(l) not in conservadas and norm(l) not in en_bitacora]
-if perdidas:
-    print(f"✗ ABORTADO: {len(perdidas)} líneas se habrían perdido. CONTINUAR.md no se tocó.",
-          file=sys.stderr)
-    for l in perdidas[:5]:
-        print("   ·", l[:90], file=sys.stderr)
-    sys.exit(1)
-
-os.replace(nuevo, viejo)
+aplicar(nuevo, viejo)
 print(f"✓ rotadas {len(desplazado)} líneas a {bit} — cero pérdida verificada")
 PY
 }
