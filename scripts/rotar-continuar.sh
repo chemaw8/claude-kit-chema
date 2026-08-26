@@ -114,6 +114,27 @@ cmd_contrato() {
   # El siguiente paso tiene que decir algo, no quedar en el encabezado vacío.
   awk '/^## +Siguiente paso/{f=1;next} /^## /{f=0} f&&NF{n++} END{exit !(n>0)}' "$f" \
     || { err "'## Siguiente paso' está vacío"; faltan=1; }
+  # Los archivos que se citan para retomar tienen que existir. Un "cómo retomar"
+  # que apunta a un script inexistente no es ejecutable, y eso un tope de líneas
+  # no lo ve: lo detectó un lector en frío antes que cualquier chequeo.
+  python3 - "$f" "${1:-.}" <<'PY' || faltan=1
+import re, sys, os
+doc, raiz = sys.argv[1], sys.argv[2]
+texto = open(doc, encoding="utf-8").read()
+tramos = re.findall(r"^## +(?:Cómo retomar|Siguiente paso)\n(.*?)(?=^## |\Z)",
+                    texto, re.M | re.S)
+citados, faltantes = set(), []
+for t in tramos:
+    for m in re.findall(r"[\w./-]+\.(?:py|sh|md|sql|R|js|ts|ipynb|xlsx|csv)", t):
+        citados.add(m.strip("`.,;:"))
+for c in sorted(citados):
+    if not os.path.exists(os.path.join(raiz, c)):
+        faltantes.append(c)
+if faltantes:
+    for c in faltantes:
+        print(f"✗ 'Cómo retomar' cita un archivo que no existe: {c}", file=sys.stderr)
+    sys.exit(1)
+PY
   if [ "$faltan" -eq 0 ]; then ok "contrato completo ($(wc -l < "$f") líneas)"; return 0; fi
   return 1
 }
@@ -278,6 +299,10 @@ EOF
   # Contrato incompleto: debe fallar.
   printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\nalgo\n' > "$p/CONTINUAR.md"
   if cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: el contrato incompleto debió fallar"; f=1; fi
+
+  # "Cómo retomar" que cita un archivo inexistente: no es ejecutable, debe fallar.
+  printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Correr: `scripts/99-no-existe.py`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
+  if cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: debió cazar el archivo citado inexistente"; f=1; fi
 
   # Estado rancio: el ancla no coincide con HEAD → debe detectarlo.
   printf '# CONTINUAR — x  ·  cierre 2026-08-26  ·  commit 0000000  ·  cierre limpio: sí\n' > "$p/CONTINUAR.md"
