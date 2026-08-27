@@ -85,10 +85,15 @@ for f in commands/*.md; do
 done
 
 # Los comandos no deben invocar skills que ya no existen (referencia muerta).
+# Se extrae CUALQUIER token kit-<algo> (no solo el fraseo literal 'skill kit-x':
+# también entre backticks, con Skill(...), etc.) y se compara contra skills/. La
+# lista blanca cubre los kit-* que NO son skills (el kit mismo, el hook).
+SKILL_WHITELIST="kit-chema kit-chema-contexto"
 for f in commands/*.md; do
   [ -e "$f" ] || continue
   muertas=0
-  for s in $(grep -oE 'skill kit-[a-z-]+' "$f" | awk '{print $2}' | sort -u); do
+  for s in $(grep -oE 'kit-[a-z]+(-[a-z]+)*' "$f" | sort -u); do
+    case " $SKILL_WHITELIST " in *" $s "*) continue;; esac
     [ -d "skills/$s" ] || { echo "      $f menciona la skill inexistente '$s'"; muertas=1; }
   done
   chk "$f no invoca skills inexistentes" $muertas

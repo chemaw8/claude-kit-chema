@@ -78,8 +78,13 @@ cmd_reconciliar() {
     if [ -z "$fecha_cierre" ]; then
       err "CONTINUAR.md sin fecha ni ancla en el encabezado — no se puede reconciliar"; return 1
     fi
+    # Se excluyen los mismos archivos de papeleo que la ruta con git (línea ~99):
+    # el propio /cierre puede tocar la ficha, DECISIONES o settings DESPUÉS de
+    # escribir CONTINUAR, y eso no es trabajo real sin cerrar.
     mas_nuevo="$(find "$dir" -type f -newer "$f" \
-      -not -path '*/.git/*' -not -path '*/node_modules/*' -not -name 'CONTINUAR.md' \
+      -not -path '*/.git/*' -not -path '*/node_modules/*' \
+      -not -name 'CONTINUAR.md' -not -name 'CLAUDE.md' -not -name 'DECISIONES.md' \
+      -not -path '*/docs/bitacora.md' -not -path '*/.claude/settings.json' -not -name '.gitignore' \
       -print -quit 2>/dev/null)"
     if [ -n "$mas_nuevo" ]; then
       err "hay archivos modificados DESPUÉS del cierre del $fecha_cierre (p. ej. ${mas_nuevo#$dir/}) — el estado puede estar rancio"
@@ -96,7 +101,7 @@ cmd_reconciliar() {
   # adelante aunque no haya trabajo real pendiente. El estado sigue fresco si lo
   # ÚNICO que cambió desde el ancla son esos archivos narrativos del kit — el
   # "trabajo real" que sí delata un estado rancio es código, datos, scripts.
-  local PAPELEO='(^|/)(CONTINUAR|CLAUDE|DECISIONES)\.md$|(^|/)docs/bitacora\.md$'
+  local PAPELEO='(^|/)(CONTINUAR|CLAUDE|DECISIONES)\.md$|(^|/)docs/bitacora\.md$|(^|/)\.claude/settings\.json$|(^|/)\.gitignore$'
 
   if [ "$commit_esc" != "$commit_real" ]; then
     local cambiados otros
@@ -166,13 +171,17 @@ PAT = re.compile(rf"[\w][\w./-]*\.{EXT}(?![\w.])")
 citados, faltantes = set(), []
 for t in tramos:
     for linea in t.splitlines():
-        if "*" in linea or "?" in linea:   # globs: son patrones, no archivos
-            continue
-        for m in PAT.findall(linea):
-            c = m.strip("`.,;:")
-            if c.startswith("/"):           # rutas absolutas: no se validan
-                continue
-            citados.add(c[2:] if c.startswith("./") else c)
+        # Se valida por CAMPO (delimitado por espacios o backticks), no por línea
+        # entera: así un glob o una URL en la línea no apaga la comprobación de un
+        # archivo real citado al lado, y un '?' de la prosa no desactiva nada.
+        for campo in re.split(r"[\s`]+", linea):
+            if "*" in campo or "?" in campo or "://" in campo:
+                continue                     # glob o URL: no es un archivo local
+            for m in PAT.findall(campo):
+                c = m.strip(".,;:")
+                if c.startswith("/"):        # ruta absoluta: no se valida
+                    continue
+                citados.add(c[2:] if c.startswith("./") else c)
 for c in sorted(citados):
     if not os.path.exists(os.path.join(raiz, c)):
         faltantes.append(c)
@@ -196,11 +205,12 @@ cmd_rotar() {
 
   if [ ! -f "$viejo" ]; then
     [ "$DRY" -eq 1 ] && { echo "[dry-run] crearía $viejo (no había estado previo)"; return 0; }
-    mkdir -p "$dir"; cp "$nuevo" "$viejo"; ok "CONTINUAR.md creado (no había estado previo)"; return 0
+    mkdir -p "$dir"; cp "$nuevo" "$viejo" && rm -f "$nuevo"; ok "CONTINUAR.md creado (no había estado previo)"; return 0
   fi
 
   python3 - "$viejo" "$nuevo" "$bit" "$HOY" "$DRY" <<'PY'
 import sys, os, shutil
+from collections import Counter
 
 viejo, nuevo, bit, hoy, dry = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5] == "1"
 
@@ -223,14 +233,26 @@ def sustantiva(l):
     return True
 
 v, n = lineas(viejo), lineas(nuevo)
-conservadas = {norm(x) for x in n}
+# Se trabaja por OCURRENCIAS, no por conjunto: una línea idéntica bajo padres
+# distintos (hijos de listas anidadas, un ítem citado en dos secciones) es
+# información distinta y no se debe colapsar.
+old_counts = Counter(norm(l) for l in v if sustantiva(l))
+new_counts = Counter(norm(l) for l in n if sustantiva(l))
 
-# Desplazado = lo que estaba y ya no está, en su orden original y sin repetir.
-desplazado, vistas = [], set()
+# Desplazado = las ocurrencias del viejo que el nuevo NO conserva, en orden y
+# SIN deduplicar. Cada ocurrencia del nuevo "consume" una del viejo; lo que
+# sobra se archiva, duplicados incluidos (un duplicado en la bitácora es el
+# peor caso que el propio diseño ya declara aceptable).
+restante = Counter(new_counts)
+desplazado = []
 for l in v:
-    if sustantiva(l) and norm(l) not in conservadas and norm(l) not in vistas:
-        desplazado.append(l)
-        vistas.add(norm(l))
+    if not sustantiva(l):
+        continue
+    k = norm(l)
+    if restante[k] > 0:
+        restante[k] -= 1          # esta ocurrencia sobrevive en el nuevo
+    else:
+        desplazado.append(l)      # esta ocurrencia no está en el nuevo → se archiva
 
 # `nuevo` suele estar en otro sistema de archivos (un temporal en /tmp), donde
 # os.replace falla con "Invalid cross-device link". copyfile sí cruza.
@@ -254,23 +276,13 @@ if dry:
         print(f"   … y {len(desplazado)-5} más")
     sys.exit(0)
 
-# Verificación ANTES de escribir nada: cada línea sustantiva del viejo tiene que
-# sobrevivir, o en el nuevo o en la bitácora. Se comprueba en memoria para que un
-# fallo no deje a medias ni la bitácora ni CONTINUAR.md.
-ya_en_bitacora = {norm(x) for x in lineas(bit)} if os.path.exists(bit) else set()
-sobrevive = conservadas | ya_en_bitacora | {norm(x) for x in desplazado}
-perdidas = [l for l in v if sustantiva(l) and norm(l) not in sobrevive]
-if perdidas:
-    print(f"✗ ABORTADO: {len(perdidas)} líneas se habrían perdido. No se tocó nada.",
-          file=sys.stderr)
-    for l in perdidas[:5]:
-        print("   ·", l[:90], file=sys.stderr)
-    sys.exit(1)
+# Respaldo en memoria para revertir si la verificación post-escritura falla.
+respaldo_viejo = "".join(x + "\n" for x in v)
+bit_prev = open(bit, encoding="utf-8").read() if os.path.exists(bit) else None
 
-# Orden a prueba de fallos: primero archivar, después reemplazar. Si algo fallara
-# en medio, el peor caso es una entrada repetida en la bitácora — nunca una pérdida.
+# Orden a prueba de fallos: primero archivar, después reemplazar.
 os.makedirs(os.path.dirname(bit), exist_ok=True)
-if not os.path.exists(bit):
+if bit_prev is None:
     with open(bit, "w", encoding="utf-8") as fh:
         fh.write("# Bitácora\n\nHistoria del proyecto. Se lee al retomar tras un hueco\n"
                  "largo o cuando CONTINUAR.md no basta. Append-only: no se edita.\n")
@@ -281,7 +293,29 @@ with open(bit, "a", encoding="utf-8") as fh:
         fh.write(l + "\n")
 
 aplicar(nuevo, viejo)
-print(f"✓ rotadas {len(desplazado)} líneas a {bit} — cero pérdida verificada")
+
+# Verificación REAL: releer del disco y comparar por OCURRENCIAS. Es independiente
+# de cómo se calculó `desplazado` —no comparte su lógica— así que sí puede fallar;
+# si falla, revierte y deja el proyecto como estaba (no una pérdida silenciosa).
+final = Counter(norm(l) for l in lineas(viejo) if sustantiva(l))
+final += Counter(norm(l) for l in lineas(bit) if sustantiva(l))
+perdidas = {k: old_counts[k] - final[k] for k in old_counts if final[k] < old_counts[k]}
+if perdidas:
+    with open(viejo, "w", encoding="utf-8") as fh:
+        fh.write(respaldo_viejo)
+    if bit_prev is None:
+        os.remove(bit)
+    else:
+        with open(bit, "w", encoding="utf-8") as fh:
+            fh.write(bit_prev)
+    tot = sum(perdidas.values())
+    print(f"✗ ABORTADO: la verificación halló {tot} ocurrencia(s) perdida(s); se revirtió todo.",
+          file=sys.stderr)
+    for k in list(perdidas)[:5]:
+        print("   ·", k[:90], file=sys.stderr)
+    sys.exit(1)
+
+print(f"✓ rotadas {len(desplazado)} líneas a {bit} — cero pérdida verificada (por ocurrencias, releído del disco)")
 PY
 }
 
@@ -342,6 +376,15 @@ EOF
     || { err "autotest: no se aplicó el estado nuevo"; f=1; }
   cmd_contrato "$p" >/dev/null || { err "autotest: el contrato debió pasar"; f=1; }
 
+  # Duplicados legítimos: una línea que aparece 2 veces en el viejo (hijos de
+  # secciones distintas) debe archivarse 2 veces, no colapsarse a 1.
+  local p2="$t/dup-demo"; mkdir -p "$p2"
+  printf '# CONTINUAR — d · cierre 2026-08-01\n\n## Detalle vivo\n- subsistema A\n- revisar logs\n- subsistema B\n- revisar logs\n' > "$p2/CONTINUAR.md"
+  printf '# CONTINUAR — d · cierre 2026-08-26\n\n## Dónde vamos\nnada que conservar\n' > "$t/dup-nuevo.md"
+  cmd_rotar "$p2" "$t/dup-nuevo.md" >/dev/null || { err "autotest: rotación de duplicados falló"; f=1; }
+  local nlogs; nlogs=$(grep -c '^- revisar logs$' "$p2/docs/bitacora.md" 2>/dev/null || true)
+  [ "${nlogs:-0}" -eq 2 ] || { err "autotest: 'revisar logs' debía archivarse 2 veces, quedó ${nlogs:-0}"; f=1; }
+
   # Contrato incompleto: debe fallar.
   printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\nalgo\n' > "$p/CONTINUAR.md"
   if cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: el contrato incompleto debió fallar"; f=1; fi
@@ -355,6 +398,14 @@ EOF
   mkdir -p "$p/scripts"; : > "$p/scripts/run.py"
   printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] crear `salida/reporte-2026.csv`\n\n## Cómo retomar\n- Correr: `python scripts/run.py`\n- Logs: `tests/*.spec.js`\n- Estado: `registro-envios.jsonl`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
   if ! cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: falso positivo (glob/.jsonl/paso-futuro no deben fallar)"; f=1; fi
+
+  # URL en "Cómo retomar": no es un archivo local, no debe fallar.
+  printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Guía: https://raw.githubusercontent.com/foo/bar/main/README.md\n- Correr: `python scripts/run.py`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
+  if ! cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: una URL en Cómo retomar no debe fallar el contrato"; f=1; fi
+
+  # Glob y archivo inexistente en la MISMA línea: el inexistente debe cazarse pese al glob.
+  printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Correr: `python scripts/99-no-existe.py` y ver `tests/*.spec.js`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
+  if cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: el glob no debe enmascarar un archivo inexistente citado al lado"; f=1; fi
 
   # Reconciliación tras el commit de cierre. El ancla se graba con el HEAD de
   # ANTES de commitear, así que el commit del cierre deja HEAD un paso adelante.

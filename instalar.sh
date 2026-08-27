@@ -104,9 +104,16 @@ for evento, entradas in f["hooks"].items():
     if solo and evento not in solo:
         continue
     actuales = hooks.setdefault(evento, [])
+    # Identidad del hook = el conjunto de comandos que corre, NO el dict completo:
+    # si una entrada ya instalada gana un statusMessage, comparar el dict entero la
+    # vería "distinta" y la re-agregaría, duplicando el hook en cada reinstalación.
+    def cmds(entry):
+        return tuple(sorted(h.get("command", "") for h in entry.get("hooks", [])))
+    presentes = {cmds(x) for x in actuales}
     for e in entradas:
-        if e not in actuales:
-            actuales.append(e)
+        if cmds(e) in presentes:
+            continue
+        actuales.append(e); presentes.add(cmds(e))
 json.dump(s, open(destino, "w"), indent=2, ensure_ascii=False)
 PY
 }
