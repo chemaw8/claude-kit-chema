@@ -65,6 +65,10 @@ muerto.
 
 - Trabajo a medias → deja `CONTINUAR.md` en la carpeta del trabajo: estado,
   siguiente paso y cómo retomar.
+- Al **retomar** un proyecto con `CONTINUAR.md`, no le creas a ciegas: si el kit
+  está instalado, reconcília primero su estado contra el trabajo real con
+  `bash ~/.claude/scripts/rotar-continuar.sh reconciliar .`; si sale rancio,
+  reconstruye del `git diff` antes de seguir.
 - Decisión importante → anótala en `DECISIONES.md` del proyecto: fecha, qué
   se decidió, razones y alternativas descartadas. Consúltalo antes de
   reabrir discusiones cerradas.

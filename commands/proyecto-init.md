@@ -51,7 +51,9 @@ escribirlo — un comando inventado en la ficha es peor que ninguno.
 
 ## Estado
 Estado actual en CONTINUAR.md · decisiones cerradas en DECISIONES.md ·
-historia larga en docs/bitacora.md. Léelos antes de proponer cambios.
+historia larga en docs/bitacora.md. **Al retomar, corre primero
+`bash ~/.claude/scripts/rotar-continuar.sh reconciliar .`**: si sale rancio,
+reconstruye del git diff antes de creerle. Luego léelos antes de proponer cambios.
 
 ## Stack y cómo correr
 <solo comandos verificados en el paso 2>
@@ -105,10 +107,13 @@ sostiene después.
 Tras la aprobación:
 
 1. Escribe `CLAUDE.md` y `.claude/settings.json`.
-2. Deja `CONTINUAR.md` en formato de reanudación: genera el encabezado con
-   `bash "$ROTAR" anclar <proyecto>` y, si hay que rotar, hazlo con
-   `bash "$ROTAR" rotar <proyecto> <borrador>` (verifica cero pérdida y aborta si
-   algo se perdería).
+2. Deja `CONTINUAR.md` en formato de reanudación. Genera el encabezado del
+   borrador con `bash "$ROTAR" anclar <proyecto>`. Si **ya existía** un
+   `CONTINUAR.md`, **siempre** aplícalo con `bash "$ROTAR" rotar <proyecto>
+   <borrador>` — nunca lo reescribas directo, sin importar su tamaño: el helper
+   archiva lo desplazado y verifica cero pérdida, y si nada se desplaza no-opea
+   limpio. (El umbral de 60 líneas del paso 5 decide cuánto resumir, no si se usa
+   el helper.)
 3. Comprueba con `bash "$ROTAR" contrato <proyecto>`.
 4. Revisa que `.gitignore` no excluya `CLAUDE.md` — algunos frameworks lo generan
    y lo ignoran, y entonces la ficha no se versiona ni viaja.

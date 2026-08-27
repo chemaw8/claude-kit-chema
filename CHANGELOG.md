@@ -1,5 +1,47 @@
 # Changelog — Kit Chema
 
+## v1.14 — 2026-08-27
+Arreglos de una auditoría adversarial (13 agentes, ultracode) del sistema de
+fichas/CONTINUAR. Ningún dato real se perdió —los 7 cierres se re-verificaron por
+ocurrencias— pero el audit destapó garantías más débiles de lo declarado.
+
+Correcciones del helper `rotar-continuar.sh`:
+- **`rotar` ya no deduplica.** Una línea idéntica bajo padres distintos (hijos de
+  listas anidadas, un ítem citado en dos secciones) es información distinta; la
+  dedup por texto la colapsaba y perdía ocurrencias en silencio, justo en la pieza
+  que garantiza cero pérdida. Ahora se archivan todas.
+- **La verificación de cero pérdida era tautológica** (no podía fallar). Ahora
+  relee del disco y compara por multiconjunto de ocurrencias; si detecta pérdida,
+  revierte y aborta. El spec ya prometía este diff independiente.
+- `reconciliar` sin-git aplica la misma lista blanca de "papeleo" que la ruta con
+  git; y esa lista incluye ahora `.claude/settings.json` y `.gitignore` (evita el
+  falso rancio tras un `/proyecto-init` de libro).
+- `contrato` valida "Cómo retomar" por campo, no por línea: una URL o un glob ya no
+  fallan en falso ni apagan la validación de un archivo real citado al lado, y un
+  `?` de la prosa ya no desactiva la línea.
+- La rama "sin estado previo" ya no deja el borrador huérfano (cero residuos).
+
+Comandos y núcleo:
+- **`reconciliar` se dispara AL REANUDAR**, no solo al cerrar: el núcleo y la
+  plantilla de ficha instruyen correrlo al retomar. El criterio de éxito del spec
+  (un estado rancio se delata solo al reanudar) ahora se cumple.
+- `cierre.md`: fija la coreografía de commit (trabajo real → anclar → papeleo) y
+  corrige la semántica de "rancio" (es normal al abrir /cierre, no una acusación al
+  cierre anterior).
+- `proyecto-init.md`: todo CONTINUAR existente pasa SIEMPRE por `rotar`, sin
+  importar su tamaño — cierra un hueco de pérdida silenciosa.
+
+Instalador y verificación:
+- `instalar.sh`: el dedup de hooks compara por ruta de comando, no por dict
+  completo. Antes, una entrada que ganaba un `statusMessage` se re-agregaba en cada
+  reinstalación → el hook de contexto quedaba DUPLICADO (contexto 2× por sesión).
+- `verificar.sh`: el check de skills muertas caza cualquier token `kit-*` citado
+  (backticks, paréntesis), no solo el fraseo literal `skill kit-x`.
+
+Un hallazgo se REFUTÓ (la puerta de /proyecto-init "clasifica el repo, no el
+comando"): los repos reales citados sí disparan las señales; queda como
+endurecimiento opcional, no como falla.
+
 ## v1.13 — 2026-08-26
 Comandos `/proyecto-init` y `/cierre` — las fichas de proyecto pasan de método
 manual a comando, con un contrato de reanudación que sobrevive a que la sesión

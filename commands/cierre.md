@@ -22,8 +22,12 @@ git -C <proyecto> log --oneline -10
 bash "$ROTAR" reconciliar <proyecto>
 ```
 
-Si `reconciliar` dice que el estado venía rancio, dilo antes de seguir: significa
-que el `CONTINUAR.md` que estás por reemplazar ya mentía.
+Al abrir `/cierre`, `reconciliar` casi siempre dirá "hubo trabajo después del
+cierre": es **normal y esperado** — ese trabajo es el de esta sesión, que es justo
+lo que vas a capturar. **No lo leas como que el estado anterior mentía.** Solo es
+alarma en dos casos: si el encabezado dice `cierre limpio: no` (una sesión murió
+sin cerrar), o si los archivos que lista son cambios que nadie de esta sesión hizo.
+En esos dos casos sí: reconstruye del `git diff` antes de creerle al estado viejo.
 
 ## 2. Decide qué cambió de verdad — y no preguntes por lo demás
 
@@ -76,6 +80,20 @@ arriba de la línea `---` va lo blindado, abajo lo recortable:
 
 Genera el encabezado con `bash "$ROTAR" anclar <proyecto>` para que la fecha y el
 ancla de git sean reales, no inventadas.
+
+**Orden de commit (importante para que la próxima reanudación salga limpia).** El
+ancla que estampa `anclar` es el `HEAD` de este momento, así que:
+
+1. **Commitea primero el trabajo real de la sesión** (código, datos, scripts) —
+   así el ancla lo captura. Si no lo commiteas, no pasa nada grave: al reanudar,
+   `reconciliar` marcará esos archivos como "trabajo sin cerrar", que es honesto.
+2. Luego genera el encabezado con `anclar` y rota (paso 4).
+3. Al final, commitea el **papeleo** (CONTINUAR.md, docs/bitacora.md, y la ficha o
+   DECISIONES si los tocaste) en un commit aparte.
+
+Con ese orden, la sesión que retome verá "solo se movió el papeleo del cierre" =
+estado fresco. Si mezclas trabajo y papeleo en un mismo commit tras `anclar`, la
+próxima reanudación marcará un falso rancio (inofensivo, pero ruido).
 
 Tres reglas al redactar:
 
