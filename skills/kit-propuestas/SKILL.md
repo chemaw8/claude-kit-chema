@@ -120,3 +120,6 @@ hace verdad por sí solo.
   de cada opción encima de la mesa.
 - Reabrir decisiones cerradas: discutir de nuevo lo que ya está en
   `DECISIONES.md` sin evidencia nueva que lo justifique.
+- Añadir rondas de deliberación entre los evaluadores. El panel vale por la
+  independencia: si se leen entre sí se contagian, el costo se multiplica y el
+  acierto no mejora. Cada uno opina por separado y la síntesis agrega al final.
