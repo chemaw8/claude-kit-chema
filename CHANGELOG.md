@@ -1,5 +1,58 @@
 # Changelog — Kit Chema
 
+## v1.15 — 2026-08-28
+Novena skill: **`kit-orquestacion`** — playbook para repartir un trabajo entre
+varios agentes en paralelo (barridos, auditorías, investigación multi-ángulo,
+corridas "ultracode").
+
+Sale de un barrido de vanguardia de 13 agentes sobre orquestación multi-agente
+(investigación en `~/Trabajo/investigacion/2026-08-28-vanguardia-para-ultracode.md`).
+El hueco que cierra: el kit tenía escalera de modelos y regla de "cuándo delegar",
+pero **ninguna regla de topología** — cómo se reparte, quién escribe, cómo se
+verifica.
+
+**Council de 4** (skill-vs-núcleo · disparo · corrección del contenido · abogado del
+diablo): **aprobada con cambios, unánime**. El abogado del diablo reportó que su
+mejor ataque —"es una copia peor de la guía de workflows del harness"— **no se
+sostiene**: solapa una sección de seis, y lo que no solapa cambia conducta.
+
+Qué entra:
+- **Un solo escritor**: el fan-out solo lee, mide, verifica y critica; el entregable
+  lo redacta un hilo, después. Es donde convergieron los dos polos del debate
+  2025-26 sobre multi-agente.
+- **Escalera de topología** (0 / 1 / 2-4 / 3-5 / 5+ agentes) con la alternativa
+  barata declarada: subir esfuerzo en un hilo en vez de repartir.
+- **Tres preguntas antes de lanzar** (objetivo y formato · qué contexto le falta ·
+  quién verifica): cubren las tres familias de fallo medidas en estos sistemas.
+- **Cómo se verifica**: verificador con contexto limpio, lentes distintos en vez de
+  copias, adversarial solo donde hay verdad comprobable.
+- **Lo que no se hace**: rondas de debate entre agentes, volcar datos crudos al
+  contexto, escritura en paralelo sobre lo mismo, personajes decorativos.
+- **Confidencialidad en corrida**: el agente que toca material externo no lleva
+  acceso al vault, al correo ni a publicación — nadie ve el paso intermedio en un
+  fan-out. Regla que no existía en ninguna parte del kit.
+
+Correcciones del council incorporadas:
+- **La cifra del sobrecosto estaba mal anclada** (3 de 4 evaluadores). El ~15× que
+  se cita mide multi-agente contra una *conversación sin herramientas*; un hilo
+  agéntico ya gasta ~4× de esa base, así que el sobrecosto real de repartir es del
+  orden de **4×**, no 15×. Inflado sesgaba en contra de repartir justo en la skill
+  que enseña a repartir bien.
+- **Faltaba la cadena por pieza sin esperas**: el texto solo describía la barrera
+  (esperar a que todas las piezas terminen una etapa), que es el patrón lento y no
+  el default de la herramienta.
+- **La skill legislaba sobre `kit-propuestas`**: la regla de no meterle rondas de
+  deliberación al Council se movió a los errores típicos de esa skill, donde vive.
+- **`kit-orquestacion` no estaba en la tabla de ruteo del núcleo** (8 filas para 9
+  skills). Añadida.
+- **La description hablaba en vocabulario de mecanismo** ("en paralelo", "reparte")
+  y el usuario pide en vocabulario de alcance ("revisa los 24 proyectos", "los 171
+  hallazgos"). Añadidos gatillos de alcance y de volumen.
+- **Cláusula de convivencia**: compone con la skill del dominio, no la reemplaza —
+  kit-research pone el estándar de fuentes, ésta solo el reparto.
+- **Cesión al harness**: cuando el usuario ya pidió una corrida grande, el
+  presupuesto lo fijó él; la skill decide la forma del reparto, no si se gasta.
+
 ## v1.14 — 2026-08-27
 Arreglos de una auditoría adversarial (13 agentes, ultracode) del sistema de
 fichas/CONTINUAR. Ningún dato real se perdió —los 7 cierres se re-verificaron por

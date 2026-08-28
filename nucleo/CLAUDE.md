@@ -95,6 +95,10 @@ juicio crítico.
 Agentes listos del kit: `verificador` (Sonnet), `evaluador-council` (Opus 5),
 `lector-fresco` (Opus 5 sin contexto previo).
 
+Cuando el trabajo se reparta entre **varios agentes a la vez** (barrido, auditoría,
+investigación multi-ángulo, "ultracode"), la forma del reparto la define la skill
+kit-orquestacion: quién lee y quién escribe, cuántos agentes y cómo se verifica.
+
 ## Mejora del kit
 
 Si el usuario corrige dos veces lo mismo, propón convertir esa corrección en
@@ -114,3 +118,4 @@ se anota en el CHANGELOG (ver GOBERNANZA.md).
 | Números, proyecciones, dinero | kit-finanzas |
 | Automatizar un proceso | kit-automatizacion |
 | Correo, minuta, memo, comunicado, documentación | kit-redaccion |
+| Repartir trabajo entre varios agentes, barrido amplio, "ultracode" | kit-orquestacion |
