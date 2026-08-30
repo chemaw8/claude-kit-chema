@@ -106,3 +106,23 @@ idénticos o falla la caché); `args` puede llegar como string JSON (parsear con
 van en Sonnet esfuerzo bajo, no en Fable (la corrida original quemó ~727k tokens
 por eso). Estado íntegro de la investigación en
 `investigacion/estado-investigacion-2026-07-08.json`.
+
+## 2026-08-29 — rotado desde CONTINUAR.md
+
+v1.13 mergeada a main (comandos `/proyecto-init` y `/cierre` + fichas de proyecto).
+v1.14 lista en la rama `fix-auditoria-v114`: arregla lo que una auditoría adversarial
+de 13 agentes encontró en el sistema de fichas. Falta su PR + merge.
+- [ ] Abrir el PR de `fix-auditoria-v114` hacia main y mergear. Terminado = v1.14 en
+      main y reinstalada en ~/.claude con `bash instalar.sh`.
+- Abrir:    `CHANGELOG.md` (entrada v1.14) y `docs/superpowers/specs/2026-08-26-comandos-ficha-design.md`
+- Ninguno técnico. El merge de v1.14 es decisión de José (gobernanza: PR + council).
+| v1.14 (arreglos del audit) | lista en rama, verde | PR + merge | decisión de José |
+| Decisiones para José | 2 abiertas | PII de callcenter · ola 3 bajo demanda vs lote | — |
+- 2026-08-26  Comandos de ficha aprobados por council 4/4 (con cambios) → CHANGELOG v1.13
+- El audit (ultracode, 13 agentes) confirmó ~17 hallazgos y refutó 1; todos con
+  arreglo proporcional ya aplicado en v1.14.
+- Loops de mejora pendientes (bajo demanda, no urgentes): cerrar el lazo
+  observabilidad→evals en `/revisar-salud`; scan de frescura semanal colgado del
+  timer de observabilidad ya existente.
+- Ola 3 (~17 proyectos sin ficha): hacer con `/proyecto-init` AL REENTRAR a cada
+  uno, no en lote (varios están dormidos y una ficha en frío nace vieja).
