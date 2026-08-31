@@ -1,5 +1,22 @@
 # Changelog — Kit Chema
 
+## v1.16 — 2026-08-31
+**Estándar de estructura de proyectos** dentro de kit-codigo:
+`estandar-proyectos.md` (árbol + capa `specs/NNN-nombre/` por feature, flujo
+spec → clarificación → plan → tareas → validación → cambio) y 3 plantillas
+(`plantillas/`), más la regla de escalado en la sección de compatibilidad
+(precedencia clara con brainstorming→writing-plans de superpowers) y el umbral
+en /proyecto-init (proyecto muy chico → se pregunta, no se impone).
+
+Adopción parcial de Spec-Driven Development (curso hello-sdd de MoureDev);
+fuera EARS obligatorio y spec-as-source. **Council de 5** (viabilidad ·
+costo/beneficio · riesgos · abogado del diablo · gobernanza): **aprobada con
+cambios**. Los cambios que el panel impuso y aquí se cumplen: vivir dentro de
+la skill (el instalador no copia `docs/`), precedencia explícita con
+superpowers, disparo como escalado con exclusiones (fix de una línea y script
+de un uso siguen con plan corto), y el núcleo en espera del piloto — ver
+DECISIONES.md del kit.
+
 ## v1.15 — 2026-08-28
 Novena skill: **`kit-orquestacion`** — playbook para repartir un trabajo entre
 varios agentes en paralelo (barridos, auditorías, investigación multi-ángulo,

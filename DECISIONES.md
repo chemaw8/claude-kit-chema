@@ -67,3 +67,24 @@ uno**, no fabricando fichas de golpe.
 que no se toca en meses nace vieja — es fabricar el mismo desfase que el sistema de
 fichas existe para evitar. El comando verifica comandos corriéndolos, y eso exige
 tener el proyecto fresco en las manos.
+
+## 2026-08-31 — El estándar de estructura de proyectos entra en dos etapas (council)
+
+**Qué:** entra a kit-codigo el estándar de estructura de proyecto
+(`estandar-proyectos.md` + `plantillas/` + regla de escalado en el cuerpo +
+mención en /proyecto-init). Las líneas de núcleo NO entran todavía: esperan la
+evidencia del piloto (proyecto sql-natural) más una sonda conductual de 6-8
+sesiones frescas con casos positivo, negativo y de umbral.
+
+**Por qué:** council de 5 (2026-08-31, veredicto aprobada con cambios). El
+matiz al congelamiento del 2026-08-29: esa decisión condiciona reabrir el kit a
+que "el reporte semanal de salud muestre un fallo recurrente", pero el panel
+verificó que esta clase de fallo (re-deducción de alcance en features
+multi-sesión) es estructuralmente invisible a ese reporte — mide errores de
+tool, no calidad de estructura. Para esta clase, la evidencia aceptada es un
+piloto medido, no el reporte. El criterio de "mejoras medidas o nada" queda
+intacto: por eso el núcleo espera al piloto.
+
+**Descartado:** PR único con núcleo adentro (entraría sin sonda conductual), y
+esperar todo al piloto (dejaba a los colegas sin las plantillas sin ganancia
+de control).

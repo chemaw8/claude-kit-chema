@@ -10,6 +10,12 @@ El helper `rotar-continuar.sh` está en
 `${CLAUDE_PLUGIN_ROOT}/scripts/rotar-continuar.sh` o, sin plugin, en
 `~/.claude/scripts/rotar-continuar.sh`. Llámalo `ROTAR`.
 
+Antes de arrancar, dimensiona: si el proyecto es muy chico (un script de un
+uso, una exploración puntual), **pregunta al usuario** si quiere la estructura
+completa o la mínima (ficha + CONTINUAR) — nunca lo decidas en silencio. La
+estructura completa y la capa `specs/NNN-nombre/` por feature están en
+`estandar-proyectos.md` de la skill kit-codigo, con sus plantillas al lado.
+
 Si ya existe `CLAUDE.md` en la raíz del proyecto, no lo pises: dilo y ofrece
 revisarlo en vez de regenerarlo.
 
@@ -68,7 +74,8 @@ reconstruye del git diff antes de creerle. Luego léelos antes de proponer cambi
 <qué no sale de aquí; verificado contra git, no contra lo que se recuerde>
 
 ## Convenciones
-<lo propio de este proyecto que no se deduce del código>
+<lo propio de este proyecto que no se deduce del código; si tendrá features
+multi-sesión, recuerda aquí la capa specs/NNN del estándar de kit-codigo>
 ```
 
 Dos reglas de contenido:
