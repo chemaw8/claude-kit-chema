@@ -61,6 +61,16 @@ perdería.
 mejora se midieron y se descartaron con datos, en vez de acumularse: el kit crece
 solo cuando la evidencia lo pide.
 
+**6. Los proyectos tienen estructura, no la improvisación de cada sesión.**
+Desde v1.16, `kit-codigo` trae el **estándar de estructura de proyectos**
+(`estandar-proyectos.md` + 3 plantillas): una feature que va a cruzar sesiones y
+toca lógica de negocio abre `specs/NNN-nombre/` — requisitos numerados y
+verificables, plan con la alternativa descartada, tareas con "Hecho cuando:" —
+**antes** del código. Un fix de una línea sigue con plan corto, y en un proyecto
+muy chico se pregunta, no se impone. Entró como manda el punto 5: council de
+cinco evaluadores (aprobada con cambios, hallazgos verificados contra disco), y
+su parte de núcleo sigue **fuera** hasta que el piloto la gane con datos.
+
 ## Dos formas de instalar
 
 Hay dos vías y ambas funcionan; elige una:
