@@ -165,7 +165,9 @@ doc, raiz = sys.argv[1], sys.argv[2]
 texto = open(doc, encoding="utf-8").read()
 tramos = re.findall(r"^## +Cómo retomar\n(.*?)(?=^## |\Z)", texto, re.M | re.S)
 # La extensión debe terminar en frontera (?![\w.]) — si no, `.js` matchea dentro
-# de `.jsonl`. El token arranca en \w, así que un `./` o `/` inicial no se captura.
+# de `.jsonl`. El token arranca en \w, así que un `./`, `/` o `~/` inicial no se
+# captura: por eso las rutas de fuera del proyecto se descartan por campo, abajo,
+# y el match ya llega normalizado a relativo.
 EXT = r"(?:py|sh|md|sql|R|rb|go|js|mjs|ts|tsx|ipynb)"
 PAT = re.compile(rf"[\w][\w./-]*\.{EXT}(?![\w.])")
 citados, faltantes = set(), []
@@ -177,11 +179,15 @@ for t in tramos:
         for campo in re.split(r"[\s`]+", linea):
             if "*" in campo or "?" in campo or "://" in campo:
                 continue                     # glob o URL: no es un archivo local
+            # Fuera del proyecto: absoluta (/x), de home (~/x) o que sube (../x).
+            # Se decide por el CAMPO y no por el match: PAT arranca en \w, así que
+            # nunca captura la '/' ni la '~' inicial y el match llega ya sin ellas
+            # ('/home/x.sh' -> 'home/x.sh'). Mirar el match daba un falso positivo
+            # en toda ruta absoluta citada.
+            if campo.lstrip("(<[\"'").startswith(("/", "~", "../")):
+                continue
             for m in PAT.findall(campo):
-                c = m.strip(".,;:")
-                if c.startswith("/"):        # ruta absoluta: no se valida
-                    continue
-                citados.add(c[2:] if c.startswith("./") else c)
+                citados.add(m.strip(".,;:"))
 for c in sorted(citados):
     if not os.path.exists(os.path.join(raiz, c)):
         faltantes.append(c)
@@ -402,6 +408,17 @@ EOF
   # URL en "Cómo retomar": no es un archivo local, no debe fallar.
   printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Guía: https://raw.githubusercontent.com/foo/bar/main/README.md\n- Correr: `python scripts/run.py`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
   if ! cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: una URL en Cómo retomar no debe fallar el contrato"; f=1; fi
+
+  # Rutas FUERA del proyecto (absoluta, de home, o que sube): no son archivos
+  # del repo y no deben validarse. PAT arranca en \w y nunca captura la '/' ni
+  # la '~' inicial, así que esto se decide por el CAMPO, no por el match.
+  printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Helper: `bash /home/chema/.claude/scripts/rotar-continuar.sh reconciliar .`\n- Hook: `~/.claude/hooks/anti-secretos.sh`\n- Vecino: `../otro-proyecto/README.md`\n- Correr: `python scripts/run.py`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
+  if ! cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: una ruta absoluta o de home no debe fallar el contrato"; f=1; fi
+
+  # ...pero eso no puede volverse un agujero: un relativo inexistente citado al
+  # lado de una ruta absoluta debe seguir cazándose.
+  printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Helper: `bash /home/chema/.claude/scripts/rotar-continuar.sh contrato .`\n- Correr: `python scripts/99-no-existe.py`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
+  if cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: la ruta absoluta no debe enmascarar un relativo inexistente"; f=1; fi
 
   # Glob y archivo inexistente en la MISMA línea: el inexistente debe cazarse pese al glob.
   printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Correr: `python scripts/99-no-existe.py` y ver `tests/*.spec.js`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
