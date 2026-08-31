@@ -121,6 +121,15 @@ evitan que se contradigan:
   directo del kit tiene precedencia sobre el candado universal de brainstorming
   (instrucción del usuario, que manda sobre las skills). Tarea grande (el plan no
   cabe en pocas líneas) → cede a brainstorming→writing-plans de superpowers.
+- Escalado a spec, sin oscilar con lo anterior: cuando la feature va a cruzar
+  sesiones y toca lógica de negocio o un entregable con audiencia, antes del
+  código se abre `specs/NNN-nombre/` (spec → plan → tasks; ver
+  `estandar-proyectos.md` y `plantillas/` junto a esta skill). La precedencia:
+  specs/ gobierna el alcance de una feature multi-sesión; writing-plans, el
+  plan de implementación grande dentro de una sesión — y `specs/NNN/plan.md`
+  puede ser ese artefacto. Un fix, un ajuste o un script de un solo uso siguen
+  con plan corto aunque el proyecto sea grande. Proyecto entero muy chico →
+  pregunta al usuario si estructura completa o mínima; nunca en silencio.
 - Revisión, cada una en su carril, nunca dos sobre el mismo diff: Council juzga
   decisiones caras o irreversibles; requesting-code-review o /review-pr revisan
   código ya escrito; kit-codigo revisa en línea si no hay plugins. Homologa el
