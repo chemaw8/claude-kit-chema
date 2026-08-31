@@ -1,11 +1,11 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-08-29  ·  commit dc95a03  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-08-30  ·  commit 6320308  ·  cierre limpio: sí
 > Estado vivo. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md y GOBERNANZA.md, no aquí.
 
 ## Dónde vamos
-**v1.15 en main e instalada** (9 skills con `kit-orquestacion`, 4 comandos, 3 agentes).
-El kit quedó **congelado a propósito**: cinco propuestas de mejora se midieron y las
-cinco se descartaron con datos (ver DECISIONES.md). No hay trabajo pendiente en el kit.
+**v1.15 en main e instalada, kit congelado** (ver DECISIONES.md: cinco propuestas de
+mejora medidas y descartadas). El README ya explica **qué hace bien el kit con sus
+mediciones**, no con adjetivos — es lo que lo distingue de un kit de prosa.
 
 ## Siguiente paso
 - [ ] Nada en el kit. El siguiente trabajo está **fuera**: llevar el harness de
@@ -33,13 +33,14 @@ cinco se descartaron con datos (ver DECISIONES.md). No hay trabajo pendiente en 
 
 ---
 ## Detalle vivo
-- **Mediciones de esta sesión** (las que sostienen el congelamiento): banco de disparo
-  27/27 con las 70 skills reales · 119 invocaciones de skills del kit en 60 días (51%
-  del total) · compactación en 8 de 1,145 sesiones · 83% de solape vault↔memoria ·
-  `verificador` 0 usos, `evaluador-council` 8, `lector-fresco` 1.
-- El **primer lunes con el reporte de salud arreglado es el 31-ago**: el falso positivo
-  de `[cyber]` ya está corregido en `claude-entorno` (contaba su propio MEMORY.md).
+- **Mediciones que sostienen el congelamiento**: banco de disparo 27/27 con las 70
+  skills reales · 119 invocaciones de skills del kit en 60 días (51% del total) ·
+  compactación en 8 de 1,145 sesiones · 83% de solape vault↔memoria · `verificador`
+  0 usos, `evaluador-council` 8, `lector-fresco` 1.
+- El **primer lunes con el reporte de salud arreglado es el 31-ago**: el falso
+  positivo de `[cyber]` ya está corregido en `claude-entorno` (contaba su propio
+  MEMORY.md; 101 coincidencias del grep contra 20 eventos reales).
 - Ola 3 de fichas (~18 proyectos): con `/proyecto-init` al reentrar, nunca en lote.
 - Investigación de respaldo en `~/Trabajo/investigacion/`:
-  `2026-08-28-vanguardia-para-ultracode.md` (incluye la config de sandbox probada,
-  por si el contexto cambia) y `2026-08-28-speculative-ptc-y-huecos-eficiencia.md`.
+  `2026-08-28-vanguardia-para-ultracode.md` (incluye la config de sandbox probada) y
+  `2026-08-28-speculative-ptc-y-huecos-eficiencia.md`.

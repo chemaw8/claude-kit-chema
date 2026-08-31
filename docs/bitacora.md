@@ -126,3 +126,17 @@ de 13 agentes encontró en el sistema de fichas. Falta su PR + merge.
   timer de observabilidad ya existente.
 - Ola 3 (~17 proyectos sin ficha): hacer con `/proyecto-init` AL REENTRAR a cada
   uno, no en lote (varios están dormidos y una ficha en frío nace vieja).
+
+## 2026-08-30 — rotado desde CONTINUAR.md
+
+**v1.15 en main e instalada** (9 skills con `kit-orquestacion`, 4 comandos, 3 agentes).
+El kit quedó **congelado a propósito**: cinco propuestas de mejora se midieron y las
+cinco se descartaron con datos (ver DECISIONES.md). No hay trabajo pendiente en el kit.
+- **Mediciones de esta sesión** (las que sostienen el congelamiento): banco de disparo
+  27/27 con las 70 skills reales · 119 invocaciones de skills del kit en 60 días (51%
+  del total) · compactación en 8 de 1,145 sesiones · 83% de solape vault↔memoria ·
+  `verificador` 0 usos, `evaluador-council` 8, `lector-fresco` 1.
+- El **primer lunes con el reporte de salud arreglado es el 31-ago**: el falso positivo
+  de `[cyber]` ya está corregido en `claude-entorno` (contaba su propio MEMORY.md).
+  `2026-08-28-vanguardia-para-ultracode.md` (incluye la config de sandbox probada,
+  por si el contexto cambia) y `2026-08-28-speculative-ptc-y-huecos-eficiencia.md`.
