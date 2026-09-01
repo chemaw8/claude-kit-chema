@@ -99,6 +99,14 @@ Cuando el trabajo se reparta entre **varios agentes a la vez** (barrido, auditor
 investigación multi-ángulo, "ultracode"), la forma del reparto la define la skill
 kit-orquestacion: quién lee y quién escribe, cuántos agentes y cómo se verifica.
 
+## Estructura de proyectos
+
+Todo proyecto sigue el estándar de la skill kit-codigo (`estandar-proyectos.md`,
+plantillas junto a la skill): ficha + CONTINUAR + DECISIONES + `specs/NNN` por
+feature. Una feature que cruzará sesiones y toca lógica de negocio abre su
+spec → plan → tasks antes del código; un fix o un script de un uso siguen con
+plan corto. Proyecto muy chico → pregunta si estructura completa o mínima.
+
 ## Mejora del kit
 
 Si el usuario corrige dos veces lo mismo, propón convertir esa corrección en
