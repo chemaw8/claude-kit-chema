@@ -1,5 +1,23 @@
 # Changelog — Kit Chema
 
+## v1.17 — 2026-09-01
+**El estándar de estructura de proyectos entra al núcleo** (etapa 2 del
+council del 2026-08-31): sección "Estructura de proyectos", 7 líneas — el
+disparo universal que la etapa 1 dejó pendiente a propósito.
+
+Entra con la evidencia que el congelamiento exige (DECISIONES 2026-08-31):
+- **Piloto real**: sql-natural v1 construida con el flujo spec → clarificación
+  → plan → tasks → validación; 18/18 preguntas verificadas contra sus fuentes
+  originales y 5 trampas de datos cazadas por el proceso.
+- **Sonda conductual 7/7**: sesiones frescas en entorno de colega (solo núcleo
+  + skills): abre spec en features multi-sesión con lógica de negocio, cero
+  ceremonia en fixes y scripts de un uso, pregunta ante tamaño ambiguo
+  ("el kit obliga a preguntarte, no a decidir en silencio") y cede a
+  writing-plans en el refactor intra-sesión.
+- **Gate de disparo como regresión** (resultado en el PR; las descriptions no
+  cambian, así que el gate mide no-regresión del ruteo, no la regla nueva —
+  esa la mide la sonda, como dictó el council).
+
 ## v1.16 — 2026-08-31
 **Estándar de estructura de proyectos** dentro de kit-codigo:
 `estandar-proyectos.md` (árbol + capa `specs/NNN-nombre/` por feature, flujo
