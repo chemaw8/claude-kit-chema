@@ -1,46 +1,38 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-08-30  ·  commit 6320308  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-01  ·  commit 593663f  ·  cierre limpio: sí
 > Estado vivo. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md y GOBERNANZA.md, no aquí.
 
 ## Dónde vamos
-**v1.15 en main e instalada, kit congelado** (ver DECISIONES.md: cinco propuestas de
-mejora medidas y descartadas). El README ya explica **qué hace bien el kit con sus
-mediciones**, no con adjetivos — es lo que lo distingue de un kit de prosa.
+**v1.17 en main e instalada.** El estándar de estructura de proyectos entró
+completo: skill + plantillas (v1.16, PR #24) y núcleo (v1.17, PR #26), por
+council de 5 con las 3 evidencias (piloto sql-natural 18/18 · sonda conductual
+7/7 · gate 27/27). El congelamiento sigue vigente para todo lo demás.
 
 ## Siguiente paso
-- [ ] Nada en el kit. El siguiente trabajo está **fuera**: llevar el harness de
-      `evals-entregables` al bot de Converzia. Terminado = 2-3 casos dorados del bot
-      escritos y el juez midiendo si Sofía hace bien su trabajo, no solo si el código
-      corre (hoy: 0 capturas en ~4,600 llamadas con las pruebas en verde).
+- [ ] Correr los evals de entregables con v1.17 cuando el tripwire avise
+      (`~/Trabajo/proyectos/evals-entregables/correr.sh`; base actual: 4/4
+      con v1.15, mismo modelo Fable 5 para comparar limpio).
+- [ ] PR del fix de bitácora del helper: las líneas hijas se archivan sin su
+      padre cuando el padre sobrevive reescrito (reproducido 2026-08-31;
+      diagnóstico en la sesión, falta el fix con tests en `cmd_rotar`).
 
 ## Cómo retomar
-- Abrir:    `DECISIONES.md` primero (dice qué ya se descartó y por qué), luego `CHANGELOG.md`
-- Correr:   `bash verificar.sh` y `bash scripts/rotar-continuar.sh autotest`
-- Verificar arranque: ambos deben dar exit 0
+- Abrir:    CHANGELOG.md (v1.17) y DECISIONES.md (entrada 2026-08-31).
+- Correr:   `bash verificar.sh` — todo el CI local en un comando.
+- Verificar arranque: `head -2 ~/.claude/CLAUDE.md` debe decir v1.17.
 
 ## Bloqueadores / esperas
 - Ninguno.
 
-## Frentes abiertos
-| Frente | Estado | Siguiente | Bloqueo |
-|---|---|---|---|
-| Kit v1.15 | congelado por decisión medida | nada hasta que el reporte semanal muestre un fallo recurrente | — |
-| Regla de modelo en workflows | identificada, no aplicada | una línea en kit-orquestacion, por PR | decisión de José |
-| Hábito `lector-fresco` | 1 uso en 60 días | invocarlo antes de que un entregable salga a dirección | — |
-
 ## Última decisión relevante
-- 2026-08-29  Congelar el kit; sandbox fuera del kit; sobrecosto de repartir es ~4× → DECISIONES.md
+- 2026-08-31  Matiz al congelamiento: para fallos invisibles al reporte de
+  salud, la evidencia aceptada es un piloto medido  → DECISIONES.md
 
 ---
 ## Detalle vivo
-- **Mediciones que sostienen el congelamiento**: banco de disparo 27/27 con las 70
-  skills reales · 119 invocaciones de skills del kit en 60 días (51% del total) ·
-  compactación en 8 de 1,145 sesiones · 83% de solape vault↔memoria · `verificador`
-  0 usos, `evaluador-council` 8, `lector-fresco` 1.
-- El **primer lunes con el reporte de salud arreglado es el 31-ago**: el falso
-  positivo de `[cyber]` ya está corregido en `claude-entorno` (contaba su propio
-  MEMORY.md; 101 coincidencias del grep contra 20 eventos reales).
-- Ola 3 de fichas (~18 proyectos): con `/proyecto-init` al reentrar, nunca en lote.
-- Investigación de respaldo en `~/Trabajo/investigacion/`:
-  `2026-08-28-vanguardia-para-ultracode.md` (incluye la config de sandbox probada) y
-  `2026-08-28-speculative-ptc-y-huecos-eficiencia.md`.
+- Evidencias del estándar archivadas en el laboratorio:
+  `~/Trabajo/proyectos/sdd-proyectos/specs/001-estandar-v1/` (sonda, gate,
+  validación) y el veredicto del council en `propuestas/`.
+- La sonda dejó 2 bugs de harness anotados (prompt "crea" se cuelga en
+  headless; `while read` pierde la última fila de un TSV sin salto final) —
+  útiles para la próxima sonda.
