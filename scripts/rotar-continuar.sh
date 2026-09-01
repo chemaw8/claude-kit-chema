@@ -250,15 +250,33 @@ new_counts = Counter(norm(l) for l in n if sustantiva(l))
 # sobra se archiva, duplicados incluidos (un duplicado en la bitácora es el
 # peor caso que el propio diseño ya declara aceptable).
 restante = Counter(new_counts)
-desplazado = []
-for l in v:
+# Cada línea desplazada viaja con su CONTEXTO: la sección de origen y, si es
+# una línea hija (indentada), su padre — para que la bitácora no acumule
+# huérfanos ilegibles cuando el padre sobrevive en el CONTINUAR nuevo.
+def _indent(l):
+    return len(l) - len(l.lstrip())
+
+desplazado = []          # tuplas (linea, seccion, padre_vigente_o_None)
+seccion = ""
+for idx, l in enumerate(v):
+    s = l.strip()
+    if s.startswith("## "):
+        seccion = s[3:].strip()
     if not sustantiva(l):
         continue
     k = norm(l)
     if restante[k] > 0:
         restante[k] -= 1          # esta ocurrencia sobrevive en el nuevo
-    else:
-        desplazado.append(l)      # esta ocurrencia no está en el nuevo → se archiva
+        continue
+    padre = None
+    if _indent(l) > 0:            # hija: buscar el padre hacia arriba
+        for j in range(idx - 1, -1, -1):
+            if sustantiva(v[j]) and _indent(v[j]) < _indent(l):
+                # solo se cita como contexto si el padre SIGUE en el nuevo
+                if new_counts[norm(v[j])] > 0:
+                    padre = v[j].strip()
+                break
+    desplazado.append((l, seccion, padre))
 
 # `nuevo` suele estar en otro sistema de archivos (un temporal en /tmp), donde
 # os.replace falla con "Invalid cross-device link". copyfile sí cruza.
@@ -276,7 +294,7 @@ if not desplazado:
 
 if dry:
     print(f"[dry-run] rotaría {len(desplazado)} líneas de CONTINUAR.md → {bit}")
-    for l in desplazado[:5]:
+    for l, _, _ in desplazado[:5]:
         print("   ·", l[:90])
     if len(desplazado) > 5:
         print(f"   … y {len(desplazado)-5} más")
@@ -295,7 +313,16 @@ if bit_prev is None:
 
 with open(bit, "a", encoding="utf-8") as fh:
     fh.write(f"\n## {hoy} — rotado desde CONTINUAR.md\n\n")
-    for l in desplazado:
+    ult_seccion, ult_padre = None, None
+    for l, seccion, padre in desplazado:
+        if seccion != ult_seccion:
+            fh.write(f"«{seccion or 'encabezado'}»:\n" if ult_seccion is None
+                     else f"\n«{seccion or 'encabezado'}»:\n")
+            ult_seccion, ult_padre = seccion, None
+        if padre != ult_padre:
+            if padre:
+                fh.write(f"> bajo: {padre}\n")
+            ult_padre = padre
         fh.write(l + "\n")
 
 aplicar(nuevo, viejo)
@@ -408,6 +435,19 @@ EOF
   # URL en "Cómo retomar": no es un archivo local, no debe fallar.
   printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Guía: https://raw.githubusercontent.com/foo/bar/main/README.md\n- Correr: `python scripts/run.py`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
   if ! cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: una URL en Cómo retomar no debe fallar el contrato"; f=1; fi
+
+  # La bitácora conserva CONTEXTO: sección de origen para todo lo archivado, y
+  # el padre citado cuando se archivan hijas de una viñeta que sobrevive.
+  local p3="$t/ctx-demo"; mkdir -p "$p3"
+  printf '# CONTINUAR — ctx  ·  cierre 2026-08-30  ·  commit ccccccc  ·  cierre limpio: sí\n\n## Dónde vamos\nfase vieja terminada\n\n## Siguiente paso\n- [ ] tarea vieja\n\n## Cómo retomar\n- Correr: make run\n\n## Bloqueadores / esperas\n- Ninguno\n\n---\n## Detalle vivo\n- Investigación de respaldo en la carpeta:\n  archivo-uno con la config probada\n  archivo-dos con los huecos\n' > "$p3/CONTINUAR.md"
+  printf '# CONTINUAR — ctx  ·  cierre 2026-08-31  ·  commit ddddddd  ·  cierre limpio: sí\n\n## Dónde vamos\nfase nueva\n\n## Siguiente paso\n- [ ] tarea nueva\n\n## Cómo retomar\n- Correr: make run\n\n## Bloqueadores / esperas\n- Ninguno\n\n---\n## Detalle vivo\n- Investigación de respaldo en la carpeta:\n' > "$t/ctx-nuevo.md"
+  cmd_rotar "$p3" "$t/ctx-nuevo.md" >/dev/null || { err "autotest: rotación con contexto falló"; f=1; }
+  grep -q "Dónde vamos" "$p3/docs/bitacora.md" \
+    || { err "autotest: lo archivado debe llevar su sección de origen"; f=1; }
+  grep -q "bajo: - Investigación de respaldo" "$p3/docs/bitacora.md" \
+    || { err "autotest: las hijas huérfanas deben citar a su padre vigente"; f=1; }
+  grep -q "archivo-uno con la config probada" "$p3/docs/bitacora.md" \
+    || { err "autotest: se perdió una hija"; f=1; }
 
   # Rutas FUERA del proyecto (absoluta, de home, o que sube): no son archivos
   # del repo y no deben validarse. PAT arranca en \w y nunca captura la '/' ni
