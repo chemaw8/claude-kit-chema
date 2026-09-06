@@ -9,7 +9,7 @@ determinista, no en prosa que Claude interpreta.
 
 ## Qué trae el kit
 
-Dos hooks de guardia y uno de contexto (`kit-chema-contexto.sh`, que carga
+Tres hooks de guardia y uno de contexto (`kit-chema-contexto.sh`, que carga
 tu contexto al abrir sesión).
 
 ### `rutas-fantasma.sh` — por defecto
@@ -29,6 +29,21 @@ no revisa `Bash`, `Glob`, `Grep` ni `NotebookEdit`.
 Por qué hook y no prosa: no es indisciplina que una regla pueda corregir, es el
 modelo inventando un entorno; ninguna instrucción lo frena, un chequeo
 determinista sí. Evidencia en CHANGELOG v1.18.
+
+### `backstop-cierre.sh` — por defecto
+
+`Stop`. El cierre no pasa ciego: si en la sesión se modificaron archivos del
+proyecto (fuera del papeleo: CONTINUAR, DECISIONES, CLAUDE.md, bitácora) o se hizo
+commit, y el `CONTINUAR.md` quedó rancio (hubo trabajo después del último cierre,
+según `rotar-continuar.sh reconciliar`) sin actualizarse después de ese trabajo,
+bloquea el cierre **una vez** con la razón, para que Claude corra `/cierre` o
+actualice el estado antes de terminar. En la misma sesión no vuelve a bloquear
+(deja un aviso al usuario); si Claude Code ya bloqueó (`stop_hook_active`), deja
+pasar. Solo lee las líneas con `tool_use` del transcript de la sesión (~80 ms en
+una sesión de 3 MB). Fail-open. Prueba: `bash hooks/test-backstop-cierre.sh`
+(la corre `verificar.sh`). Se apaga con `KIT_BACKSTOP=n ./instalar.sh` tras quitar
+su entrada de `settings.json`. Idea del backstop de fin de turno de firstmate
+(cosecha 2026-09-06).
 
 ### `anti-secretos.sh` — opt-in
 
@@ -55,12 +70,12 @@ Hay más eventos en Claude Code; este catálogo cubre los más útiles para el k
 
 ## Instalación y cómo desactivarlo
 
-`kit-chema-contexto.sh` y `rutas-fantasma.sh` se instalan por defecto (bajo
+`kit-chema-contexto.sh`, `rutas-fantasma.sh` y `backstop-cierre.sh` se instalan por defecto (bajo
 riesgo, alto valor). `hooks/anti-secretos.sh` es opt-in: `instalar.sh` pregunta
 antes de activarlo. Si aceptas, copia el script a `~/.claude/hooks/anti-secretos.sh` y
 fusiona `hooks/settings-fragment.json` dentro de `~/.claude/settings.json`,
 sin pisar hooks que ya tengas configurados ahí. Para desactivar cualquiera, quita su
-entrada (`anti-secretos.sh` o `rutas-fantasma.sh`) dentro de `hooks.PreToolUse`
+entrada (`anti-secretos.sh`, `rutas-fantasma.sh` en `hooks.PreToolUse`; `backstop-cierre.sh` en `hooks.Stop`)
 en `~/.claude/settings.json` — y, en el caso de `rutas-fantasma.sh`, reinstala
 después con `KIT_RUTAS_FANTASMA=n ./instalar.sh` (o exporta esa variable), porque
 si no el instalador la repone en la siguiente actualización. Ojo: revertir el PR

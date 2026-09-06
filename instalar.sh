@@ -148,6 +148,19 @@ else
   echo "hook rutas-fantasma: omitido — necesita python3 para fusionar settings.json y no se encontró en este sistema."
 fi
 
+# 4a-ter. Hook backstop-cierre (Stop): por defecto. Si la sesión modificó archivos
+# del proyecto y su CONTINUAR.md quedó rancio sin actualizarse, bloquea el cierre
+# una vez para que Claude corra /cierre. Fail-open. Se omite con KIT_BACKSTOP=n.
+if [ "${KIT_BACKSTOP:-}" = "n" ]; then
+  echo "hook backstop-cierre: omitido por KIT_BACKSTOP=n"
+elif command -v python3 >/dev/null 2>&1; then
+  cp "$KIT/hooks/backstop-cierre.sh" "$DIR/hooks/" && chmod +x "$DIR/hooks/backstop-cierre.sh"
+  SOLO_CMD=backstop-cierre fusionar_hooks Stop
+  echo "hook backstop-cierre: instalado (el cierre no pasa ciego con trabajo sin cerrar)"
+else
+  echo "hook backstop-cierre: omitido — necesita python3 para fusionar settings.json y no se encontró en este sistema."
+fi
+
 # 4b. Hook anti-secretos (PreToolUse): opt-in, sigue preguntando.
 resp="${KIT_HOOKS:-}"
 if [ -z "$resp" ] && [ -t 0 ]; then
