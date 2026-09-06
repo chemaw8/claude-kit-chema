@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
-# Hook Stop del Kit Chema: el cierre no pasa ciego. Si en ESTA sesión se
-# modificaron archivos (Write/Edit/NotebookEdit) o se hicieron commits dentro del
-# proyecto del cwd, y su CONTINUAR.md quedó rancio (hubo trabajo después del
-# último cierre, según `rotar-continuar.sh reconciliar`) y no se actualizó en la
-# sesión, bloquea el cierre UNA vez con la razón, para que Claude corra /cierre o
-# actualice CONTINUAR.md antes de terminar. En la misma sesión no vuelve a
-# bloquear: deja un aviso al usuario. Si Claude Code ya bloqueó antes
-# (stop_hook_active), deja pasar. Fail-open: ante cualquier error, deja pasar.
-# Idea tomada del backstop de fin de turno de firstmate (cosecha 2026-09-06).
+# Hook Stop del Kit Chema: el cierre no pasa ciego. Si en ESTA sesión hubo trabajo
+# real dentro del proyecto del cwd (≥3 escrituras fuera del papeleo, o ≥1 commit)
+# después de la última actualización de CONTINUAR.md, y `rotar-continuar.sh
+# reconciliar` dice que el estado quedó rancio (código 1: trabajo después del
+# último cierre, o cierre no limpio), bloquea el fin de turno UNA vez con la razón,
+# para que Claude decida: si va a terminar, corre /cierre; si está a mitad de la
+# tarea, continúa. En la misma sesión no vuelve a bloquear (deja un aviso al
+# usuario) hasta que CONTINUAR.md se actualice de nuevo: entonces se re-arma.
+# Si Claude Code ya bloqueó (stop_hook_active), o el helper no puede reconciliar
+# (código 3: sin ancla, ancla fuera del historial), o algo falla: deja pasar.
+# Opt-in: KIT_BACKSTOP=s ./instalar.sh. Idea: backstop de firstmate (cosecha 2026-09-06).
 set -uo pipefail
 ROTAR="${BACKSTOP_ROTAR:-$HOME/.claude/scripts/rotar-continuar.sh}"
-MARCAS="${BACKSTOP_MARCAS:-${XDG_RUNTIME_DIR:-/tmp}/kit-chema-backstop}"
+MARCAS="${BACKSTOP_MARCAS:-${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/kit-chema-backstop}"
+MIN_ESCRITURAS="${BACKSTOP_MIN:-3}"
 input=$(cat)
 leer=$(printf '%s' "$input" | python3 -c '
 import json,sys
@@ -25,12 +28,13 @@ tr=$(sed -n 3p <<<"$leer"); activo=$(sed -n 4p <<<"$leer")
 [ -n "$cwd" ] && [ -f "$cwd/CONTINUAR.md" ] || exit 0
 [ -n "$tr" ] && [ -r "$tr" ] || exit 0
 
-# ¿Hubo trabajo real en esta sesión dentro del proyecto, y quedó sin cerrar? Trabajo
-# real = Write/Edit fuera del papeleo (CONTINUAR, DECISIONES, CLAUDE.md, bitácora) o
-# git commit. Cerrado = se escribió CONTINUAR.md y después no hubo más trabajo real
-# (el commit de cierre no cuenta). Solo se leen las líneas con tool_use.
+# Trabajo real en esta sesión dentro del proyecto, y si quedó sin cerrar. Trabajo real
+# = Write/Edit/NotebookEdit fuera del papeleo (CONTINUAR, DECISIONES, CLAUDE.md,
+# bitácora) o `git … commit`. Cerrado = se escribió CONTINUAR.md y después no hubo
+# más trabajo real (papeleo y commit de cierre no cuentan). Solo lee las líneas con
+# tool_use. Imprime: escrituras_posteriores, commits, cerrado, idx_ultimo_continuar.
 res=$(grep -F '"tool_use"' "$tr" 2>/dev/null | python3 -c '
-import json,sys,os
+import json,sys,os,re
 raiz=sys.argv[1].rstrip("/")
 PAPELEO={"CONTINUAR.md","DECISIONES.md","CLAUDE.md","bitacora.md"}
 idx=0; ultimo_cont=-1; trabajo=[]; commits=0
@@ -48,31 +52,39 @@ for line in sys.stdin:
             b=os.path.basename(p)
             if b=="CONTINUAR.md": ultimo_cont=idx
             elif b not in PAPELEO: trabajo.append(idx)
-        elif name=="Bash" and "git commit" in (i.get("command") or ""):
+        elif name=="Bash" and re.search(r"\bgit\b.*\bcommit\b", i.get("command") or ""):
             commits+=1
-n=len(trabajo)+commits
-# cerrado = se escribio CONTINUAR.md y despues no hubo mas trabajo real (papeleo y commits no cuentan)
-cerrado = ultimo_cont>=0 and not any(t>ultimo_cont for t in trabajo)
-print(n); print("1" if cerrado else "0")' "$cwd" 2>/dev/null) || exit 0
-n=$(sed -n 1p <<<"$res"); cont=$(sed -n 2p <<<"$res")
-[ "${n:-0}" -gt 0 ] 2>/dev/null || exit 0
-[ "$cont" = "1" ] && exit 0
+posteriores=[t for t in trabajo if t>ultimo_cont]
+cerrado = ultimo_cont>=0 and not posteriores
+print(len(posteriores)); print(commits); print("1" if cerrado else "0"); print(ultimo_cont)' "$cwd" 2>/dev/null) || exit 0
+n=$(sed -n 1p <<<"$res"); commits=$(sed -n 2p <<<"$res"); cerrado=$(sed -n 3p <<<"$res"); ultimo_cont=$(sed -n 4p <<<"$res")
+[ "${n:-0}" -ge "$MIN_ESCRITURAS" ] 2>/dev/null || [ "${commits:-0}" -ge 1 ] 2>/dev/null || exit 0
+[ "$cerrado" = "1" ] && exit 0
 
-# ¿El estado quedó rancio? 0 fresco · 1 rancio · 2 sin CONTINUAR. BACKSTOP_RECONCILIAR
-# permite inyectar el veredicto en la prueba.
-if [ -n "${BACKSTOP_RECONCILIAR:-}" ]; then bash -c "$BACKSTOP_RECONCILIAR"; rc=$?
-else bash "$ROTAR" reconciliar "$cwd" >/dev/null 2>&1; rc=$?; fi
+# ¿El estado quedó rancio? 0 fresco · 1 rancio · 2 sin CONTINUAR · 3 no se puede
+# reconciliar (sin ancla, ancla fuera del historial). Solo el 1 bloquea, y la razón
+# cita el motivo que dio el helper. BACKSTOP_RECONCILIAR inyecta el veredicto en la prueba.
+if [ -n "${BACKSTOP_RECONCILIAR:-}" ]; then motivo=$(bash -c "$BACKSTOP_RECONCILIAR" 2>&1); rc=$?
+else motivo=$(bash "$ROTAR" reconciliar "$cwd" 2>&1); rc=$?; fi
 [ "$rc" -eq 1 ] || exit 0
+motivo=$(printf '%s\n' "$motivo" | grep -m1 '✗' | sed 's/^[^✗]*✗ *//' | cut -c1-160)
 
 proy=$(basename "$cwd")
-mkdir -p "$MARCAS" 2>/dev/null
+mkdir -p "$MARCAS" 2>/dev/null || exit 0
+find "$MARCAS" -type f -mtime +7 -delete 2>/dev/null
 marca="$MARCAS/${sid:-sin-sesion}"
+# La marca guarda el índice del último CONTINUAR.md al momento del bloqueo: si después
+# se volvió a escribir CONTINUAR.md (cierre) y hubo más trabajo, se re-arma.
 if [ -f "$marca" ]; then
-  python3 -c 'import json,sys; print(json.dumps({"systemMessage": sys.argv[1]}, ensure_ascii=False))' \
-    "Kit Chema: '$proy' sigue con CONTINUAR.md rancio tras trabajo real en esta sesión (ya se avisó una vez). Corre /cierre antes de dejarlo."
-  exit 0
+  guardado=$(cat "$marca" 2>/dev/null); guardado=${guardado:--1}
+  if [ "${ultimo_cont:--1}" -gt "$guardado" ] 2>/dev/null; then rm -f "$marca"
+  else
+    python3 -c 'import json,sys; print(json.dumps({"systemMessage": sys.argv[1]}, ensure_ascii=False))' \
+      "Kit Chema: '$proy' sigue con trabajo sin cerrar en esta sesión (ya se avisó una vez). Antes de dejarlo, corre /cierre."
+    exit 0
+  fi
 fi
-: > "$marca"
+printf '%s' "${ultimo_cont:--1}" > "$marca" 2>/dev/null || exit 0
 python3 -c 'import json,sys; print(json.dumps({"decision":"block","reason": sys.argv[1]}, ensure_ascii=False))' \
-  "Kit Chema: esta sesión modificó $n archivo(s) o hizo commits en el proyecto '$proy' y su CONTINUAR.md quedó rancio (hubo trabajo después del último cierre). Antes de terminar: corre /cierre o actualiza CONTINUAR.md. Si José prefiere dejarlo así, dilo y termina."
+  "Kit Chema: en esta sesión hay $n escritura(s) y $commits commit(s) en el proyecto '$proy' después de la última actualización de CONTINUAR.md, y reconciliar dice: ${motivo:-el estado quedó rancio}. Si estás a mitad de la tarea, continúa. Si vas a terminar: corre /cierre o actualiza CONTINUAR.md antes. Si el usuario prefiere dejarlo así, dilo y termina."
 exit 0

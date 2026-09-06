@@ -9,7 +9,7 @@ determinista, no en prosa que Claude interpreta.
 
 ## Qué trae el kit
 
-Tres hooks de guardia y uno de contexto (`kit-chema-contexto.sh`, que carga
+Tres hooks de guardia (dos por defecto, uno opt-in) y uno de contexto (`kit-chema-contexto.sh`, que carga
 tu contexto al abrir sesión).
 
 ### `rutas-fantasma.sh` — por defecto
@@ -30,20 +30,28 @@ Por qué hook y no prosa: no es indisciplina que una regla pueda corregir, es el
 modelo inventando un entorno; ninguna instrucción lo frena, un chequeo
 determinista sí. Evidencia en CHANGELOG v1.18.
 
-### `backstop-cierre.sh` — por defecto
+### `backstop-cierre.sh` — opt-in (`KIT_BACKSTOP=s`)
 
-`Stop`. El cierre no pasa ciego: si en la sesión se modificaron archivos del
-proyecto (fuera del papeleo: CONTINUAR, DECISIONES, CLAUDE.md, bitácora) o se hizo
-commit, y el `CONTINUAR.md` quedó rancio (hubo trabajo después del último cierre,
-según `rotar-continuar.sh reconciliar`) sin actualizarse después de ese trabajo,
-bloquea el cierre **una vez** con la razón, para que Claude corra `/cierre` o
-actualice el estado antes de terminar. En la misma sesión no vuelve a bloquear
-(deja un aviso al usuario); si Claude Code ya bloqueó (`stop_hook_active`), deja
-pasar. Solo lee las líneas con `tool_use` del transcript de la sesión (~80 ms en
-una sesión de 3 MB). Fail-open. Prueba: `bash hooks/test-backstop-cierre.sh`
-(la corre `verificar.sh`). Se apaga con `KIT_BACKSTOP=n ./instalar.sh` tras quitar
-su entrada de `settings.json`. Idea del backstop de fin de turno de firstmate
-(cosecha 2026-09-06).
+`Stop`. El fin de turno no pasa ciego: si en la sesión hubo **trabajo real** en el
+proyecto (≥3 escrituras fuera del papeleo —CONTINUAR, DECISIONES, CLAUDE.md,
+bitácora— o ≥1 `git commit`) después de la última actualización de `CONTINUAR.md`,
+y `rotar-continuar.sh reconciliar` dice que el estado quedó rancio (código 1),
+bloquea **una vez** con la razón —citando el motivo del helper— para que Claude
+decida: si está a mitad de la tarea, continúa; si va a terminar, corre `/cierre`.
+En la misma sesión no repite (aviso al usuario) hasta que `CONTINUAR.md` se
+actualice de nuevo: entonces se re-arma. Si el helper **no puede** reconciliar
+(código 3: sin ancla, ancla fuera del historial) o algo falla, deja pasar. Solo lee
+las líneas con `tool_use` del transcript (~0.1 s en 50 MB). Prueba:
+`bash hooks/test-backstop-cierre.sh` (25 casos, dos con el helper real).
+
+**Por qué hook y no prosa, y por qué opt-in.** No cerrar bien es indisciplina, no
+un fallo del modelo: por la regla de abajo tocaría corregirlo en prosa — y la prosa
+ya existe (el núcleo pide reconciliar al retomar; `/cierre` existe) y no alcanzó:
+4 estados rancios en una semana, medidos por kit-uso. El costo no es alto (un
+estado rancio se recupera), así que este hook **no cumple la puerta para entrar por
+defecto**: entra opt-in y pasa a "por defecto" solo si dos reportes semanales
+muestran menos rancios sin falsos positivos. Idea del backstop de fin de turno de
+firstmate (cosecha 2026-09-06).
 
 ### `anti-secretos.sh` — opt-in
 
@@ -70,9 +78,9 @@ Hay más eventos en Claude Code; este catálogo cubre los más útiles para el k
 
 ## Instalación y cómo desactivarlo
 
-`kit-chema-contexto.sh`, `rutas-fantasma.sh` y `backstop-cierre.sh` se instalan por defecto (bajo
-riesgo, alto valor). `hooks/anti-secretos.sh` es opt-in: `instalar.sh` pregunta
-antes de activarlo. Si aceptas, copia el script a `~/.claude/hooks/anti-secretos.sh` y
+`kit-chema-contexto.sh` y `rutas-fantasma.sh` se instalan por defecto (bajo
+riesgo, alto valor). `hooks/anti-secretos.sh` es opt-in (`instalar.sh` pregunta) y
+`hooks/backstop-cierre.sh` también (`KIT_BACKSTOP=s`). Si aceptas, copia el script a `~/.claude/hooks/anti-secretos.sh` y
 fusiona `hooks/settings-fragment.json` dentro de `~/.claude/settings.json`,
 sin pisar hooks que ya tengas configurados ahí. Para desactivar cualquiera, quita su
 entrada (`anti-secretos.sh`, `rutas-fantasma.sh` en `hooks.PreToolUse`; `backstop-cierre.sh` en `hooks.Stop`)

@@ -42,8 +42,12 @@ núcleo o caracteres a una description declara en su descripción qué paga la
 adición**: qué línea o frase sale, o por qué el margen restante la absorbe y
 cuánto queda después. Cuando el núcleo esté a menos de 10 líneas del tope, la
 adición exige una remoción del mismo tamaño en el mismo PR. Un PR que agrega sin
-decir qué paga vuelve a borrador. (Idea del presupuesto de memoria de backpass
-—"sobre presupuesto, toda adición nombra qué paga"—, cosecha del 2026-09-06.)
+decir qué paga vuelve a borrador. La regla es sobre **adiciones**: un fix que
+corrige una línea sin crecer no la dispara. Cubre lo que `verificar.sh` mide —el
+núcleo y las descriptions—, no los cuerpos de skill, comandos ni hooks; esos tienen
+sus propios topes (5,000 palabras por skill; "máximo 2 adiciones netas por skill por
+ronda"). (Idea del presupuesto de memoria de backpass —"sobre presupuesto, toda
+adición nombra qué paga"—, cosecha del 2026-09-06.)
 
 ## Crear una skill nueva
 

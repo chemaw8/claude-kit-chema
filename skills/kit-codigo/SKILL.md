@@ -77,8 +77,9 @@ La regla que sostiene todo lo demás. Cada punto es verificable.
   mueva, sobrescriba o rote datos corre en `--dry-run` salvo flag explícito;
   clasifica el riesgo (en uso, sin mergear, con cambios, reservado) en flags
   separados en vez de un `--force` global; y falla cerrado cuando no puede
-  resolver su objetivo: error, nunca un default inferido. `rotar-continuar.sh`
-  es el ejemplo vivo.
+  resolver su objetivo: error, nunca un default inferido. Es el estándar hacia
+  adelante; hoy `rotar-continuar.sh` cumple el fallo cerrado y la verificación de
+  cero pérdida, pero su simulacro es `--dry-run` opt-in, no el default.
 - Revisar el diff completo antes del commit final. Lee todo lo que vas a
   commitear. Lo que no aporte a la tarea, fuera.
 

@@ -2,23 +2,29 @@
 
 ## v1.19 — 2026-09-06
 Fase 1 del programa de mejora del entorno (cosecha del setup de Kun Chen,
-2026-09-06; ninguna herramienta suya instalada, solo el diseño):
-- **Hook `backstop-cierre.sh`** (`Stop`), por defecto: si la sesión modificó
-  archivos del proyecto o hizo commits y su `CONTINUAR.md` quedó rancio sin
-  actualizarse después, bloquea el cierre una vez con la razón para que Claude
-  corra `/cierre`. Papeleo y commit de cierre no cuentan; en la misma sesión no
-  repite; fail-open. Probado con el transcript real de una sesión de 3 MB (81 ms).
-  Prueba `hooks/test-backstop-cierre.sh` (16 casos). Interruptor `KIT_BACKSTOP=n`.
-  Completa el scan de frescura: semanal (kit-uso), al retomar (`reconciliar`) y
-  ahora al cerrar. Idea: backstop de fin de turno de firstmate.
-- **GOBERNANZA: "toda adición al núcleo nombra qué paga"** — el núcleo (129/150
-  líneas hoy) y las descriptions son presupuesto: cada PR que agrega declara qué
-  sale o qué margen lo absorbe; a <10 líneas del tope, la adición exige remoción.
-  Idea: presupuesto de memoria de backpass.
-- **kit-codigo: "destructivo = simulacro por defecto"** — scripts que borran,
-  mueven o rotan corren en `--dry-run` salvo flag explícito, clasifican el riesgo
-  en flags separados en vez de `--force`, y fallan cerrado. Idea: treehouse/gnhf;
-  `rotar-continuar.sh` ya lo cumplía.
+2026-09-06; ninguna herramienta suya instalada, solo el diseño). Council de 3
+lentes: aprobada con cambios, todos aplicados (`docs/pruebas/council-v1.19.md`).
+- **Hook `backstop-cierre.sh`** (`Stop`), **opt-in** (`KIT_BACKSTOP=s`): si en la
+  sesión hubo trabajo real en el proyecto (≥3 escrituras fuera del papeleo o ≥1
+  commit) después de la última actualización de `CONTINUAR.md` y `reconciliar` dice
+  rancio, bloquea el fin de turno una vez citando el motivo del helper; se re-arma
+  si se cierra y se sigue trabajando; fail-open. 25 casos de prueba, dos con el
+  helper real; medido: 0.1-0.4 s en transcripts de 40-146 MB. Entra opt-in porque no
+  cumple la puerta de v1.18 para hooks por defecto (no cerrar es indisciplina, costo
+  medio); pasa a por defecto si dos reportes semanales muestran menos rancios sin
+  falsos positivos. Idea: backstop de fin de turno de firstmate.
+- **`rotar-continuar.sh reconciliar` devuelve 3** cuando NO puede reconciliar (sin
+  ancla, ancla fuera del historial), en vez de 1 como "rancio": 13 de 32 CONTINUAR
+  de una instalación real no tienen ancla y habrían bloqueado en falso. Quien use el
+  código como booleano no cambia.
+- **GOBERNANZA: "toda adición al núcleo nombra qué paga"** — núcleo (129/150 hoy) y
+  descriptions son presupuesto; cada PR que agrega declara qué sale o qué margen lo
+  absorbe; a <10 líneas del tope, la adición exige remoción. Solo adiciones; cubre
+  lo que mide `verificar.sh`. Idea: presupuesto de memoria de backpass.
+- **kit-codigo: "destructivo = simulacro por defecto"** — `--dry-run` salvo flag
+  explícito, clases de riesgo en flags separados en vez de `--force`, fallo cerrado.
+  Estándar hacia adelante (hoy ningún script del kit lo cumple del todo). Idea:
+  treehouse/gnhf.
 
 ## v1.18 — 2026-09-06
 **Hook `rutas-fantasma.sh`** (`PreToolUse` sobre `Read|Write|Edit`), instalado
