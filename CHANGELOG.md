@@ -1,5 +1,26 @@
 # Changelog — Kit Chema
 
+## v1.18 — 2026-09-06
+**Hook `rutas-fantasma.sh`** (`PreToolUse` sobre `Read|Write|Edit`), instalado
+por defecto: bloquea lecturas y escrituras a rutas de otro entorno que el modelo
+a veces alucina en la máquina del usuario —`/home/user`, `/mnt/user-data`,
+`/repo`, típicas del sandbox de claude.ai— y el `Read` de `/` (siempre EISDIR),
+devolviendo al modelo el cwd real. Solo actúa si el prefijo no existe en disco,
+así no puede estorbar un flujo legítimo; sin python3 o con JSON ilegible deja
+pasar. Prefijos configurables con `RUTAS_FANTASMA` (lo usa la prueba).
+
+Evidencia, la que el congelamiento del 2026-08-29 exige (fallo recurrente en el
+reporte semanal de salud): en una instalación real, 46 de 148 errores de tool en
+5 días (31%) fueron `Read` a esas rutas, tras 17 la semana anterior; ninguna
+regla en prosa aplica porque no es indisciplina sino una alucinación de entorno.
+Prueba `hooks/test-rutas-fantasma.sh` (12 casos, independiente de la máquina;
+`verificar.sh` la corre) y bloqueo comprobado en vivo el 2026-09-05.
+
+También: `fusionar_hooks` de `instalar.sh` admite `SOLO_CMD` para fusionar una
+sola entrada de un evento (antes, aceptar un hook de `PreToolUse` arrastraba a
+todos los del fragmento); `verificar.sh` corre la prueba de todo hook que traiga
+`hooks/test-<nombre>.sh`.
+
 ## v1.17 — 2026-09-01
 **El estándar de estructura de proyectos entra al núcleo** (etapa 2 del
 council del 2026-08-31): sección "Estructura de proyectos", 7 líneas — el

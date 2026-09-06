@@ -108,6 +108,14 @@ for f in scripts/*.sh; do
   fi
 done
 
+# Los hooks que traen prueba deben pasarla: hooks/test-<nombre>.sh prueba hooks/<nombre>.sh.
+for t in hooks/test-*.sh; do
+  [ -e "$t" ] || continue
+  h="hooks/$(basename "$t" .sh | sed 's/^test-//').sh"
+  [ -x "$h" ]; chk "$h es ejecutable" $?
+  bash "$t" "$h" >/dev/null 2>&1; chk "$h pasa $t" $?
+done
+
 # 4. Sin gritos: mayúsculas de énfasis prohibidas en contenido instalable
 if grep -rnE '(CRITICAL|IMPORTANTE:|OBLIGATORIO:|NUNCA HAGAS|SIEMPRE DEBES)' nucleo/ skills/ agents/ 2>/dev/null | grep -v ':#'; then
   chk "sin énfasis gritado en nucleo/, skills/ y agents/" 1
