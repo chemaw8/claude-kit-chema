@@ -21,7 +21,7 @@ dejó abierta (fallo recurrente en el reporte de salud).
 - [ ] PR del fix de bitácora del helper: las líneas hijas se archivan sin su padre cuando el padre sobrevive reescrito (reproducido 2026-08-31).
 
 ## Cómo retomar
-- Abrir:    CHANGELOG.md (v1.18, v1.19), `docs/pruebas/council-v1.18.md` y `council-v1.19.md`, PRs #29 y #30.
+- Abrir:    CHANGELOG.md (v1.18, v1.19), `docs/pruebas/council-v1.18.md` y `docs/pruebas/council-v1.19.md`, PRs #29 y #30.
 - Correr:   `bash verificar.sh` — todo el CI local en un comando (incluye las pruebas de los tres hooks).
 - Verificar arranque: `gh pr view 30 --json state,mergedAt,isDraft`.
 
