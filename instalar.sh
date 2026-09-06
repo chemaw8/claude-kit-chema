@@ -135,8 +135,12 @@ fi
 # 4a-bis. Hook rutas-fantasma (PreToolUse Read|Write|Edit): por defecto. Solo
 # bloquea rutas a prefijos que no existen en esta máquina (típicas del sandbox de
 # claude.ai: /home/user, /mnt/user-data, /repo) y el Read de "/", así que no puede
-# estorbar un flujo legítimo. Evidencia y diseño en CHANGELOG v1.18.
-if command -v python3 >/dev/null 2>&1; then
+# estorbar una lectura legítima. Evidencia y diseño en CHANGELOG v1.18. Se omite
+# con KIT_RUTAS_FANTASMA=n (después de quitar su entrada de settings.json, si ya
+# estaba: el instalador no borra hooks).
+if [ "${KIT_RUTAS_FANTASMA:-}" = "n" ]; then
+  echo "hook rutas-fantasma: omitido por KIT_RUTAS_FANTASMA=n"
+elif command -v python3 >/dev/null 2>&1; then
   cp "$KIT/hooks/rutas-fantasma.sh" "$DIR/hooks/" && chmod +x "$DIR/hooks/rutas-fantasma.sh"
   SOLO_CMD=rutas-fantasma fusionar_hooks PreToolUse
   echo "hook rutas-fantasma: instalado (bloquea lecturas a rutas de otro entorno que aquí no existen)"
