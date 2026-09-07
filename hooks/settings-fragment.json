@@ -26,7 +26,7 @@
           {
             "type": "command",
             "command": "$HOME/.claude/hooks/sello-push.sh",
-            "timeout": 5
+            "timeout": 10
           }
         ]
       }

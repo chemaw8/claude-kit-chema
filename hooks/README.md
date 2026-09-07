@@ -81,7 +81,9 @@ política. Pruebas: `bash hooks/test-sello-push.sh` (56 casos) y `bash
 scripts/sello-push.sh autotest` (revisor y pruebas inyectados; ninguna toca el ledger
 real). Apagado en tres niveles: por push (`KIT_SELLO=omitir`, anotado), por repo
 (`sello-push.sh desactivar`), por máquina (quitar `sello-push.sh` de
-`hooks.PreToolUse` y no volver a pasar `KIT_GATE=s`).
+`hooks.PreToolUse` y no volver a pasar `KIT_GATE=s`). Ojo: por la **vía plugin**
+(`hooks.json`) el hook viaja siempre y la única llave es la del repo; la llave de máquina
+`KIT_GATE=s` existe solo con el instalador.
 
 **Por qué hook y no prosa, y por qué opt-in.** "Revisa antes de subir" ya estaba en
 prosa (kit-codigo) y no alcanza: el modelo decide cuándo aplica. El hook no cumple las

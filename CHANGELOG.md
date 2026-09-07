@@ -4,7 +4,8 @@
 Fase 3 del programa de mejora del entorno: **gate de push local**, diseñado por un
 workflow de 3 diseños independientes, 3 jueces y un crítico de completitud (spec 002 de
 claude-entorno; elegido "Sello de push v2" sobre un pre-receive local y un check de
-GitHub). Todo **opt-in** (`KIT_GATE=s` + `git config kit-chema.gate true` por repo).
+GitHub). Todo **opt-in**: `git config kit-chema.gate true` por repo y, con el instalador,
+además `KIT_GATE=s` (por la vía plugin el hook viaja siempre y solo cuenta la llave del repo).
 - **Hook `sello-push.sh`** (`PreToolUse` Bash): `git push` solo pasa con sello del sha
   empujado sin bloqueantes pendientes; analiza el comando por segmentos (heredocs y
   cadenas no cuentan), resuelve remoto y refspec (`@{push}`, `+`, `HEAD:x`, opciones con

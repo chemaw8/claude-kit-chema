@@ -90,7 +90,7 @@ bloquea "--tags sin remoto → resuelve origin y bloquea por un tag cuyo commit 
 sello "$B" 0 0; bloquea "--tags junto con un refspec (git push --tags origin main) también revisa los tags → 2" "$R" "git push --tags origin main"; cita "cita un tag, no la rama" "es un tag"; sin_sello "$B"
 g tag -d v-fork >/dev/null; bloquea "--tags sin v-fork: el bloqueo lo dispara v-nueva" "$R" "git push --tags"; cita "cita v-nueva" "v-nueva"
 g tag -d v-nueva >/dev/null; pasa "--tags con solo tags cuyo commit ya está en origin (v-vieja) → 0" "$R" "git push --tags"
-for i in $(seq 1 21); do g tag "t$i" "$A"; done; bloquea "más de 20 tags → 2 (tope para no agotar el timeout del hook)" "$R" "git push --tags"; cita "dice el tope" "tope 20"; for i in $(seq 1 21); do g tag -d "t$i" >/dev/null; done
+for i in $(seq 1 21); do g tag "t$i" "$A"; done; bloquea "más de 10 tags → 2 (tope para no agotar el timeout del hook)" "$R" "git push --tags"; cita "dice el tope" "tope 10"; for i in $(seq 1 21); do g tag -d "t$i" >/dev/null; done
 
 echo "RF-5 · escape explícito del usuario:"
 pasa "KIT_SELLO=omitir git push → 0" "$R" "KIT_SELLO=omitir git push origin main"; ledger "ledger: omitido" omitido

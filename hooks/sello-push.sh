@@ -217,9 +217,9 @@ def main():
             remoto = up.split("/", 3)[2] if up.startswith("refs/remotes/") and up.count("/") >= 3 else (git(repo, "config", "--get", "remote.pushDefault") or "origin")
         if o["tags"]:                                            # --tags empuja los tags ADEMÁS de los refspecs: se revisan siempre
             tags = [t for t in (git(repo, "tag", "--list") or "").split("\n") if t]
-            if len(tags) > 20:
+            if len(tags) > 10:
                 ledger(evento="bloqueo", repo=identidad(repo), motivo="varios-tags", session=sid)
-                salir(2, PREFIJO + f"--tags empujaría {len(tags)} tags y el gate los revisa uno por uno (tope 20 para no agotar su timeout): empuja los tags por nombre.")
+                salir(2, PREFIJO + f"--tags empujaría {len(tags)} tags y el gate los revisa uno por uno (tope 10 para no agotar su timeout): empuja los tags por nombre.")
             refspecs = refspecs + tags
         specs = []
         if not refspecs:

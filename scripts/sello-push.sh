@@ -19,7 +19,8 @@
 #
 # Config por repo (git config): kit-chema.pruebas ("bash verificar.sh" si existe),
 # kit-chema.revisor (opus), kit-chema.base (rama base). Variables: KIT_GATE_LEDGER,
-# SELLO_TOPE_USD (2; la primera revisión real de 1,400 líneas costó 0.90), SELLO_PRUEBAS_SEG (600), SELLO_DEBUG=1 (imprime la invocación).
+# SELLO_TOPE_USD (2; la primera revisión real de 1,400 líneas costó 0.90), SELLO_PRUEBAS_SEG (600, pruebas),
+# SELLO_REVISOR_SEG (900, revisor: una revisión real ya tardó 632 s), SELLO_DEBUG=1 (imprime la invocación).
 # Solo para pruebas: SELLO_REVISOR (sustituye el comando claude -p), SELLO_PRUEBAS
 # (sustituye las pruebas), SELLO_SIN_TIMEOUT=1 (simula que no hay coreutils timeout).
 set -uo pipefail
@@ -50,12 +51,12 @@ cmd_revisar() {
   if [ -z "${SELLO_PRUEBAS+x}" ] && [ -z "$pruebas" ] && [ -f "$repo/verificar.sh" ]; then pruebas="bash verificar.sh"; fi
   cli="$(command -v claude >/dev/null 2>&1 && claude --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
   REPO="$repo" BASE_ARG="$base" PRUEBAS_CMD="$pruebas" MODELO="$(git -C "$repo" config --get kit-chema.revisor 2>/dev/null || echo opus)" \
-  LEDGER="$(ledger_path)" PROMPT="$PROMPT" ESQUEMA="$ESQUEMA" TOPE="${SELLO_TOPE_USD:-2}" SEG="${SELLO_PRUEBAS_SEG:-600}" \
+  LEDGER="$(ledger_path)" PROMPT="$PROMPT" ESQUEMA="$ESQUEMA" TOPE="${SELLO_TOPE_USD:-2}" SEG="${SELLO_PRUEBAS_SEG:-600}" REV_SEG="${SELLO_REVISOR_SEG:-900}" \
   SIN_TIMEOUT="${SELLO_SIN_TIMEOUT:-}" REVISOR_CMD="${SELLO_REVISOR:-}" DEBUG="${SELLO_DEBUG:-}" CLI_VERSION="$cli" \
   python3 - <<'PY'
 import json, os, re, subprocess, sys, tempfile, shutil, hashlib, datetime, time, shlex
 E = os.environ; REPO = E["REPO"]; LEDGER = E["LEDGER"]
-MODELO = E.get("MODELO") or "opus"; SEG = int(E.get("SEG") or 600)
+MODELO = E.get("MODELO") or "opus"; SEG = int(E.get("SEG") or 600); REV_SEG = int(E.get("REV_SEG") or 900)
 def sh(args, cwd=None, inp=None, timeout=None, env=None):
     try: return subprocess.run(args, cwd=cwd, input=inp, capture_output=True, text=True, timeout=timeout, env=env)
     except FileNotFoundError as e: return subprocess.CompletedProcess(args, 127, "", f"no se encontró {args[0]}")
@@ -220,11 +221,11 @@ else:
 env = dict(os.environ); env["KIT_ADVISOR_INNER"] = "1"
 if E.get("DEBUG"): print("invocación: " + " ".join(shlex.quote(a) if a != E["PROMPT"] else "<prompt>" for a in argv) + f" · cwd: {cwd_vacio}", file=sys.stderr)
 t0 = time.time()
-try: r = sh(argv, cwd=cwd_vacio, inp=paquete, timeout=SEG, env=env)
+try: r = sh(argv, cwd=cwd_vacio, inp=paquete, timeout=REV_SEG, env=env)
 except subprocess.TimeoutExpired: r = None
 if r is not None and r.returncode != 0 and not rev_cmd and (time.time() - t0) < 10:   # plan B solo si falló de inmediato (anidamiento), no tras gastar cuota
     env2 = dict(env); env2.pop("CLAUDECODE", None)
-    try: r = sh(argv, cwd=cwd_vacio, inp=paquete, timeout=SEG, env=env2)
+    try: r = sh(argv, cwd=cwd_vacio, inp=paquete, timeout=REV_SEG, env=env2)
     except subprocess.TimeoutExpired: r = None
 dur_ms = int((time.time() - t0) * 1000); shutil.rmtree(cwd_vacio, ignore_errors=True)
 def no_disponible(razon):
@@ -294,6 +295,7 @@ lines = open(p, encoding="utf-8").read().splitlines(); d = dict(l.split("=", 1) 
 h = json.loads(d.get("hallazgos", "[]")); n = int(E["N"])
 if not 1 <= n <= len(h): print(f"✗ el sello tiene {len(h)} hallazgo(s); no existe el {n}", file=sys.stderr); sys.exit(2)
 if h[n-1].get("sev") != "bloquea": print(f"✗ el hallazgo {n} ({h[n-1].get('id')}) es un aviso: no bloquea, nada que saltar", file=sys.stderr); sys.exit(2)
+if h[n-1].get("archivo") == "(pruebas)": print("✗ las pruebas rojas no se saltan: arregla, commitea y vuelve a revisar", file=sys.stderr); sys.exit(2)
 ids = [x for x in (d.get("saltados_ids") or "").split(",") if x]
 if h[n-1].get("id") in ids: print(f"✗ el hallazgo {n} ({h[n-1].get('id')}) ya estaba saltado", file=sys.stderr); sys.exit(2)
 ids.append(h[n-1].get("id")); d["saltados_ids"] = ",".join(ids); d["saltados"] = str(len(ids))
@@ -484,6 +486,7 @@ cmd_autotest() {
   out=$(SELLO_PRUEBAS='echo falla; exit 1' SELLO_REVISOR="echo x >> '$t/llamadas'; cat '$t/aprobado.json'" cmd_revisar "$R" 2>&1); rc=$?
   [ $rc -eq 1 ] && grep -q '^bloquea=1$' "$SELLOS/$B" && grep -q '^pruebas=rc 1$' "$SELLOS/$B" && [ ! -f "$t/llamadas" ] || fallo "pruebas rojas: rc=$rc, revisor llamado=$([ -f "$t/llamadas" ] && echo sí || echo no)"
   grep -q '"revisor": "no-invocado"' "$KIT_GATE_LEDGER" || fallo "la revisión con pruebas rojas no quedó como no-invocado"
+  cmd_saltar 1 "x" "$R" >/dev/null 2>&1 && fallo "saltar el hallazgo sintético de pruebas rojas debió fallar"
   # 7 worktree huérfano se limpia
   git -C "$R" worktree add -q "$t/huerfano" -b huer 2>/dev/null; rm -rf "$t/huerfano"
   SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" >/dev/null 2>&1
