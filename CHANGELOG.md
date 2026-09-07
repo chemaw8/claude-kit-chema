@@ -1,5 +1,22 @@
 # Changelog — Kit Chema
 
+## v1.19.2 — 2026-09-07
+Viene de un council de 4 lentes sobre el entorno del mantenedor (aprobada con cambios; acta en
+`docs/pruebas/council-v1.19.2.md`). Qué paga: en una semana medida, la gran mayoría de los tokens
+se iban al modelo más caro sin que ninguna regla lo frenara, y el escalón Fable de la escalera
+no tenía ningún agente asignado.
+- **Núcleo (+4 líneas, 133/150): esfuerzo antes que modelo.** Antes de subir de Opus 5 a Fable,
+  sube `--effort` en Opus 5; si el entorno mide el reparto de tokens por modelo, ese porcentaje
+  es el indicador de la regla.
+- **kit-orquestacion:** la alternativa barata al fan-out es "esfuerzo primero, modelo después", y
+  cada etapa de una corrida declara su modelo y su esfuerzo (pendiente desde la decisión del
+  2026-08-29 que nunca se ejecutó).
+- **Agentes:** nace `sintetizador` (Fable, solo lectura): integra veredictos de council o reportes
+  de varios agentes en un juicio final, verificando hallazgos antes de heredarlos. Era lo que el
+  núcleo mandaba ("Fable solo para síntesis y juicio") y ningún agente cumplía. `lector-fresco`
+  **se queda en Opus 5**: subirlo a Fable sin haber probado Opus a `--effort max` habría violado la
+  regla que este mismo cambio introduce (lo señaló el revisor del gate).
+
 ## v1.19.1 — 2026-09-07
 Cierra el PR #12 (borrador desde 2026-07-21) en versión corta, con council de 3 lentes
 (aprobada con cambios, todos aplicados; acta en `docs/pruebas/council-pr12.md`).

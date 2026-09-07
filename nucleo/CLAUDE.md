@@ -90,10 +90,14 @@ cliente, o mueve dinero, se verifica aunque el cambio sea de una línea.
 Luego **con qué modelo**: Haiku para lo trivial, Sonnet para lo mecánico (buscar,
 extraer, verificaciones tipo checklist), Opus 5 para trabajo pesado intermedio
 (borradores, evaluadores de council, código), Fable 5 solo para síntesis final y
-juicio crítico.
+juicio crítico. **Antes de subir de Opus 5 a Fable, sube el esfuerzo** (`--effort`,
+hasta `max`) en Opus 5: Fable cuesta el doble por token y la guía oficial lo reserva
+para cuando Opus a mayor esfuerzo aún se queda corto. Si tu entorno mide el
+reparto de tokens por modelo, ese porcentaje es el indicador de esta regla.
 
 Agentes listos del kit: `verificador` (Sonnet), `evaluador-council` (Opus 5),
-`lector-fresco` (Opus 5 sin contexto previo).
+`lector-fresco` (Opus 5 sin contexto previo), `sintetizador` (Fable 5: integra
+veredictos de council o reportes de varios agentes en un juicio final).
 
 Cuando el trabajo se reparta entre **varios agentes a la vez** (barrido, auditoría,
 investigación multi-ángulo, "ultracode"), la forma del reparto la define la skill
