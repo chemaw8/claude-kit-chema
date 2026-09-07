@@ -7,9 +7,10 @@
 # línea se rechaza (el sello se compara con el commit que existe al evaluar); --all y
 # --mirror también (una rama a la vez); --dry-run, --delete y un sha ya contenido en el
 # remoto pasan; un tag pasa solo si su commit ya está en el remoto o tiene sello (empujar
-# un tag empuja su commit). `KIT_SELLO=omitir git push …` pasa y queda anotado. Si el
-# comando invoca `sello-push.sh revisar`, exige timeout ≥ 300000 (el Bash de Claude Code
-# corta a 120 s). Cada decisión se apendea al ledger JSONL (KIT_GATE_LEDGER). Falla
+# un tag empuja su commit). `KIT_SELLO=omitir git push …` (la variable como PREFIJO del
+# propio push, no en un comentario ni en otro segmento) pasa y queda anotado. Si el comando
+# invoca `sello-push.sh revisar` sobre un repo con la llave, exige timeout ≥ 300000 (el
+# Bash de Claude Code corta a 120 s). Cada decisión se apendea al ledger JSONL (KIT_GATE_LEDGER). Falla
 # abierto ante error propio: exit 0 y evento `error-hook` si puede escribirlo. En repos
 # sin la llave, sale 0 sin tocar nada. Diseño: claude-entorno/specs/002-gate-de-push/.
 set -uo pipefail
@@ -73,7 +74,10 @@ def segmentar(cmd, cwd):
     if actual: segs.append(actual)
     salida, cwd_v = [], cwd
     for s in segs:
-        while s and (re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", s[0]) or s[0] in ENVOLTORIOS): s = s[1:]
+        envs = []                                     # asignaciones que preceden al comando (VAR=x cmd …)
+        while s and (re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", s[0]) or s[0] in ENVOLTORIOS):
+            if s[0] not in ENVOLTORIOS: envs.append(s[0])
+            s = s[1:]
         if s and s[0] == "timeout" and len(s) > 2: s = s[2:]
         if not s: continue
         if s[0] in ("cd", "pushd"):
@@ -84,7 +88,7 @@ def segmentar(cmd, cwd):
             i = s.index("-c")
             if i + 1 < len(s): salida.extend(segmentar(s[i + 1], cwd_v))
             continue
-        salida.append((s, cwd_v))
+        salida.append((s, cwd_v, envs))
     return salida
 
 def parsear_git(tokens, cwd):
@@ -154,26 +158,32 @@ def main():
     ti = d.get("tool_input") or {}
     cmd = ti.get("command") or ""
     cwd = d.get("cwd") or os.getcwd(); sid = d.get("session_id", "")
-    # RF-7: `sello-push.sh revisar` puede tardar más de los 120 s del Bash de Claude Code.
-    if re.search(r"sello-push(?:\.sh)?\S*\s+revisar\b", cmd) and not ti.get("run_in_background"):
-        to = ti.get("timeout")
-        if not isinstance(to, (int, float)) or to < 300000:
-            salir(2, PREFIJO + "`sello-push.sh revisar` corre las pruebas y un revisor y puede tardar más de 2 minutos: vuelve a correrlo con timeout: 600000 (o run_in_background: true).")
     segs = segmentar(cmd, cwd)
-    gits = []   # (indice, repo, sub, resto)
-    for idx, (toks, cwd_v) in enumerate(segs):
+    def gateado(dir_):
+        r = git(os.path.normpath(dir_), "rev-parse", "--show-toplevel")
+        return r if r and git(r, "config", "--bool", "--get", "kit-chema.gate") == "true" else None
+    # RF-7: `sello-push.sh revisar` sobre un repo con la llave puede tardar más de los 120 s del Bash.
+    if not ti.get("run_in_background"):
+        for toks, cwd_v, _ in segs:
+            for i, t in enumerate(toks[:-1]):
+                if "sello-push.sh" in t and toks[i + 1] == "revisar":
+                    arg = toks[i + 2] if len(toks) > i + 2 and not toks[i + 2].startswith("-") else "."
+                    if gateado(os.path.join(cwd_v, os.path.expanduser(arg))):
+                        to = ti.get("timeout")
+                        if not isinstance(to, (int, float)) or to < 300000:
+                            salir(2, PREFIJO + "`sello-push.sh revisar` corre las pruebas y un revisor y puede tardar más de 2 minutos: vuelve a correrlo con timeout: 600000 (o run_in_background: true).")
+    gits = []   # (indice, repo, sub, resto, envs)
+    for idx, (toks, cwd_v, envs) in enumerate(segs):
         p = parsear_git(toks, cwd_v)
-        if p: gits.append((idx, p[0], p[1], p[2]))
+        if p: gits.append((idx, p[0], p[1], p[2], envs))
     pushes = [g for g in gits if g[2] == "push"]
     if not pushes: return
-    # RF-5: escape explícito del usuario, anotado
-    if "KIT_SELLO=omitir" in cmd:
-        repo0 = git(pushes[0][1], "rev-parse", "--show-toplevel") or pushes[0][1]
-        ledger(evento="omitido", repo=identidad(repo0), comando=cmd[:200], session=sid); return
-    for idx, dir_, _, resto in pushes:
-        repo = git(dir_, "rev-parse", "--show-toplevel")
-        if not repo: continue                                   # fuera de un repo: que git se queje solo
-        if git(repo, "config", "--bool", "--get", "kit-chema.gate") != "true": continue
+    for idx, dir_, _, resto, envs in pushes:
+        repo = gateado(dir_)
+        if not repo: continue                                   # fuera de un repo o sin la llave: nada que hacer
+        # RF-5: escape explícito del usuario, solo como prefijo del propio push; queda anotado
+        if "KIT_SELLO=omitir" in envs:
+            ledger(evento="omitido", repo=identidad(repo), rama=None, comando=cmd[:200], session=sid); continue
         # RF-3: nada que mueva HEAD antes del push en el mismo comando
         movers = [g for g in gits if g[0] < idx and (g[2] in MUEVEN_HEAD or (g[2] == "stash" and g[3][:1] in (["pop"], ["apply"])))]
         if movers:

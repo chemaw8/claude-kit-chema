@@ -79,6 +79,8 @@ pasa "tag a un commit ya en el remoto → 0" "$R" "git push origin v-vieja"
 
 echo "RF-5 · escape explícito del usuario:"
 pasa "KIT_SELLO=omitir git push → 0" "$R" "KIT_SELLO=omitir git push origin main"; ledger "ledger: omitido" omitido
+bloquea "el escape solo vale como prefijo del push: en un comentario no cuenta → 2" "$R" "git push origin main # KIT_SELLO=omitir"
+bloquea "ni en otro segmento (export …; git push) → 2" "$R" "export KIT_SELLO=omitir; git push origin main"
 
 echo "RF-6 · falla abierto:"
 err=$(printf 'no es json' | KIT_GATE_LEDGER="$LEDGER" bash "$HOOK" 2>&1 >/dev/null); rc=$?; [ $rc -eq 0 ] && ok "JSON roto → 0" || falla "JSON roto"
@@ -94,6 +96,7 @@ pasa "con timeout 600000 → 0" "$R" "bash ~/.claude/scripts/sello-push.sh revis
 pasa "run_in_background → 0" "$R" "bash ~/.claude/scripts/sello-push.sh revisar" "" bg
 bloquea "forma con variable y default literal, sin timeout → 2" "$R" 'bash "${SELLO:-$HOME/.claude/scripts/sello-push.sh}" revisar'
 pasa "otros subcomandos del helper no exigen timeout" "$R" "bash ~/.claude/scripts/sello-push.sh estado"
+pasa "revisar sin timeout en un repo SIN gate → 0 (sin la llave el hook no toca nada)" "$T/libre" "bash ~/.claude/scripts/sello-push.sh revisar"
 
 echo "RF-17 · sin nombres propios ni rutas de una máquina:"
 [ "$(grep -ciE 'josé|jose' "$HOOK")" = 0 ] && ok "sin el nombre del dueño" || { echo "  FALLA nombre propio en el hook"; fallos=$((fallos+1)); }

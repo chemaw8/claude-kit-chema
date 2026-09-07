@@ -18,10 +18,10 @@ GitHub). Todo **opt-in** (`KIT_GATE=s` + `git config kit-chema.gate true` por re
   con bloqueante automático; revisor `claude -p` con otro modelo, sin herramientas, sin
   settings ni MCP, sin `--bare`, cwd vacío, reintento sin `CLAUDECODE`; veredicto
   calculado cotejando evidencia literal; sello + ledger con tokens literales del sobre),
-  `saltar` (solo con la palabra del usuario, anotado), `estado --contra-remoto` (ramas
+  `saltar` (por id, solo bloqueantes, sin repetir; un hallazgo nuevo del mismo sha no hereda saltos; solo con la palabra del usuario, anotado), `estado --contra-remoto` (ramas
   del remoto sin sello), `activar|desactivar`, `metricas` (línea greppable, redondeo
   half-up, sellos sin revisión, líneas ilegibles) y `autotest` (15 escenarios con
-  revisor y pruebas inyectados; nunca toca el ledger real, verificado con centinela).
+  revisor y pruebas inyectados; el propio autotest comprueba con un centinela que el ledger real no cambia).
 - **Comando `/revisar-antes-de-subir`**: los 8 pasos, incluido vigilar el CI tras el PR.
 - Instalador: bloque 4a-quater (`KIT_GATE=s`); `hooks.json`/`settings-fragment.json` en
   paridad; GOBERNANZA gana "Gate de push local — piloto"; README de hooks, la tercera vía.

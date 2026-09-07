@@ -87,11 +87,17 @@ for n in os.listdir(sellos):                                  # sellos de más d
 prompt_sha = hashlib.sha1((E["PROMPT"] + E["ESQUEMA"]).encode()).hexdigest()[:12]
 cli_version = E.get("CLI_VERSION") or None
 previo = leer_sello(os.path.join(sellos, head)) or {}
-saltados_prev = int(previo.get("saltados", 0) or 0)
+prev_ids = [x for x in (previo.get("saltados_ids") or "").split(",") if x]
+def vigentes(hallazgos):
+    """Saltos heredados de una revisión anterior del MISMO sha: solo los ids que siguen siendo
+    bloqueantes ahora. Un hallazgo nuevo nunca nace perdonado."""
+    ids_b = {h["id"] for h in hallazgos if h.get("sev") == "bloquea"}
+    return [i for i in prev_ids if i in ids_b]
 
 def escribir_sello(veredicto, hallazgos, bloquea, avisos, sin_ev, pruebas, ficha, extra=None):
+    ids = vigentes(hallazgos)
     campos = {"head": head, "rama": rama, "fecha": ahora(), "veredicto": veredicto, "bloquea": bloquea, "avisos": avisos,
-              "saltados": saltados_prev, "sin_evidencia": sin_ev, "pruebas": pruebas, "ficha": ficha, "modelo": MODELO,
+              "saltados": len(ids), "saltados_ids": ",".join(ids), "sin_evidencia": sin_ev, "pruebas": pruebas, "ficha": ficha, "modelo": MODELO,
               "prompt_sha": prompt_sha, **(extra or {})}
     with open(os.path.join(sellos, head), "w", encoding="utf-8") as f:
         for k, v in campos.items(): f.write(f"{k}={v}\n")
@@ -252,13 +258,13 @@ if truncado:
 bloquea = sum(1 for h in hallazgos if h["sev"] == "bloquea"); avisos = len(hallazgos) - bloquea
 prev = [p for p in (salida.get("previos") or []) if isinstance(p, dict)]
 res, sig = sum(1 for p in prev if p.get("estado") == "resuelto"), sum(1 for p in prev if p.get("estado") == "sigue")
-pendientes = max(0, bloquea - saltados_prev); veredicto = "aprobado" if pendientes == 0 else "con-hallazgos"
+saltados_vig = len(vigentes(hallazgos)); pendientes = max(0, bloquea - saltados_vig); veredicto = "aprobado" if pendientes == 0 else "con-hallazgos"
 escribir_sello(veredicto, hallazgos, bloquea, avisos, sin_ev, pruebas, ficha, {**extra_pruebas, "truncado": int(truncado), "previos_resueltos": res, "previos_siguen": sig})
 ledger(evento="revision", repo=ident, rama=rama, head=head, veredicto=veredicto, bloquea=bloquea, avisos=avisos, sin_evidencia=sin_ev,
        previos_resueltos=res, previos_siguen=sig, pruebas=pruebas, ficha=ficha, modelo=MODELO, prompt_sha=prompt_sha, cli_version=cli_version,
        **tok, usd=usd, dur_ms=dur_ms, diff_lineas=diff_lineas, archivos=archivos, revisor=revisor_tag, base=base, truncado=truncado)
 ttot = sum(v or 0 for v in tok.values())
-tabla(hallazgos, veredicto, f" · {bloquea} bloqueante(s), {avisos} aviso(s), {saltados_prev} saltado(s), {sin_ev} sin evidencia · previos: {res} resueltos, {sig} siguen · {ttot:,} tokens ({MODELO}, {dur_ms/1000:.0f} s)")
+tabla(hallazgos, veredicto, f" · {bloquea} bloqueante(s), {avisos} aviso(s), {saltados_vig} saltado(s), {sin_ev} sin evidencia · previos: {res} resueltos, {sig} siguen · {ttot:,} tokens ({MODELO}, {dur_ms/1000:.0f} s)")
 if salida.get("resumen"): print(f"Resumen del revisor: {str(salida['resumen'])[:300]}")
 if salida.get("no_verificable"): print("No verificable sin navegar el repo: " + " · ".join(str(x)[:100] for x in salida["no_verificable"][:5]))
 sys.exit(0 if pendientes == 0 else 1)
@@ -279,7 +285,10 @@ if not os.path.isfile(p): print(f"✗ HEAD {head[:7]} no tiene sello: corre `rev
 lines = open(p, encoding="utf-8").read().splitlines(); d = dict(l.split("=", 1) for l in lines if "=" in l)
 h = json.loads(d.get("hallazgos", "[]")); n = int(E["N"])
 if not 1 <= n <= len(h): print(f"✗ el sello tiene {len(h)} hallazgo(s); no existe el {n}", file=sys.stderr); sys.exit(2)
-d["saltados"] = str(int(d.get("saltados", 0)) + 1)
+if h[n-1].get("sev") != "bloquea": print(f"✗ el hallazgo {n} ({h[n-1].get('id')}) es un aviso: no bloquea, nada que saltar", file=sys.stderr); sys.exit(2)
+ids = [x for x in (d.get("saltados_ids") or "").split(",") if x]
+if h[n-1].get("id") in ids: print(f"✗ el hallazgo {n} ({h[n-1].get('id')}) ya estaba saltado", file=sys.stderr); sys.exit(2)
+ids.append(h[n-1].get("id")); d["saltados_ids"] = ",".join(ids); d["saltados"] = str(len(ids))
 with open(p, "w", encoding="utf-8") as f:
     for k, v in d.items(): f.write(f"{k}={v}\n")
 try:
@@ -408,6 +417,7 @@ cmd_autotest() {
   export GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t
   mkdir -p "$t/bin"; local PATH_ORIG="$PATH"; export PATH="$t/bin:/usr/bin:/bin"   # sin `claude`: cli_version debe salir null
   local f=0 R="$t/repo" HOOK="$AQUI/../hooks/sello-push.sh"
+  local REAL="$HOME/.claude/kit-chema/gate.jsonl" centinela=""; [ -f "$REAL" ] && centinela="$(sha256sum "$REAL")"   # el ledger real no debe cambiar"
   fallo() { err "autotest: $*"; f=1; }
   git init -q --bare "$t/remoto.git"; git init -q -b main "$R"; printf '# demo\n' > "$R/README.md"; printf 'x=1\n' > "$R/a.txt"
   git -C "$R" add -A; git -C "$R" commit -qm A; git -C "$R" remote add origin "$t/remoto.git"; git -C "$R" push -q -u origin main 2>/dev/null
@@ -439,6 +449,14 @@ cmd_autotest() {
   grep -q '^saltados=1$' "$SELLOS/$B" && grep -q '"evento": "saltado"' "$KIT_GATE_LEDGER" || fallo "saltar no anotó saltados=1 o el evento"
   ev | bash "$HOOK" >/dev/null 2>&1; [ $? -eq 0 ] || fallo "el hook debió dejar pasar tras saltar el único bloqueante"
   cmd_saltar 5 "x" "$R" >/dev/null 2>&1 && fallo "saltar un hallazgo inexistente debió fallar"
+  cmd_saltar 1 "otra vez" "$R" >/dev/null 2>&1 && fallo "saltar dos veces el mismo hallazgo debió fallar"
+  grep -q '^saltados=1$' "$SELLOS/$B" || fallo "el segundo saltar cambió el contador"
+  sobre '{"resumen":"x","hallazgos":[{"id":"H7","sev":"bloquea","archivo":"a.txt","que":"otro defecto","evidencia":"hola gate","por_que":"x"}],"previos":[],"no_verificable":[]}' > "$t/otro.json"
+  out=$(SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/otro.json'" cmd_revisar "$R" 2>&1); rc=$?
+  [ $rc -eq 1 ] && grep -q '^saltados=0$' "$SELLOS/$B" || fallo "un hallazgo nuevo (H7) del mismo sha no debe nacer perdonado por el salto de H1 (rc=$rc)"
+  sobre '{"resumen":"x","hallazgos":[{"id":"H1","sev":"aviso","archivo":"a.txt","que":"menor","evidencia":"hola gate","por_que":"x"}],"previos":[],"no_verificable":[]}' > "$t/aviso.json"
+  SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/aviso.json'" cmd_revisar "$R" >/dev/null 2>&1
+  cmd_saltar 1 "x" "$R" >/dev/null 2>&1 && fallo "saltar un aviso debió fallar (no bloquea)"
   # 4 sin evidencia → aviso
   out=$(SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/sin-evidencia.json'" cmd_revisar "$R" 2>&1); rc=$?
   [ $rc -eq 0 ] && grep -q '^bloquea=0$' "$SELLOS/$B" && grep -q '^avisos=1$' "$SELLOS/$B" && grep -q '^sin_evidencia=1$' "$SELLOS/$B" || fallo "evidencia ausente debió bajar a aviso (rc=$rc)"
@@ -506,6 +524,7 @@ cmd_autotest() {
   cmd_llave activar "$R" >/dev/null && [ "$(git -C "$R" config --bool --get kit-chema.gate)" = true ] || fallo "activar no puso la llave"
   python3 -c 'import json,sys; [json.loads(l) for l in open(sys.argv[1])]' "$KIT_GATE_LEDGER" || fallo "el ledger tiene líneas ilegibles"
   export PATH="$PATH_ORIG"
+  [ -n "$centinela" ] && [ "$(sha256sum "$REAL")" != "$centinela" ] && fallo "el autotest tocó el ledger real ($REAL)"
   [ "$f" -eq 0 ] && ok "autotest: revisar (aprobado, bloqueado, evidencia, revisor caído, pruebas rojas, worktree, sin timeout, sin cambios, previos, diff grande, invocación), saltar, estado --contra-remoto, metricas y llaves funcionan"
   return $f
 }
