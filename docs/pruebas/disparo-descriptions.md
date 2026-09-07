@@ -66,3 +66,44 @@ aprobar/decidir → kit-propuestas; estatus informativo → kit-redaccion.
 | 8 | Informe con láminas | kit-presentaciones | ✅ |
 | 9 | Mensaje para que aprueben contratar | kit-propuestas | ✅ |
 | 10 | Documenta el proceso | kit-redaccion | ✅ |
+
+
+## Corrida 2026-09-07 — PR #12 (descriptions de kit-propuestas y kit-redaccion; fronteras 28-30 nuevas)
+
+Runner `docs/pruebas/disparo.py`, juez Sonnet, 9 skills, 30 peticiones.
+
+| # | petición | esperada | juez | frontera? |
+|---|---|---|---|---|
+| 1 | Necesito mostrarle a los de Ordenaris cómo vamos con el proyecto del t | kit-presentaciones | ✓ kit-presentaciones | no |
+| 2 | Ayúdame a armar unas láminas para la junta del viernes con el cliente | kit-presentaciones | ✓ kit-presentaciones | no |
+| 3 | Tengo que presentar los resultados del año a dirección, ¿me ayudas? | kit-presentaciones | ✓ kit-presentaciones | no |
+| 4 | Aquí está el Excel de ventas de las tiendas, dime qué está pasando | kit-analisis-datos | ✓ kit-analisis-datos | no |
+| 5 | ¿Por qué bajaron las ventas en junio? Te paso el CSV | kit-analisis-datos | ✓ kit-analisis-datos | no |
+| 6 | Hazme un dashboard con las métricas de este archivo | kit-analisis-datos | ✓ kit-analisis-datos | no |
+| 7 | Investiga qué sistemas de punto de venta usan las cadenas de retail en | kit-research | ✓ kit-research | no |
+| 8 | ¿Qué hay sobre la nueva norma de facturación electrónica? Necesito ent | kit-research | ✓ kit-research | no |
+| 9 | Compárame opciones de proveedores de hosting para el proyecto | kit-research | ✓ kit-research | no |
+| 10 | Haz un script que renombre todas las fotos de la carpeta con su fecha | kit-codigo | ✓ kit-codigo | sí (código↔automatización, benigna) |
+| 11 | El sistema tira un error cuando subo el archivo, arréglalo | kit-codigo | ✓ kit-codigo | no |
+| 12 | Crea el proyecto base para la API de inventarios | kit-codigo | ✓ kit-codigo | no |
+| 13 | ¿Te parece buena idea migrar todo a la nube este año? Dame tu opinión  | kit-propuestas | ✓ kit-propuestas | no |
+| 14 | Escríbeme la propuesta para el cliente de la app de pedidos | kit-propuestas | ✓ kit-propuestas | no |
+| 15 | Estoy pensando en contratar dos desarrolladores más en vez de subcontr | kit-propuestas | ✓ kit-propuestas | no |
+| 16 | ¿Cuánto le cobramos al cliente por el desarrollo del portal? | kit-finanzas | ✓ kit-finanzas | no |
+| 17 | Hazme el presupuesto del proyecto para el próximo semestre | kit-finanzas | ✓ kit-finanzas | no |
+| 18 | ¿Cuál es el margen si vendemos el paquete en 85 mil pesos? | kit-finanzas | ✓ kit-finanzas | no |
+| 19 | Quiero que el reporte de ventas se mande solo cada lunes por correo | kit-automatizacion | ✓ kit-automatizacion | no |
+| 20 | Conecta el formulario de la página con la hoja de cálculo para que se  | kit-automatizacion | ✓ kit-automatizacion | no |
+| 21 | Cada vez que llegue una factura al correo, que se guarde en la carpeta | kit-automatizacion | ✓ kit-automatizacion | no |
+| 22 | Escríbeme un correo al proveedor para pedirle la cotización actualizad | kit-redaccion | ✓ kit-redaccion | sí (correo↔redacción) |
+| 23 | Haz la minuta de la junta de hoy con los acuerdos y pendientes | kit-redaccion | ✓ kit-redaccion | sí (minuta↔redacción) |
+| 24 | Mándame un mensaje de estatus a dirección de cómo va el proyecto, solo | kit-redaccion | ✓ kit-redaccion | sí (estatus↔redacción) |
+| 25 | Documenta el proceso de cierre mensual | kit-redaccion | ✓ kit-redaccion | sí (documenta↔redacción) |
+| 26 | Prepárame un informe con láminas para la reunión del viernes | kit-presentaciones | ✓ kit-presentaciones | sí (informe↔deck) |
+| 27 | Redacta un mensaje a dirección para que aprueben contratar dos persona | kit-propuestas | ✓ kit-propuestas | sí (aprobación↔propuesta) |
+| 28 | Escríbele un correo al director comercial de Farmacias X para proponer | kit-propuestas | ✓ kit-propuestas | sí (acercamiento a contacto ↔ correo) |
+| 29 | Mándale un mensaje a Franco de Aeroméxico para agendar la demo de RCS | kit-propuestas | ✓ kit-propuestas | sí (acercamiento a contacto ↔ correo) |
+| 30 | Escribe un correo al equipo con el estatus del proyecto de esta semana | kit-redaccion | ✓ kit-redaccion | sí (estatus interno ↔ acercamiento) |
+
+núcleo: 21/21 (criterio ≥ 19/21) · confusiones de frontera no benignas: 0
+GATE DE DISPARO: PASA

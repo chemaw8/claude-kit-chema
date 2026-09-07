@@ -5,7 +5,7 @@ KIT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DIR="${CLAUDE_DIR:-$HOME/.claude}"
 INI="<!-- kit-chema:inicio -->"
 FIN="<!-- kit-chema:fin -->"
-VER=$(grep -m1 -oE '## v[0-9]+\.[0-9]+' "$KIT/CHANGELOG.md" | cut -d' ' -f2)
+VER=$(grep -m1 -oE '## v[0-9]+\.[0-9]+(\.[0-9]+)?' "$KIT/CHANGELOG.md" | cut -d' ' -f2)
 
 mkdir -p "$DIR" "$DIR/skills" "$DIR/contexto" "$DIR/hooks" "$DIR/agents" \
          "$DIR/commands" "$DIR/scripts"

@@ -121,10 +121,12 @@ importa:
    presenta las opciones y que el usuario confirme; si no aparece o no hay cómo
    buscar, dilo y pide los datos. Sin identidad confirmada, escribe sin
    personalizar: personalizar sobre la persona equivocada es peor que no hacerlo.
-2. Personaliza como una capa encima del kit que toque (kit-redaccion para un
-   mensaje, esta skill para una propuesta, kit-presentaciones para láminas), solo
-   con información profesional y pública, verificable, ligada al problema u
-   opción del entregable; nada de halagos que servirían para cualquiera.
+2. Redacta el entregable con su estándar de siempre (un mensaje, con kit-redaccion;
+   una propuesta, con esta skill; láminas, con kit-presentaciones) y añade encima
+   la capa de personalización: solo información profesional y pública,
+   verificable, ligada al problema u opción del entregable; nada de halagos que
+   servirían para cualquiera. Esta sección aporta la identidad y la capa, no
+   sustituye al kit del formato.
 3. Antes de enviar o publicar a nombre del usuario, confirma con él el texto
    final. Un mensaje de acercamiento no dispara Council por sí solo: basta esa
    confirmación; una propuesta formal o material que se presenta sigue los

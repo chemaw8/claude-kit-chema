@@ -1,6 +1,6 @@
 # Changelog — Kit Chema
 
-## v1.20 — 2026-09-07
+## v1.19.1 — 2026-09-07
 Cierra el PR #12 (borrador desde 2026-07-21) en versión corta, con council de 3 lentes
 (aprobada con cambios, todos aplicados; acta en `docs/pruebas/council-pr12.md`).
 - **kit-propuestas: "Acercamiento personalizado a un contacto"** (3 pasos, 18 líneas): confirmar
@@ -10,8 +10,12 @@ Cierra el PR #12 (borrador desde 2026-07-21) en versión corta, con council de 3
   de acercamiento no dispara Council por sí solo. Antipatrón "acercamiento a ciegas".
 - **Disparo en ambos lados de la frontera:** la description de kit-propuestas gana la frase
   `"escríbele a fulano de X"` y la de kit-redaccion remite a kit-propuestas cuando el correo es
-  a un contacto de otra empresa para vender o proponer. Qué paga: +133 y +109 caracteres de
-  description (973 y 900; la suma del kit queda en 5,414 de 6,000).
+  a un contacto de otra empresa para vender o proponer. Qué paga: +133 y +107 caracteres de
+  description (971 y 898; la suma del kit queda en 5,414 de 6,000).
+- **Gate de disparo corrido y documentado:** `docs/pruebas/disparo.py` (juez Sonnet, contexto
+  fresco) → 21/21 del núcleo y cero confusiones en las fronteras, con tres fronteras nuevas en
+  el banco (28-30: acercamiento a un contacto ↔ correo ↔ estatus interno). El instalador lee
+  versiones de tres componentes (`v1.19.1`) para no colisionar con la v1.20 del gate de push.
 
 ## v1.19 — 2026-09-06
 Fase 1 del programa de mejora del entorno (cosecha del setup de Kun Chen,

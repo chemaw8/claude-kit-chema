@@ -13,8 +13,13 @@ Tres evaluadores independientes (Opus 5), solo con la propuesta y el mandato aco
 | Abogado del diablo | aprobada con cambios | El caso central ("mándale un correo a fulano de X") lo captura kit-redaccion y su regla le dice quedarse: sin línea de vuelta la sección no se carga; acotar la investigación a información profesional y pública (privacidad) |
 
 Síntesis (hallazgos verificados contra los archivos): los seis cambios se aplican —frase de disparo
-corta (description 966 chars), remisión desde kit-redaccion, sección comprimida a 3 pasos con
+corta (description 971 chars / 990 bytes), remisión desde kit-redaccion, sección comprimida a 3 pasos con
 salida sin resultados, ámbito profesional y público, y cláusula de que el acercamiento no dispara
 Council por sí solo. El hilo cambió de opinión en dos puntos que no tenía: el choque con el
 disparador de Council y la frontera desde kit-redaccion. Veredicto: **aprobada con cambios**,
 aplicados en este mismo PR.
+
+Gate de disparo (obligatorio por tocar descriptions): `python3 docs/pruebas/disparo.py` con juez
+Sonnet → 21/21 del núcleo, 0 confusiones de frontera; fronteras nuevas 28-30 del banco correctas
+(28 y 29 → kit-propuestas; 30 → kit-redaccion). Resultado completo en `disparo-descriptions.md`.
+Versión: v1.19.1 (el gate de push conserva la v1.20 en su rama).

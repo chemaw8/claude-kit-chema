@@ -3,13 +3,13 @@
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**v1.20 en main (2026-09-07): kit-propuestas gana "Acercamiento personalizado a un
-contacto"** (cierre del PR #12 de julio en versión corta, council de 3 aplicado; acta en
-`docs/pruebas/council-pr12.md`) y kit-redaccion remite a esa sección cuando el correo va a
-un contacto de otra empresa para vender o proponer. **Fase 3 (gate de push) en la rama
-`fase-3-gate-push`, PR #33 en borrador y PILOTO desde 2026-09-07**: al rebasar sobre este
-main pasa a v1.21 (su CHANGELOG hoy dice v1.20). El gate está activo en la máquina de José
-y en este repo; este mismo PR #12 pasó por él.
+**v1.19.1 — kit-propuestas gana "Acercamiento personalizado a un contacto"** (PR #12 de
+julio cerrado en versión corta, council de 3 aplicado, gate de disparo 21/21; acta en
+`docs/pruebas/council-pr12.md`); kit-redaccion remite a esa sección cuando el correo va a un
+contacto de otra empresa para vender o proponer. Entra a main con el PR #12 (2026-09-07).
+**Fase 3 (gate de push) en la rama `fase-3-gate-push`, PR #33 en borrador (v1.20) y PILOTO
+desde 2026-09-07**; el gate está activo en la máquina de José y en este repo, y este mismo
+PR #12 pasó por él.
 
 ## Siguiente paso
 - [ ] **Fase 3 — gate de push local.** Spec, plan y tareas en
