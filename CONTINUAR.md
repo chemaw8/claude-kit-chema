@@ -7,7 +7,7 @@
 PILOTO desde 2026-09-07**, como PR en borrador v1.20 (spec y evidencia en claude-entorno,
 `specs/002-gate-de-push/`). El gate está activo en la máquina de José y en este repo
 (`sello-push.sh estado`); **este mismo PR pasó por su gate**: revisiones reales con Opus
-(al escribir esto, 7 en el ledger; 65-97k tokens y de 3 a 11 min cada una) que cazaron los defectos sembrados de la prueba
+(al escribir esto, 8 en el ledger; 65-97k tokens y de 3 a 11 min cada una) que cazaron los defectos sembrados de la prueba
 y varios reales del propio gate (`saltar`, escape en comentarios, `timeout -k`, `git push >
 archivo`, `--tags` con refspec, base irresoluble), todos corregidos antes de subir. Cifras
 en `docs/pruebas/RUNBOOK.md` y en `~/.claude/kit-chema/gate.jsonl`.
@@ -36,7 +36,7 @@ lee en `git log`, no aquí).
 ## Cómo retomar
 - `bash verificar.sh` (todo OK; incluye `hooks/test-sello-push.sh` y el autotest del helper).
 - `bash scripts/sello-push.sh estado . --contra-remoto` · `bash scripts/sello-push.sh metricas 7 .`
-- Antes de subir cualquier cosa aquí: `/revisar-antes-de-subir` (timeout 600000 en el Bash).
+- Antes de subir cualquier cosa aquí: `/revisar-antes-de-subir` (Bash en background; una revisión real ha tardado 11 min).
   Si el revisor no responde, el push sigue bloqueado: `KIT_SELLO=omitir` es de José, no del modelo.
 
 ## Bloqueadores / esperas

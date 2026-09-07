@@ -12,7 +12,7 @@ además `KIT_GATE=s` (por la vía plugin el hook viaja siempre y solo cuenta la 
   argumento), sello por `--git-common-dir` (vale desde worktrees), rechaza comandos que
   mueven HEAD antes del push y `--all`/`--mirror`, deja pasar `--dry-run`, `--delete` y
   shas ya en el remoto, tags solo si su commit está en el remoto o sellado; exige
-  timeout ≥ 300000 a `sello-push.sh revisar`; fail-open ante error propio. 80 comprobaciones.
+  timeout ≥ 300000 a `sello-push.sh revisar`; fail-open ante error propio. 84 comprobaciones.
 - **Helper `scripts/sello-push.sh`**: `revisar` (pruebas en worktree desechable con
   `prune` y `timeout`; si fallan, sello sintético sin gastar revisor; paquete de 7
   secciones etiquetadas como datos, ficha o sustituto declarado, diff recortado a 200 KB

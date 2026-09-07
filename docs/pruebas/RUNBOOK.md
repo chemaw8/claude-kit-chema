@@ -79,6 +79,7 @@ La única prueba del gate que gasta cuota. Todo lo demás corre sin red
 | 7aea354 (fase-3-gate-push) | 1489 líneas, 11 archivos | 1 bloqueante(s), 5 aviso(s), previos 5 resueltos | 88,639 | 1.35 | 365 s |
 | 17f8798 (fase-3-gate-push) | 1565 líneas, 12 archivos | aprobado, 5 aviso(s), previos 5 resueltos | 96,698 | 1.50 | 426 s |
 | 427407f (fase-3-gate-push) | 1571 líneas, 12 archivos | 1 bloqueante(s), 3 aviso(s), previos 4 resueltos | 90,323 | 1.33 | 340 s |
+| 50bf837 (fase-3-gate-push) | 1580 líneas, 12 archivos | aprobado, 5 aviso(s), previos 4 resueltos | 100,272 | 1.57 | 447 s |
 
 Las dos primeras filas son la prueba con defectos sembrados (rama `gate-prueba`); las siguientes,
 el propio PR del gate pasando por su gate (dogfooding). El revisor cazó **los dos defectos

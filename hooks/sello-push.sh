@@ -9,8 +9,8 @@
 # remoto pasan; un tag pasa solo si su commit ya está en el remoto o tiene sello (empujar
 # un tag empuja su commit). `KIT_SELLO=omitir git push …` (la variable como PREFIJO del
 # propio push, no en un comentario ni en otro segmento) pasa y queda anotado. Si el comando
-# invoca `sello-push.sh revisar` sobre un repo con la llave, exige timeout ≥ 300000 (el
-# Bash de Claude Code corta a 120 s). Cada decisión se apendea al ledger JSONL (KIT_GATE_LEDGER). Falla
+# invoca `sello-push.sh revisar` sobre un repo con la llave, exige run_in_background o
+# timeout ≥ 600000 (el Bash de Claude Code corta a 120 s y una revisión real tardó 11 min). Cada decisión se apendea al ledger JSONL (KIT_GATE_LEDGER). Falla
 # abierto ante error propio: exit 0 y evento `error-hook` si puede escribirlo. En repos
 # sin la llave, sale 0 sin tocar nada. Diseño: claude-entorno/specs/002-gate-de-push/.
 set -uo pipefail
@@ -96,16 +96,16 @@ def segmentar(cmd, cwd):
             dest = s[1] if len(s) > 1 else "~"
             if dest != "-": cwd_v = os.path.normpath(os.path.join(cwd_v, os.path.expanduser(dest)))
             continue
-        if s[0] in ("bash", "sh", "zsh", "dash") and "-c" in s:
-            i = s.index("-c")
-            if i + 1 < len(s): salida.extend(segmentar(s[i + 1], cwd_v))
+        if os.path.basename(s[0]) in ("bash", "sh", "zsh", "dash", "fish"):   # bash -c / -lc / -xc '…': se analiza la cadena
+            for i, t in enumerate(s[1:], 1):
+                if t.startswith("-") and not t.startswith("--") and "c" in t and i + 1 < len(s): salida.extend(segmentar(s[i + 1], cwd_v)); break
             continue
         salida.append((s, cwd_v, envs))
     return salida
 
 def parsear_git(tokens, cwd):
     """(repo, subcomando, resto) de un segmento que empieza por git; None si no es git."""
-    if not tokens or tokens[0] != "git": return None
+    if not tokens or os.path.basename(tokens[0]) != "git": return None   # también /usr/bin/git
     repo, i = cwd, 1
     while i < len(tokens) and tokens[i].startswith("-"):
         t = tokens[i]
@@ -186,8 +186,8 @@ def main():
                     arg = toks[i + 2] if len(toks) > i + 2 and not toks[i + 2].startswith("-") else "."
                     if gateado(os.path.join(cwd_v, os.path.expanduser(arg))):
                         to = ti.get("timeout")
-                        if not isinstance(to, (int, float)) or to < 300000:
-                            salir(2, PREFIJO + "`sello-push.sh revisar` corre las pruebas y un revisor y puede tardar más de 2 minutos: vuelve a correrlo con timeout: 600000 (o run_in_background: true).")
+                        if not isinstance(to, (int, float)) or to < 600000:      # menos que el tope del Bash no alcanza para pruebas + revisor
+                            salir(2, PREFIJO + "`sello-push.sh revisar` corre las pruebas y un revisor y puede tardar más de 2 minutos: vuelve a correrlo con run_in_background: true (o timeout: 600000 si esperas que sea corta).")
     gits = []   # (indice, repo, sub, resto, envs)
     for idx, (toks, cwd_v, envs) in enumerate(segs):
         p = parsear_git(toks, cwd_v)

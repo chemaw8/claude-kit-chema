@@ -218,7 +218,7 @@ else:
     argv = ["claude", "-p", "--model", MODELO, "--tools", "", "--output-format", "json", "--json-schema", E["ESQUEMA"], "--no-session-persistence",
             "--setting-sources", "", "--strict-mcp-config", "--mcp-config", mcp_vacio, "--max-budget-usd", E.get("TOPE") or "2", "--system-prompt", E["PROMPT"]]
     revisor_tag = "claude -p"
-env = dict(os.environ); env["KIT_ADVISOR_INNER"] = "1"
+env = dict(os.environ)
 if E.get("DEBUG"): print("invocación: " + " ".join(shlex.quote(a) if a != E["PROMPT"] else "<prompt>" for a in argv) + f" · cwd: {cwd_vacio}", file=sys.stderr)
 t0 = time.time()
 try: r = sh(argv, cwd=cwd_vacio, inp=paquete, timeout=REV_SEG, env=env)

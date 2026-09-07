@@ -49,6 +49,8 @@ pasa "'push' dentro de una cadena no cuenta" "$R" "git commit --allow-empty -m '
 pasa "'git push' dentro de un heredoc no cuenta" "$R" $'cat > /dev/null <<\'EOF\'\ngit push origin main\nEOF'
 bloquea "timeout -k 5 600 git push (envoltorio con opciones) → 2" "$R" "timeout -k 5 600 git push origin main"
 bloquea "nice -n 10 git push → 2" "$R" "nice -n 10 git push origin main"
+bloquea "bash -lc 'git push …' → 2 (se analiza la cadena)" "$R" "bash -lc 'git push origin main'"
+bloquea "/usr/bin/git push → 2" "$R" "/usr/bin/git push origin main"
 bloquea "git push > /tmp/out (redirección) sin sello → 2" "$R" "git push > /tmp/out"
 bloquea "git push origin main 2>&1 | tee x → 2" "$R" "git push origin main 2>&1 | tee /tmp/x"
 bloquea "git push origin main &> /dev/null → 2" "$R" "git push origin main &> /dev/null"
@@ -101,7 +103,8 @@ bloquea "el escape solo vale como prefijo del push: en un comentario no cuenta �
 bloquea "ni en otro segmento (export …; git push) → 2" "$R" "export KIT_SELLO=omitir; git push origin main"
 
 echo "RF-6 · falla abierto:"
-err=$(printf 'no es json' | KIT_GATE_LEDGER="$LEDGER" bash "$HOOK" 2>&1 >/dev/null); rc=$?; [ $rc -eq 0 ] && ok "JSON roto → 0" || falla "JSON roto"
+err=$(printf 'no es json' | KIT_GATE_LEDGER="$LEDGER" bash "$HOOK" 2>&1 >/dev/null); rc=$?; [ $rc -eq 0 ] && ok "texto sin JSON → 0 (prefiltro)" || falla "texto sin JSON"
+err=$(printf '{"tool_name":"Bash","tool_input":{"command":"git push origin main"' | KIT_GATE_LEDGER="$LEDGER" bash "$HOOK" 2>&1 >/dev/null); rc=$?; [ $rc -eq 0 ] && grep -q '"evento": "error-hook"' "$LEDGER" && ok "JSON inválido con 'git push' → python falla abierto y anota error-hook" || falla "JSON inválido con git push"
 pasa "cwd fuera de un repo → 0" "$T" "git push origin main"
 sello "$B" 0 0; err=$(KIT_GATE_LEDGER=/proc/no-se-puede/x bash "$HOOK" <<<"$(ev "$R" "git push origin main")" 2>&1 >/dev/null); rc=$?; [ $rc -eq 0 ] && ok "ledger no escribible + sello válido → 0" || falla "ledger no escribible + sello"
 sin_sello "$B"; err=$(KIT_GATE_LEDGER=/proc/no-se-puede/x bash "$HOOK" <<<"$(ev "$R" "git push origin main")" 2>&1 >/dev/null); rc=$?; [ $rc -eq 2 ] && ok "ledger no escribible + sin sello → 2 (la decisión no cambia)" || falla "ledger no escribible sin sello"
@@ -110,6 +113,7 @@ err=$(printf '{"session_id":"s1","cwd":"%s","hook_event_name":"PreToolUse","tool
 echo "RF-7 · revisar exige timeout suficiente:"
 bloquea "sello-push.sh revisar sin timeout → 2" "$R" "bash ~/.claude/scripts/sello-push.sh revisar"; cita "pide timeout 600000" "600000"
 bloquea "con timeout 120000 → 2" "$R" "bash ~/.claude/scripts/sello-push.sh revisar" 120000
+bloquea "con timeout 300000 → 2 (menos que el tope del Bash no alcanza)" "$R" "bash ~/.claude/scripts/sello-push.sh revisar" 300000
 pasa "con timeout 600000 → 0" "$R" "bash ~/.claude/scripts/sello-push.sh revisar" 600000
 pasa "run_in_background → 0" "$R" "bash ~/.claude/scripts/sello-push.sh revisar" "" bg
 bloquea "forma con variable y default literal, sin timeout → 2" "$R" 'bash "${SELLO:-$HOME/.claude/scripts/sello-push.sh}" revisar'
