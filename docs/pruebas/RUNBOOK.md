@@ -53,7 +53,8 @@ confusión nueva.
    genuinamente ambigua (documéntala) o una confusión real que cerrar por ambos
    lados, como se hizo con redacción ↔ propuestas.
 
-El workflow que automatiza este barrido (un juez por petición, en paralelo) vive
-en la sesión de construcción del kit; aquí se referencia el patrón, no una ruta
-de archivo frágil que se rompería al reorganizar. Reconstruirlo desde esta
-descripción es directo.
+Runner: `python3 docs/pruebas/disparo.py [--paralelo 6] [--modelo sonnet]` (desde
+2026-09-07): lee las descriptions del repo (la rama que se evalúa) y el banco, lanza un
+juez Sonnet de contexto fresco por petición en paralelo (~15 s, una llamada corta por fila) e imprime la
+tabla y el veredicto con el criterio de arriba; sale 1 si no pasa. Pega el resultado
+en `disparo-descriptions.md` con fecha.
