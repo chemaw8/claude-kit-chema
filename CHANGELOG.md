@@ -1,5 +1,36 @@
 # Changelog — Kit Chema
 
+## v1.18 — 2026-09-06
+**Hook `rutas-fantasma.sh`** (`PreToolUse` sobre `Read|Write|Edit`), instalado
+por defecto: bloquea lecturas y escrituras a rutas de otro entorno que el modelo
+a veces alucina en la máquina del usuario —`/home/user`, `/mnt/user-data`,
+`/repo`, típicas del sandbox de claude.ai— y el `Read` de `/` (siempre EISDIR),
+devolviendo al modelo el cwd real. Solo actúa si el prefijo no existe en disco,
+así no puede estorbar una lectura legítima; sin python3 o con JSON ilegible deja
+pasar; prefiltro en bash para que el camino común no arranque python (~3 ms).
+Prefijos configurables con `RUTAS_FANTASMA` (lo usa la prueba). Se apaga con
+`KIT_RUTAS_FANTASMA=n ./instalar.sh` tras quitar su entrada de `settings.json`;
+revertir el PR no desinstala nada de las máquinas (no hay desinstalador).
+
+Evidencia, la que el congelamiento del 2026-08-29 exige (fallo recurrente en el
+reporte semanal de salud): en una instalación real, 46 de 148 errores de tool en
+5 días (31%) fueron `Read` a esas rutas, tras 17 la semana anterior; ninguna
+regla en prosa aplica porque no es indisciplina sino una alucinación de entorno.
+Prueba `hooks/test-rutas-fantasma.sh` (14 casos, independiente de la máquina;
+`verificar.sh` la corre) y bloqueo comprobado en vivo el 2026-09-05.
+
+Qué se espera medir después (el hook no evita que el modelo emita la ruta, mejora
+el error que recibe): que los reintentos al mismo destino dentro de una sesión
+caigan a uno y que "File does not exist" a esas rutas caiga a cero; el bloqueo se
+cuenta aparte en el reporte de salud. Council de 3 lentes: aprobada con cambios,
+todos aplicados (`docs/pruebas/council-v1.18.md`).
+
+También: `fusionar_hooks` de `instalar.sh` admite `SOLO_CMD` para fusionar una
+sola entrada de un evento (antes, aceptar un hook de `PreToolUse` arrastraba a
+todos los del fragmento); `verificar.sh` corre la prueba de todo hook que traiga
+`hooks/test-<nombre>.sh` y comprueba que `hooks.json` y `settings-fragment.json`
+declaren los mismos hooks.
+
 ## v1.17 — 2026-09-01
 **El estándar de estructura de proyectos entra al núcleo** (etapa 2 del
 council del 2026-08-31): sección "Estructura de proyectos", 7 líneas — el

@@ -97,6 +97,7 @@ fusionar_hooks() { # fusionar_hooks <evento> [evento...]
 import json, sys, os
 destino, fragmento = sys.argv[1], sys.argv[2]
 solo = set(sys.argv[3:])  # eventos a fusionar; si va vacío, se fusionan todos
+solo_cmd = os.environ.get("SOLO_CMD", "")  # si se define, solo entradas cuyo comando lo contenga
 s = json.load(open(destino)) if os.path.exists(destino) else {}
 f = json.load(open(fragmento))
 hooks = s.setdefault("hooks", {})
@@ -111,6 +112,8 @@ for evento, entradas in f["hooks"].items():
         return tuple(sorted(h.get("command", "") for h in entry.get("hooks", [])))
     presentes = {cmds(x) for x in actuales}
     for e in entradas:
+        if solo_cmd and not any(solo_cmd in c for c in cmds(e)):
+            continue
         if cmds(e) in presentes:
             continue
         actuales.append(e); presentes.add(cmds(e))
@@ -129,6 +132,22 @@ else
   echo "hook contexto: instala python3 y vuelve a correr ./instalar.sh para activarlo."
 fi
 
+# 4a-bis. Hook rutas-fantasma (PreToolUse Read|Write|Edit): por defecto. Solo
+# bloquea rutas a prefijos que no existen en esta máquina (típicas del sandbox de
+# claude.ai: /home/user, /mnt/user-data, /repo) y el Read de "/", así que no puede
+# estorbar una lectura legítima. Evidencia y diseño en CHANGELOG v1.18. Se omite
+# con KIT_RUTAS_FANTASMA=n (después de quitar su entrada de settings.json, si ya
+# estaba: el instalador no borra hooks).
+if [ "${KIT_RUTAS_FANTASMA:-}" = "n" ]; then
+  echo "hook rutas-fantasma: omitido por KIT_RUTAS_FANTASMA=n"
+elif command -v python3 >/dev/null 2>&1; then
+  cp "$KIT/hooks/rutas-fantasma.sh" "$DIR/hooks/" && chmod +x "$DIR/hooks/rutas-fantasma.sh"
+  SOLO_CMD=rutas-fantasma fusionar_hooks PreToolUse
+  echo "hook rutas-fantasma: instalado (bloquea lecturas a rutas de otro entorno que aquí no existen)"
+else
+  echo "hook rutas-fantasma: omitido — necesita python3 para fusionar settings.json y no se encontró en este sistema."
+fi
+
 # 4b. Hook anti-secretos (PreToolUse): opt-in, sigue preguntando.
 resp="${KIT_HOOKS:-}"
 if [ -z "$resp" ] && [ -t 0 ]; then
@@ -144,7 +163,7 @@ if [ "$activar_hooks" -eq 1 ] && ! command -v python3 >/dev/null 2>&1; then
   echo "hook anti-secretos: instala python3 y vuelve a correr KIT_HOOKS=s ./instalar.sh para activarlo."
 elif [ "$activar_hooks" -eq 1 ]; then
   cp "$KIT/hooks/anti-secretos.sh" "$DIR/hooks/" && chmod +x "$DIR/hooks/anti-secretos.sh"
-  fusionar_hooks PreToolUse
+  SOLO_CMD=anti-secretos fusionar_hooks PreToolUse
   echo "hook anti-secretos: activado"
 else
   echo "hook anti-secretos: omitido (KIT_HOOKS=s ./instalar.sh para activarlo)"

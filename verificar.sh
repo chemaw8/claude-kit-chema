@@ -108,6 +108,28 @@ for f in scripts/*.sh; do
   fi
 done
 
+# Los hooks que traen prueba deben pasarla: hooks/test-<nombre>.sh prueba hooks/<nombre>.sh.
+for t in hooks/test-*.sh; do
+  [ -e "$t" ] || continue
+  h="hooks/$(basename "$t" .sh | sed 's/^test-//').sh"
+  [ -x "$h" ]; chk "$h es ejecutable" $?
+  bash "$t" "$h" >/dev/null 2>&1; chk "$h pasa $t" $?
+done
+
+# hooks.json (vía plugin) y settings-fragment.json (vía instalador) deben declarar
+# los mismos hooks: con tres ya es fácil que uno gane una entrada y el otro no.
+if command -v python3 >/dev/null 2>&1; then
+  python3 - <<'PYH'
+import json, os, sys
+def hooks(p):
+    d = json.load(open(p))
+    return sorted((ev, e.get("matcher", ""), os.path.basename(h["command"].strip('"')))
+                  for ev, es in d["hooks"].items() for e in es for h in e["hooks"])
+sys.exit(0 if hooks("hooks/hooks.json") == hooks("hooks/settings-fragment.json") else 1)
+PYH
+  chk "hooks/hooks.json y hooks/settings-fragment.json declaran los mismos hooks" $?
+fi
+
 # 4. Sin gritos: mayúsculas de énfasis prohibidas en contenido instalable
 if grep -rnE '(CRITICAL|IMPORTANTE:|OBLIGATORIO:|NUNCA HAGAS|SIEMPRE DEBES)' nucleo/ skills/ agents/ 2>/dev/null | grep -v ':#'; then
   chk "sin énfasis gritado en nucleo/, skills/ y agents/" 1
