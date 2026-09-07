@@ -1,53 +1,33 @@
 # Changelog — Kit Chema
 
-## v1.19.2 — 2026-09-08
-Viene de un council de 4 lentes sobre el entorno del mantenedor (aprobada con cambios; acta en
-`docs/pruebas/council-v1.19.2.md`). Qué paga: en una semana medida, la gran mayoría de los tokens
-se iban al modelo más caro sin que ninguna regla lo frenara, y el escalón Fable de la escalera
-no tenía ningún agente asignado.
-- **Núcleo (+4 líneas, 133/150): esfuerzo antes que modelo.** Antes de subir de Opus 5 a Fable,
-  sube `--effort` en Opus 5. **Medido antes de fusionar** (cierra el aviso del council que pedía
-  evidencia de que Opus 5 a `--effort max` se queda corto): sobre una batería propia de casos con
-  juez fijo, **no se detectó diferencia de calidad** entre los escalones (la batería está saturada:
-  eso no prueba igualdad, pero sí que no hay evidencia para subir de modelo por calidad), el
-  esfuerzo salió más barato por corrida que el salto de modelo, y Fable 5.1 salió **más rápido**.
-  Con una salvedad que el documento carga: el único caso donde los brazos divergieron quedó fuera
-  del conteo, y en él Fable 5.1 respondió dentro del mensaje y Opus 5 no —diferencia de
-  comportamiento, con re-juicio pendiente—, así que la lectura "no se detectó diferencia" se toma
-  con eso encima, y con que en los casos limpios esa lectura de calidad se sostiene en 2 casos,
-  no en 4. De ahí la
-  excepción que la regla lleva escrita: cuando manda la latencia y no el costo, salta de modelo.
-  Resultados relativos y método en `docs/pruebas/medicion-esfuerzo-v1.19.2.md`.
-- **kit-propuestas:** en el protocolo de council, la síntesis del veredicto deja de hacerla el hilo
-  principal y la hace el agente `sintetizador`, al que hay que pasarle la postura inicial del hilo
-  (el veredicto debe decir si los evaluadores le hicieron cambiar de opinión). Si el agente no está
-  disponible, sintetiza el hilo principal. Es el único flujo para el que el agente existe y antes
-  no lo invocaba.
-- **kit-orquestacion:** la alternativa barata al fan-out es "esfuerzo primero, modelo después", y
-  cada etapa de una corrida declara su modelo y su esfuerzo (pendiente desde la decisión del
-  2026-08-29 que nunca se ejecutó).
-- **Agentes:** nace `sintetizador` (Fable, solo lectura): integra veredictos de council o reportes
-  de varios agentes en un juicio final, verificando hallazgos antes de heredarlos. Era lo que el
-  núcleo mandaba ("Fable solo para síntesis y juicio") y ningún agente cumplía. `lector-fresco`
-  **se queda en Opus 5**: subirlo a Fable sin haber probado Opus a `--effort max` habría violado la
-  regla que este mismo cambio introduce (lo señaló el revisor del gate).
+## v1.20 — 2026-09-07 (piloto; PR en borrador hasta la puerta de la fase 3)
+Fase 3 del programa de mejora del entorno: **gate de push local**, diseñado por un
+workflow de 3 diseños independientes, 3 jueces y un crítico de completitud (spec 002 de
+claude-entorno; elegido "Sello de push v2" sobre un pre-receive local y un check de
+GitHub). Todo **opt-in** (`KIT_GATE=s` + `git config kit-chema.gate true` por repo).
+- **Hook `sello-push.sh`** (`PreToolUse` Bash): `git push` solo pasa con sello del sha
+  empujado sin bloqueantes pendientes; analiza el comando por segmentos (heredocs y
+  cadenas no cuentan), resuelve remoto y refspec (`@{push}`, `+`, `HEAD:x`, opciones con
+  argumento), sello por `--git-common-dir` (vale desde worktrees), rechaza comandos que
+  mueven HEAD antes del push y `--all`/`--mirror`, deja pasar `--dry-run`, `--delete` y
+  shas ya en el remoto, tags solo si su commit está en el remoto o sellado; exige
+  timeout ≥ 300000 a `sello-push.sh revisar`; fail-open ante error propio. 56 casos.
+- **Helper `scripts/sello-push.sh`**: `revisar` (pruebas en worktree desechable con
+  `prune` y `timeout`; si fallan, sello sintético sin gastar revisor; paquete de 7
+  secciones etiquetadas como datos, ficha o sustituto declarado, diff recortado a 200 KB
+  con bloqueante automático; revisor `claude -p` con otro modelo, sin herramientas, sin
+  settings ni MCP, sin `--bare`, cwd vacío, reintento sin `CLAUDECODE`; veredicto
+  calculado cotejando evidencia literal; sello + ledger con tokens literales del sobre),
+  `saltar` (solo con la palabra del usuario, anotado), `estado --contra-remoto` (ramas
+  del remoto sin sello), `activar|desactivar`, `metricas` (línea greppable, redondeo
+  half-up, sellos sin revisión, líneas ilegibles) y `autotest` (15 escenarios con
+  revisor y pruebas inyectados; nunca toca el ledger real, verificado con centinela).
+- **Comando `/revisar-antes-de-subir`**: los 8 pasos, incluido vigilar el CI tras el PR.
+- Instalador: bloque 4a-quater (`KIT_GATE=s`); `hooks.json`/`settings-fragment.json` en
+  paridad; GOBERNANZA gana "Gate de push local — piloto"; README de hooks, la tercera vía.
+- **Evidencia esperada para salir de borrador:** dos lunes de columna `Gate` en el
+  historial de claude-entorno con el repo piloto y council de 5 (kit-propuestas).
 
-## v1.19.1 — 2026-09-07
-Cierra el PR #12 (borrador desde 2026-07-21) en versión corta, con council de 3 lentes
-(aprobada con cambios, todos aplicados; acta en `docs/pruebas/council-pr12.md`).
-- **kit-propuestas: "Acercamiento personalizado a un contacto"** (3 pasos, 18 líneas de texto): confirmar
-  la identidad del contacto antes de personalizar (con salida cuando no hay resultados o no hay
-  buscador), personalizar como capa encima del kit que toque solo con información profesional y
-  pública, y confirmar el texto final con el usuario antes de que salga a un tercero; un mensaje
-  de acercamiento no dispara Council por sí solo. Antipatrón "acercamiento a ciegas".
-- **Disparo en ambos lados de la frontera:** la description de kit-propuestas gana la frase
-  `"escríbele a fulano de X"` y la de kit-redaccion remite a kit-propuestas cuando el correo es
-  a un contacto de otra empresa para vender o proponer. Qué paga: +133 y +107 caracteres de
-  description (971 y 898; la suma del kit queda en 5,414 de 6,000).
-- **Gate de disparo corrido y documentado:** `docs/pruebas/disparo.py` (juez Sonnet, contexto
-  fresco) → 21/21 del núcleo y cero confusiones en las fronteras, con tres fronteras nuevas en
-  el banco (28-30: acercamiento a un contacto ↔ correo ↔ estatus interno). El instalador lee
-  versiones de tres componentes (`v1.19.1`) para no colisionar con la v1.20 del gate de push.
 
 ## v1.19 — 2026-09-06
 Fase 1 del programa de mejora del entorno (cosecha del setup de Kun Chen,

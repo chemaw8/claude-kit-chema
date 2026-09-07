@@ -114,6 +114,28 @@ y fusiona. Emergencia: como el dueño sigue siendo admin, puede desactivar la
 protección temporalmente en GitHub → Settings → Branches; es reversible y
 deliberadamente incómodo (esa fricción es el punto).
 
+## Gate de push local — piloto (desde 2026-09-07)
+
+Una capa **antes** del PR, en la máquina: en los repos con `git config kit-chema.gate
+true`, un `git push` desde Claude Code exige un sello de revisión del commit
+(`hooks/sello-push.sh` + `scripts/sello-push.sh` + `/revisar-antes-de-subir`; detalle
+en `hooks/README.md`). La branch protection de arriba sigue mandando: el gate no la
+sustituye, la adelanta. Reglas del piloto:
+
+- Repo piloto: este (`claude-kit-chema`), con `kit-chema.pruebas = bash verificar.sh` y
+  revisor `opus` (el autor habitual de las sesiones es Fable; el revisor debe ser otro
+  modelo). Los repos NDA quedan fuera hasta decidir la política de confidencialidad del
+  revisor.
+- Omitir es del usuario, no del modelo: `KIT_SELLO=omitir git push …` queda anotado
+  en el ledger y aparece en el reporte semanal. Un `omitido` sin petición del usuario
+  es un hallazgo del piloto.
+- Métrica: `sello-push.sh metricas 7` → línea `Gate: pushes N · con hallazgo X% ·
+  bloqueante Y% · omitidos M · errores-hook E · tokens/gate mediana K · revisiones/push R ·
+  sin sello en remoto S`, columna `Gate` del historial semanal de claude-entorno.
+- **Puerta:** dos lunes seguidos con la columna poblada → council de 5 decide: por
+  defecto en el kit (`KIT_GATE=s` deja de ser opt-in), sigue opt-in, o se retira. El
+  council lee conteos, no solo porcentajes (15-30 pushes en dos semanas).
+
 ## Diferido (no bloqueante)
 
 - Plugin "lean": hoy el paquete se distribuye con `source "./"` (viaja el repo
