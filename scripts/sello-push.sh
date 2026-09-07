@@ -41,9 +41,9 @@ ESQUEMA='{"type":"object","additionalProperties":false,"properties":{"resumen":{
 
 # ── revisar ───────────────────────────────────────────────────────────────
 cmd_revisar() {
-  local repo="" base=""
-  while [ $# -gt 0 ]; do case "$1" in --base) base="${2:-}"; shift $(( $# > 1 ? 2 : 1 )) ;; *) repo="$1"; shift ;; esac; done
-  [ -n "$base" ] || [ "$*" = "${*/--base/}" ] || { err "revisar: --base necesita un valor"; return 2; }
+  local repo="" base="" pide_base=0
+  while [ $# -gt 0 ]; do case "$1" in --base) pide_base=1; base="${2:-}"; shift $(( $# > 1 ? 2 : 1 )) ;; *) repo="$1"; shift ;; esac; done
+  [ "$pide_base" -eq 1 ] && [ -z "$base" ] && { err "revisar: --base necesita un valor (p. ej. --base origin/main)"; return 2; }
   repo="$(repo_de "${repo:-.}")" || { err "revisar: aquí no hay un repo git"; return 2; }
   local pruebas cli
   pruebas="${SELLO_PRUEBAS-$(git -C "$repo" config --get kit-chema.pruebas 2>/dev/null)}"
@@ -136,6 +136,9 @@ if not base or mb == head:
 
 # ── pruebas en worktree desechable ──
 git("worktree", "prune")
+for bloque in (git("worktree", "list", "--porcelain") or "").split("\n\n"):        # un revisar matado a medias deja su worktree registrado
+    ruta = next((l[9:] for l in bloque.splitlines() if l.startswith("worktree ")), "")
+    if os.path.basename(ruta).startswith("sello-wt-"): sh(["git", "-C", REPO, "worktree", "remove", "--force", ruta]); shutil.rmtree(ruta, ignore_errors=True)
 pruebas_cmd = E.get("PRUEBAS_CMD") or ""
 wt = tempfile.mkdtemp(prefix="sello-wt-"); donde = "worktree"
 try:
@@ -484,6 +487,10 @@ cmd_autotest() {
   git -C "$R" worktree add -q "$t/huerfano" -b huer 2>/dev/null; rm -rf "$t/huerfano"
   SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" >/dev/null 2>&1
   git -C "$R" worktree list | grep -q huerfano && fallo "el worktree huérfano no se limpió"
+  git -C "$R" worktree add -q --detach "$t/sello-wt-zombi" HEAD 2>/dev/null   # worktree del gate que quedó registrado (revisar matado a medias)
+  SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" >/dev/null 2>&1
+  git -C "$R" worktree list | grep -q sello-wt-zombi && fallo "el worktree zombi del gate no se limpió"
+  out=$(SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" --base 2>&1); rc=$?; [ $rc -eq 2 ] || fallo "revisar --base sin valor debió dar rc 2 sin correr nada (rc=$rc)"
   git -C "$R" worktree list | grep -q sello-wt && fallo "quedó un worktree temporal del gate"
   # 8 sin timeout
   SELLO_SIN_TIMEOUT=1 SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" >/dev/null 2>&1
