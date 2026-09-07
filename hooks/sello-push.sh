@@ -238,7 +238,9 @@ def main():
         dir_sellos = sellos_dir(repo); ident = identidad(repo)
         for src, dst in specs:
             sha = git(repo, "rev-parse", "--verify", "--quiet", f"{src}^{{commit}}")
-            if not sha: continue                                    # ref inexistente: que git falle solo
+            if not sha:                                             # variable sin expandir, $(…) o ref inexistente: el hook no ejecuta nada, así que no puede saber qué se empuja → bloquea
+                ledger(evento="bloqueo", repo=ident, rama=dst, motivo="refspec-irresoluble", detalle=src[:80], session=sid)
+                salir(2, PREFIJO + f"no puedo resolver el refspec '{src}' sin ejecutar el comando (variable, sustitución o ref inexistente). Escribe la rama o el commit por su nombre literal: git push {remoto} <rama>.")
             s7 = sha[:7]
             es_tag = git(repo, "show-ref", "--verify", "--quiet", f"refs/tags/{src}") is not None
             # ¿ya está en el remoto? nada nuevo llega → permitido (sin-cambios)

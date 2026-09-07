@@ -77,7 +77,7 @@ desde la terminal, scripts que envuelven el push o `gh pr create` que empuja (se
 con `estado --contra-remoto`, no se impiden); la branch protection sigue siendo el muro.
 Confidencialidad: el diff viaja al modelo revisor igual que cualquier uso de Claude
 Code; el piloto es el repo público del kit y los repos NDA quedan fuera hasta decidir
-política. Pruebas: `bash hooks/test-sello-push.sh` (56 casos) y `bash
+política. Pruebas: `bash hooks/test-sello-push.sh` (80 comprobaciones) y `bash
 scripts/sello-push.sh autotest` (revisor y pruebas inyectados; ninguna toca el ledger
 real). Apagado en tres niveles: por push (`KIT_SELLO=omitir`, anotado), por repo
 (`sello-push.sh desactivar`), por máquina (quitar `sello-push.sh` de

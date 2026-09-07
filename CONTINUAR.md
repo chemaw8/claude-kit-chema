@@ -6,8 +6,8 @@
 **v1.19 en main. Fase 3 (gate de push) construida en la rama `fase-3-gate-push` y en
 PILOTO desde 2026-09-07**, como PR en borrador v1.20 (spec y evidencia en claude-entorno,
 `specs/002-gate-de-push/`). El gate está activo en la máquina de José y en este repo
-(`sello-push.sh estado`); **este mismo PR pasó por su gate**: cinco revisiones reales
-(Opus, 65-89k tokens y 3-10 min cada una) que cazaron los defectos sembrados de la prueba
+(`sello-push.sh estado`); **este mismo PR pasó por su gate**: revisiones reales con Opus
+(al escribir esto, 7 en el ledger; 65-97k tokens y de 3 a 11 min cada una) que cazaron los defectos sembrados de la prueba
 y varios reales del propio gate (`saltar`, escape en comentarios, `timeout -k`, `git push >
 archivo`, `--tags` con refspec, base irresoluble), todos corregidos antes de subir. Cifras
 en `docs/pruebas/RUNBOOK.md` y en `~/.claude/kit-chema/gate.jsonl`.

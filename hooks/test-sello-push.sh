@@ -52,6 +52,9 @@ bloquea "nice -n 10 git push → 2" "$R" "nice -n 10 git push origin main"
 bloquea "git push > /tmp/out (redirección) sin sello → 2" "$R" "git push > /tmp/out"
 bloquea "git push origin main 2>&1 | tee x → 2" "$R" "git push origin main 2>&1 | tee /tmp/x"
 bloquea "git push origin main &> /dev/null → 2" "$R" "git push origin main &> /dev/null"
+bloquea 'refspec con variable sin expandir ("$RAMA") → 2: no se resuelve sin ejecutar' "$R" 'RAMA=main; git push origin "$RAMA"'; cita "pide el nombre literal" "nombre literal"
+bloquea 'refspec con $(…) → 2' "$R" 'git push origin $(git rev-parse HEAD):main'
+sello "$B" 0 0; bloquea "refspec irresoluble bloquea aunque HEAD tenga sello" "$R" 'git push origin "$RAMA"'; sin_sello "$B"
 t0=$(date +%s%N); corre "$R" "ls"; t1=$(( ($(date +%s%N)-t0)/1000000 )); echo "  info  comando sin push: ${t1} ms (informativo; meta <50)"
 
 echo "RF-2 · sha del ref empujado y sello por common-dir:"
