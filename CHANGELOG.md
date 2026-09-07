@@ -12,7 +12,7 @@ además `KIT_GATE=s` (por la vía plugin el hook viaja siempre y solo cuenta la 
   argumento), sello por `--git-common-dir` (vale desde worktrees), rechaza comandos que
   mueven HEAD antes del push y `--all`/`--mirror`, deja pasar `--dry-run`, `--delete` y
   shas ya en el remoto, tags solo si su commit está en el remoto o sellado; exige
-  `run_in_background` o timeout ≥ 600000 a `sello-push.sh revisar`; fail-open ante error propio (anotado en el ledger incluso sin python3). 85 comprobaciones.
+  `run_in_background` o timeout ≥ 600000 a `sello-push.sh revisar`; fail-open ante error propio (anotado en el ledger incluso sin python3). 88 comprobaciones.
 - **Helper `scripts/sello-push.sh`**: `revisar` (pruebas en worktree desechable con
   `prune` y `timeout`; si fallan, sello sintético sin gastar revisor; paquete de 7
   secciones etiquetadas como datos, ficha o sustituto declarado, diff recortado a 200 KB
@@ -26,9 +26,29 @@ además `KIT_GATE=s` (por la vía plugin el hook viaja siempre y solo cuenta la 
 - **Comando `/revisar-antes-de-subir`**: los 8 pasos, incluido vigilar el CI tras el PR.
 - Instalador: bloque 4a-quater (`KIT_GATE=s`); `hooks.json`/`settings-fragment.json` en
   paridad; GOBERNANZA gana "Gate de push local — piloto"; README de hooks, la tercera vía.
+- Primeras vueltas del piloto sobre el propio PR: un `push --force` que rebobina la rama remota a
+  un ancestro ya no pasa como "sin cambios" (exige sello); `error-hook` se anota también con bash
+  3.2; la prueba usa `$BASH`; tope por defecto del revisor 3 USD.
 - **Evidencia esperada para salir de borrador:** dos lunes de columna `Gate` en el
   historial de claude-entorno con el repo piloto y council de 5 (kit-propuestas).
 
+
+## v1.19.1 — 2026-09-07
+Cierra el PR #12 (borrador desde 2026-07-21) en versión corta, con council de 3 lentes
+(aprobada con cambios, todos aplicados; acta en `docs/pruebas/council-pr12.md`).
+- **kit-propuestas: "Acercamiento personalizado a un contacto"** (3 pasos, 18 líneas de texto): confirmar
+  la identidad del contacto antes de personalizar (con salida cuando no hay resultados o no hay
+  buscador), personalizar como capa encima del kit que toque solo con información profesional y
+  pública, y confirmar el texto final con el usuario antes de que salga a un tercero; un mensaje
+  de acercamiento no dispara Council por sí solo. Antipatrón "acercamiento a ciegas".
+- **Disparo en ambos lados de la frontera:** la description de kit-propuestas gana la frase
+  `"escríbele a fulano de X"` y la de kit-redaccion remite a kit-propuestas cuando el correo es
+  a un contacto de otra empresa para vender o proponer. Qué paga: +133 y +107 caracteres de
+  description (971 y 898; la suma del kit queda en 5,414 de 6,000).
+- **Gate de disparo corrido y documentado:** `docs/pruebas/disparo.py` (juez Sonnet, contexto
+  fresco) → 21/21 del núcleo y cero confusiones en las fronteras, con tres fronteras nuevas en
+  el banco (28-30: acercamiento a un contacto ↔ correo ↔ estatus interno). El instalador lee
+  versiones de tres componentes (`v1.19.1`) para no colisionar con la v1.20 del gate de push.
 
 ## v1.19 — 2026-09-06
 Fase 1 del programa de mejora del entorno (cosecha del setup de Kun Chen,

@@ -19,7 +19,7 @@
 #
 # Config por repo (git config): kit-chema.pruebas ("bash verificar.sh" si existe),
 # kit-chema.revisor (opus), kit-chema.base (rama base). Variables: KIT_GATE_LEDGER,
-# SELLO_TOPE_USD (2; la primera revisión real de 1,400 líneas costó 0.90), SELLO_PRUEBAS_SEG (600, pruebas),
+# SELLO_TOPE_USD (3; revisiones reales de ~1,600 líneas han costado hasta 1.57), SELLO_PRUEBAS_SEG (600, pruebas),
 # SELLO_REVISOR_SEG (900, revisor: una revisión real ya tardó 632 s), SELLO_DEBUG=1 (imprime la invocación).
 # Solo para pruebas: SELLO_REVISOR (sustituye el comando claude -p), SELLO_PRUEBAS
 # (sustituye las pruebas), SELLO_SIN_TIMEOUT=1 (simula que no hay coreutils timeout).
@@ -51,7 +51,7 @@ cmd_revisar() {
   if [ -z "${SELLO_PRUEBAS+x}" ] && [ -z "$pruebas" ] && [ -f "$repo/verificar.sh" ]; then pruebas="bash verificar.sh"; fi
   cli="$(command -v claude >/dev/null 2>&1 && claude --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
   REPO="$repo" BASE_ARG="$base" PRUEBAS_CMD="$pruebas" MODELO="$(git -C "$repo" config --get kit-chema.revisor 2>/dev/null || echo opus)" \
-  LEDGER="$(ledger_path)" PROMPT="$PROMPT" ESQUEMA="$ESQUEMA" TOPE="${SELLO_TOPE_USD:-2}" SEG="${SELLO_PRUEBAS_SEG:-600}" REV_SEG="${SELLO_REVISOR_SEG:-900}" \
+  LEDGER="$(ledger_path)" PROMPT="$PROMPT" ESQUEMA="$ESQUEMA" TOPE="${SELLO_TOPE_USD:-3}" SEG="${SELLO_PRUEBAS_SEG:-600}" REV_SEG="${SELLO_REVISOR_SEG:-900}" \
   SIN_TIMEOUT="${SELLO_SIN_TIMEOUT:-}" REVISOR_CMD="${SELLO_REVISOR:-}" DEBUG="${SELLO_DEBUG:-}" CLI_VERSION="$cli" \
   python3 - <<'PY'
 import json, os, re, subprocess, sys, tempfile, shutil, hashlib, datetime, time, shlex
@@ -216,7 +216,7 @@ mcp_vacio = os.path.join(cwd_vacio, "mcp.json"); open(mcp_vacio, "w").write('{"m
 if rev_cmd: argv, revisor_tag = ["bash", "-c", rev_cmd], "inyectado"
 else:
     argv = ["claude", "-p", "--model", MODELO, "--tools", "", "--output-format", "json", "--json-schema", E["ESQUEMA"], "--no-session-persistence",
-            "--setting-sources", "", "--strict-mcp-config", "--mcp-config", mcp_vacio, "--max-budget-usd", E.get("TOPE") or "2", "--system-prompt", E["PROMPT"]]
+            "--setting-sources", "", "--strict-mcp-config", "--mcp-config", mcp_vacio, "--max-budget-usd", E.get("TOPE") or "3", "--system-prompt", E["PROMPT"]]
     revisor_tag = "claude -p"
 env = dict(os.environ)
 if E.get("DEBUG"): print("invocación: " + " ".join(shlex.quote(a) if a != E["PROMPT"] else "<prompt>" for a in argv) + f" · cwd: {cwd_vacio}", file=sys.stderr)

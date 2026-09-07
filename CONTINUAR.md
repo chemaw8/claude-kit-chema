@@ -3,7 +3,7 @@
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**v1.19 en main. Fase 3 (gate de push) construida en la rama `fase-3-gate-push` y en
+**v1.19.1 en main. Fase 3 (gate de push) construida en la rama `fase-3-gate-push` y en
 PILOTO desde 2026-09-07**, como PR en borrador v1.20 (spec y evidencia en claude-entorno,
 `specs/002-gate-de-push/`). El gate está activo en la máquina de José y en este repo
 (`sello-push.sh estado`); **este mismo PR pasó por su gate**: revisiones reales con Opus

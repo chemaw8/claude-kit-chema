@@ -19,7 +19,7 @@ input=""; while IFS= read -r linea || [ -n "$linea" ]; do input+="$linea"$'\n'; 
 case "$input" in *git*push*|*sello-push*) ;; *) exit 0 ;; esac
 export KIT_GATE_LEDGER="${KIT_GATE_LEDGER:-$HOME/.claude/kit-chema/gate.jsonl}"
 # Fail-open por entorno (sin python3 o sin git): pasa, pero queda anotado con builtins de bash.
-error_hook() { local d="${KIT_GATE_LEDGER%/*}"; [ -d "$d" ] && printf '{"ts":"%(%FT%T)T","evento":"error-hook","motivo":"%s"}\n' -1 "$1" >> "$KIT_GATE_LEDGER" 2>/dev/null; exit 0; }
+error_hook() { local d="${KIT_GATE_LEDGER%/*}" ts; ts=$(printf '%(%FT%T)T' -1 2>/dev/null) || ts=$(date +%FT%T 2>/dev/null) || ts=""; [ -d "$d" ] && printf '{"ts":"%s","evento":"error-hook","motivo":"%s"}\n' "$ts" "$1" >> "$KIT_GATE_LEDGER" 2>/dev/null; exit 0; }   # bash 3.2 (macOS) no tiene %(…)T
 command -v python3 >/dev/null 2>&1 || error_hook "sin-python3"
 command -v git >/dev/null 2>&1 || error_hook "sin-git"
 INPUT="$input" python3 - <<'PY'
@@ -117,7 +117,7 @@ def parsear_git(tokens, cwd):
     return repo, tokens[i], tokens[i + 1:]
 
 def parsear_push(resto):
-    o = {"dry_run": False, "delete": False, "all": False, "mirror": False, "tags": False}; pos = []
+    o = {"dry_run": False, "delete": False, "all": False, "mirror": False, "tags": False, "force": False}; pos = []
     i = 0
     while i < len(resto):
         t = resto[i]
@@ -129,6 +129,7 @@ def parsear_push(resto):
             elif base == "--all": o["all"] = True
             elif base == "--mirror": o["mirror"] = True
             elif base == "--tags": o["tags"] = True
+            elif base in ("--force", "-f", "--force-with-lease", "--force-if-includes"): o["force"] = True
             if base in OPCION_CON_ARG and "=" not in t: i += 2; continue
             i += 1; continue
         pos.append(t); i += 1
@@ -229,6 +230,7 @@ def main():
             specs.append(("HEAD", partes[3] if len(partes) > 3 else rama))
         else:
             for rs in refspecs:
+                if rs.startswith("+"): o["force"] = True
                 rs = rs.lstrip("+")
                 if rs.startswith(":"): continue                       # borrado remoto: nada nuevo llega
                 src, _, dst = rs.partition(":"); dst = dst or src
@@ -250,6 +252,7 @@ def main():
             else:
                 rt = git(repo, "rev-parse", "--verify", "--quiet", f"refs/remotes/{remoto}/{dst}")
                 en_remoto = bool(rt) and git(repo, "merge-base", "--is-ancestor", sha, rt) is not None
+                if en_remoto and o["force"] and rt != sha: en_remoto = False   # forzar a un ancestro REBOBINA la rama remota: eso sí exige sello
             if en_remoto:
                 ledger(evento="permitido", repo=ident, rama=dst, head=sha, veredicto="sin-cambios", session=sid); continue
             sello = leer_sello(dir_sellos, sha) if dir_sellos else None
