@@ -68,6 +68,7 @@ aprobar/decidir → kit-propuestas; estatus informativo → kit-redaccion.
 | 10 | Documenta el proceso | kit-redaccion | ✅ |
 
 
+
 ## Corrida 2026-09-07 — PR #12 (descriptions de kit-propuestas y kit-redaccion; fronteras 28-30 nuevas)
 
 Runner `docs/pruebas/disparo.py`, juez Sonnet, 9 skills, 30 peticiones.
@@ -102,7 +103,7 @@ Runner `docs/pruebas/disparo.py`, juez Sonnet, 9 skills, 30 peticiones.
 | 26 | Prepárame un informe con láminas para la reunión del viernes | kit-presentaciones | ✓ kit-presentaciones | sí (informe↔deck) |
 | 27 | Redacta un mensaje a dirección para que aprueben contratar dos persona | kit-propuestas | ✓ kit-propuestas | sí (aprobación↔propuesta) |
 | 28 | Escríbele un correo al director comercial de Farmacias X para proponer | kit-propuestas | ✓ kit-propuestas | sí (acercamiento a contacto ↔ correo) |
-| 29 | Mándale un mensaje a Franco de Aeroméxico para agendar la demo de RCS | kit-propuestas | ✓ kit-propuestas | sí (acercamiento a contacto ↔ correo) |
+| 29 | Mándale un mensaje al gerente de compras de la Aerolínea Z para agenda | kit-propuestas | ✓ kit-propuestas | sí (acercamiento a contacto ↔ correo) |
 | 30 | Escribe un correo al equipo con el estatus del proyecto de esta semana | kit-redaccion | ✓ kit-redaccion | sí (estatus interno ↔ acercamiento) |
 
 núcleo: 21/21 (criterio ≥ 19/21) · confusiones de frontera no benignas: 0

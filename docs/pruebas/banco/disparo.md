@@ -43,8 +43,8 @@ dos skills; el criterio de cero-confusiones se evalúa sobre ellas.
 | 25 | Documenta el proceso de cierre mensual | kit-redaccion | sí (documenta↔redacción) |
 | 26 | Prepárame un informe con láminas para la reunión del viernes | kit-presentaciones | sí (informe↔deck) |
 | 27 | Redacta un mensaje a dirección para que aprueben contratar dos personas | kit-propuestas | sí (aprobación↔propuesta) |
+| 28 | Escríbele un correo al director comercial de Farmacias X para proponerle nuestro servicio | kit-propuestas | sí (acercamiento a contacto ↔ correo) |
+| 29 | Mándale un mensaje al gerente de compras de la Aerolínea Z para agendar la demo del producto | kit-propuestas | sí (acercamiento a contacto ↔ correo) |
+| 30 | Escribe un correo al equipo con el estatus del proyecto de esta semana | kit-redaccion | sí (estatus interno ↔ acercamiento) |
 
 Historia y análisis de fallos previos en `docs/pruebas/disparo-descriptions.md`.
-| 28 | Escríbele un correo al director comercial de Farmacias X para proponerle el MVNO | kit-propuestas | sí (acercamiento a contacto ↔ correo) |
-| 29 | Mándale un mensaje a Franco de Aeroméxico para agendar la demo de RCS | kit-propuestas | sí (acercamiento a contacto ↔ correo) |
-| 30 | Escribe un correo al equipo con el estatus del proyecto de esta semana | kit-redaccion | sí (estatus interno ↔ acercamiento) |

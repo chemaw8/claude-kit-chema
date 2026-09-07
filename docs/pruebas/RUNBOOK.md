@@ -54,7 +54,7 @@ confusión nueva.
    lados, como se hizo con redacción ↔ propuestas.
 
 Runner: `python3 docs/pruebas/disparo.py [--paralelo 6] [--modelo sonnet]` (desde
-2026-09-07): lee las descriptions instaladas y el banco, lanza un juez Sonnet de
-contexto fresco por petición en paralelo (~15 s, ~30 llamadas cortas) e imprime la
+2026-09-07): lee las descriptions del repo (la rama que se evalúa) y el banco, lanza un
+juez Sonnet de contexto fresco por petición en paralelo (~15 s, una llamada corta por fila) e imprime la
 tabla y el veredicto con el criterio de arriba; sale 1 si no pasa. Pega el resultado
 en `disparo-descriptions.md` con fecha.

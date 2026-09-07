@@ -2,8 +2,9 @@
 """Gate de disparo (docs/pruebas/RUNBOOK.md): un juez Sonnet con contexto fresco recibe SOLO los pares
 nombre+description de las skills y UNA petición del banco, y dice qué skill cargaría (o 'ninguna').
 Uso: python3 docs/pruebas/disparo.py [--banco docs/pruebas/banco/disparo.md] [--paralelo 6] [--modelo sonnet]
-Criterio: ≥ 19/21 del núcleo y cero confusiones nuevas en las fronteras (ver RUNBOOK). Gasta cuota (~29 llamadas cortas)."""
-import concurrent.futures, json, os, re, subprocess, sys, tempfile
+Lee las descriptions del REPO (la rama evaluada), no las instaladas en ~/.claude. Criterio: ≥ 19/21 del núcleo y cero
+confusiones nuevas en las fronteras (ver RUNBOOK). Gasta cuota: una llamada corta por fila del banco."""
+import concurrent.futures, json, os, re, shutil, subprocess, sys, tempfile
 AQUI = os.path.dirname(os.path.abspath(__file__)); KIT = os.path.dirname(os.path.dirname(AQUI))
 a = sys.argv[1:]
 def opt(n, d=None): return a[a.index(n) + 1] if n in a and a.index(n) + 1 < len(a) else d
@@ -31,6 +32,7 @@ def juez(f):
     except Exception as e: res = f"error {type(e).__name__}"
     m = re.search(r"kit-[a-z]+(?:-[a-z]+)*|ninguna", str(res)); return {**f, "juez": m.group(0) if m else str(res)[:40]}
 with concurrent.futures.ThreadPoolExecutor(paralelo) as ex: res = list(ex.map(juez, filas))
+shutil.rmtree(tmp, ignore_errors=True)
 nucleo = [r for r in res if r["n"] <= 21]; ok_n = sum(1 for r in nucleo if r["juez"] == r["esperada"])
 front = [r for r in res if r["frontera"].startswith("sí") or r["n"] > 21]
 conf = [r for r in front if r["juez"] != r["esperada"] and not r["frontera"].endswith("benigna)")]

@@ -3,7 +3,7 @@
 ## v1.19.1 — 2026-09-07
 Cierra el PR #12 (borrador desde 2026-07-21) en versión corta, con council de 3 lentes
 (aprobada con cambios, todos aplicados; acta en `docs/pruebas/council-pr12.md`).
-- **kit-propuestas: "Acercamiento personalizado a un contacto"** (3 pasos, 18 líneas): confirmar
+- **kit-propuestas: "Acercamiento personalizado a un contacto"** (3 pasos, 18 líneas de texto): confirmar
   la identidad del contacto antes de personalizar (con salida cuando no hay resultados o no hay
   buscador), personalizar como capa encima del kit que toque solo con información profesional y
   pública, y confirmar el texto final con el usuario antes de que salga a un tercero; un mensaje
