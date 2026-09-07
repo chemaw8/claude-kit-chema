@@ -63,7 +63,7 @@ Claude corre cuando el hook lo bloquea): pruebas del proyecto en un worktree
 desechable → si pasan, revisor adversario con **otro modelo** (`claude -p` sin
 herramientas, sin settings ni MCP del usuario, desde un directorio vacío para que no
 entren ni la memoria ni las fichas padre) → veredicto **calculado por el helper**:
-cada hallazgo tiene que citar una línea literal del diff o baja a aviso. Todo commit
+cada hallazgo tiene que citar una línea literal del paquete que recibió (diff, mensajes de commit, ficha o salida de las pruebas) o baja a aviso. Todo commit
 nuevo cambia el sha y exige revisar de nuevo; un comando que mueve HEAD y empuja en la
 misma línea se rechaza; `--all`/`--mirror` también (una rama a la vez); `--dry-run`,
 `--delete` y un sha que ya está en el remoto pasan; un tag pasa solo si su commit ya

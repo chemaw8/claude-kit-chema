@@ -26,7 +26,8 @@ import json, os, re, shlex, subprocess, sys, datetime
 MUEVEN_HEAD = {"commit", "rebase", "merge", "reset", "cherry-pick", "checkout", "switch", "pull", "revert", "am"}
 OPCION_CON_ARG = {"-o", "--push-option", "--repo", "--receive-pack", "--exec"}
 GIT_GLOBAL_CON_ARG = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--exec-path"}
-ENVOLTORIOS = {"sudo", "exec", "command", "nohup", "setsid", "time", "env"}
+ENVOLTORIOS = {"sudo", "exec", "command", "nohup", "setsid", "time", "env", "timeout", "nice", "ionice"}
+OPCION_ENVOLTORIO_CON_ARG = {"-k", "-s", "--kill-after", "--signal", "-n", "-u", "-c", "-C", "-S", "--chdir"}
 PREFIJO = "Kit Chema · gate de push: "
 
 def salir(rc, msg=None):
@@ -75,10 +76,15 @@ def segmentar(cmd, cwd):
     salida, cwd_v = [], cwd
     for s in segs:
         envs = []                                     # asignaciones que preceden al comando (VAR=x cmd …)
-        while s and (re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", s[0]) or s[0] in ENVOLTORIOS):
-            if s[0] not in ENVOLTORIOS: envs.append(s[0])
-            s = s[1:]
-        if s and s[0] == "timeout" and len(s) > 2: s = s[2:]
+        while s:                                      # pela asignaciones y envoltorios con sus opciones (timeout -k 5 600, nice -n 10, env -u X)
+            if re.match(r"^[A-Za-z_][A-Za-z0-9_]*=", s[0]): envs.append(s[0]); s = s[1:]; continue
+            if s[0] in ENVOLTORIOS:
+                w = s[0]; s = s[1:]
+                while s and s[0].startswith("-"):
+                    s = s[2:] if s[0] in OPCION_ENVOLTORIO_CON_ARG and len(s) > 1 else s[1:]
+                if w == "timeout" and s: s = s[1:]     # la duración
+                continue
+            break
         if not s: continue
         if s[0] in ("cd", "pushd"):
             dest = s[1] if len(s) > 1 else "~"
@@ -226,8 +232,8 @@ def main():
             s7 = sha[:7]
             es_tag = git(repo, "show-ref", "--verify", "--quiet", f"refs/tags/{src}") is not None
             # ¿ya está en el remoto? nada nuevo llega → permitido (sin-cambios)
-            if es_tag:
-                en_remoto = bool(git(repo, "branch", "-r", "--contains", sha))
+            if es_tag:                                              # solo cuenta el remoto DESTINO del push
+                en_remoto = bool(git(repo, "branch", "-r", "--contains", sha, "--list", f"{remoto}/*"))
             else:
                 rt = git(repo, "rev-parse", "--verify", "--quiet", f"refs/remotes/{remoto}/{dst}")
                 en_remoto = bool(rt) and git(repo, "merge-base", "--is-ancestor", sha, rt) is not None

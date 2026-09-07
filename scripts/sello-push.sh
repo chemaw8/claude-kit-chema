@@ -77,7 +77,10 @@ def pend(s):
 head = git("rev-parse", "HEAD"); rama = git("rev-parse", "--abbrev-ref", "HEAD") or "HEAD"
 if not head: print("✗ el repo no tiene commits", file=sys.stderr); sys.exit(2)
 ident = git("config", "--get", "remote.origin.url") or REPO
-common = git("rev-parse", "--path-format=absolute", "--git-common-dir") or os.path.join(REPO, ".git")
+common = git("rev-parse", "--path-format=absolute", "--git-common-dir")
+if common is None:                                            # git < 2.31: ruta relativa al árbol
+    common = git("rev-parse", "--git-common-dir") or ".git"
+    if not os.path.isabs(common): common = os.path.normpath(os.path.join(REPO, common))
 sellos = os.path.join(common, "kit-chema", "sellos"); os.makedirs(sellos, exist_ok=True)
 for n in os.listdir(sellos):                                  # sellos de más de 30 días: fuera
     p = os.path.join(sellos, n)
@@ -279,7 +282,7 @@ cmd_saltar() {
 import json, os, subprocess, sys, datetime
 E = os.environ; repo = E["REPO"]
 g = lambda *a: subprocess.run(["git", "-C", repo, *a], capture_output=True, text=True).stdout.strip()
-head = g("rev-parse", "HEAD"); common = g("rev-parse", "--path-format=absolute", "--git-common-dir") or os.path.join(repo, ".git")
+head = g("rev-parse", "HEAD"); common = g("rev-parse", "--path-format=absolute", "--git-common-dir") or os.path.normpath(os.path.join(repo, g("rev-parse", "--git-common-dir") or ".git"))
 p = os.path.join(common, "kit-chema", "sellos", head)
 if not os.path.isfile(p): print(f"✗ HEAD {head[:7]} no tiene sello: corre `revisar` primero", file=sys.stderr); sys.exit(2)
 lines = open(p, encoding="utf-8").read().splitlines(); d = dict(l.split("=", 1) for l in lines if "=" in l)
@@ -311,7 +314,7 @@ cmd_estado() {
   gate="$(git -C "$repo" config --bool --get kit-chema.gate 2>/dev/null || echo false)"
   pruebas="$(git -C "$repo" config --get kit-chema.pruebas 2>/dev/null)"; [ -z "$pruebas" ] && [ -f "$repo/verificar.sh" ] && pruebas="bash verificar.sh (default)"
   rev="$(git -C "$repo" config --get kit-chema.revisor 2>/dev/null || echo opus)"
-  head="$(git -C "$repo" rev-parse HEAD 2>/dev/null)"; common="$(git -C "$repo" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+  head="$(git -C "$repo" rev-parse HEAD 2>/dev/null)"; common="$(git -C "$repo" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || (cd "$repo" && realpath "$(git rev-parse --git-common-dir)"))"
   echo "gate $([ "$gate" = true ] && echo activo || echo inactivo) · pruebas: ${pruebas:-sin-pruebas} · revisor: $rev · ledger: $(ledger_path)"
   sello="$common/kit-chema/sellos/$head"
   if [ -f "$sello" ]; then
@@ -379,12 +382,14 @@ for k, lista in cad.items():
         if e.get("evento") == "permitido":
             revs = [x for x in actual if x.get("evento") == "revision" and x.get("veredicto") != "sin-cambios"]
             tokens = sum((r.get(f) or 0) for r in revs for f in ("tokens_in", "tokens_out", "tokens_cache_read", "tokens_cache_creation"))
+            modelos = defaultdict(int)                       # acumula: varias revisiones del mismo modelo por push es lo normal
+            for r in revs: modelos[r.get("modelo")] += sum((r.get(f) or 0) for f in ("tokens_in", "tokens_out", "tokens_cache_read", "tokens_cache_creation"))
             pushes.append({"revisiones": len(revs), "tokens": tokens, "bloqueante": any((r.get("bloquea") or 0) > 0 for r in revs),
                            "hallazgo": any(((r.get("bloquea") or 0) + (r.get("avisos") or 0)) > 0 for r in revs),
                            "sin_revision": e.get("veredicto") != "sin-cambios" and not any(r.get("head") == e.get("head") for r in revs),
                            "saltados": sum(1 for x in actual if x.get("evento") == "saltado"), "resueltos": sum((r.get("previos_resueltos") or 0) for r in revs),
                            "sin_ev": sum((r.get("sin_evidencia") or 0) for r in revs), "hallazgos": sum(((r.get("bloquea") or 0) + (r.get("avisos") or 0)) for r in revs),
-                           "modelos": defaultdict(int, {r.get("modelo"): sum((r.get(f) or 0) for f in ("tokens_in", "tokens_out", "tokens_cache_read", "tokens_cache_creation")) for r in revs})})
+                           "modelos": modelos})
             actual = []
         else: actual.append(e)
 n = len(pushes); cnt = lambda ev: sum(1 for e in evs if e.get("evento") == ev)
@@ -415,12 +420,13 @@ cmd_autotest() {
   local t; t="$(mktemp -d)"; trap 'rm -rf "$t"' RETURN
   export KIT_GATE_LEDGER="$t/ledger.jsonl" GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
   export GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t
-  local PATH_ORIG="$PATH" dir_claude; dir_claude="$(dirname "$(command -v claude 2>/dev/null || echo /nonexistent/claude)")"
-  export PATH="$(printf '%s' "$PATH" | tr ':' '\n' | grep -vxF "$dir_claude" | paste -sd: -)"   # sin `claude` (y solo sin él): cli_version debe salir null
+  local PATH_ORIG="$PATH"; mkdir -p "$t/bin"; printf '#!/bin/sh\nexit 127\n' > "$t/bin/claude"; chmod +x "$t/bin/claude"
+  export PATH="$t/bin:$PATH"   # un `claude` falso que no responde: cli_version debe salir null y la invocación real dar rc 3; el resto del PATH intacto
   local sin_hook=0; [ -f "$AQUI/../hooks/sello-push.sh" ] || { sin_hook=1; echo "  info  sin hooks/sello-push.sh junto al helper (instalación sin KIT_GATE=s): se omiten las comprobaciones del hook"; }
   hook_espera() { [ "$sin_hook" -eq 1 ] && return 0; ev | bash "$AQUI/../hooks/sello-push.sh" >/dev/null 2>&1; [ $? -eq "$1" ] || fallo "$2"; }
   local f=0 R="$t/repo" HOOK="$AQUI/../hooks/sello-push.sh"
-  local REAL="$HOME/.claude/kit-chema/gate.jsonl" centinela="ausente"; [ -f "$REAL" ] && centinela="$(sha256sum "$REAL")"   # el ledger real no debe cambiar ni aparecer"
+  hash_de() { python3 -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$1"; }
+  local REAL="$HOME/.claude/kit-chema/gate.jsonl" centinela="ausente"; [ -f "$REAL" ] && centinela="$(hash_de "$REAL")"   # el ledger real no debe cambiar ni aparecer"
   fallo() { err "autotest: $*"; f=1; }
   git init -q --bare "$t/remoto.git"; git init -q -b main "$R"; printf '# demo\n' > "$R/README.md"; printf 'x=1\n' > "$R/a.txt"
   git -C "$R" add -A; git -C "$R" commit -qm A; git -C "$R" remote add origin "$t/remoto.git"; git -C "$R" push -q -u origin main 2>/dev/null
@@ -517,6 +523,7 @@ cmd_autotest() {
   out=$(cd "$t" && KIT_GATE_LEDGER="$L2" cmd_metricas 3650 2>&1)   # desde fuera de un repo: "sin sello en remoto ?" no depende del cwd
   printf '%s' "$out" | grep -q "Gate: pushes 3 · con hallazgo 67% · bloqueante 67% · omitidos 1 · errores-hook 1 · tokens/gate mediana 120 · revisiones/push 1.3 · sin sello en remoto ?" || fallo "línea Gate inesperada: $(printf '%s' "$out" | tail -1)"
   printf '%s' "$out" | grep -q "1 sello(s) sin revisión" && printf '%s' "$out" | grep -q "1 línea(s) ilegible" && printf '%s' "$out" | grep -q "saltados vs corregidos: 2 vs 1" || fallo "detalle de métricas incompleto: $out"
+  printf '%s' "$out" | grep -q "opus: 350" && printf '%s' "$out" | grep -q "sonnet: 120" || fallo "el desglose por modelo debe acumular varias revisiones del mismo modelo: $out"
   out=$(cd "$t" && KIT_GATE_LEDGER="$t/vacio.jsonl" cmd_metricas 7 2>&1); printf '%s' "$out" | grep -q "Gate: 0 pushes en el rango" || fallo "ledger vacío debió decir 0 pushes: $out"
   # 14 estado --contra-remoto
   git -C "$R" checkout -q -b rodeo; printf 'r\n' > "$R/r.txt"; git -C "$R" add r.txt; git -C "$R" commit -qm rodeo; git -C "$R" push -q origin rodeo 2>/dev/null; git -C "$R" checkout -q feat   # commit que nunca pasó por revisar
@@ -527,7 +534,7 @@ cmd_autotest() {
   cmd_llave activar "$R" >/dev/null && [ "$(git -C "$R" config --bool --get kit-chema.gate)" = true ] || fallo "activar no puso la llave"
   python3 -c 'import json,sys; [json.loads(l) for l in open(sys.argv[1])]' "$KIT_GATE_LEDGER" || fallo "el ledger tiene líneas ilegibles"
   export PATH="$PATH_ORIG"
-  if [ "$centinela" = ausente ]; then [ -f "$REAL" ] && fallo "el autotest CREÓ el ledger real ($REAL)"; else [ "$(sha256sum "$REAL")" != "$centinela" ] && fallo "el autotest tocó el ledger real ($REAL)"; fi
+  if [ "$centinela" = ausente ]; then [ -f "$REAL" ] && fallo "el autotest CREÓ el ledger real ($REAL)"; else [ "$(hash_de "$REAL")" != "$centinela" ] && fallo "el autotest tocó el ledger real ($REAL)"; fi
   [ "$f" -eq 0 ] && ok "autotest: revisar (aprobado, bloqueado, evidencia, revisor caído, pruebas rojas, worktree, sin timeout, sin cambios, previos, diff grande, invocación), saltar, estado --contra-remoto, metricas y llaves funcionan"
   return $f
 }

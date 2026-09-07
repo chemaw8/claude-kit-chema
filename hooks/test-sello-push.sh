@@ -19,6 +19,7 @@ g branch otra; git -C "$T/repo" checkout -q otra; echo o > "$T/repo/o"; g add o;
 g branch ya "$B"; g push -q origin ya 2>/dev/null                      # sha ya presente en el remoto
 g branch tagged; g checkout -q tagged; echo c > "$T/repo/c"; g add c; g commit -q -m C; C=$(g rev-parse HEAD); g checkout -q main
 g tag v-nueva "$C"; g tag v-vieja "$A"
+g checkout -q -b solo-fork; echo f > "$T/repo/f"; g add f; g commit -q -m F; F=$(g rev-parse HEAD); g push -q fork solo-fork 2>/dev/null; g tag v-fork "$F"; g checkout -q main
 g worktree add -q -b wt "$T/repo-wt" "$B" 2>/dev/null; WT=$(git -C "$T/repo-wt" rev-parse HEAD)
 git init -q -b main "$T/libre"; echo x > "$T/libre/x"; git -C "$T/libre" add x; git -C "$T/libre" commit -q -m X; git -C "$T/libre" remote add origin "$T/remoto.git"
 SELLOS="$(g rev-parse --path-format=absolute --git-common-dir)/kit-chema/sellos"; mkdir -p "$SELLOS"
@@ -46,6 +47,8 @@ bloquea "git -C repo push sin sello → 2" "$T" "git -C $R push origin main"; ci
 bloquea "cd repo && git push resuelve el repo → 2" "$T" "cd $R && git push origin main"
 pasa "'push' dentro de una cadena no cuenta" "$R" "git commit --allow-empty -m 'explica git push' --dry-run"
 pasa "'git push' dentro de un heredoc no cuenta" "$R" $'cat > /dev/null <<\'EOF\'\ngit push origin main\nEOF'
+bloquea "timeout -k 5 600 git push (envoltorio con opciones) → 2" "$R" "timeout -k 5 600 git push origin main"
+bloquea "nice -n 10 git push → 2" "$R" "nice -n 10 git push origin main"
 t0=$(date +%s%N); corre "$R" "ls"; t1=$(( ($(date +%s%N)-t0)/1000000 )); echo "  info  comando sin push: ${t1} ms (informativo; meta <50)"
 
 echo "RF-2 · sha del ref empujado y sello por common-dir:"
@@ -78,6 +81,7 @@ pasa ":rama → 0" "$R" "git push origin :main"
 pasa "sha ya contenido en el remoto (rama ya) → 0" "$R" "git push origin ya"
 bloquea "tag a un commit que no está en el remoto ni sellado → 2" "$R" "git push origin v-nueva"; cita "explica que el tag empuja su commit" "tag"
 pasa "tag a un commit ya en el remoto → 0" "$R" "git push origin v-vieja"
+bloquea "tag cuyo commit solo está en OTRO remoto (fork) → 2 al empujar a origin" "$R" "git push origin v-fork"
 
 echo "RF-5 · escape explícito del usuario:"
 pasa "KIT_SELLO=omitir git push → 0" "$R" "KIT_SELLO=omitir git push origin main"; ledger "ledger: omitido" omitido
