@@ -96,10 +96,9 @@ def segmentar(cmd, cwd):
             dest = s[1] if len(s) > 1 else "~"
             if dest != "-": cwd_v = os.path.normpath(os.path.join(cwd_v, os.path.expanduser(dest)))
             continue
-        if os.path.basename(s[0]) in ("bash", "sh", "zsh", "dash", "fish"):   # bash -c / -lc / -xc '…': se analiza la cadena
-            for i, t in enumerate(s[1:], 1):
-                if t.startswith("-") and not t.startswith("--") and "c" in t and i + 1 < len(s): salida.extend(segmentar(s[i + 1], cwd_v)); break
-            continue
+        if os.path.basename(s[0]) in ("bash", "sh", "zsh", "dash", "fish"):   # bash -c / -lc / -xc '…': se analiza la cadena; `bash script.sh …` sigue como segmento
+            j = next((i for i, t in enumerate(s[1:], 1) if t.startswith("-") and not t.startswith("--") and "c" in t and i + 1 < len(s)), None)
+            if j is not None: salida.extend(segmentar(s[j + 1], cwd_v)); continue
         salida.append((s, cwd_v, envs))
     return salida
 
