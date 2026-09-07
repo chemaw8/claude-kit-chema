@@ -14,12 +14,14 @@
 # abierto ante error propio: exit 0 y evento `error-hook` si puede escribirlo. En repos
 # sin la llave, sale 0 sin tocar nada. Diseño: claude-entorno/specs/002-gate-de-push/.
 set -uo pipefail
-input=$(cat)
+input=""; while IFS= read -r linea || [ -n "$linea" ]; do input+="$linea"$'\n'; done   # solo builtins: sirve aunque falte el PATH
 # Prefiltro barato: sin "git…push" ni "sello-push" en el comando no arranca python (~3 ms).
 case "$input" in *git*push*|*sello-push*) ;; *) exit 0 ;; esac
-command -v python3 >/dev/null 2>&1 || exit 0
-command -v git >/dev/null 2>&1 || exit 0
 export KIT_GATE_LEDGER="${KIT_GATE_LEDGER:-$HOME/.claude/kit-chema/gate.jsonl}"
+# Fail-open por entorno (sin python3 o sin git): pasa, pero queda anotado con builtins de bash.
+error_hook() { local d="${KIT_GATE_LEDGER%/*}"; [ -d "$d" ] && printf '{"ts":"%(%FT%T)T","evento":"error-hook","motivo":"%s"}\n' -1 "$1" >> "$KIT_GATE_LEDGER" 2>/dev/null; exit 0; }
+command -v python3 >/dev/null 2>&1 || error_hook "sin-python3"
+command -v git >/dev/null 2>&1 || error_hook "sin-git"
 INPUT="$input" python3 - <<'PY'
 import json, os, re, shlex, subprocess, sys, datetime
 
