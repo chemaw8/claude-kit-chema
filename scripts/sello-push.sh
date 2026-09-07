@@ -493,10 +493,10 @@ cmd_autotest() {
   fila revision ',"head":"cca","bloquea":2,"avisos":0,"tokens_in":100,"tokens_out":20,"tokens_cache_read":0,"tokens_cache_creation":0,"modelo":"sonnet","previos_resueltos":0,"veredicto":"con-hallazgos"'
   fila saltado ',"head":"cca"'; fila saltado ',"head":"cca"'; fila permitido ',"head":"cca","veredicto":"con-hallazgos"'
   fila omitido ',"comando":"KIT_SELLO=omitir git push"'; fila error-hook ',"detalle":"x"'; printf 'linea corrupta\n' >> "$L2"
-  out=$(KIT_GATE_LEDGER="$L2" cmd_metricas 3650 2>&1)
+  out=$(cd "$t" && KIT_GATE_LEDGER="$L2" cmd_metricas 3650 2>&1)   # desde fuera de un repo: "sin sello en remoto ?" no depende del cwd
   printf '%s' "$out" | grep -q "Gate: pushes 3 · con hallazgo 67% · bloqueante 67% · omitidos 1 · errores-hook 1 · tokens/gate mediana 120 · revisiones/push 1.3 · sin sello en remoto ?" || fallo "línea Gate inesperada: $(printf '%s' "$out" | tail -1)"
   printf '%s' "$out" | grep -q "1 sello(s) sin revisión" && printf '%s' "$out" | grep -q "1 línea(s) ilegible" && printf '%s' "$out" | grep -q "saltados vs corregidos: 2 vs 1" || fallo "detalle de métricas incompleto: $out"
-  out=$(KIT_GATE_LEDGER="$t/vacio.jsonl" cmd_metricas 7 2>&1); printf '%s' "$out" | grep -q "Gate: 0 pushes en el rango" || fallo "ledger vacío debió decir 0 pushes: $out"
+  out=$(cd "$t" && KIT_GATE_LEDGER="$t/vacio.jsonl" cmd_metricas 7 2>&1); printf '%s' "$out" | grep -q "Gate: 0 pushes en el rango" || fallo "ledger vacío debió decir 0 pushes: $out"
   # 14 estado --contra-remoto
   git -C "$R" checkout -q -b rodeo; printf 'r\n' > "$R/r.txt"; git -C "$R" add r.txt; git -C "$R" commit -qm rodeo; git -C "$R" push -q origin rodeo 2>/dev/null; git -C "$R" checkout -q feat   # commit que nunca pasó por revisar
   out=$(cmd_estado "$R" --contra-remoto 2>&1); printf '%s' "$out" | grep -q "sin sello en remoto: 1 — rodeo" || fallo "contra-remoto debió reportar la rama rodeo: $out"
