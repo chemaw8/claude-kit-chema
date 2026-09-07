@@ -10,8 +10,8 @@ Cierra el PR #12 (borrador desde 2026-07-21) en versión corta, con council de 3
   de acercamiento no dispara Council por sí solo. Antipatrón "acercamiento a ciegas".
 - **Disparo en ambos lados de la frontera:** la description de kit-propuestas gana la frase
   `"escríbele a fulano de X"` y la de kit-redaccion remite a kit-propuestas cuando el correo es
-  a un contacto de otra empresa para vender o proponer. Qué paga: +126 y +94 caracteres de
-  description (suma 5,575 de 6,000).
+  a un contacto de otra empresa para vender o proponer. Qué paga: +133 y +109 caracteres de
+  description (973 y 900; la suma del kit queda en 5,414 de 6,000).
 
 ## v1.19 — 2026-09-06
 Fase 1 del programa de mejora del entorno (cosecha del setup de Kun Chen,
