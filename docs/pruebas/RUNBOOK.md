@@ -72,19 +72,25 @@ La única prueba del gate que gasta cuota. Todo lo demás corre sin red
 
 | Revisión | Diff | Resultado | Tokens (in+out+cache) | USD | Duración |
 |---|---|---|---|---|---|
-| 1ª (8a8b16d) | 1,378 líneas, 12 archivos | 3 bloqueantes, 5 avisos, 0 sin evidencia | 65,312 | 0.90 | 164 s |
-| 2ª (b7c2690) | 1,386 líneas, 10 archivos | aprobado; 7 avisos; previos 7 resueltos, 1 sigue | 80,443 | 0.72 | 632 s |
+| 8a8b16d (gate-prueba) | 1378 líneas, 12 archivos | 3 bloqueante(s), 5 aviso(s) | 65,312 | 0.90 | 164 s |
+| b7c2690 (gate-prueba) | 1386 líneas, 10 archivos | aprobado, 7 aviso(s), previos 7 resueltos | 80,443 | 0.72 | 632 s |
+| 11a2e36 (fase-3-gate-push) | 1447 líneas, 11 archivos | 1 bloqueante(s), 6 aviso(s) | 78,371 | 1.15 | 288 s |
+| 65e3fa4 (fase-3-gate-push) | 1464 líneas, 11 archivos | 1 bloqueante(s), 4 aviso(s), previos 7 resueltos | 87,769 | 1.35 | 378 s |
 
-El revisor cazó **los dos defectos sembrados** con evidencia literal y, además, **tres defectos
-reales del propio gate** (contador de `saltar`, escape válido en comentarios, timeout y
-`omitido` en repos sin llave), corregidos en el commit 63977b8 antes de la segunda vuelta; la
-segunda vuelta dejó siete avisos menores, también atendidos. El hallazgo que "sigue" (H7) es
+Las dos primeras filas son la prueba con defectos sembrados (rama `gate-prueba`); las siguientes,
+el propio PR del gate pasando por su gate (dogfooding). El revisor cazó **los dos defectos
+sembrados** con evidencia literal y, vuelta tras vuelta, **defectos reales del propio gate**:
+el contador de `saltar` (dos saltos anulaban dos bloqueantes distintos), el escape válido en un
+comentario, el desglose de tokens por modelo que colapsaba revisiones, `timeout -k 5 600 git
+push` y `git push > archivo` que escapaban al análisis del comando. Cada vuelta corrigió lo
+real, produjo un sha nuevo y volvió a bloquearse hasta re-revisar; los previos salen
+"resueltos" en la fila siguiente. El hallazgo que "sigue" (H7) es
 que ninguna prueba sin cuota ejercita la llamada real a `claude -p`: eso lo cubre esta prueba
 en vivo, y la fila `revision` del ledger guarda `cli_version` y `prompt_sha` para saber con qué
 se midió. Observaciones: la duración la marca la salida del revisor (26k tokens de salida en la
 segunda), no las pruebas; la primera revisión rozó el tope de 1 USD, por eso el default de
 `SELLO_TOPE_USD` es 2. Las filas quedan en `~/.claude/kit-chema/gate.jsonl` y
-`sello-push.sh metricas 1` las agrega: 1 permitido, 2 bloqueos, 2 revisiones.
+`sello-push.sh metricas 7` las agrega (una revisión más por cada vuelta del propio PR).
 
 Para repetirla: sembrar defectos con evidencia literal obvia en el diff; si el revisor devuelve
 0 hallazgos, repetir una vez; si vuelve a 0, anotar "revisor no cazó" aquí y no bloquear la

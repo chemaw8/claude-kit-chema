@@ -63,15 +63,21 @@ def quitar_heredocs(cmd):
 def segmentar(cmd, cwd):
     """Lista de (tokens, cwd_vigente) por segmento (; && || | & ( ) y saltos de línea).
     Sigue los `cd` y entra en `bash -c '…'`."""
-    lex = shlex.shlex(quitar_heredocs(cmd).replace("\n", " ; "), posix=True, punctuation_chars=";&|()")
+    lex = shlex.shlex(quitar_heredocs(cmd).replace("\n", " ; "), posix=True, punctuation_chars=";&|()<>")
     lex.whitespace_split = True
     try: toks = list(lex)
     except ValueError: toks = quitar_heredocs(cmd).replace("\n", " ").split()   # comillas sin cerrar: tokens crudos
-    segs, actual = [], []
-    for t in toks:
-        if t and all(c in ";&|()" for c in t):
+    segs, actual, i = [], [], 0
+    while i < len(toks):
+        t = toks[i]
+        if t and all(c in ";&|()<>" for c in t):
+            if "<" in t or ">" in t:                       # redirección: fuera el operador, su destino y el fd previo (2> x, >&1, > /tmp/out)
+                if actual and actual[-1].isdigit(): actual.pop()
+                i += 2 if (not t.endswith("&")) or (i + 1 < len(toks) and toks[i + 1].isdigit()) else 1
+                continue
             if actual: segs.append(actual); actual = []
-        else: actual.append(t)
+            i += 1; continue
+        actual.append(t); i += 1
     if actual: segs.append(actual)
     salida, cwd_v = [], cwd
     for s in segs:
@@ -206,16 +212,16 @@ def main():
         if o["dry_run"] or o["delete"]: continue
         remoto = pos[0] if pos else None
         refspecs = pos[1:] if len(pos) > 1 else []
+        up = git(repo, "rev-parse", "--symbolic-full-name", "@{push}") or git(repo, "rev-parse", "--symbolic-full-name", "@{u}") or ""
+        if remoto is None:                                       # sin remoto explícito: el del upstream, pushDefault u origin
+            remoto = up.split("/", 3)[2] if up.startswith("refs/remotes/") and up.count("/") >= 3 else (git(repo, "config", "--get", "remote.pushDefault") or "origin")
         if o["tags"] and not refspecs:
             refspecs = [t for t in (git(repo, "tag", "--list") or "").split("\n") if t]
         specs = []
         if not refspecs:
-            up = git(repo, "rev-parse", "--symbolic-full-name", "@{push}") or git(repo, "rev-parse", "--symbolic-full-name", "@{u}")
             rama = git(repo, "rev-parse", "--abbrev-ref", "HEAD") or "HEAD"
-            if up and up.startswith("refs/remotes/"):
-                partes = up.split("/", 3); remoto = remoto or partes[2]; specs.append(("HEAD", partes[3] if len(partes) > 3 else rama))
-            else:
-                remoto = remoto or git(repo, "config", "--get", "remote.pushDefault") or "origin"; specs.append(("HEAD", rama))
+            partes = up.split("/", 3) if up.startswith("refs/remotes/") else []
+            specs.append(("HEAD", partes[3] if len(partes) > 3 else rama))
         else:
             for rs in refspecs:
                 rs = rs.lstrip("+")

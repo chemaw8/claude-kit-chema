@@ -6,7 +6,7 @@
 # prueba NUNCA toca ~/.claude/kit-chema/gate.jsonl.
 HOOK="${1:-$(dirname "${BASH_SOURCE[0]}")/sello-push.sh}"
 [ -f "$HOOK" ] || { echo "FALLA: hook inexistente ($HOOK)"; exit 1; }
-export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t HOME_REAL="$HOME"
+export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1 GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t
 T=$(mktemp -d); fallos=0; export LEDGER="$T/ledger.jsonl"
 g() { git -C "$T/repo" "$@"; }
 # remoto bare + repo con main empujado (A) y un commit local sin empujar (B)
@@ -49,6 +49,9 @@ pasa "'push' dentro de una cadena no cuenta" "$R" "git commit --allow-empty -m '
 pasa "'git push' dentro de un heredoc no cuenta" "$R" $'cat > /dev/null <<\'EOF\'\ngit push origin main\nEOF'
 bloquea "timeout -k 5 600 git push (envoltorio con opciones) → 2" "$R" "timeout -k 5 600 git push origin main"
 bloquea "nice -n 10 git push → 2" "$R" "nice -n 10 git push origin main"
+bloquea "git push > /tmp/out (redirección) sin sello → 2" "$R" "git push > /tmp/out"
+bloquea "git push origin main 2>&1 | tee x → 2" "$R" "git push origin main 2>&1 | tee /tmp/x"
+bloquea "git push origin main &> /dev/null → 2" "$R" "git push origin main &> /dev/null"
 t0=$(date +%s%N); corre "$R" "ls"; t1=$(( ($(date +%s%N)-t0)/1000000 )); echo "  info  comando sin push: ${t1} ms (informativo; meta <50)"
 
 echo "RF-2 · sha del ref empujado y sello por common-dir:"
@@ -62,6 +65,7 @@ pasa "push sin argumentos usa el upstream (HEAD sellado)" "$R" "git push"
 sin_sello "$B"; bloquea "push sin argumentos sin sello → 2" "$R" "git push"
 sello "$B" 0 0; pasa "HEAD:refs/heads/x → sha de HEAD" "$R" "git push origin HEAD:refs/heads/x"
 pasa "+main quita el + (force) y sigue por sha" "$R" "git push origin +main"
+pasa "push con redirecciones y sello → 0" "$R" "git push origin main > /dev/null 2>&1"
 sello "$WT" 0 0 wt; pasa "sello escrito desde el árbol principal vale en un worktree enlazado" "$T/repo-wt" "git push origin wt"
 
 echo "RF-3 · comandos compuestos que mueven HEAD:"
@@ -82,6 +86,7 @@ pasa "sha ya contenido en el remoto (rama ya) → 0" "$R" "git push origin ya"
 bloquea "tag a un commit que no está en el remoto ni sellado → 2" "$R" "git push origin v-nueva"; cita "explica que el tag empuja su commit" "tag"
 pasa "tag a un commit ya en el remoto → 0" "$R" "git push origin v-vieja"
 bloquea "tag cuyo commit solo está en OTRO remoto (fork) → 2 al empujar a origin" "$R" "git push origin v-fork"
+bloquea "--tags sin remoto → resuelve origin y bloquea por el tag cuyo commit no está ahí (v-nueva)" "$R" "git push --tags"; cita "cita el tag" "v-nueva"
 
 echo "RF-5 · escape explícito del usuario:"
 pasa "KIT_SELLO=omitir git push → 0" "$R" "KIT_SELLO=omitir git push origin main"; ledger "ledger: omitido" omitido

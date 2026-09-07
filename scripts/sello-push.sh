@@ -42,7 +42,8 @@ ESQUEMA='{"type":"object","additionalProperties":false,"properties":{"resumen":{
 # ── revisar ───────────────────────────────────────────────────────────────
 cmd_revisar() {
   local repo="" base=""
-  while [ $# -gt 0 ]; do case "$1" in --base) base="${2:-}"; shift 2 ;; *) repo="$1"; shift ;; esac; done
+  while [ $# -gt 0 ]; do case "$1" in --base) base="${2:-}"; shift $(( $# > 1 ? 2 : 1 )) ;; *) repo="$1"; shift ;; esac; done
+  [ -n "$base" ] || [ "$*" = "${*/--base/}" ] || { err "revisar: --base necesita un valor"; return 2; }
   repo="$(repo_de "${repo:-.}")" || { err "revisar: aquí no hay un repo git"; return 2; }
   local pruebas cli
   pruebas="${SELLO_PRUEBAS-$(git -C "$repo" config --get kit-chema.pruebas 2>/dev/null)}"
