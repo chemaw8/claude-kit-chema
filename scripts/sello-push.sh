@@ -19,7 +19,7 @@
 #
 # Config por repo (git config): kit-chema.pruebas ("bash verificar.sh" si existe),
 # kit-chema.revisor (opus), kit-chema.base (rama base). Variables: KIT_GATE_LEDGER,
-# SELLO_TOPE_USD (1), SELLO_PRUEBAS_SEG (600), SELLO_DEBUG=1 (imprime la invocación).
+# SELLO_TOPE_USD (2; la primera revisión real de 1,400 líneas costó 0.90), SELLO_PRUEBAS_SEG (600), SELLO_DEBUG=1 (imprime la invocación).
 # Solo para pruebas: SELLO_REVISOR (sustituye el comando claude -p), SELLO_PRUEBAS
 # (sustituye las pruebas), SELLO_SIN_TIMEOUT=1 (simula que no hay coreutils timeout).
 set -uo pipefail
@@ -49,7 +49,7 @@ cmd_revisar() {
   if [ -z "${SELLO_PRUEBAS+x}" ] && [ -z "$pruebas" ] && [ -f "$repo/verificar.sh" ]; then pruebas="bash verificar.sh"; fi
   cli="$(command -v claude >/dev/null 2>&1 && claude --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
   REPO="$repo" BASE_ARG="$base" PRUEBAS_CMD="$pruebas" MODELO="$(git -C "$repo" config --get kit-chema.revisor 2>/dev/null || echo opus)" \
-  LEDGER="$(ledger_path)" PROMPT="$PROMPT" ESQUEMA="$ESQUEMA" TOPE="${SELLO_TOPE_USD:-1}" SEG="${SELLO_PRUEBAS_SEG:-600}" \
+  LEDGER="$(ledger_path)" PROMPT="$PROMPT" ESQUEMA="$ESQUEMA" TOPE="${SELLO_TOPE_USD:-2}" SEG="${SELLO_PRUEBAS_SEG:-600}" \
   SIN_TIMEOUT="${SELLO_SIN_TIMEOUT:-}" REVISOR_CMD="${SELLO_REVISOR:-}" DEBUG="${SELLO_DEBUG:-}" CLI_VERSION="$cli" \
   python3 - <<'PY'
 import json, os, re, subprocess, sys, tempfile, shutil, hashlib, datetime, time, shlex
@@ -207,14 +207,14 @@ mcp_vacio = os.path.join(cwd_vacio, "mcp.json"); open(mcp_vacio, "w").write('{"m
 if rev_cmd: argv, revisor_tag = ["bash", "-c", rev_cmd], "inyectado"
 else:
     argv = ["claude", "-p", "--model", MODELO, "--tools", "", "--output-format", "json", "--json-schema", E["ESQUEMA"], "--no-session-persistence",
-            "--setting-sources", "", "--strict-mcp-config", "--mcp-config", mcp_vacio, "--max-budget-usd", E.get("TOPE") or "1", "--system-prompt", E["PROMPT"]]
+            "--setting-sources", "", "--strict-mcp-config", "--mcp-config", mcp_vacio, "--max-budget-usd", E.get("TOPE") or "2", "--system-prompt", E["PROMPT"]]
     revisor_tag = "claude -p"
 env = dict(os.environ); env["KIT_ADVISOR_INNER"] = "1"
 if E.get("DEBUG"): print("invocación: " + " ".join(shlex.quote(a) if a != E["PROMPT"] else "<prompt>" for a in argv) + f" · cwd: {cwd_vacio}", file=sys.stderr)
 t0 = time.time()
 try: r = sh(argv, cwd=cwd_vacio, inp=paquete, timeout=SEG, env=env)
 except subprocess.TimeoutExpired: r = None
-if r is not None and r.returncode != 0 and not rev_cmd:            # plan B: anidamiento
+if r is not None and r.returncode != 0 and not rev_cmd and (time.time() - t0) < 10:   # plan B solo si falló de inmediato (anidamiento), no tras gastar cuota
     env2 = dict(env); env2.pop("CLAUDECODE", None)
     try: r = sh(argv, cwd=cwd_vacio, inp=paquete, timeout=SEG, env=env2)
     except subprocess.TimeoutExpired: r = None
@@ -415,9 +415,12 @@ cmd_autotest() {
   local t; t="$(mktemp -d)"; trap 'rm -rf "$t"' RETURN
   export KIT_GATE_LEDGER="$t/ledger.jsonl" GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
   export GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t
-  mkdir -p "$t/bin"; local PATH_ORIG="$PATH"; export PATH="$t/bin:/usr/bin:/bin"   # sin `claude`: cli_version debe salir null
+  local PATH_ORIG="$PATH" dir_claude; dir_claude="$(dirname "$(command -v claude 2>/dev/null || echo /nonexistent/claude)")"
+  export PATH="$(printf '%s' "$PATH" | tr ':' '\n' | grep -vxF "$dir_claude" | paste -sd: -)"   # sin `claude` (y solo sin él): cli_version debe salir null
+  local sin_hook=0; [ -f "$AQUI/../hooks/sello-push.sh" ] || { sin_hook=1; echo "  info  sin hooks/sello-push.sh junto al helper (instalación sin KIT_GATE=s): se omiten las comprobaciones del hook"; }
+  hook_espera() { [ "$sin_hook" -eq 1 ] && return 0; ev | bash "$AQUI/../hooks/sello-push.sh" >/dev/null 2>&1; [ $? -eq "$1" ] || fallo "$2"; }
   local f=0 R="$t/repo" HOOK="$AQUI/../hooks/sello-push.sh"
-  local REAL="$HOME/.claude/kit-chema/gate.jsonl" centinela=""; [ -f "$REAL" ] && centinela="$(sha256sum "$REAL")"   # el ledger real no debe cambiar"
+  local REAL="$HOME/.claude/kit-chema/gate.jsonl" centinela="ausente"; [ -f "$REAL" ] && centinela="$(sha256sum "$REAL")"   # el ledger real no debe cambiar ni aparecer"
   fallo() { err "autotest: $*"; f=1; }
   git init -q --bare "$t/remoto.git"; git init -q -b main "$R"; printf '# demo\n' > "$R/README.md"; printf 'x=1\n' > "$R/a.txt"
   git -C "$R" add -A; git -C "$R" commit -qm A; git -C "$R" remote add origin "$t/remoto.git"; git -C "$R" push -q -u origin main 2>/dev/null
@@ -444,10 +447,10 @@ cmd_autotest() {
   out=$(SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/bloqueado.json'" cmd_revisar "$R" 2>&1); rc=$?
   [ $rc -eq 1 ] && grep -q '^bloquea=1$' "$SELLOS/$B" || fallo "bloqueado con evidencia debió dar rc 1 y bloquea=1 (rc=$rc)"
   ev() { printf '{"session_id":"s","cwd":"%s","tool_name":"Bash","tool_input":{"command":"git push origin feat"}}' "$R"; }
-  ev | bash "$HOOK" >/dev/null 2>&1; [ $? -eq 2 ] || fallo "el hook debió bloquear con 1 pendiente"
+  hook_espera 2 "el hook debió bloquear con 1 pendiente"
   out=$(cmd_saltar 1 "falso positivo" "$R" 2>&1) || fallo "saltar falló: $out"
   grep -q '^saltados=1$' "$SELLOS/$B" && grep -q '"evento": "saltado"' "$KIT_GATE_LEDGER" || fallo "saltar no anotó saltados=1 o el evento"
-  ev | bash "$HOOK" >/dev/null 2>&1; [ $? -eq 0 ] || fallo "el hook debió dejar pasar tras saltar el único bloqueante"
+  hook_espera 0 "el hook debió dejar pasar tras saltar el único bloqueante"
   cmd_saltar 5 "x" "$R" >/dev/null 2>&1 && fallo "saltar un hallazgo inexistente debió fallar"
   cmd_saltar 1 "otra vez" "$R" >/dev/null 2>&1 && fallo "saltar dos veces el mismo hallazgo debió fallar"
   grep -q '^saltados=1$' "$SELLOS/$B" || fallo "el segundo saltar cambió el contador"
@@ -486,7 +489,7 @@ cmd_autotest() {
   # 10 previos en el paquete tras un commit nuevo
   SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/bloqueado.json'" cmd_revisar "$R" >/dev/null 2>&1
   printf 'x=1\nhola gate\nmas\n' > "$R/a.txt"; git -C "$R" commit -qam C; local C; C=$(git -C "$R" rev-parse HEAD)
-  ev | bash "$HOOK" >/dev/null 2>&1; [ $? -eq 2 ] || fallo "un commit nuevo debió quedar sin sello (hook → 2)"
+  hook_espera 2 "un commit nuevo debió quedar sin sello (hook → 2)"
   SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat > '$t/captura2'; cat '$t/aprobado.json'" cmd_revisar "$R" >/dev/null 2>&1
   grep -q '"H1"' "$t/captura2" || fallo "el paquete no trae el hallazgo previo H1 de la misma rama"
   # 11 diff > 200 KB → truncado + bloqueante D1
@@ -524,7 +527,7 @@ cmd_autotest() {
   cmd_llave activar "$R" >/dev/null && [ "$(git -C "$R" config --bool --get kit-chema.gate)" = true ] || fallo "activar no puso la llave"
   python3 -c 'import json,sys; [json.loads(l) for l in open(sys.argv[1])]' "$KIT_GATE_LEDGER" || fallo "el ledger tiene líneas ilegibles"
   export PATH="$PATH_ORIG"
-  [ -n "$centinela" ] && [ "$(sha256sum "$REAL")" != "$centinela" ] && fallo "el autotest tocó el ledger real ($REAL)"
+  if [ "$centinela" = ausente ]; then [ -f "$REAL" ] && fallo "el autotest CREÓ el ledger real ($REAL)"; else [ "$(sha256sum "$REAL")" != "$centinela" ] && fallo "el autotest tocó el ledger real ($REAL)"; fi
   [ "$f" -eq 0 ] && ok "autotest: revisar (aprobado, bloqueado, evidencia, revisor caído, pruebas rojas, worktree, sin timeout, sin cambios, previos, diff grande, invocación), saltar, estado --contra-remoto, metricas y llaves funcionan"
   return $f
 }

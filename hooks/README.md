@@ -9,7 +9,7 @@ determinista, no en prosa que Claude interpreta.
 
 ## Qué trae el kit
 
-Cuatro hooks de guardia (dos por defecto, dos opt-in) y uno de contexto (`kit-chema-contexto.sh`, que carga
+Cuatro hooks de guardia (uno por defecto —rutas-fantasma— y tres opt-in —anti-secretos, backstop-cierre, sello-push—) y uno de contexto (`kit-chema-contexto.sh`, que carga
 tu contexto al abrir sesión).
 
 ### `rutas-fantasma.sh` — por defecto

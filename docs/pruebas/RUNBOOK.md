@@ -53,8 +53,40 @@ confusión nueva.
    genuinamente ambigua (documéntala) o una confusión real que cerrar por ambos
    lados, como se hizo con redacción ↔ propuestas.
 
-Runner: `python3 docs/pruebas/disparo.py [--paralelo 6] [--modelo sonnet]` (desde
-2026-09-07): lee las descriptions del repo (la rama que se evalúa) y el banco, lanza un
-juez Sonnet de contexto fresco por petición en paralelo (~15 s, una llamada corta por fila) e imprime la
-tabla y el veredicto con el criterio de arriba; sale 1 si no pasa. Pega el resultado
-en `disparo-descriptions.md` con fecha.
+El workflow que automatiza este barrido (un juez por petición, en paralelo) vive
+en la sesión de construcción del kit; aquí se referencia el patrón, no una ruta
+de archivo frágil que se rompería al reorganizar. Reconstruirlo desde esta
+descripción es directo.
+
+## Gate de push — prueba en vivo (2026-09-07, repo piloto claude-kit-chema)
+
+La única prueba del gate que gasta cuota. Todo lo demás corre sin red
+(`hooks/test-sello-push.sh`, `scripts/sello-push.sh autotest`). Qué se hizo y qué debe verse:
+
+1. Rama `gate-prueba` con dos defectos sembrados que `verificar.sh` no ve: un hook con ruta
+   absoluta de una máquina y una prueba con `|| true` que siempre imprime TODO OK.
+2. `git push` → el hook bloquea: `8a8b16d (rama gate-prueba) no tiene sello de revisión`.
+3. `sello-push.sh revisar` (timeout 600000) → pruebas en verde en el worktree → revisor Opus.
+4. Corregir (quitar los archivos) → sha nuevo → `git push` bloquea citando el sello anterior
+   con sus 3 pendientes → `revisar` → previos resueltos → `git push` pasa → `permitido`.
+
+| Revisión | Diff | Resultado | Tokens (in+out+cache) | USD | Duración |
+|---|---|---|---|---|---|
+| 1ª (8a8b16d) | 1,378 líneas, 12 archivos | 3 bloqueantes, 5 avisos, 0 sin evidencia | 65,312 | 0.90 | 164 s |
+| 2ª (b7c2690) | 1,386 líneas, 10 archivos | aprobado; 7 avisos; previos 7 resueltos, 1 sigue | 80,443 | 0.72 | 632 s |
+
+El revisor cazó **los dos defectos sembrados** con evidencia literal y, además, **tres defectos
+reales del propio gate** (contador de `saltar`, escape válido en comentarios, timeout y
+`omitido` en repos sin llave), corregidos en el commit 63977b8 antes de la segunda vuelta; la
+segunda vuelta dejó siete avisos menores, también atendidos. El hallazgo que "sigue" (H7) es
+que ninguna prueba sin cuota ejercita la llamada real a `claude -p`: eso lo cubre esta prueba
+en vivo, y la fila `revision` del ledger guarda `cli_version` y `prompt_sha` para saber con qué
+se midió. Observaciones: la duración la marca la salida del revisor (26k tokens de salida en la
+segunda), no las pruebas; la primera revisión rozó el tope de 1 USD, por eso el default de
+`SELLO_TOPE_USD` es 2. Las filas quedan en `~/.claude/kit-chema/gate.jsonl` y
+`sello-push.sh metricas 1` las agrega: 1 permitido, 2 bloqueos, 2 revisiones.
+
+Para repetirla: sembrar defectos con evidencia literal obvia en el diff; si el revisor devuelve
+0 hallazgos, repetir una vez; si vuelve a 0, anotar "revisor no cazó" aquí y no bloquear la
+construcción por eso (RF-19 de la spec 002 de claude-entorno).
+

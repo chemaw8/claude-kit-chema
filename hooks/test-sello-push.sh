@@ -67,6 +67,8 @@ bloquea "git commit && git push (HEAD sellado) → 2" "$R" "git commit -m x && g
 bloquea "git rebase main; git push → 2" "$R" "git rebase main; git push origin main"
 bloquea "--all → 2 (una rama a la vez)" "$R" "git push --all origin"; cita "dice una rama a la vez" "una rama a la vez"
 bloquea "--mirror → 2" "$R" "git push --mirror origin"
+grep -q '"motivo": "varias-ramas"' "$LEDGER" && grep -q '"motivo": "mueve-head"' "$LEDGER" && ok "los bloqueos por --all y por mover HEAD dejan fila en el ledger" || { echo "  FALLA bloqueos sin fila en el ledger"; fallos=$((fallos+1)); }
+printf 'head=%s\nrama=main\nbloquea=x\n' "$B" > "$SELLOS/$B"; bloquea "sello corrupto (bloquea= no numérico) → 2, nunca deja pasar" "$R" "git push origin main"; sello "$B" 0 0
 
 echo "RF-4 · pases sin sello:"
 sin_sello "$B"

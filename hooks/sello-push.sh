@@ -136,9 +136,13 @@ def leer_sello(dir_, sha):
         return d
     except Exception: return None
 
+def ent(x, d=0):
+    try: return int(x)
+    except Exception: return d
+
 def pendientes(s):
-    try: return max(0, int(s.get("bloquea", 0)) - int(s.get("saltados", 0)))
-    except Exception: return 1
+    b = ent(s.get("bloquea"), None)
+    return 1 if b is None else max(0, b - ent(s.get("saltados"), 0))   # sello ilegible → bloquea
 
 def ultimo_sello_rama(dir_, rama):
     mejor = None
@@ -187,9 +191,11 @@ def main():
         # RF-3: nada que mueva HEAD antes del push en el mismo comando
         movers = [g for g in gits if g[0] < idx and (g[2] in MUEVEN_HEAD or (g[2] == "stash" and g[3][:1] in (["pop"], ["apply"])))]
         if movers:
+            ledger(evento="bloqueo", repo=identidad(repo), motivo="mueve-head", detalle=f"git {movers[0][2]}", session=sid)
             salir(2, PREFIJO + f"este comando mueve HEAD (git {movers[0][2]}) y empuja en la misma línea, y el sello se compara con el commit que existe al evaluar. Haz el push en un comando aparte, después de /revisar-antes-de-subir.")
         o, pos = parsear_push(resto)
         if o["all"] or o["mirror"]:
+            ledger(evento="bloqueo", repo=identidad(repo), motivo="varias-ramas", session=sid)
             salir(2, PREFIJO + "--all/--mirror empujan varias ramas a la vez y el gate sella una rama a la vez. Empuja cada rama por separado.")
         if o["dry_run"] or o["delete"]: continue
         remoto = pos[0] if pos else None
@@ -236,9 +242,9 @@ def main():
                 ult = ultimo_sello_rama(dir_sellos, dst) if dir_sellos else None
                 ult_txt = f"último sello de esta rama: {ult[0][:7]}, {ult[1].get('veredicto','?')}, {pendientes(ult[1])} pendiente(s)" if ult else "esta rama no tiene ningún sello"
                 estado = f"tiene {pend} pendiente(s) sin corregir ni saltar" if sello else "no tiene sello de revisión"
-                ledger(evento="bloqueo", repo=ident, rama=dst, head=sha, bloquea=int(sello.get("bloquea", 0)) if sello else None, saltados=int(sello.get("saltados", 0)) if sello else None, session=sid)
+                ledger(evento="bloqueo", repo=ident, rama=dst, head=sha, bloquea=ent(sello.get("bloquea"), None) if sello else None, saltados=ent(sello.get("saltados"), None) if sello else None, motivo="sin-sello" if sello is None else "pendientes", session=sid)
                 salir(2, PREFIJO + f"{s7} (rama {dst}) {estado}; {ult_txt}. Corre /revisar-antes-de-subir y vuelve a empujar. Solo si el usuario lo pide expresamente: KIT_SELLO=omitir git push … (queda anotado).")
-            ledger(evento="permitido", repo=ident, rama=dst, head=sha, veredicto=sello.get("veredicto", ""), bloquea=int(sello.get("bloquea", 0)), saltados=int(sello.get("saltados", 0)), session=sid)
+            ledger(evento="permitido", repo=ident, rama=dst, head=sha, veredicto=sello.get("veredicto", ""), bloquea=ent(sello.get("bloquea")), saltados=ent(sello.get("saltados")), session=sid)
 
 try:
     main()
