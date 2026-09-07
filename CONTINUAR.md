@@ -1,14 +1,15 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-06  ·  commit b3ba89b  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-07  ·  commit 382ce00  ·  cierre limpio: sí
 > Estado vivo. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**v1.19 en main desde 2026-09-06.** Ese día se fusionaron en orden #29 (v1.18, hook
-rutas-fantasma), #30 (v1.19: backstop-cierre opt-in, presupuesto del núcleo,
-destructivo=simulacro; council aplicado, acta en `docs/pruebas/council-v1.19.md`) y
-#31 (ficha `CLAUDE.md` del repo). Instalado en la máquina de José con
-`KIT_HOOKS=s KIT_BACKSTOP=s bash instalar.sh`; `verificar.sh` en verde en main.
-Queda abierto solo el PR #12 (julio, kit-propuestas acercamiento): decisión de José.
+**v1.20 en main (2026-09-07): kit-propuestas gana "Acercamiento personalizado a un
+contacto"** (cierre del PR #12 de julio en versión corta, council de 3 aplicado; acta en
+`docs/pruebas/council-pr12.md`) y kit-redaccion remite a esa sección cuando el correo va a
+un contacto de otra empresa para vender o proponer. **Fase 3 (gate de push) en la rama
+`fase-3-gate-push`, PR #33 en borrador y PILOTO desde 2026-09-07**: al rebasar sobre este
+main pasa a v1.21 (su CHANGELOG hoy dice v1.20). El gate está activo en la máquina de José
+y en este repo; este mismo PR #12 pasó por él.
 
 ## Siguiente paso
 - [ ] **Fase 3 — gate de push local.** Spec, plan y tareas en
