@@ -163,6 +163,22 @@ else
   echo "hook backstop-cierre: omitido — necesita python3 para fusionar settings.json y no se encontró en este sistema."
 fi
 
+# 4a-quater. Hook sello-push (PreToolUse Bash): opt-in (KIT_GATE=s) — gate de push local.
+# En repos con `git config kit-chema.gate true`, un `git push` desde Claude Code solo pasa
+# si el commit tiene sello de revisión (`scripts/sello-push.sh revisar`: pruebas → revisor
+# con otro modelo → veredicto calculado). Dos llaves: esta (máquina) y el git config (repo);
+# sin la segunda el hook es inerte. Fail-open ante error propio. Piloto: spec 002 de
+# claude-entorno; pasa a por defecto solo con dos reportes semanales y council de 5.
+if [ "${KIT_GATE:-}" != "s" ]; then
+  echo "hook sello-push: omitido (KIT_GATE=s ./instalar.sh para activarlo; luego 'sello-push.sh activar' en cada repo)"
+elif command -v python3 >/dev/null 2>&1; then
+  cp "$KIT/hooks/sello-push.sh" "$DIR/hooks/" && chmod +x "$DIR/hooks/sello-push.sh"
+  SOLO_CMD=sello-push fusionar_hooks PreToolUse
+  echo "hook sello-push: activado (git push exige sello de revisión en los repos con kit-chema.gate=true)"
+else
+  echo "hook sello-push: omitido — necesita python3 para fusionar settings.json y no se encontró en este sistema."
+fi
+
 # 4b. Hook anti-secretos (PreToolUse): opt-in, sigue preguntando.
 resp="${KIT_HOOKS:-}"
 if [ -z "$resp" ] && [ -t 0 ]; then
