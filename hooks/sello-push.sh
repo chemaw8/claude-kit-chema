@@ -9,8 +9,8 @@
 # remoto pasan; un tag pasa solo si su commit ya está en el remoto o tiene sello (empujar
 # un tag empuja su commit). `KIT_SELLO=omitir git push …` (la variable como PREFIJO del
 # propio push, no en un comentario ni en otro segmento) pasa y queda anotado. Si el comando
-# invoca `sello-push.sh revisar` sobre un repo con la llave, exige run_in_background o
-# timeout ≥ 600000 (el Bash de Claude Code corta a 120 s y una revisión real tardó 11 min). Cada decisión se apendea al ledger JSONL (KIT_GATE_LEDGER). Falla
+# invoca `sello-push.sh revisar` sobre un repo con la llave, exige run_in_background (el
+# Bash de Claude Code en primer plano topa en 10 min y una revisión real tardó 11). Cada decisión se apendea al ledger JSONL (KIT_GATE_LEDGER). Falla
 # abierto ante error propio: exit 0 y evento `error-hook` si puede escribirlo. En repos
 # sin la llave, sale 0 sin tocar nada. Diseño: claude-entorno/specs/002-gate-de-push/.
 set -uo pipefail
@@ -186,10 +186,8 @@ def main():
             for i, t in enumerate(toks[:-1]):
                 if "sello-push.sh" in t and toks[i + 1] == "revisar":
                     arg = toks[i + 2] if len(toks) > i + 2 and not toks[i + 2].startswith("-") else "."
-                    if gateado(os.path.join(cwd_v, os.path.expanduser(arg))):
-                        to = ti.get("timeout")
-                        if not isinstance(to, (int, float)) or to < 600000:      # menos que el tope del Bash no alcanza para pruebas + revisor
-                            salir(2, PREFIJO + "`sello-push.sh revisar` corre las pruebas y un revisor y puede tardar más de 2 minutos: vuelve a correrlo con run_in_background: true (o timeout: 600000 si esperas que sea corta).")
+                    if gateado(os.path.join(cwd_v, os.path.expanduser(arg))):   # pruebas (hasta 600 s) + revisor (hasta 900 s) no caben en el Bash en primer plano
+                        salir(2, PREFIJO + "`sello-push.sh revisar` corre las pruebas y un revisor (una revisión real ha tardado 11 min) y el Bash en primer plano topa en 10: vuelve a correrlo con run_in_background: true y espera el aviso.")
     gits = []   # (indice, repo, sub, resto, envs)
     for idx, (toks, cwd_v, envs) in enumerate(segs):
         p = parsear_git(toks, cwd_v)

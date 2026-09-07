@@ -53,10 +53,11 @@ confusión nueva.
    genuinamente ambigua (documéntala) o una confusión real que cerrar por ambos
    lados, como se hizo con redacción ↔ propuestas.
 
-El workflow que automatiza este barrido (un juez por petición, en paralelo) vive
-en la sesión de construcción del kit; aquí se referencia el patrón, no una ruta
-de archivo frágil que se rompería al reorganizar. Reconstruirlo desde esta
-descripción es directo.
+Runner: `python3 docs/pruebas/disparo.py [--paralelo 6] [--modelo sonnet]` (desde
+2026-09-07): lee las descriptions del repo (la rama que se evalúa) y el banco, lanza un
+juez Sonnet de contexto fresco por petición en paralelo (~15 s, una llamada corta por fila) e imprime la
+tabla y el veredicto con el criterio de arriba; sale 1 si no pasa. Pega el resultado
+en `disparo-descriptions.md` con fecha.
 
 ## Gate de push — prueba en vivo (2026-09-07, repo piloto claude-kit-chema)
 
@@ -83,7 +84,8 @@ La única prueba del gate que gasta cuota. Todo lo demás corre sin red
 | 058159b (fase-3-gate-push) | ? líneas, ? archivos | 1 bloqueante(s), 0 aviso(s) | 0 | 0.00 | 0 s |
 | 7ca088f (fase-3-gate-push) | 1584 líneas, 12 archivos | 1 bloqueante(s), 3 aviso(s), previos 1 resueltos | 96,864 | 1.48 | 398 s |
 
-Las dos primeras filas son la prueba con defectos sembrados (rama `gate-prueba`); las siguientes,
+Una fila con 0 tokens y 0 s es una revisión con las pruebas en rojo: el sello sintético se
+escribe sin invocar al revisor. Las dos primeras filas son la prueba con defectos sembrados (rama `gate-prueba`); las siguientes,
 el propio PR del gate pasando por su gate (dogfooding). El revisor cazó **los dos defectos
 sembrados** con evidencia literal y, vuelta tras vuelta, **defectos reales del propio gate**:
 el contador de `saltar` (dos saltos anulaban dos bloqueantes distintos), el escape válido en un
@@ -95,8 +97,8 @@ PR (cada cambio al RUNBOOK produce un sha nuevo): esa fila y las posteriores se 
 Lo único que ninguna prueba sin cuota ejercita es la llamada real a `claude -p`: eso lo cubre esta
 prueba en vivo, y la fila `revision` del ledger guarda `cli_version` y `prompt_sha` para saber con qué
 se midió. Observaciones: la duración la marca la salida del revisor (26k tokens de salida en la
-segunda), no las pruebas; la primera revisión rozó el tope de 1 USD, por eso el default de
-`SELLO_TOPE_USD` es 2. Las filas quedan en `~/.claude/kit-chema/gate.jsonl` y
+segunda), no las pruebas; revisiones reales han costado hasta 1.57 USD, por eso el default de
+`SELLO_TOPE_USD` es 3. Las filas quedan en `~/.claude/kit-chema/gate.jsonl` y
 `sello-push.sh metricas 7` las agrega (una revisión más por cada vuelta del propio PR).
 
 Para repetirla: sembrar defectos con evidencia literal obvia en el diff; si el revisor devuelve

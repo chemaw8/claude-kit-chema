@@ -14,13 +14,13 @@
 #   estado [repo] [--contra-remoto] sello de HEAD y configuración; con la bandera, ramas del
 #                                   remoto sin sello (pushes que rodearon el hook).
 #   activar | desactivar [repo]     llave del repo (git config kit-chema.gate).
-#   metricas [dias] [repo]          agrega el ledger → línea `Gate: …` del reporte semanal.
+#   metricas [dias] [repo]          agrega el ledger (solo ese repo si se da) → línea `Gate: …` del reporte semanal.
 #   autotest                        se prueba con revisor y pruebas inyectados, sin cuota.
 #
 # Config por repo (git config): kit-chema.pruebas ("bash verificar.sh" si existe),
 # kit-chema.revisor (opus), kit-chema.base (rama base). Variables: KIT_GATE_LEDGER,
 # SELLO_TOPE_USD (3; revisiones reales de ~1,600 líneas han costado hasta 1.57), SELLO_PRUEBAS_SEG (600, pruebas),
-# SELLO_REVISOR_SEG (900, revisor: una revisión real ya tardó 632 s), SELLO_DEBUG=1 (imprime la invocación).
+# SELLO_REVISOR_SEG (900, revisor: una revisión real ya tardó 632 s; por eso revisar va en background), SELLO_DEBUG=1 (imprime la invocación).
 # Solo para pruebas: SELLO_REVISOR (sustituye el comando claude -p), SELLO_PRUEBAS
 # (sustituye las pruebas), SELLO_SIN_TIMEOUT=1 (simula que no hay coreutils timeout).
 set -uo pipefail
@@ -366,7 +366,8 @@ cmd_metricas() {
   if [ -n "$repo" ] || repo="$(repo_de . 2>/dev/null)"; then
     [ -n "$repo" ] && [ "$(git -C "$repo" config --bool --get kit-chema.gate 2>/dev/null)" = true ] && remoto="$(cmd_estado "$repo" --contra-remoto 2>/dev/null | grep -o 'sin sello en remoto: [^ ]*' | awk '{print $NF}')"
   fi
-  DIAS="$dias" LEDGER="$(ledger_path)" REMOTO="${remoto:-?}" python3 - <<'PY'
+  local ident=""; [ -n "$repo" ] && ident="$(git -C "$repo" config --get remote.origin.url 2>/dev/null || git -C "$repo" rev-parse --show-toplevel 2>/dev/null)"
+  DIAS="$dias" LEDGER="$(ledger_path)" REMOTO="${remoto:-?}" REPO_FILTRO="$ident" python3 - <<'PY'
 import json, os, sys, datetime, statistics, math
 from collections import defaultdict
 E = os.environ; dias = int(E["DIAS"]); corte = (datetime.datetime.now() - datetime.timedelta(days=dias)).isoformat(timespec="seconds")
@@ -377,7 +378,7 @@ try:
         if not l.strip(): continue
         try:
             d = json.loads(l)
-            if d.get("ts", "") >= corte: evs.append(d)
+            if d.get("ts", "") >= corte and (not E.get("REPO_FILTRO") or d.get("repo") == E["REPO_FILTRO"]): evs.append(d)
         except Exception: ilegibles += 1
 except FileNotFoundError: pass
 cad = defaultdict(list)

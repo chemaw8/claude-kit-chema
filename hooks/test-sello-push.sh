@@ -115,14 +115,12 @@ sin_sello "$B"; err=$(KIT_GATE_LEDGER=/proc/no-se-puede/x bash "$HOOK" <<<"$(ev 
 err=$(printf '{"session_id":"s1","cwd":"%s","hook_event_name":"PreToolUse","tool_name":"Read","tool_input":{"file_path":"%s/notas-git-push.md"}}' "$R" "$R" | KIT_GATE_LEDGER="$LEDGER" bash "$HOOK" 2>&1 >/dev/null); rc=$?; [ $rc -eq 0 ] && ok "otra herramienta (Read) con 'git push' en el texto → 0" || falla "otra herramienta con git push en el texto"
 
 echo "RF-7 · revisar exige timeout suficiente:"
-bloquea "sello-push.sh revisar sin timeout → 2" "$R" "bash ~/.claude/scripts/sello-push.sh revisar"; cita "pide timeout 600000" "600000"
-bloquea "con timeout 120000 → 2" "$R" "bash ~/.claude/scripts/sello-push.sh revisar" 120000
-bloquea "con timeout 300000 → 2 (menos que el tope del Bash no alcanza)" "$R" "bash ~/.claude/scripts/sello-push.sh revisar" 300000
-pasa "con timeout 600000 → 0" "$R" "bash ~/.claude/scripts/sello-push.sh revisar" 600000
+bloquea "sello-push.sh revisar en primer plano → 2" "$R" "bash ~/.claude/scripts/sello-push.sh revisar"; cita "pide background" "run_in_background"
+bloquea "con timeout 600000 también → 2 (el tope del Bash no cubre pruebas + revisor)" "$R" "bash ~/.claude/scripts/sello-push.sh revisar" 600000
 pasa "run_in_background → 0" "$R" "bash ~/.claude/scripts/sello-push.sh revisar" "" bg
-bloquea "forma con variable y default literal, sin timeout → 2" "$R" 'bash "${SELLO:-$HOME/.claude/scripts/sello-push.sh}" revisar'
+bloquea "forma con variable y default literal, en primer plano → 2" "$R" 'bash "${SELLO:-$HOME/.claude/scripts/sello-push.sh}" revisar'
 pasa "otros subcomandos del helper no exigen timeout" "$R" "bash ~/.claude/scripts/sello-push.sh estado"
-pasa "revisar sin timeout en un repo SIN gate → 0 (sin la llave el hook no toca nada)" "$T/libre" "bash ~/.claude/scripts/sello-push.sh revisar"
+pasa "revisar en primer plano en un repo SIN gate → 0 (sin la llave el hook no toca nada)" "$T/libre" "bash ~/.claude/scripts/sello-push.sh revisar"
 
 echo "RF-17 · sin nombres propios ni rutas de una máquina:"
 [ "$(grep -ciE 'josé|jose' "$HOOK")" = 0 ] && ok "sin el nombre del dueño" || { echo "  FALLA nombre propio en el hook"; fallos=$((fallos+1)); }
