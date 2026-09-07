@@ -10,7 +10,8 @@
 #                              docs/bitacora.md, y se verifica línea por línea.
 #   anclar <proyecto>          imprime el encabezado con fecha + ancla de git.
 #   reconciliar <proyecto>     ¿el estado escrito es fresco o quedó rancio?
-#                              salida 0 = fresco · 1 = rancio · 2 = no hay CONTINUAR.
+#                              salida 0 = fresco · 1 = rancio · 2 = no hay CONTINUAR ·
+#                              3 = no se puede reconciliar (sin ancla, o ancla fuera del historial).
 #   contrato <proyecto>        ¿CONTINUAR.md cumple el contrato mínimo?
 #   autotest                   se prueba a sí mismo con datos sintéticos.
 #
@@ -76,7 +77,7 @@ cmd_reconciliar() {
     local fecha_cierre mas_nuevo
     fecha_cierre="$(printf '%s' "$cab" | grep -oE 'cierre [0-9]{4}-[0-9]{2}-[0-9]{2}' | awk '{print $2}')"
     if [ -z "$fecha_cierre" ]; then
-      err "CONTINUAR.md sin fecha ni ancla en el encabezado — no se puede reconciliar"; return 1
+      err "CONTINUAR.md sin fecha ni ancla en el encabezado — no se puede reconciliar"; return 3
     fi
     # Se excluyen los mismos archivos de papeleo que la ruta con git (línea ~99):
     # el propio /cierre puede tocar la ficha, DECISIONES o settings DESPUÉS de
@@ -109,7 +110,7 @@ cmd_reconciliar() {
     if [ $? -ne 0 ]; then
       # el ancla ya no existe en el árbol (rebase, historia reescrita)
       err "el ancla $commit_esc no está en el historial — no se puede reconciliar; revisa a mano"
-      return 1
+      return 3
     fi
     # grep devuelve 1 si no queda nada tras filtrar el papeleo: es el caso fresco,
     # no un error — por eso se filtra sobre la variable, sin mirar su $?.

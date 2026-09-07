@@ -171,3 +171,80 @@ mediciones**, no con adjetivos — es lo que lo distingue de un kit de prosa.
 - Investigación de respaldo en `~/Trabajo/investigacion/`:
   `2026-08-28-vanguardia-para-ultracode.md` (incluye la config de sandbox probada) y
   `2026-08-28-speculative-ptc-y-huecos-eficiencia.md`.
+
+## 2026-09-06 — rotado desde CONTINUAR.md
+
+«encabezado»:
+> README.md y GOBERNANZA.md, no aquí.
+
+«Dónde vamos»:
+**v1.17 en main e instalada.** El estándar de estructura de proyectos entró
+completo: skill + plantillas (v1.16, PR #24) y núcleo (v1.17, PR #26), por
+council de 5 con las 3 evidencias (piloto sql-natural 18/18 · sonda conductual
+7/7 · gate 27/27). El congelamiento sigue vigente para todo lo demás.
+
+«Siguiente paso»:
+- [ ] Correr los evals de entregables con v1.17 cuando el tripwire avise
+      (`~/Trabajo/proyectos/evals-entregables/correr.sh`; base actual: 4/4
+      con v1.15, mismo modelo Fable 5 para comparar limpio).
+> bajo: - [ ] PR del fix de bitácora del helper: las líneas hijas se archivan sin su
+      padre cuando el padre sobrevive reescrito (reproducido 2026-08-31;
+      diagnóstico en la sesión, falta el fix con tests en `cmd_rotar`).
+
+«Cómo retomar»:
+- Abrir:    CHANGELOG.md (v1.17) y DECISIONES.md (entrada 2026-08-31).
+- Verificar arranque: `head -2 ~/.claude/CLAUDE.md` debe decir v1.17.
+
+«Bloqueadores / esperas»:
+- Ninguno.
+
+«Última decisión relevante»:
+- 2026-08-31  Matiz al congelamiento: para fallos invisibles al reporte de
+  salud, la evidencia aceptada es un piloto medido  → DECISIONES.md
+
+«Detalle vivo»:
+## Detalle vivo
+- Evidencias del estándar archivadas en el laboratorio:
+  `~/Trabajo/proyectos/sdd-proyectos/specs/001-estandar-v1/` (sonda, gate,
+  validación) y el veredicto del council en `propuestas/`.
+- La sonda dejó 2 bugs de harness anotados (prompt "crea" se cuelga en
+  headless; `while read` pierde la última fila de un TSV sin salto final) —
+  útiles para la próxima sonda.
+
+## 2026-09-06 — rotado desde CONTINUAR.md
+
+«encabezado»:
+> README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
+
+«Dónde vamos»:
+**v1.17 en main e instalada; v1.18 lista en PR #29** (rama `hook-rutas-fantasma`,
+fuera de borrador): hook `rutas-fantasma.sh` por defecto, council de 3 lentes
+aprobada con cambios y todos aplicados (`docs/pruebas/council-v1.18.md`). Es el
+primer cambio que entra por la vía que el congelamiento del 2026-08-29 dejó
+abierta: fallo recurrente en el reporte semanal de salud (46/148 errores en 5
+días). La ficha del repo (CLAUDE.md) va aparte en PR desde la rama
+`ficha-proyecto`. El congelamiento sigue vigente para todo lo demás.
+
+«Siguiente paso»:
+- [ ] José revisa y mergea PR #29 (CODEOWNERS); después `bash instalar.sh` en la
+      máquina para que `~/.claude/CLAUDE.md` diga v1.18. Terminado cuando
+      `head -2 ~/.claude/CLAUDE.md` muestre v1.18 y `verificar.sh` pase en main.
+- [ ] Abrir PR de la rama `ficha-proyecto` (solo CLAUDE.md; sin gate, sin council:
+      es papeleo del repo).
+- [ ] Correr los evals de entregables con v1.17/v1.18 cuando el tripwire avise
+      (`~/Trabajo/proyectos/evals-entregables/correr.sh`; base 5/5 con v1.17).
+- [ ] PR del fix de bitácora del helper: las líneas hijas se archivan sin su
+      padre cuando el padre sobrevive reescrito (reproducido 2026-08-31).
+
+«Cómo retomar»:
+- Abrir:    CHANGELOG.md (v1.18), `docs/pruebas/council-v1.18.md`, PR #29.
+- Correr:   `bash verificar.sh` — todo el CI local en un comando.
+- Verificar arranque: `gh pr view 29 --json state,mergedAt`.
+
+«Bloqueadores / esperas»:
+- Merge de PR #29 (decisión de José).
+
+«Última decisión relevante»:
+- 2026-09-06  Un hook entra al kit por defecto solo si cumple cinco condiciones a
+  la vez (fallo del modelo, recurrente en salud, determinista, condicionado al
+  estado de la máquina, fail-open con prueba) → `hooks/README.md`, council v1.18.

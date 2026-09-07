@@ -33,6 +33,22 @@ aprobada / con cambios / rechazada). Solo si el council aprueba, el PR se saca d
 borrador y sigue el flujo normal (CI + CODEOWNERS). Así el mecanismo que hace
 "aprender" al kit no es también la vía por la que se degrada sin control.
 
+## Presupuesto del núcleo: toda adición nombra qué paga
+
+El núcleo tiene tope duro de 150 líneas y las descriptions un aviso a 6,000
+caracteres (los mide `verificar.sh`): lo que se carga en cada sesión es un
+presupuesto, no un archivo que crece. Por eso **todo PR que añada líneas al
+núcleo o caracteres a una description declara en su descripción qué paga la
+adición**: qué línea o frase sale, o por qué el margen restante la absorbe y
+cuánto queda después. Cuando el núcleo esté a menos de 10 líneas del tope, la
+adición exige una remoción del mismo tamaño en el mismo PR. Un PR que agrega sin
+decir qué paga vuelve a borrador. La regla es sobre **adiciones**: un fix que
+corrige una línea sin crecer no la dispara. Cubre lo que `verificar.sh` mide —el
+núcleo y las descriptions—, no los cuerpos de skill, comandos ni hooks; esos tienen
+sus propios topes (5,000 palabras por skill; "máximo 2 adiciones netas por skill por
+ronda"). (Idea del presupuesto de memoria de backpass —"sobre presupuesto, toda
+adición nombra qué paga"—, cosecha del 2026-09-06.)
+
 ## Crear una skill nueva
 
 El oficio para que una skill dispare bien y no degrade el kit. Antes de

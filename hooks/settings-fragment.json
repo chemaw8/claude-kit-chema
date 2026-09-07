@@ -6,6 +6,19 @@
         "hooks": [
           { "type": "command", "command": "$HOME/.claude/hooks/anti-secretos.sh" }
         ]
+      },
+      {
+        "matcher": "Read|Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "$HOME/.claude/hooks/rutas-fantasma.sh", "timeout": 5 }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "$HOME/.claude/hooks/backstop-cierre.sh", "timeout": 10 }
+        ]
       }
     ],
     "SessionStart": [
