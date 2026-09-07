@@ -72,10 +72,6 @@ def leer_sello(p):
     try:
         with open(p, encoding="utf-8") as f: return dict(l.rstrip("\n").split("=", 1) for l in f if "=" in l)
     except Exception: return None
-def pend(s):
-    try: return max(0, int(s.get("bloquea", 0)) - int(s.get("saltados", 0)))
-    except Exception: return 1
-
 head = git("rev-parse", "HEAD"); rama = git("rev-parse", "--abbrev-ref", "HEAD") or "HEAD"
 if not head: print("✗ el repo no tiene commits", file=sys.stderr); sys.exit(2)
 ident = git("config", "--get", "remote.origin.url") or REPO
@@ -361,12 +357,11 @@ cmd_llave() { local repo; repo="$(repo_de "${2:-.}")" || { err "$1: aquí no hay
 
 # ── metricas ──────────────────────────────────────────────────────────────
 cmd_metricas() {
-  local dias="${1:-7}" repo="${2:-}"; [[ "$dias" =~ ^[0-9]+$ ]] || { err "uso: metricas [dias] [repo]"; return 2; }
-  local remoto="?"
-  if [ -n "$repo" ] || repo="$(repo_de . 2>/dev/null)"; then
-    [ -n "$repo" ] && [ "$(git -C "$repo" config --bool --get kit-chema.gate 2>/dev/null)" = true ] && remoto="$(cmd_estado "$repo" --contra-remoto 2>/dev/null | grep -o 'sin sello en remoto: [^ ]*' | awk '{print $NF}')"
-  fi
-  local ident=""; [ -n "$repo" ] && ident="$(git -C "$repo" config --get remote.origin.url 2>/dev/null || git -C "$repo" rev-parse --show-toplevel 2>/dev/null)"
+  local dias="${1:-7}" repo_arg="${2:-}"; [[ "$dias" =~ ^[0-9]+$ ]] || { err "uso: metricas [dias] [repo]"; return 2; }
+  local remoto="?" ident="" repo_rem
+  repo_rem="${repo_arg:-$(repo_de . 2>/dev/null)}"          # el cwd solo sirve para "sin sello en remoto"; el FILTRO solo con repo explícito
+  [ -n "$repo_rem" ] && [ "$(git -C "$repo_rem" config --bool --get kit-chema.gate 2>/dev/null)" = true ] && remoto="$(cmd_estado "$repo_rem" --contra-remoto 2>/dev/null | grep -o 'sin sello en remoto: [^ ]*' | awk '{print $NF}')"
+  [ -n "$repo_arg" ] && ident="$(git -C "$repo_arg" config --get remote.origin.url 2>/dev/null || git -C "$repo_arg" rev-parse --show-toplevel 2>/dev/null)"
   DIAS="$dias" LEDGER="$(ledger_path)" REMOTO="${remoto:-?}" REPO_FILTRO="$ident" python3 - <<'PY'
 import json, os, sys, datetime, statistics, math
 from collections import defaultdict
@@ -378,7 +373,7 @@ try:
         if not l.strip(): continue
         try:
             d = json.loads(l)
-            if d.get("ts", "") >= corte and (not E.get("REPO_FILTRO") or d.get("repo") == E["REPO_FILTRO"]): evs.append(d)
+            if d.get("ts", "") >= corte and (not E.get("REPO_FILTRO") or d.get("repo") in (E["REPO_FILTRO"], None)): evs.append(d)   # error-hook no lleva repo
         except Exception: ilegibles += 1
 except FileNotFoundError: pass
 cad = defaultdict(list)
@@ -534,6 +529,11 @@ cmd_autotest() {
   fila saltado ',"head":"cca"'; fila saltado ',"head":"cca"'; fila permitido ',"head":"cca","veredicto":"con-hallazgos"'
   fila omitido ',"comando":"KIT_SELLO=omitir git push"'; fila error-hook ',"detalle":"x"'; printf 'linea corrupta\n' >> "$L2"
   out=$(cd "$t" && KIT_GATE_LEDGER="$L2" cmd_metricas 3650 2>&1)   # desde fuera de un repo: "sin sello en remoto ?" no depende del cwd
+  printf '{"ts":"%s","evento":"error-hook","motivo":"sin-python3"}\n' "$ts" >> "$L2"   # fila sin repo (la escribe el hook con builtins)
+  out2=$(KIT_GATE_LEDGER="$L2" cmd_metricas 3650 "$R" 2>&1 | tail -1)
+  case "$out2" in *"Gate: 0 pushes"*"errores-hook 1"*) ;; *) fallo "filtrar por repo debe dejar fuera lo del repo 'r' y contar el error-hook sin repo: $out2" ;; esac
+  out3=$(cd "$R" && KIT_GATE_LEDGER="$L2" cmd_metricas 3650 2>&1 | tail -1)
+  case "$out3" in *"Gate: pushes 3"*"errores-hook 2"*) ;; *) fallo "sin repo explícito no debe filtrar aunque el cwd sea un repo: $out3" ;; esac
   printf '%s' "$out" | grep -q "Gate: pushes 3 · con hallazgo 67% · bloqueante 67% · omitidos 1 · errores-hook 1 · tokens/gate mediana 120 · revisiones/push 1.3 · sin sello en remoto ?" || fallo "línea Gate inesperada: $(printf '%s' "$out" | tail -1)"
   printf '%s' "$out" | grep -q "1 sello(s) sin revisión" && printf '%s' "$out" | grep -q "1 línea(s) ilegible" && printf '%s' "$out" | grep -q "saltados vs corregidos: 2 vs 1" || fallo "detalle de métricas incompleto: $out"
   printf '%s' "$out" | grep -q "opus: 350" && printf '%s' "$out" | grep -q "sonnet: 120" || fallo "el desglose por modelo debe acumular varias revisiones del mismo modelo: $out"

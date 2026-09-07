@@ -19,7 +19,7 @@ input=""; while IFS= read -r linea || [ -n "$linea" ]; do input+="$linea"$'\n'; 
 case "$input" in *git*push*|*sello-push*) ;; *) exit 0 ;; esac
 export KIT_GATE_LEDGER="${KIT_GATE_LEDGER:-$HOME/.claude/kit-chema/gate.jsonl}"
 # Fail-open por entorno (sin python3 o sin git): pasa, pero queda anotado con builtins de bash.
-error_hook() { local d="${KIT_GATE_LEDGER%/*}" ts; ts=$(printf '%(%FT%T)T' -1 2>/dev/null) || ts=$(date +%FT%T 2>/dev/null) || ts=""; [ -d "$d" ] && printf '{"ts":"%s","evento":"error-hook","motivo":"%s"}\n' "$ts" "$1" >> "$KIT_GATE_LEDGER" 2>/dev/null; exit 0; }   # bash 3.2 (macOS) no tiene %(…)T
+error_hook() { local d="${KIT_GATE_LEDGER%/*}" ts; ts=$(printf '%(%FT%T)T' -1 2>/dev/null) || ts=$(date +%FT%T 2>/dev/null) || ts=""; [ -d "$d" ] || mkdir -p "$d" 2>/dev/null || true; [ -d "$d" ] && printf '{"ts":"%s","evento":"error-hook","motivo":"%s"}\n' "$ts" "$1" >> "$KIT_GATE_LEDGER" 2>/dev/null; exit 0; }   # bash 3.2 (macOS) no tiene %(…)T
 command -v python3 >/dev/null 2>&1 || error_hook "sin-python3"
 command -v git >/dev/null 2>&1 || error_hook "sin-git"
 INPUT="$input" python3 - <<'PY'
@@ -47,7 +47,7 @@ def ledger(**ev):
 def git(repo, *args):
     """stdout (sin espacios) si git sale 0; None si falla. '' es éxito sin salida."""
     try:
-        r = subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True, timeout=5)
+        r = subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True, timeout=3)   # el hook entero tiene 10 s
     except Exception: return None
     return r.stdout.strip() if r.returncode == 0 else None
 

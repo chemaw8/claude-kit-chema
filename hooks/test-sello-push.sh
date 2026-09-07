@@ -57,7 +57,7 @@ bloquea "git push origin main &> /dev/null → 2" "$R" "git push origin main &> 
 bloquea 'refspec con variable sin expandir ("$RAMA") → 2: no se resuelve sin ejecutar' "$R" 'RAMA=main; git push origin "$RAMA"'; cita "pide el nombre literal" "nombre literal"
 bloquea 'refspec con $(…) → 2' "$R" 'git push origin $(git rev-parse HEAD):main'
 sello "$B" 0 0; bloquea "refspec irresoluble bloquea aunque HEAD tenga sello" "$R" 'git push origin "$RAMA"'; sin_sello "$B"
-t0=$(date +%s%N); corre "$R" "ls"; t1=$(( ($(date +%s%N)-t0)/1000000 )); echo "  info  comando sin push: ${t1} ms (informativo; meta <50)"
+ms() { python3 -c 'import time; print(int(time.time()*1000))'; }; t0=$(ms); corre "$R" "ls"; t1=$(( $(ms)-t0 )); echo "  info  comando sin push: ${t1} ms (informativo; meta <50)"
 
 echo "RF-2 · sha del ref empujado y sello por common-dir:"
 sello "$B" 0 0; pasa "sello válido → 0" "$R" "git push origin main"; ledger "ledger: permitido" permitido
