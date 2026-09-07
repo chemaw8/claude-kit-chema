@@ -86,7 +86,11 @@ pasa "sha ya contenido en el remoto (rama ya) → 0" "$R" "git push origin ya"
 bloquea "tag a un commit que no está en el remoto ni sellado → 2" "$R" "git push origin v-nueva"; cita "explica que el tag empuja su commit" "tag"
 pasa "tag a un commit ya en el remoto → 0" "$R" "git push origin v-vieja"
 bloquea "tag cuyo commit solo está en OTRO remoto (fork) → 2 al empujar a origin" "$R" "git push origin v-fork"
-bloquea "--tags sin remoto → resuelve origin y bloquea por el tag cuyo commit no está ahí (v-nueva)" "$R" "git push --tags"; cita "explica que es un tag" "es un tag"
+bloquea "--tags sin remoto → resuelve origin y bloquea por un tag cuyo commit no está ahí" "$R" "git push --tags"; cita "explica que es un tag" "es un tag"
+sello "$B" 0 0; bloquea "--tags junto con un refspec (git push --tags origin main) también revisa los tags → 2" "$R" "git push --tags origin main"; cita "cita un tag, no la rama" "es un tag"; sin_sello "$B"
+g tag -d v-fork >/dev/null; bloquea "--tags sin v-fork: el bloqueo lo dispara v-nueva" "$R" "git push --tags"; cita "cita v-nueva" "v-nueva"
+g tag -d v-nueva >/dev/null; pasa "--tags con solo tags cuyo commit ya está en origin (v-vieja) → 0" "$R" "git push --tags"
+for i in $(seq 1 21); do g tag "t$i" "$A"; done; bloquea "más de 20 tags → 2 (tope para no agotar el timeout del hook)" "$R" "git push --tags"; cita "dice el tope" "tope 20"; for i in $(seq 1 21); do g tag -d "t$i" >/dev/null; done
 
 echo "RF-5 · escape explícito del usuario:"
 pasa "KIT_SELLO=omitir git push → 0" "$R" "KIT_SELLO=omitir git push origin main"; ledger "ledger: omitido" omitido
