@@ -1,7 +1,7 @@
 ---
 name: kit-propuestas
 license: MIT
-description: 'Estándar Kit Chema para redactar o evaluar propuestas y decisiones — propuestas de desarrollo, de inversión, de arquitectura, cotizaciones, o cualquier "¿hacemos X o Y?" con consecuencias reales (caro o difícil de revertir); una elección ligera o "ayúdame a elegir" sin consecuencia mayor la resuelve el núcleo con opciones, no esta skill. También todo mensaje o correo que pide aprobar, autorizar o decidir algo (aunque vaya a dirección). Úsala al escribir una propuesta, al evaluar una idea del usuario con consecuencias reales, al pedir aprobación de algo, y siempre que se pida "council". Frases gatillo "hazme la propuesta", "¿te parece bien esta idea?", "evalúa esta decisión", "que aprueben/autoricen X", "council". Incluye el protocolo Council: panel de evaluadores independientes con veredicto aprobada / con cambios / rechazada.'
+description: 'Estándar Kit Chema para redactar o evaluar propuestas y decisiones — propuestas de desarrollo, de inversión, de arquitectura, cotizaciones, o cualquier "¿hacemos X o Y?" con consecuencias reales (caro o difícil de revertir); una elección ligera o "ayúdame a elegir" sin consecuencia mayor la resuelve el núcleo con opciones, no esta skill. También todo mensaje o correo que pide aprobar, autorizar o decidir algo (aunque vaya a dirección). Úsala al escribir una propuesta, al evaluar una idea del usuario con consecuencias reales, al pedir aprobación de algo, y siempre que se pida "council". Frases gatillo "hazme la propuesta", "¿te parece bien esta idea?", "evalúa esta decisión", "que aprueben/autoricen X", "council". Cubre también el acercamiento personalizado a un contacto o prospecto de otra empresa ("escríbele a fulano de X para proponerle Y"): primero confirmar quién es, luego personalizar. Incluye el protocolo Council: panel de evaluadores independientes con veredicto aprobada / con cambios / rechazada.'
 ---
 
 # Propuestas y decisiones — estándar Kit Chema
@@ -110,6 +110,27 @@ hallazgo que no resista una verificación rápida (dato erróneo, fuera de alcan
 ya resuelto) se descarta explicando por qué. Que venga de un evaluador no lo
 hace verdad por sí solo.
 
+## Acercamiento personalizado a un contacto
+
+Aplica cuando el usuario quiere llegar a una persona concreta de otra empresa
+—para vender, proponer o presentar algo— y busca subir la aceptación
+personalizando el mensaje o el material. El orden importa:
+
+1. Confirma quién es el contacto antes de personalizar nada. Con nombre,
+   empresa y puesto, busca en fuentes públicas; si aparece más de una persona
+   plausible, presenta las opciones con lo que las distingue y que el usuario
+   confirme cuál es. Personalizar sobre la persona equivocada es peor que no
+   personalizar.
+2. Investiga solo lo verificable de la persona y su empresa (rol, prioridades,
+   movimientos recientes) y lo que conecte con lo que se ofrece; sin supuestos.
+3. Acuerda el formato si no es obvio y aplica el kit que toque (kit-redaccion
+   para un mensaje, esta skill para una propuesta, kit-presentaciones para
+   láminas): la personalización es una capa encima de esa estructura.
+4. Personaliza con evidencia concreta ligada al problema u opción que ya trae
+   el entregable, no con halagos que servirían para cualquier destinatario.
+5. Antes de enviar o publicar a nombre del usuario, confirma con él el texto
+   final: sale de la empresa y llega a un tercero real.
+
 ## Errores típicos
 
 - Council teatral: inventar fallos para parecer riguroso. Si no hay hallazgos,
@@ -123,3 +144,5 @@ hace verdad por sí solo.
 - Añadir rondas de deliberación entre los evaluadores. El panel vale por la
   independencia: si se leen entre sí se contagian, el costo se multiplica y el
   acierto no mejora. Cada uno opina por separado y la síntesis agrega al final.
+- Acercamiento a ciegas: personalizar sin haber confirmado la identidad del
+  contacto, o rellenar con datos no verificados y halagos genéricos.
