@@ -1,15 +1,16 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-08  ·  commit eb392d3  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-07  ·  commit 054efb6  ·  cierre limpio: sí
 > Estado vivo. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**v1.19.1 — kit-propuestas gana "Acercamiento personalizado a un contacto"** (PR #12 de
-julio cerrado en versión corta, council de 3 aplicado, gate de disparo 21/21; acta en
-`docs/pruebas/council-pr12.md`); kit-redaccion remite a esa sección cuando el correo va a un
-contacto de otra empresa para vender o proponer. Entra a main con el PR #12 (2026-09-07).
-**Fase 3 (gate de push) en la rama `fase-3-gate-push`, PR #33 en borrador (v1.20) y PILOTO
-desde 2026-09-07**; el gate está activo en la máquina de José y en este repo, y este mismo
-PR #12 pasó por él.
+**v1.19 en main. Fase 3 (gate de push) construida en la rama `fase-3-gate-push` y en
+PILOTO desde 2026-09-07**, como PR en borrador v1.20 (spec y evidencia en claude-entorno,
+`specs/002-gate-de-push/`). El gate está activo en la máquina de José y en este repo
+(`sello-push.sh estado`); **este mismo PR pasó por su gate**: cinco revisiones reales
+(Opus, 65-89k tokens y 3-10 min cada una) que cazaron los defectos sembrados de la prueba
+y varios reales del propio gate (`saltar`, escape en comentarios, `timeout -k`, `git push >
+archivo`, `--tags` con refspec, base irresoluble), todos corregidos antes de subir. Cifras
+en `docs/pruebas/RUNBOOK.md` y en `~/.claude/kit-chema/gate.jsonl`.
 
 **v1.19.2 EN MAIN E INSTALADO (PR #35 fusionado el 2026-09-08): regla de esfuerzo + agente `sintetizador`,
 con la medición hecha antes de fusionar.** El aviso del council pedía evidencia de que Opus 5
@@ -22,28 +23,25 @@ vueltas del gate de push; los hallazgos y su cierre están en los mensajes de co
 lee en `git log`, no aquí).
 
 ## Siguiente paso
-- [ ] **Pendientes que abre v1.19.2** (los tres viven en
-  `docs/pruebas/medicion-esfuerzo-v1.19.2.md`): (a) **re-juzgar el caso divergente** leyendo el
-  archivo que produjo el agente, para saber si la diferencia era de comportamiento o de calidad —
-  hoy queda fuera del conteo y su exclusión favorece la lectura que conviene; (b) **re-correr los
-  brazos 1 y 3 bajo el mismo núcleo**, para que la comparación con Fable 5.1 no dependa de n = 2;
-  (c) **medir calidad en síntesis** (pide un caso dorado nuevo y firma del mantenedor): es lo único
-  que bajaría a `sintetizador` de escalón, porque hoy se justifica solo por latencia.
-- [ ] **Fase 3 — gate de push local.** Spec, plan y tareas en
-  `~/Trabajo/proyectos/claude-entorno/specs/002-gate-de-push/` (diseño por workflow
-  de 8 agentes; D1-D4 decididas el 2026-09-06: revisor `opus`, base = main, ficha del
-  kit = la de #31, ledger `~/.claude/kit-chema/gate.jsonl`). Rama `fase-3-gate-push`
-  desde main; T1-T14 (2 sesiones) → piloto 2 semanas en este repo → council de 5.
-- [ ] Primer lunes con el kit v1.19 activo (2026-09-07): `/revisar-salud` en
-  claude-entorno decide si rutas-fantasma y backstop cruzan la puerta de la fase 1.
+- [ ] **Piloto de dos semanas** en este repo: trabajar normal; cada push pasa por
+  `/revisar-antes-de-subir`. Los lunes 2026-09-14 y 2026-09-21 el reporte semanal de
+  claude-entorno trae la columna `Gate` (`sello-push.sh metricas 7`).
+- [ ] **Puerta de la fase 3** (tras el segundo lunes): council de 5 (kit-propuestas) con la
+  columna `Gate` → por defecto / opt-in / retiro, y aceptar o no la "tercera vía" de
+  `hooks/README.md`. Solo entonces el PR sale de borrador.
+- [ ] Si aparece un `omitido` sin petición del usuario o `sin sello en remoto` crece:
+  endurecer (pausa con caducidad) según la spec 002.
+- [ ] PR #12 (julio, kit-propuestas acercamiento): decisión de José, sigue abierto.
 
 ## Cómo retomar
-- `bash verificar.sh` (todo OK) · `bash hooks/test-backstop-cierre.sh` · `bash scripts/rotar-continuar.sh autotest`.
-- Ver qué hay en la máquina: `head -2 ~/.claude/CLAUDE.md` (v1.19) y `jq '.hooks|map_values(length)' ~/.claude/settings.json`.
-- Antes de construir el gate: leer la spec 002 completa y `GOBERNANZA.md` (todo por PR + council; el PR del gate sale en borrador).
+- `bash verificar.sh` (todo OK; incluye `hooks/test-sello-push.sh` y el autotest del helper).
+- `bash scripts/sello-push.sh estado . --contra-remoto` · `bash scripts/sello-push.sh metricas 7 .`
+- Antes de subir cualquier cosa aquí: `/revisar-antes-de-subir` (timeout 600000 en el Bash).
+  Si el revisor no responde, el push sigue bloqueado: `KIT_SELLO=omitir` es de José, no del modelo.
 
 ## Bloqueadores / esperas
-- Ninguno para la fase 3. PR #12: José decide cerrarlo o retomarlo.
+- Dos lunes de métrica antes del council (2026-09-14 y 2026-09-21).
 
 ## Última decisión relevante
-- 2026-09-06 Gate de push = Sello de push v2 (hook PreToolUse + helper + comando), no Esclusa ni check de GitHub → DECISIONES.md de claude-entorno.
+- 2026-09-07 El gate se construyó y se probó sobre sí mismo; entra opt-in con dos llaves y
+  puerta de dos reportes → DECISIONES.md de claude-entorno (2026-09-06 y 2026-09-07).
