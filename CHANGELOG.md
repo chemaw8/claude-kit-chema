@@ -11,7 +11,7 @@ no tenía ningún agente asignado.
   juez fijo, los dos escalones dan **la misma calidad**, el esfuerzo cuesta un tercio más y el
   salto de modelo cerca de la mitad más — pero Fable resultó **un tercio más rápido**. De ahí la
   excepción que la regla lleva escrita: cuando manda la latencia y no el costo, salta de modelo.
-  La regla se redactó sin crecer el núcleo (sigue en 133/150).
+  Resultados relativos y método en `docs/pruebas/medicion-esfuerzo-v1.19.2.md`.
 - **kit-orquestacion:** la alternativa barata al fan-out es "esfuerzo primero, modelo después", y
   cada etapa de una corrida declara su modelo y su esfuerzo (pendiente desde la decisión del
   2026-08-29 que nunca se ejecutó).

@@ -32,7 +32,12 @@ pagar Fable.
   `lector-fresco` en Opus 5 queda respaldada. La medición añadió una excepción que la regla no
   contemplaba —Fable resultó más rápido— y esa excepción entró al núcleo.
 - **Aviso, aplicado:** el núcleo prometía un reporte semanal que vive fuera del kit → reformulado
-  como condicional.
+  como condicional. **Al incorporar la medición, esa condicional se retiró del todo**: la regla ya
+  no menciona ningún reporte ni indicador externo, así que el aviso queda cubierto más estrictamente.
+- **Unidades, para que no se lean como contradicción:** el núcleo habla de costo **por corrida
+  medida** (un tercio más el esfuerzo, cerca de la mitad más el salto de modelo) y
+  kit-orquestacion del precio **por token** (Fable 5.1 el doble, tabla de arriba). Son dos
+  magnitudes distintas y las dos quedan dichas con su unidad.
 - **Aviso, aplicado:** la description del `sintetizador` decía ser "el" escalón Fable → ahora "el
   agente del escalón Fable".
 - **Aviso, aplicado:** el gate de disparo (`docs/pruebas/RUNBOOK.md`) es obligatorio al tocar el
@@ -44,7 +49,8 @@ pagar Fable.
   2026-09-07): Fable 5.1 $10 / $50 por millón de tokens de entrada / salida; Opus 5 $5 / $25. El doble
   en ambos. Ambos con 1M de contexto y 128K de salida.
 - **Bloqueante de la segunda revisión, aplicado:** el cuerpo del primer commit de la rama repetía la
-  cifra privada → la rama se reescribió en un solo commit limpio antes de subirse.
+  cifra privada → la rama se reescribió limpia antes de subirse. (Después se le sumó un segundo
+  commit, el de la medición de esta misma tanda; la rama tiene dos.)
 
 ## Verificaciones en la máquina (Claude Code 2.1.263)
 - `fable` es alias válido de modelo (lista de alias en el binario). ✓
@@ -52,6 +58,9 @@ pagar Fable.
   xhigh / max. ✓
 - `bash verificar.sh` en verde; núcleo 133/150 líneas.
 - Gate de disparo (`docs/pruebas/disparo.py --paralelo 6 --modelo sonnet`, 2026-09-07): **núcleo 21/21 (criterio ≥ 19/21) · confusiones de frontera no benignas: 0 · PASA**.
+- **Re-corrido el 2026-09-08** sobre el texto final del núcleo (la regla cambió de justificación
+  después de la primera corrida, así que la anterior no cubría lo que se fusiona): **21/21 ·
+  confusiones de frontera no benignas: 0 · PASA**. `verificar.sh` en verde y núcleo 133/150.
 
 ## Veredicto para el kit
 `aprobada con cambios` (aplicados). Reversible con `git revert`; la regla no cambia ningún default de
