@@ -15,8 +15,9 @@ pagar Fable.
 
 ## Hallazgos del council que aplican al kit
 - **Costo/beneficio:** la regla de esfuerzo era el ítem con más palanca y viajaba como nota
-  documental → entra al núcleo, y el entorno la mide (el núcleo lo enuncia como condicional: "si tu
-  entorno mide el reparto por modelo", porque el kit se instala en máquinas sin ese reporte).
+  documental → entra al núcleo, y el entorno la mide. (Así se redactó en su momento, con una
+  condicional "si tu entorno mide el reparto por modelo"; al incorporar la medición esa frase se
+  retiró del todo y el núcleo final no menciona ningún reporte ni indicador externo.)
 - **Costo/beneficio:** asignar Fable a más agentes en el mismo cambio que pide frenar Fable exige
   un árbitro → el `sintetizador` queda acotado a integrar veredictos (entrada corta).
 - **Abogado del diablo / auditoría interna:** la decisión del 2026-08-29 de "declarar el modelo por
@@ -27,10 +28,12 @@ pagar Fable.
   privado y una ruta interna. Retiradas; las cifras quedan cualitativas.
 - **Aviso, aplicado:** subir `lector-fresco` a Fable sin evidencia de que Opus 5 a `--effort max` se
   queda corto contradecía la regla nueva → `lector-fresco` sigue en Opus 5.
-  **Cerrado con medición antes de fusionar:** sobre una batería propia con juez fijo, Opus 5 a
-  `--effort max` **no** se queda corto (misma calidad que Fable), así que la decisión de dejar
-  `lector-fresco` en Opus 5 queda respaldada. La medición añadió una excepción que la regla no
-  contemplaba —Fable resultó más rápido— y esa excepción entró al núcleo.
+  **Medido antes de fusionar** (`docs/pruebas/medicion-esfuerzo-v1.19.2.md`): en ese material **no
+  se detectó que Opus 5 a `--effort max` se quede corto**. La batería está saturada, así que eso no
+  prueba igualdad de calidad; sí quita la evidencia que haría falta para subir de modelo por
+  calidad, y con eso la decisión de dejar `lector-fresco` en Opus 5 queda respaldada. La medición
+  añadió además una excepción que la regla no contemplaba —Fable 5.1 sale más rápido— y esa
+  excepción entró al núcleo enunciada como criterio, no como cifra (su brazo no es limpio).
 - **Aviso, aplicado:** el núcleo prometía un reporte semanal que vive fuera del kit → reformulado
   como condicional. **Al incorporar la medición, esa condicional se retiró del todo**: la regla ya
   no menciona ningún reporte ni indicador externo, así que el aviso queda cubierto más estrictamente.
@@ -49,8 +52,8 @@ pagar Fable.
   2026-09-07): Fable 5.1 $10 / $50 por millón de tokens de entrada / salida; Opus 5 $5 / $25. El doble
   en ambos. Ambos con 1M de contexto y 128K de salida.
 - **Bloqueante de la segunda revisión, aplicado:** el cuerpo del primer commit de la rama repetía la
-  cifra privada → la rama se reescribió limpia antes de subirse. (Después se le sumó un segundo
-  commit, el de la medición de esta misma tanda; la rama tiene dos.)
+  cifra privada → la rama se reescribió limpia antes de subirse. (Después se le sumaron los
+  commits de la medición de esta misma tanda; el conteo exacto se lee en `git log`, no aquí.)
 
 ## Verificaciones en la máquina (Claude Code 2.1.263)
 - `fable` es alias válido de modelo (lista de alias en el binario). ✓

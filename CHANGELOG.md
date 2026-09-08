@@ -8,8 +8,9 @@ no tenía ningún agente asignado.
 - **Núcleo (+4 líneas, 133/150): esfuerzo antes que modelo.** Antes de subir de Opus 5 a Fable,
   sube `--effort` en Opus 5. **Medido antes de fusionar** (cierra el aviso del council que pedía
   evidencia de que Opus 5 a `--effort max` se queda corto): sobre una batería propia de casos con
-  juez fijo, los dos escalones dan **la misma calidad**, el esfuerzo cuesta un tercio más y el
-  salto de modelo cerca de la mitad más — pero Fable resultó **un tercio más rápido**. De ahí la
+  juez fijo, **no se detectó diferencia de calidad** entre los escalones (la batería está saturada:
+  eso no prueba igualdad, pero sí que no hay evidencia para subir de modelo por calidad), el
+  esfuerzo salió más barato por corrida que el salto de modelo, y Fable 5.1 salió **más rápido**. De ahí la
   excepción que la regla lleva escrita: cuando manda la latencia y no el costo, salta de modelo.
   Resultados relativos y método en `docs/pruebas/medicion-esfuerzo-v1.19.2.md`.
 - **kit-orquestacion:** la alternativa barata al fan-out es "esfuerzo primero, modelo después", y
