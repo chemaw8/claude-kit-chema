@@ -25,7 +25,8 @@ de "cerrar en `main`, trabajar en una rama" salía rancio hasta fusionar.
   ahora va con `--no-renames`, que lo parte en borrado y alta.
 - Cuando se abstiene entre ramas, la salida dice **cuántos commits hay desde el ancla sin juzgar**:
   no puede decidir por ti, pero no te esconde el tamaño de lo que no miró.
-- `autotest` gana 14 comprobaciones; `commands/cierre.md` documenta la forma nueva del encabezado.
+- `autotest` gana 14 comprobaciones; `commands/cierre.md` documenta la forma nueva del encabezado,
+  y el `README` la recoge junto con los cuatro códigos de salida de `reconciliar` y el ciclo completo.
 
 (La v1.19.3 no falta: va en otra rama, en curso al momento de publicar esta.)
 
