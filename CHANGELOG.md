@@ -1,5 +1,37 @@
 # Changelog — Kit Chema
 
+## v1.20 — 2026-09-08 (piloto hasta la puerta de la fase 3, el 2026-09-21)
+Fase 3 del programa de mejora del entorno: **gate de push local**, diseñado por un
+workflow de 3 diseños independientes, 3 jueces y un crítico de completitud (spec 002 de
+claude-entorno; elegido "Sello de push v2" sobre un pre-receive local y un check de
+GitHub). Todo **opt-in**: `git config kit-chema.gate true` por repo y, con el instalador,
+además `KIT_GATE=s` (por la vía plugin el hook viaja siempre y solo cuenta la llave del repo).
+- **Hook `sello-push.sh`** (`PreToolUse` Bash): `git push` solo pasa con sello del sha
+  empujado sin bloqueantes pendientes; analiza el comando por segmentos (heredocs y
+  cadenas no cuentan), resuelve remoto y refspec (`@{push}`, `+`, `HEAD:x`, opciones con
+  argumento), sello por `--git-common-dir` (vale desde worktrees), rechaza comandos que
+  mueven HEAD antes del push y `--all`/`--mirror`, deja pasar `--dry-run`, `--delete` y
+  shas ya en el remoto, tags solo si su commit está en el remoto o sellado; exige
+  `run_in_background` a `sello-push.sh revisar` (el Bash en primer plano topa en 10 min); fail-open ante error propio (anotado en el ledger incluso sin python3). 86 comprobaciones.
+- **Helper `scripts/sello-push.sh`**: `revisar` (pruebas en worktree desechable con
+  `prune` y `timeout`; si fallan, sello sintético sin gastar revisor; paquete de 7
+  secciones etiquetadas como datos, ficha o sustituto declarado, diff recortado a 200 KB
+  con bloqueante automático; revisor `claude -p` con otro modelo, sin herramientas, sin
+  settings ni MCP, sin `--bare`, cwd vacío, reintento sin `CLAUDECODE`; veredicto
+  calculado cotejando evidencia literal; sello + ledger con tokens literales del sobre),
+  `saltar` (por id, solo bloqueantes, sin repetir; el perdón se ancla a la **huella del hallazgo** —archivo + resumen—, no a su número, porque el revisor renumera desde H1 en cada pasada y un hallazgo distinto con un id ya saltado nacería perdonado; solo con la palabra del usuario, anotado), `estado --contra-remoto` (ramas
+  del remoto sin sello), `activar|desactivar`, `metricas` (línea greppable, redondeo
+  half-up, sellos sin revisión, líneas ilegibles) y `autotest` (15 escenarios con
+  revisor y pruebas inyectados; el propio autotest comprueba con un centinela que el ledger real no cambia).
+- **Comando `/revisar-antes-de-subir`**: los 8 pasos, incluido vigilar el CI tras el PR.
+- Instalador: bloque 4a-quater (`KIT_GATE=s`); `hooks.json`/`settings-fragment.json` en
+  paridad; GOBERNANZA gana "Gate de push local — piloto"; README de hooks, la tercera vía.
+- Primeras vueltas del piloto sobre el propio PR: un `push --force` que rebobina la rama remota a
+  un ancestro ya no pasa como "sin cambios" (exige sello); `error-hook` se anota también con bash
+  3.2; la prueba usa `$BASH`; tope por defecto del revisor 3 USD.
+- **Evidencia esperada para salir de borrador:** dos lunes de columna `Gate` en el
+  historial de claude-entorno con el repo piloto y council de 5 (kit-propuestas).
+
 ## v1.19.4 — 2026-09-08
 **El ancla del `CONTINUAR` lleva la rama y `reconciliar` no compara entre ramas.** El panel marcó
 RANCIO un repo con el cierre recién hecho: un rebase le trajo a la rama de trabajo el `CONTINUAR`

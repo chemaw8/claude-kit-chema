@@ -1,4 +1,4 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-08  ·  commit eb392d3  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-08  ·  commit 98c16f5 (rama fase-3-gate-push)  ·  cierre limpio: sí
 > Estado vivo. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
@@ -21,7 +21,16 @@ y que `sintetizador` se quede en Fable 5.1 por latencia, no por calidad. La rama
 vueltas del gate de push; los hallazgos y su cierre están en los mensajes de commit (el conteo se
 lee en `git log`, no aquí).
 
+**2026-09-08 — el ancla del CONTINUAR lleva la rama (va en v1.20).** El panel marcó RANCIO
+este repo con el cierre recién hecho: el rebase trajo aquí el CONTINUAR de main con su ancla
+(`eb392d3`), y los 20 commits que la rama ya tenía se leyeron como trabajo sin cerrar.
+`anclar` estampa ahora `(rama <rama>)` y `reconciliar` devuelve 3 entre ramas en vez de un
+rancio falso; lo sin commitear se revisa antes, así que sigue avisando en cualquier rama.
+Verificado en los 27 proyectos reales con CONTINUAR: 0 veredictos cambiados.
+
 ## Siguiente paso
+- [ ] **Subir la rama**: el gate exige sello, así que va por `/revisar-antes-de-subir`.
+  Lleva el arreglo del ancla por rama además del gate; el PR #33 sigue en borrador.
 - [ ] **Pendientes que abre v1.19.2** (los tres viven en
   `docs/pruebas/medicion-esfuerzo-v1.19.2.md`): (a) **re-juzgar el caso divergente** leyendo el
   archivo que produjo el agente, para saber si la diferencia era de comportamiento o de calidad —

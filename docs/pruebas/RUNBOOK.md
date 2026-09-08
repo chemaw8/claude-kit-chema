@@ -58,3 +58,50 @@ Runner: `python3 docs/pruebas/disparo.py [--paralelo 6] [--modelo sonnet]` (desd
 juez Sonnet de contexto fresco por petición en paralelo (~15 s, una llamada corta por fila) e imprime la
 tabla y el veredicto con el criterio de arriba; sale 1 si no pasa. Pega el resultado
 en `disparo-descriptions.md` con fecha.
+
+## Gate de push — prueba en vivo (2026-09-07, repo piloto claude-kit-chema)
+
+La única prueba del gate que gasta cuota. Todo lo demás corre sin red
+(`hooks/test-sello-push.sh`, `scripts/sello-push.sh autotest`). Qué se hizo y qué debe verse:
+
+1. Rama `gate-prueba` con dos defectos sembrados que `verificar.sh` no ve: un hook con ruta
+   absoluta de una máquina y una prueba con `|| true` que siempre imprime TODO OK.
+2. `git push` → el hook bloquea: `8a8b16d (rama gate-prueba) no tiene sello de revisión`.
+3. `sello-push.sh revisar` (timeout 600000) → pruebas en verde en el worktree → revisor Opus.
+4. Corregir (quitar los archivos) → sha nuevo → `git push` bloquea citando el sello anterior
+   con sus 3 pendientes → `revisar` → previos resueltos → `git push` pasa → `permitido`.
+
+| Revisión | Diff | Resultado | Tokens (in+out+cache) | USD | Duración |
+|---|---|---|---|---|---|
+| 8a8b16d (gate-prueba) | 1378 líneas, 12 archivos | 3 bloqueante(s), 5 aviso(s) | 65,312 | 0.90 | 164 s |
+| b7c2690 (gate-prueba) | 1386 líneas, 10 archivos | aprobado, 7 aviso(s), previos 7 resueltos | 80,443 | 0.72 | 632 s |
+| 11a2e36 (fase-3-gate-push) | 1447 líneas, 11 archivos | 1 bloqueante(s), 6 aviso(s) | 78,371 | 1.15 | 288 s |
+| 65e3fa4 (fase-3-gate-push) | 1464 líneas, 11 archivos | 1 bloqueante(s), 4 aviso(s), previos 7 resueltos | 87,769 | 1.35 | 378 s |
+| 7aea354 (fase-3-gate-push) | 1489 líneas, 11 archivos | 1 bloqueante(s), 5 aviso(s), previos 5 resueltos | 88,639 | 1.35 | 365 s |
+| 17f8798 (fase-3-gate-push) | 1565 líneas, 12 archivos | aprobado, 5 aviso(s), previos 5 resueltos | 96,698 | 1.50 | 426 s |
+| 427407f (fase-3-gate-push) | 1571 líneas, 12 archivos | 1 bloqueante(s), 3 aviso(s), previos 4 resueltos | 90,323 | 1.33 | 340 s |
+| 50bf837 (fase-3-gate-push) | 1580 líneas, 12 archivos | aprobado, 5 aviso(s), previos 4 resueltos | 100,272 | 1.57 | 447 s |
+| 058159b (fase-3-gate-push) | ? líneas, ? archivos | 1 bloqueante(s), 0 aviso(s) | 0 | 0.00 | 0 s |
+| 7ca088f (fase-3-gate-push) | 1584 líneas, 12 archivos | 1 bloqueante(s), 3 aviso(s), previos 1 resueltos | 96,864 | 1.48 | 398 s |
+
+Una fila con 0 tokens y 0 s es una revisión con las pruebas en rojo: el sello sintético se
+escribe sin invocar al revisor. Las dos primeras filas son la prueba con defectos sembrados (rama `gate-prueba`); las siguientes,
+el propio PR del gate pasando por su gate (dogfooding). El revisor cazó **los dos defectos
+sembrados** con evidencia literal y, vuelta tras vuelta, **defectos reales del propio gate**:
+el contador de `saltar` (dos saltos anulaban dos bloqueantes distintos), el escape válido en un
+comentario, el desglose de tokens por modelo que colapsaba revisiones, `timeout -k 5 600 git
+push` y `git push > archivo` que escapaban al análisis del comando. Cada vuelta corrigió lo
+real, produjo un sha nuevo y volvió a bloquearse hasta re-revisar; los previos salen
+"resueltos" en la fila siguiente. La tabla no puede incluir la revisión que selló este mismo
+PR (cada cambio al RUNBOOK produce un sha nuevo): esa fila y las posteriores se leen en el ledger.
+Lo único que ninguna prueba sin cuota ejercita es la llamada real a `claude -p`: eso lo cubre esta
+prueba en vivo, y la fila `revision` del ledger guarda `cli_version` y `prompt_sha` para saber con qué
+se midió. Observaciones: la duración la marca la salida del revisor (26k tokens de salida en la
+segunda), no las pruebas; revisiones reales han costado hasta 1.57 USD, por eso el default de
+`SELLO_TOPE_USD` es 3. Las filas quedan en `~/.claude/kit-chema/gate.jsonl` y
+`sello-push.sh metricas 7` las agrega (una revisión más por cada vuelta del propio PR).
+
+Para repetirla: sembrar defectos con evidencia literal obvia en el diff; si el revisor devuelve
+0 hallazgos, repetir una vez; si vuelve a 0, anotar "revisor no cazó" aquí y no bloquear la
+construcción por eso (RF-19 de la spec 002 de claude-entorno).
+

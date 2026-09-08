@@ -9,7 +9,7 @@ determinista, no en prosa que Claude interpreta.
 
 ## Qué trae el kit
 
-Tres hooks de guardia (dos por defecto, uno opt-in) y uno de contexto (`kit-chema-contexto.sh`, que carga
+Cuatro hooks de guardia (uno por defecto —rutas-fantasma— y tres opt-in —anti-secretos, backstop-cierre, sello-push—) y uno de contexto (`kit-chema-contexto.sh`, que carga
 tu contexto al abrir sesión).
 
 ### `rutas-fantasma.sh` — por defecto
@@ -53,6 +53,46 @@ defecto**: entra opt-in y pasa a "por defecto" solo si dos reportes semanales
 muestran menos rancios sin falsos positivos. Idea del backstop de fin de turno de
 firstmate (cosecha 2026-09-06).
 
+### `sello-push.sh` — opt-in (`KIT_GATE=s`) + `git config kit-chema.gate true` por repo
+
+`PreToolUse` sobre `Bash`: el **gate de push local**. En un repo con la llave, un
+`git push` desde Claude Code solo pasa si el commit que se empuja tiene un **sello
+de revisión** sin bloqueantes pendientes (`.git/kit-chema/sellos/<sha>`). El sello lo
+produce `scripts/sello-push.sh revisar` (y el comando `/revisar-antes-de-subir`, que
+Claude corre cuando el hook lo bloquea): pruebas del proyecto en un worktree
+desechable → si pasan, revisor adversario con **otro modelo** (`claude -p` sin
+herramientas, sin settings ni MCP del usuario, desde un directorio vacío para que no
+entren ni la memoria ni las fichas padre) → veredicto **calculado por el helper**:
+cada hallazgo tiene que citar una línea literal del paquete que recibió (diff, mensajes de commit, ficha o salida de las pruebas) o baja a aviso. Todo commit
+nuevo cambia el sha y exige revisar de nuevo; un comando que mueve HEAD y empuja en la
+misma línea se rechaza; `--all`/`--mirror` también (una rama a la vez); `--dry-run`,
+`--delete` y un sha que ya está en el remoto pasan; un tag pasa solo si su commit ya
+está en el remoto o tiene sello. Escape explícito del usuario: `KIT_SELLO=omitir git
+push …` pasa y queda anotado. El hook falla abierto ante error propio (exit 0, evento
+`error-hook`); si el **revisor** no responde no hay sello y el push sigue bloqueado: un
+gate que se abre al cortar la red no es gate. Cada decisión va a un ledger JSONL
+(`~/.claude/kit-chema/gate.jsonl`) del que `sello-push.sh metricas` saca la línea
+`Gate: pushes N · con hallazgo X% · …` para el reporte semanal. Qué NO cubre: pushes
+desde la terminal, scripts que envuelven el push o `gh pr create` que empuja (se miden
+con `estado --contra-remoto`, no se impiden); la branch protection sigue siendo el muro.
+Confidencialidad: el diff viaja al modelo revisor igual que cualquier uso de Claude
+Code; el piloto es el repo público del kit y los repos NDA quedan fuera hasta decidir
+política. Pruebas: `bash hooks/test-sello-push.sh` (86 comprobaciones) y `bash
+scripts/sello-push.sh autotest` (revisor y pruebas inyectados; ninguna toca el ledger
+real). Apagado en tres niveles: por push (`KIT_SELLO=omitir`, anotado), por repo
+(`sello-push.sh desactivar`), por máquina (quitar `sello-push.sh` de
+`hooks.PreToolUse` y no volver a pasar `KIT_GATE=s`). Ojo: por la **vía plugin**
+(`hooks.json`) el hook viaja siempre y la única llave es la del repo; la llave de máquina
+`KIT_GATE=s` existe solo con el instalador.
+
+**Por qué hook y no prosa, y por qué opt-in.** "Revisa antes de subir" ya estaba en
+prosa (kit-codigo) y no alcanza: el modelo decide cuándo aplica. El hook no cumple las
+dos vías de abajo (no es una regla violada dos veces ni una alucinación): entra por la
+**tercera vía** —infraestructura decidida por el programa de mejora, opt-in con dos
+llaves, puerta de dos reportes semanales— y el council de 5 debe aceptarla
+explícitamente antes de que pase a por defecto. Diseño y evidencia: spec 002 de
+claude-entorno (workflow de 3 diseños, 3 jueces y crítico; 2026-09-06).
+
 ### `anti-secretos.sh` — opt-in
 
 Es un hook
@@ -80,10 +120,10 @@ Hay más eventos en Claude Code; este catálogo cubre los más útiles para el k
 
 `kit-chema-contexto.sh` y `rutas-fantasma.sh` se instalan por defecto (bajo
 riesgo, alto valor). `hooks/anti-secretos.sh` es opt-in (`instalar.sh` pregunta) y
-`hooks/backstop-cierre.sh` también (`KIT_BACKSTOP=s`). Si aceptas, copia el script a `~/.claude/hooks/anti-secretos.sh` y
+`hooks/backstop-cierre.sh` también (`KIT_BACKSTOP=s`), igual que `hooks/sello-push.sh` (`KIT_GATE=s`, y además `sello-push.sh activar` en cada repo que se quiera gatear). Si aceptas, copia el script a `~/.claude/hooks/anti-secretos.sh` y
 fusiona `hooks/settings-fragment.json` dentro de `~/.claude/settings.json`,
 sin pisar hooks que ya tengas configurados ahí. Para desactivar cualquiera, quita su
-entrada (`anti-secretos.sh`, `rutas-fantasma.sh` en `hooks.PreToolUse`; `backstop-cierre.sh` en `hooks.Stop`)
+entrada (`anti-secretos.sh`, `rutas-fantasma.sh`, `sello-push.sh` en `hooks.PreToolUse`; `backstop-cierre.sh` en `hooks.Stop`)
 en `~/.claude/settings.json` — y, en el caso de `rutas-fantasma.sh`, reinstala
 después con `KIT_RUTAS_FANTASMA=n ./instalar.sh` (o exporta esa variable), porque
 si no el instalador la repone en la siguiente actualización. Ojo: revertir el PR
@@ -104,6 +144,11 @@ alucinación que ninguna regla en prosa alcanza), el reporte semanal de salud lo
 muestra recurrente, y el hook que lo ataja es determinista, está condicionado
 al estado real de la máquina (no puede bloquear una lectura legítima), falla
 abierto y trae prueba que corre `verificar.sh`. Las cinco a la vez; si falta
-una, no es hook — es el caso de `rutas-fantasma.sh`. Si solo
+una, no es hook — es el caso de `rutas-fantasma.sh`. Hay una tercera vía, más
+exigente todavía: **infraestructura del programa de mejora** (una pieza que el kit
+necesita para medir o proteger, no una regla), que entra siempre **opt-in** con
+llave por máquina y por repo, con prueba sin cuota que corre `verificar.sh`, con
+métrica propia, y cuya puerta a "por defecto" son dos reportes semanales más un
+council de 5 que acepte esta vía explícitamente — es el caso de `sello-push.sh`. Si solo
 pasó una vez o el costo es bajo, corrígelo en prosa: sale más barato de
 mantener y no bloquea flujos legítimos.

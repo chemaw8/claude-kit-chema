@@ -4,27 +4,52 @@
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "$HOME/.claude/hooks/anti-secretos.sh" }
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/anti-secretos.sh"
+          }
         ]
       },
       {
         "matcher": "Read|Write|Edit",
         "hooks": [
-          { "type": "command", "command": "$HOME/.claude/hooks/rutas-fantasma.sh", "timeout": 5 }
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/rutas-fantasma.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/sello-push.sh",
+            "timeout": 10
+          }
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "$HOME/.claude/hooks/backstop-cierre.sh", "timeout": 10 }
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/backstop-cierre.sh",
+            "timeout": 10
+          }
         ]
       }
     ],
     "SessionStart": [
       {
         "hooks": [
-          { "type": "command", "command": "$HOME/.claude/hooks/kit-chema-contexto.sh", "timeout": 10 }
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/kit-chema-contexto.sh",
+            "timeout": 10
+          }
         ]
       }
     ]
