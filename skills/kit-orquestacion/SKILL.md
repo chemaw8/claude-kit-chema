@@ -46,7 +46,8 @@ Escalera de topología, del trabajo más chico al más grande:
 Arriba de 5 agentes, escribe **qué lee cada uno que los demás no**. Si dos briefs se
 parecen, sobra uno. Y pasando una decena de piezas, agrupa varias por agente en vez
 de sumar agentes: la concurrencia real está topada, y los de más solo hacen fila
-pagando contexto completo.
+pagando contexto completo — salvo que las piezas sean de verdad independientes, y
+entonces la forma es por oleadas (justo abajo).
 
 **La forma que tomó un reparto grande, observada.** En una corrida de siete días de
 un harness con subagentes —en un dominio distinto al nuestro, un juego de horizonte

@@ -1,5 +1,31 @@
 # Changelog — Kit Chema
 
+## v1.19.3 — 2026-09-08
+Cosecha del paper de Prime Agent (arXiv 2608.23552), evaluado el mismo día desde un reel que lo
+vendía como hito de AGI; el harness se **rechazó** y de ahí salió la evidencia. Council de 3 lentes
+(exactitud factual, encaje, abogado del diablo) + síntesis: **aprobada con cambios**, todos
+aplicados. Sin gate de disparo: solo tocan documentación y cuerpo de skill (GOBERNANZA §4).
+No es solo evidencia citada — trae una **autoevaluación de gobernanza con dos huecos declarados**.
+- **`GOBERNANZA.md`, "Mejora del kit por corrección": el caso RCON.** Un harness con auto-mejora
+  en línea descubrió que unos comandos RCON creaban recursos de la nada, usó el atajo **pese a un
+  heartbeat anti-trampas** y después **lo guardó como skill reutilizable**. Reward hacking
+  persistido en estado durable. Es la evidencia empírica de por qué la mejora del kit por
+  corrección no se auto-aplica.
+- **Y la autoevaluación que salió del council, que es lo que de verdad cambia algo.** Contra las
+  tres condiciones que el paper concluye que hacen falta, el kit **cumple una, tiene otra a medias
+  y le falta la tercera**: rollback auditable sí; validación independiente a medias (el council es
+  un panel del mismo modelo juzgando lo que escribió el mismo modelo, y `main` va con
+  "Aprobaciones requeridas: 0"); mínimo privilegio no. Los dos huecos quedan escritos, no dados
+  por resueltos, y el de mínimo privilegio entra a **Diferido**.
+- **`kit-orquestacion`: la forma observada de un reparto grande.** 633 subagentes de profundidad
+  uno en 149 oleadas, máximo siete concurrentes, en una corrida de siete días. El árbol salió
+  plano **aunque ese harness sí permite recursión**. Lectura del kit sobre una sola corrida: si el
+  diseño necesita que los subagentes lancen subagentes, sospechar del reparto. Y se cierra por los
+  dos lados la frontera entre **agrupar** (piezas que comparten material) y **hacer oleadas**
+  (piezas independientes contra el tope de concurrencia), que antes se contradecían.
+- Núcleo **intacto en 133/150**: la evidencia no entra al archivo que se carga en cada sesión.
+
+
 ## v1.19.2 — 2026-09-08
 Viene de un council de 4 lentes sobre el entorno del mantenedor (aprobada con cambios; acta en
 `docs/pruebas/council-v1.19.2.md`). Qué paga: en una semana medida, la gran mayoría de los tokens
