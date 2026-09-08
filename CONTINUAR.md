@@ -1,4 +1,4 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-07  ·  commit 382ce00  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-08  ·  commit eb392d3  ·  cierre limpio: sí
 > Estado vivo. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
@@ -11,7 +11,7 @@ contacto de otra empresa para vender o proponer. Entra a main con el PR #12 (202
 desde 2026-09-07**; el gate está activo en la máquina de José y en este repo, y este mismo
 PR #12 pasó por él.
 
-**v1.19.2 (rama `vanguardia-tanda1`, PR #35): regla de esfuerzo + agente `sintetizador`,
+**v1.19.2 EN MAIN E INSTALADO (PR #35 fusionado el 2026-09-08): regla de esfuerzo + agente `sintetizador`,
 con la medición hecha antes de fusionar.** El aviso del council pedía evidencia de que Opus 5
 a `--effort max` se queda corto; se midió (`docs/pruebas/medicion-esfuerzo-v1.19.2.md`): a
 calidad no distinguible, subir el esfuerzo es 16 % más barato y 2.3 veces más lento que saltar
