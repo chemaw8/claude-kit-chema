@@ -17,6 +17,11 @@ no tenía ningún agente asignado.
   con eso encima. De ahí la
   excepción que la regla lleva escrita: cuando manda la latencia y no el costo, salta de modelo.
   Resultados relativos y método en `docs/pruebas/medicion-esfuerzo-v1.19.2.md`.
+- **kit-propuestas:** en el protocolo de council, la síntesis del veredicto deja de hacerla el hilo
+  principal y la hace el agente `sintetizador`, al que hay que pasarle la postura inicial del hilo
+  (el veredicto debe decir si los evaluadores le hicieron cambiar de opinión). Si el agente no está
+  disponible, sintetiza el hilo principal. Es el único flujo para el que el agente existe y antes
+  no lo invocaba.
 - **kit-orquestacion:** la alternativa barata al fan-out es "esfuerzo primero, modelo después", y
   cada etapa de una corrida declara su modelo y su esfuerzo (pendiente desde la decisión del
   2026-08-29 que nunca se ejecutó).

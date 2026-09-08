@@ -88,3 +88,26 @@ intacto: por eso el núcleo espera al piloto.
 **Descartado:** PR único con núcleo adentro (entraría sin sonda conductual), y
 esperar todo al piloto (dejaba a los colegas sin las plantillas sin ganancia
 de control).
+
+## 2026-09-08 — v1.19.2: qué modelo lleva cada agente, decidido con medición
+
+**Decidido.** (a) La regla "esfuerzo antes que modelo" entra al núcleo enunciada **por
+dirección y no por cifras**, con una excepción: dentro del alcance de Fable 5.1 (síntesis y
+juicio crítico), si manda la latencia y no el costo, se salta de modelo. (b) `lector-fresco`
+**sigue en Opus 5**. (c) El agente nuevo `sintetizador` **se queda en Fable 5.1 por latencia,
+no por calidad**, y su ficha declara la condición que lo bajaría de escalón. (d) La síntesis
+del council la hace ese agente, no el hilo principal.
+
+**Por qué:** medición propia antes de fusionar (`docs/pruebas/medicion-esfuerzo-v1.19.2.md`),
+que cierra el aviso del council de v1.19.2 —faltaba evidencia de que Opus 5 a `--effort max`
+se quede corto—. En la única comparación limpia que enfrenta los dos escalones (n = 2, los
+tres brazos con el mismo núcleo), subir el esfuerzo es **16 % más barato y 2.3 veces más
+lento** que saltar de modelo. De ahí las cuatro decisiones: el orden de la regla se sostiene
+por costo, la excepción de latencia era necesaria y no estaba, y ninguna medición cubre
+calidad en síntesis, así que el `sintetizador` no puede justificarse por calidad.
+
+**Descartado:** afirmar cifras en el núcleo (el brazo de Fable quedó partido por un cambio de
+versión a mitad de la corrida: la magnitud varía entre lecturas, la dirección no); mover
+`sintetizador` a Opus 5 (dejaría el escalón Fable sin ningún agente, que era el hueco que el
+council quiso llenar); y medir síntesis antes de fusionar (pide un caso dorado nuevo y firma
+del mantenedor; queda pendiente y es lo que bajaría al agente de escalón).

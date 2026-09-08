@@ -30,7 +30,10 @@ máquina donde se midió (bloqueante de la primera revisión del acta).
 ## Resultado
 
 En los **4 casos que los tres brazos pudieron entregar**, los tres pasan los 4: no se detectó
-diferencia de calidad entre las tres configuraciones.
+diferencia de calidad entre las tres configuraciones. Con la misma salvedad que las tablas de
+costo: 2 de esos 4 casos del brazo Fable 5.1 corrieron con otra versión del núcleo. En los 2
+limpios los tres brazos también pasan, así que la lectura no cambia — pero se sostiene en 2 casos,
+no en 4.
 
 **Comparación limpia** (los dos brazos con el mismo núcleo, n = 4):
 
