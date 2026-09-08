@@ -61,8 +61,9 @@ teatral). La mecánica cambia según dónde corras:
 
 - En Claude Code: lanza los evaluadores como subagentes en paralelo, con modelo
   Opus 5 cada uno. La síntesis en un solo veredicto la hace el agente
-  `sintetizador` (Fable 5.1), que verifica cada hallazgo antes de heredarlo; si no
-  está disponible, la hace el hilo principal.
+  `sintetizador` (Fable 5.1), que verifica cada hallazgo antes de heredarlo; pásale
+  tu postura inicial, porque el veredicto debe decir si los evaluadores te hicieron
+  cambiar de opinión. Si el agente no está disponible, sintetiza el hilo principal.
 - En claude.ai (web): no hay subagentes, así que evalúa secuencialmente en la
   misma conversación, tomando un lente a la vez y marcando cada sección con su
   nombre ("Viabilidad técnica:", "Riesgos:", ...). Trata cada lente como una

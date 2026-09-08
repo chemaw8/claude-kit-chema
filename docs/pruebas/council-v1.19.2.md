@@ -62,9 +62,11 @@ pagar Fable.
   xhigh / max. ✓
 - `bash verificar.sh` en verde; núcleo 133/150 líneas.
 - Gate de disparo (`docs/pruebas/disparo.py --paralelo 6 --modelo sonnet`, 2026-09-07): **núcleo 21/21 (criterio ≥ 19/21) · confusiones de frontera no benignas: 0 · PASA**.
-- **Re-corrido el 2026-09-08** sobre el texto final del núcleo (la regla cambió de justificación
-  después de la primera corrida, así que la anterior no cubría lo que se fusiona): **21/21 ·
-  confusiones de frontera no benignas: 0 · PASA**. `verificar.sh` en verde y núcleo 133/150.
+- **Re-corrido el 2026-09-08 sobre el núcleo de `df8cb12`**, que es el último commit que lo toca
+  en esta rama: **21/21 (criterio ≥ 19/21) · confusiones de frontera no benignas: 0 · PASA**.
+  `verificar.sh` en verde y núcleo 133/150. Se fija el hash y no solo la fecha porque el núcleo
+  se editó tres veces en la rama y una nota fechada no dice cuál texto se probó: la corrida
+  anterior (tras `79d6480`) quedó obsoleta por eso.
 
 ## Veredicto para el kit
 `aprobada con cambios` (aplicados). Reversible con `git revert`; la regla no cambia ningún default de
