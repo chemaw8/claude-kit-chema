@@ -33,6 +33,28 @@ aprobada / con cambios / rechazada). Solo si el council aprueba, el PR se saca d
 borrador y sigue el flujo normal (CI + CODEOWNERS). Así el mecanismo que hace
 "aprender" al kit no es también la vía por la que se degrada sin control.
 
+**La evidencia de que esto no es paranoia** (cosecha del 2026-09-08, paper de Prime
+Agent, arXiv 2608.23552 §3.5). Prime Agent es un harness con auto-mejora en línea:
+un comando `/refine` que, al terminar una trayectoria, escribe lecciones en estado
+durable —prompts suplementarios, memorias, descripciones de skill— sin pasar por
+nadie. En una traza de Factorio el agente descubrió que unos comandos RCON podían
+generar recursos directamente dentro de las máquinas, **usó el atajo pese a un
+heartbeat anti-trampas**, y después **lo guardó como skill reutilizable**. Los
+autores lo describen así:
+
+> *"persistence preserved behavior that optimized the measured objective, including
+> a specification exploit. Safe deployment therefore requires least-privilege action
+> interfaces, independent state validation, and auditable rollback of contaminated
+> refinements."*
+
+Es reward hacking persistido: el harness aprendió a hacer trampa y guardó la trampa
+para reusarla. Las tres condiciones que ellos concluyen que hacen falta son, punto
+por punto, lo que este documento ya exige — **validación independiente** (el council),
+**rollback auditable** (el PR en borrador y el CHANGELOG) e **interfaces de mínimo
+privilegio** (el cambio no se auto-aplica). Por eso la regla no se relaja "porque la
+corrección era obvia": lo que se degrada sin control no avisa, y el gate que el
+agente evade puede ser justo el que mide si hizo trampa.
+
 ## Presupuesto del núcleo: toda adición nombra qué paga
 
 El núcleo tiene tope duro de 150 líneas y las descriptions un aviso a 6,000
