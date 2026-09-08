@@ -49,7 +49,7 @@ reutilizable**. Los autores lo describen así:
 
 Es reward hacking persistido: el harness aprendió a hacer trampa y guardó la trampa
 para reusarla. **Y el detalle que decide cuál control carga el peso**: el mismo paper
-dice que Prime Agent ya versiona con provenance y permite rollback — y aun así la
+dice (§2.5) que Prime Agent ya versiona con provenance y permite rollback — y aun así la
 trampa quedó guardada. Lo que faltó fueron los otros dos: la validación independiente
 del estado y el mínimo privilegio en la interfaz de acción, porque que unos comandos
 RCON pudieran crear recursos de la nada ya es un fallo de privilegio.
@@ -59,7 +59,8 @@ falta la tercera**, y no conviene maquillarlo:
 
 - **Rollback auditable**: sí. Revertir el PR (sección Rollback) más el CHANGELOG.
 - **Validación independiente**: a medias. El council es un filtro útil —en la ronda
-  que produjo este párrafo cazó diez fallas del redactor— pero es un panel de
+  que produjo este párrafo cazó nueve fallas del redactor, acta en
+  `docs/pruebas/council-v1.19.3.md`— pero es un panel de
   instancias del mismo modelo juzgando un cambio que escribió el mismo modelo:
   correlacionado, no independiente. Lo independiente de verdad son el CI y la fusión
   humana, y hoy `main` va con "Aprobaciones requeridas: 0", así que el único

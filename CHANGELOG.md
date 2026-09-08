@@ -4,7 +4,8 @@
 Cosecha del paper de Prime Agent (arXiv 2608.23552), evaluado el mismo día desde un reel que lo
 vendía como hito de AGI; el harness se **rechazó** y de ahí salió la evidencia. Council de 3 lentes
 (exactitud factual, encaje, abogado del diablo) + síntesis: **aprobada con cambios**, todos
-aplicados. Sin gate de disparo: solo tocan documentación y cuerpo de skill (GOBERNANZA §4).
+aplicados; acta en `docs/pruebas/council-v1.19.3.md` (9 hallazgos sobre el borrador y 5 más
+que introdujeron las propias correcciones). Sin gate de disparo: solo tocan documentación y cuerpo de skill (GOBERNANZA §4).
 No es solo evidencia citada — trae una **autoevaluación de gobernanza con dos huecos declarados**.
 - **`GOBERNANZA.md`, "Mejora del kit por corrección": el caso RCON.** Un harness con auto-mejora
   en línea descubrió que unos comandos RCON creaban recursos de la nada, usó el atajo **pese a un
