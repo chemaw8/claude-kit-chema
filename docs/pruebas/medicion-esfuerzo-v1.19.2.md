@@ -46,6 +46,11 @@ diferencia de calidad entre las tres configuraciones.
 | solo los casos anteriores al cambio de kit | 2 | +59 % | **−18 %** |
 | los 4 casos comparables (2 contaminados) | 4 | +44 % | **−35 %** |
 
+Cada fila compara **los mismos casos en los dos brazos**: la de n = 2 restringe también el
+referente Opus default a esos dos, no lo compara contra sus cuatro. Por lo mismo, el +32 % del
+brazo de esfuerzo (n = 4) y el +59 % de la fila de n = 2 **no son comparables entre sí**: son
+subconjuntos distintos.
+
 Lo que sobrevive a la contaminación es **la dirección** —Fable 5.1 sale más caro por corrida y más
 rápido, en las dos lecturas—, **no la magnitud**: entre −18 % y −35 % de tiempo, y entre +44 % y
 +59 % de costo. Por eso el núcleo enuncia la regla por dirección y no por cifra, y este documento
@@ -64,10 +69,15 @@ es el que carga los números.
    las dos lecturas. La regla razonaba solo en costo por token; donde manda la latencia —algo
    interactivo, o un paso que bloquea a alguien— el escalón "barato" es el lento. La magnitud del
    ahorro de tiempo no está firme, así que la excepción se enuncia como criterio, no como número.
-4. **Un caso quedó sin veredicto en los dos brazos de Opus** y sí pasó con Fable 5.1. No cuenta
-   como diferencia de calidad: la causa es una limitación del arnés de medición (el juez solo
-   recibe el último mensaje del agente, y un entregable que se va a un archivo no le llega).
-   Queda anotado como defecto del arnés, no del modelo.
+4. **El único caso donde los brazos divergieron queda fuera del conteo, y eso hay que decirlo
+   sin adornos.** De los 5 casos, los comparables son **4**: el quinto no pudo juzgarse en
+   ninguno de los dos brazos de Opus y sí pasó con Fable 5.1. La causa inmediata es del arnés
+   (el juez solo recibe el último mensaje del agente, y un entregable que se va a un archivo no
+   le llega), pero **con las mismas instrucciones Fable 5.1 respondió dentro del mensaje y Opus
+   5 no: eso es diferencia de comportamiento, no solo ruido de medición.** Excluirlo empuja el
+   resultado hacia "no se detectó diferencia", que es justo la lectura que sostiene dejar
+   `lector-fresco` en Opus 5 — así que la conclusión 1 se lee con esta salvedad encima. Cerrar
+   el hueco pide re-juzgar ese caso leyendo el archivo producido; queda pendiente en el arnés.
 
 ## Límites de esta medición
 

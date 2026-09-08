@@ -93,7 +93,7 @@ extraer, verificaciones tipo checklist), Opus 5 para trabajo pesado intermedio
 juicio crítico. **Antes de subir de Opus 5 a Fable, sube el esfuerzo** (`--effort`,
 hasta `max`) en Opus 5: medido por corrida, subir el esfuerzo salió más barato que saltar
 de modelo, con margen estrecho y a costa de tardar más. Fable 5.1 salió más caro y más
-rápido: cuando manda la latencia y no el costo, salta de modelo.
+rápido: dentro de ese alcance, si manda la latencia y no el costo, salta de modelo.
 
 Agentes listos del kit: `verificador` (Sonnet), `evaluador-council` (Opus 5),
 `lector-fresco` (Opus 5 sin contexto previo), `sintetizador` (Fable 5.1: integra

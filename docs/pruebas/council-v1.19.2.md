@@ -38,9 +38,10 @@ pagar Fable.
   como condicional. **Al incorporar la medición, esa condicional se retiró del todo**: la regla ya
   no menciona ningún reporte ni indicador externo, así que el aviso queda cubierto más estrictamente.
 - **Unidades, para que no se lean como contradicción:** el núcleo habla de costo **por corrida
-  medida** (un tercio más el esfuerzo, cerca de la mitad más el salto de modelo) y
-  kit-orquestacion del precio **por token** (Fable 5.1 el doble, tabla de arriba). Son dos
-  magnitudes distintas y las dos quedan dichas con su unidad.
+  medida** y lo enuncia sin cifras (solo la dirección y que el margen es estrecho);
+  kit-orquestacion habla del precio **por token** (Fable 5.1 el doble, tabla de arriba); y las
+  cifras viven en `docs/pruebas/medicion-esfuerzo-v1.19.2.md`. Tres magnitudes, cada una en su
+  lugar y con su unidad.
 - **Aviso, aplicado:** la description del `sintetizador` decía ser "el" escalón Fable → ahora "el
   agente del escalón Fable".
 - **Aviso, aplicado:** el gate de disparo (`docs/pruebas/RUNBOOK.md`) es obligatorio al tocar el
