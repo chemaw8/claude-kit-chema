@@ -48,10 +48,14 @@ parecen, sobra uno. Y pasando una decena de piezas, agrupa varias por agente en 
 de sumar agentes: la concurrencia real está topada, y los de más solo hacen fila
 pagando contexto completo.
 
-Antes de repartir, considera la alternativa barata: **subir de modelo o de esfuerzo
-en un solo hilo**. En cadenas donde cada paso depende del anterior sobre el mismo
-material y todo cabe en contexto, un hilo con más esfuerzo gana; el fan-out ahí paga
-el sobrecosto sin cobrar nada.
+Antes de repartir, considera la alternativa barata: **subir de esfuerzo o de modelo
+en un solo hilo, y en ese orden** (esfuerzo primero: Fable cuesta el doble que Opus 5
+por token y solo compensa cuando Opus a mayor esfuerzo se queda corto, o cuando manda la
+latencia en un paso de síntesis o juicio — su alcance — porque ahí sale más rápido). En cadenas
+donde cada paso depende del anterior sobre el mismo material y todo cabe en contexto,
+un hilo con más esfuerzo gana; el fan-out ahí paga el sobrecosto sin cobrar nada.
+Cuando sí repartes, **declara el modelo y el esfuerzo de cada etapa** en el plan de la
+corrida: es lo que permite auditar después qué costó cada pieza.
 
 **Cuando el usuario pidió una corrida grande** (por ejemplo "ultracode", confirmado
 por un aviso del sistema), el presupuesto ya lo fijó él: ahí esta skill decide la

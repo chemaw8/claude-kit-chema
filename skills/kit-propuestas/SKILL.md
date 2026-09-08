@@ -54,14 +54,17 @@ El panel son de 3 a 5 evaluadores independientes, cada uno con contexto fresco
 
 A cada evaluador se le entrega la propuesta y el mandato acotado de la sección
 siguiente. Antes de lanzar a los evaluadores, el hilo principal fija en una
-frase su postura inicial sobre la propuesta, sin haber leído ningún reporte; al
-sintetizar el veredicto dice explícitamente si los evaluadores le hicieron
-cambiar de opinión y en qué (que lo diga confirma que el council aportó y no fue
-teatral). La mecánica cambia según dónde corras:
+frase su postura inicial sobre la propuesta, sin haber leído ningún reporte; esa
+postura viaja a quien sintetice, y el veredicto dice explícitamente si los
+evaluadores le hicieron cambiar de opinión y en qué (que lo diga confirma que el
+council aportó y no fue teatral). Quién sintetiza y la mecánica cambian según
+dónde corras:
 
 - En Claude Code: lanza los evaluadores como subagentes en paralelo, con modelo
-  Opus 5 cada uno. El hilo principal recoge sus reportes y sintetiza un solo
-  veredicto con el modelo principal de la sesión (Fable 5).
+  Opus 5 cada uno. La síntesis en un solo veredicto la hace el agente
+  `sintetizador` (Fable 5.1), que verifica cada hallazgo antes de heredarlo; pásale
+  tu postura inicial, porque el veredicto debe decir si los evaluadores te hicieron
+  cambiar de opinión. Si el agente no está disponible, sintetiza el hilo principal.
 - En claude.ai (web): no hay subagentes, así que evalúa secuencialmente en la
   misma conversación, tomando un lente a la vez y marcando cada sección con su
   nombre ("Viabilidad técnica:", "Riesgos:", ...). Trata cada lente como una
