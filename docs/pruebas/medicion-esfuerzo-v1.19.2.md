@@ -39,7 +39,21 @@ diferencia de calidad entre las tres configuraciones.
 | Opus 5, esfuerzo por defecto | referencia | referencia |
 | Opus 5, `--effort max` | **+32 %** | **+46 %** |
 
-**Fable 5.1, brazo parcialmente contaminado** — las dos lecturas, contra el mismo referente:
+**Comparación de los tres brazos, también limpia** (los 2 casos del brazo Fable 5.1 que corrieron
+antes del cambio de kit; los brazos 1 y 2 corrieron completos con ese mismo núcleo, así que en esos
+2 casos los tres son comparables de igual a igual). Es la **única** lectura limpia que incluye a
+Fable 5.1, y es la que sostiene el orden de la regla:
+
+| Brazo | n | Costo por corrida | Tiempo |
+|---|---:|---:|---:|
+| Opus 5, esfuerzo por defecto | 2 | referencia | referencia |
+| Opus 5, `--effort max` | 2 | +33 % | +91 % |
+| Fable 5.1 | 2 | +59 % | **−18 %** |
+
+Cara a cara, subir el esfuerzo contra saltar de modelo: **16 % más barato y 2.3 veces más lento.**
+Ahí está la regla completa en una línea — y con n = 2, así que se lee como dirección, no como cifra.
+
+**Fable 5.1, lectura contaminada** — para referencia, contra el mismo referente:
 
 | Lectura | n | Costo | Tiempo |
 |---|---:|---:|---:|
@@ -62,9 +76,9 @@ es el que carga los números.
    Opus 5 a `--effort max` se quede corto**. No es lo mismo que probar igualdad —una batería
    saturada no puede—, pero era justo lo que faltaba: no hay evidencia que justifique subir de
    modelo por calidad. Por eso `lector-fresco` sigue en Opus 5.
-2. **La regla acierta por costo, con margen estrecho:** subir el esfuerzo cuesta menos que saltar
-   de modelo (+32 % contra +44 % en la lectura de 4 casos, +59 % en la limpia de 2), pero en la
-   lectura de 4 la diferencia es de 12 puntos: acierta, no arrasa.
+2. **La regla acierta por costo, con margen modesto:** en la única comparación limpia que enfrenta
+   los dos escalones (n = 2, tabla de tres brazos), subir el esfuerzo sale **16 % más barato** que
+   saltar de modelo. Acierta, no arrasa, y descansa en dos casos.
 3. **La regla necesitaba una excepción, y ahora la lleva escrita:** Fable 5.1 salió más rápido en
    las dos lecturas. La regla razonaba solo en costo por token; donde manda la latencia —algo
    interactivo, o un paso que bloquea a alguien— el escalón "barato" es el lento. La magnitud del
@@ -87,7 +101,9 @@ es el que carga los números.
 - **Un solo material y un solo juez.** Cuatro casos comparables son pocos para afirmar más que un
   orden de magnitud; los porcentajes se leen como "un tercio", "cerca de la mitad", no como
   precisión de dos decimales.
-- **El brazo de Fable 5.1 no es limpio** (ver arriba): 2 de sus 4 casos comparables corrieron con
-  otra versión del núcleo. Se dan las dos lecturas y se afirma solo la dirección. Cerrar ese hueco
-  cuesta re-correr los brazos 1 y 3 bajo el mismo núcleo; no se hizo porque la dirección ya es
-  consistente y la regla no depende de la magnitud.
+- **El brazo de Fable 5.1 está partido:** 2 de sus 4 casos comparables corrieron con otra versión
+  del núcleo. De ahí que la lectura limpia con Fable sea de **n = 2** y la de n = 4 quede solo como
+  referencia. Las dos apuntan en la misma dirección (más caro, más rápido), pero la magnitud varía
+  bastante entre ellas (−18 % contra −35 % de tiempo). Cerrar el hueco cuesta re-correr los brazos
+  1 y 3 bajo el mismo núcleo; no se hizo porque la dirección ya es consistente en las dos lecturas
+  y la regla se enuncia por dirección.
