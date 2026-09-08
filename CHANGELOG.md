@@ -6,8 +6,12 @@ Viene de un council de 4 lentes sobre el entorno del mantenedor (aprobada con ca
 se iban al modelo más caro sin que ninguna regla lo frenara, y el escalón Fable de la escalera
 no tenía ningún agente asignado.
 - **Núcleo (+4 líneas, 133/150): esfuerzo antes que modelo.** Antes de subir de Opus 5 a Fable,
-  sube `--effort` en Opus 5; si el entorno mide el reparto de tokens por modelo, ese porcentaje
-  es el indicador de la regla.
+  sube `--effort` en Opus 5. **Medido antes de fusionar** (cierra el aviso del council que pedía
+  evidencia de que Opus 5 a `--effort max` se queda corto): sobre una batería propia de casos con
+  juez fijo, los dos escalones dan **la misma calidad**, el esfuerzo cuesta un tercio más y el
+  salto de modelo cerca de la mitad más — pero Fable resultó **un tercio más rápido**. De ahí la
+  excepción que la regla lleva escrita: cuando manda la latencia y no el costo, salta de modelo.
+  La regla se redactó sin crecer el núcleo (sigue en 133/150).
 - **kit-orquestacion:** la alternativa barata al fan-out es "esfuerzo primero, modelo después", y
   cada etapa de una corrida declara su modelo y su esfuerzo (pendiente desde la decisión del
   2026-08-29 que nunca se ejecutó).

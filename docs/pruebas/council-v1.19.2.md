@@ -27,6 +27,10 @@ pagar Fable.
   privado y una ruta interna. Retiradas; las cifras quedan cualitativas.
 - **Aviso, aplicado:** subir `lector-fresco` a Fable sin evidencia de que Opus 5 a `--effort max` se
   queda corto contradecía la regla nueva → `lector-fresco` sigue en Opus 5.
+  **Cerrado con medición antes de fusionar:** sobre una batería propia con juez fijo, Opus 5 a
+  `--effort max` **no** se queda corto (misma calidad que Fable), así que la decisión de dejar
+  `lector-fresco` en Opus 5 queda respaldada. La medición añadió una excepción que la regla no
+  contemplaba —Fable resultó más rápido— y esa excepción entró al núcleo.
 - **Aviso, aplicado:** el núcleo prometía un reporte semanal que vive fuera del kit → reformulado
   como condicional.
 - **Aviso, aplicado:** la description del `sintetizador` decía ser "el" escalón Fable → ahora "el

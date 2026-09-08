@@ -91,9 +91,9 @@ Luego **con qué modelo**: Haiku para lo trivial, Sonnet para lo mecánico (busc
 extraer, verificaciones tipo checklist), Opus 5 para trabajo pesado intermedio
 (borradores, evaluadores de council, código), Fable 5 solo para síntesis final y
 juicio crítico. **Antes de subir de Opus 5 a Fable, sube el esfuerzo** (`--effort`,
-hasta `max`) en Opus 5: Fable cuesta el doble por token y la guía oficial lo reserva
-para cuando Opus a mayor esfuerzo aún se queda corto. Si tu entorno mide el
-reparto de tokens por modelo, ese porcentaje es el indicador de esta regla.
+hasta `max`) en Opus 5: medido en una batería propia, a calidad igual el esfuerzo costó
+un tercio más y el salto de modelo cerca de la mitad más — pero Fable resultó un tercio
+más rápido, así que cuando manda la latencia y no el costo, salta de modelo.
 
 Agentes listos del kit: `verificador` (Sonnet), `evaluador-council` (Opus 5),
 `lector-fresco` (Opus 5 sin contexto previo), `sintetizador` (Fable 5: integra
