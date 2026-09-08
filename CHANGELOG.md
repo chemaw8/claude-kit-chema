@@ -1,5 +1,35 @@
 # Changelog — Kit Chema
 
+## v1.19.4 — 2026-09-08
+**El ancla del `CONTINUAR` lleva la rama y `reconciliar` no compara entre ramas.** El panel marcó
+RANCIO un repo con el cierre recién hecho: un rebase le trajo a la rama de trabajo el `CONTINUAR`
+de `main` con su ancla, y los 20 commits que esa rama ya tenía desde antes del cierre se leyeron
+como trabajo sin cerrar; el backstop bloqueó el fin de turno por lo mismo. El ancla era un hash
+suelto que se comparaba contra el `HEAD` de la rama que estuviera puesta, así que cualquier flujo
+de "cerrar en `main`, trabajar en una rama" salía rancio hasta fusionar.
+- `anclar` estampa `commit <hash> (rama <rama>)`; en `HEAD` desprendido no inventa rama.
+- `reconciliar` devuelve 3 ("no se puede reconciliar"), con la salida para reanclar, cuando la
+  rama del cierre no es la actual — en vez de un rancio falso. El backstop ya trataba el 3 como
+  "deja pasar", así que deja de bloquear por este motivo.
+- El ancla que **coincide** con `HEAD` es prueba directa de que no hay nada que reconciliar: eso
+  se mira antes del cruce de ramas, así que salir de `main` con `checkout -b` sigue siendo fresco.
+- Lo **sin commitear** se revisa antes del cruce de ramas: sigue marcando rancio en cualquiera.
+- Los encabezados sin rama (todos los anteriores) se comportan igual que siempre; se les estampa
+  la rama en su próximo `/cierre`. Verificado en los 28 proyectos reales con `CONTINUAR`:
+  **0 veredictos cambiados**.
+- **Un renombre ya no esconde un archivo real, por ninguno de los dos caminos.** En lo sin
+  commitear, `git status --porcelain` se corta por posición y no por campos, mirando los dos lados
+  del `->`: con el origen se colaba `git mv CLAUDE.md codigo.py` y con el destino se colaba lo
+  contrario. En lo ya commiteado, `git diff --name-only` detectaba el renombre e imprimía solo el
+  destino, así que un commit que movía un archivo real a un nombre de papeleo salía "fresco";
+  ahora va con `--no-renames`, que lo parte en borrado y alta.
+- Cuando se abstiene entre ramas, la salida dice **cuántos commits hay desde el ancla sin juzgar**:
+  no puede decidir por ti, pero no te esconde el tamaño de lo que no miró.
+- `autotest` gana 14 comprobaciones; `commands/cierre.md` documenta la forma nueva del encabezado.
+
+(La v1.19.3 no falta: va en otra rama, en curso al momento de publicar esta.)
+
+
 ## v1.19.2 — 2026-09-08
 Viene de un council de 4 lentes sobre el entorno del mantenedor (aprobada con cambios; acta en
 `docs/pruebas/council-v1.19.2.md`). Qué paga: en una semana medida, la gran mayoría de los tokens
