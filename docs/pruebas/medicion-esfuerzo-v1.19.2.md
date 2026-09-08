@@ -53,17 +53,17 @@ Fable 5.1, y es la que sostiene el orden de la regla:
 Cara a cara, subir el esfuerzo contra saltar de modelo: **16 % más barato y 2.3 veces más lento.**
 Ahí está la regla completa en una línea — y con n = 2, así que se lee como dirección, no como cifra.
 
-**Fable 5.1, lectura contaminada** — para referencia, contra el mismo referente:
+**Fable 5.1 sobre los 4 casos comparables** — lectura con 2 casos contaminados, solo para ver si
+la dirección aguanta al ampliar la muestra:
 
 | Lectura | n | Costo | Tiempo |
 |---|---:|---:|---:|
-| solo los casos anteriores al cambio de kit | 2 | +59 % | **−18 %** |
 | los 4 casos comparables (2 contaminados) | 4 | +44 % | **−35 %** |
 
-Cada fila compara **los mismos casos en los dos brazos**: la de n = 2 restringe también el
-referente Opus default a esos dos, no lo compara contra sus cuatro. Por lo mismo, el +32 % del
-brazo de esfuerzo (n = 4) y el +59 % de la fila de n = 2 **no son comparables entre sí**: son
-subconjuntos distintos.
+Misma dirección que la tabla limpia, distinta magnitud. Todas las tablas comparan **los mismos
+casos en los dos brazos**: la lectura limpia restringe también el referente Opus default a esos
+dos casos, no lo enfrenta a sus cuatro. Por lo mismo, cifras de tablas con n distinto **no se
+comparan entre sí**.
 
 Lo que sobrevive a la contaminación es **la dirección** —Fable 5.1 sale más caro por corrida y más
 rápido, en las dos lecturas—, **no la magnitud**: entre −18 % y −35 % de tiempo, y entre +44 % y
