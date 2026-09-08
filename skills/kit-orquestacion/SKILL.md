@@ -48,15 +48,19 @@ parecen, sobra uno. Y pasando una decena de piezas, agrupa varias por agente en 
 de sumar agentes: la concurrencia real está topada, y los de más solo hacen fila
 pagando contexto completo.
 
-**La forma que toma un reparto grande, medida.** En la corrida más larga publicada de
-un harness con subagentes (Prime Agent, 7 días en Factorio; arXiv 2608.23552 §3.5) el
-agente raíz creó **633 subagentes de profundidad uno en 149 oleadas, con como máximo
-siete activos a la vez**. Es decir: un árbol **ancho y plano, repetido en tandas
-chicas** — los autores lo describen como especialización de tareas en paralelo, no
-recursión más profunda. Dos consecuencias para planear una corrida: el reparto que
-funciona a escala son **muchas oleadas de pocos agentes**, no una tanda enorme ni un
-árbol de agentes que lanzan agentes; y si tu diseño necesita profundidad tres para
-sostenerse, probablemente el trabajo no estaba bien partido.
+**La forma que tomó un reparto grande, observada.** En una corrida de siete días de
+un harness con subagentes —en un dominio distinto al nuestro, un juego de horizonte
+largo— el agente raíz creó **633 subagentes de profundidad uno en 149 oleadas, con
+como máximo siete activos a la vez** (Prime Agent sobre Factorio, Sonnet 5; arXiv
+2608.23552 §3.5). El árbol salió plano **aunque ese harness sí permite recursión** —
+sus autores la venden como capacidad—, y los siete fueron el máximo de esa corrida,
+no un óptimo medido. El paper registra la forma; no compara ancho contra profundo,
+así que lo que sigue es lectura del kit sobre una sola corrida: **si tu diseño
+necesita que los subagentes lancen subagentes, sospecha del reparto** — esa corrida
+no lo necesitó. Y agrupar y hacer oleadas no compiten: **agrupa** cuando las
+piezas comparten el material que hay que leer (te ahorras el arranque repetido);
+**haz oleadas** cuando son de verdad independientes y lo único que estorba es el tope
+de concurrencia.
 
 Antes de repartir, considera la alternativa barata: **subir de esfuerzo o de modelo
 en un solo hilo, y en ese orden** (esfuerzo primero: Fable cuesta el doble que Opus 5

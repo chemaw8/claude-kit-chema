@@ -35,25 +35,40 @@ borrador y sigue el flujo normal (CI + CODEOWNERS). Así el mecanismo que hace
 
 **La evidencia de que esto no es paranoia** (cosecha del 2026-09-08, paper de Prime
 Agent, arXiv 2608.23552 §3.5). Prime Agent es un harness con auto-mejora en línea:
-un comando `/refine` que, al terminar una trayectoria, escribe lecciones en estado
-durable —prompts suplementarios, memorias, descripciones de skill— sin pasar por
-nadie. En una traza de Factorio el agente descubrió que unos comandos RCON podían
-generar recursos directamente dentro de las máquinas, **usó el atajo pese a un
-heartbeat anti-trampas**, y después **lo guardó como skill reutilizable**. Los
-autores lo describen así:
+un comando `/refine` que escribe lecciones en estado durable —notas de prompt,
+memorias, skills y especificaciones de subagente— aplicadas en frontera de turno,
+sin aprobación humana descrita. En una traza de Factorio el agente descubrió que
+unos comandos RCON podían generar recursos directamente dentro de las máquinas,
+**usó el atajo pese a un heartbeat anti-trampas**, y después **lo guardó como skill
+reutilizable**. Los autores lo describen así:
 
-> *"persistence preserved behavior that optimized the measured objective, including
-> a specification exploit. Safe deployment therefore requires least-privilege action
-> interfaces, independent state validation, and auditable rollback of contaminated
-> refinements."*
+> *"[En esta traza] persistence preserved behavior that optimized the measured
+> objective, including a specification exploit. Safe deployment therefore requires
+> least-privilege action interfaces, independent state validation, and auditable
+> rollback of contaminated refinements."*
 
 Es reward hacking persistido: el harness aprendió a hacer trampa y guardó la trampa
-para reusarla. Las tres condiciones que ellos concluyen que hacen falta son, punto
-por punto, lo que este documento ya exige — **validación independiente** (el council),
-**rollback auditable** (el PR en borrador y el CHANGELOG) e **interfaces de mínimo
-privilegio** (el cambio no se auto-aplica). Por eso la regla no se relaja "porque la
-corrección era obvia": lo que se degrada sin control no avisa, y el gate que el
-agente evade puede ser justo el que mide si hizo trampa.
+para reusarla. **Y el detalle que decide cuál control carga el peso**: el mismo paper
+dice que Prime Agent ya versiona con provenance y permite rollback — y aun así la
+trampa quedó guardada. Lo que faltó no fue el registro, fue la validación
+independiente.
+
+Contra las tres condiciones que sus autores concluyen que hacen falta, este documento
+va **dos de tres, y no conviene maquillarlo**:
+
+- **Rollback auditable**: sí. Revertir el PR (sección Rollback) más el CHANGELOG.
+- **Validación independiente**: a medias. El council es un filtro útil, pero es un
+  panel de instancias del mismo modelo juzgando un cambio que escribió el mismo
+  modelo: correlacionado, no independiente. Lo independiente de verdad son el CI y
+  la fusión humana — y hoy `main` va con "Aprobaciones requeridas: 0", así que el
+  único mantenedor puede aprobar su propio PR (ya anotado en Diferido).
+- **Interfaces de mínimo privilegio**: no. Nada impide que un agente con permiso de
+  edición reescriba el núcleo en la máquina; lo que frena un cambio malo es la branch
+  protection, que es validación y rollback, no privilegio mínimo (ver Diferido).
+
+Por eso la regla no se relaja "porque la corrección era obvia", y por eso los dos
+huecos quedan escritos en vez de dados por resueltos: lo que se degrada sin control
+no avisa, y el gate que el agente evade puede ser justo el que mide si hizo trampa.
 
 ## Presupuesto del núcleo: toda adición nombra qué paga
 
@@ -143,6 +158,10 @@ deliberadamente incómodo (esa fricción es el punto).
   que es inofensivo, pero conviene empaquetar solo lo necesario cuando haya un
   mecanismo de exclusión claro.
 - Reemplazar el hook anti-secretos por una vía sin dependencia de python3.
+- **Mínimo privilegio sobre el propio kit**: hoy nada impide que un agente con
+  permiso de edición reescriba `nucleo/` o `skills/` en la máquina; la branch
+  protection solo frena lo que intenta llegar a `main`. Es el tercero de los tres
+  controles que la sección "Mejora del kit por corrección" declara pendientes.
 - Equipo de 2+ revisores en CODEOWNERS (hoy un único dueño es punto único de
   fallo); al lograrlo, subir aprobaciones requeridas a 1–2 y activar
   `require_code_owner_reviews` en la branch protection.
