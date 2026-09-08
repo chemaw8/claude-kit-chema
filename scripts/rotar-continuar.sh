@@ -11,7 +11,8 @@
 #   anclar <proyecto>          imprime el encabezado con fecha + ancla de git.
 #   reconciliar <proyecto>     ¿el estado escrito es fresco o quedó rancio?
 #                              salida 0 = fresco · 1 = rancio · 2 = no hay CONTINUAR ·
-#                              3 = no se puede reconciliar (sin ancla, o ancla fuera del historial).
+#                              3 = no se puede reconciliar (sin ancla, ancla fuera del
+#                              historial, o cierre anclado en otra rama).
 #   contrato <proyecto>        ¿CONTINUAR.md cumple el contrato mínimo?
 #   autotest                   se prueba a sí mismo con datos sintéticos.
 #
@@ -39,9 +40,15 @@ ok()  { echo "✓ $*"; }
 ancla_de() {
   local dir="$1"
   if git -C "$dir" rev-parse --git-dir >/dev/null 2>&1; then
-    local h
+    local h r
     h="$(git -C "$dir" rev-parse --short HEAD 2>/dev/null)"
-    if [ -n "$h" ]; then echo "commit $h"; else echo "commit ninguno-aún"; fi
+    r="$(git -C "$dir" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+    # La rama forma parte del ancla: un CONTINUAR puede viajar a otra rama (un rebase
+    # que trae el de main) y ahí su hash deja de ser comparable. En HEAD desprendido
+    # no hay rama que estampar y no se inventa una.
+    if [ -z "$h" ]; then echo "commit ninguno-aún"
+    elif [ -n "$r" ] && [ "$r" != "HEAD" ]; then echo "commit $h (rama $r)"
+    else echo "commit $h"; fi
   else
     echo "sin-git"
   fi
@@ -104,39 +111,69 @@ cmd_reconciliar() {
   # "trabajo real" que sí delata un estado rancio es código, datos, scripts.
   local PAPELEO='(^|/)(CONTINUAR|CLAUDE|DECISIONES)\.md$|(^|/)docs/bitacora\.md$|(^|/)\.claude/settings\.json$|(^|/)\.gitignore$'
 
-  if [ "$commit_esc" != "$commit_real" ]; then
-    local cambiados otros
-    cambiados="$(git -C "$dir" diff --name-only "$commit_esc..HEAD" 2>/dev/null)"
-    if [ $? -ne 0 ]; then
-      # el ancla ya no existe en el árbol (rebase, historia reescrita)
-      err "el ancla $commit_esc no está en el historial — no se puede reconciliar; revisa a mano"
-      return 3
-    fi
-    # grep devuelve 1 si no queda nada tras filtrar el papeleo: es el caso fresco,
-    # no un error — por eso se filtra sobre la variable, sin mirar su $?.
-    otros="$(printf '%s\n' "$cambiados" | grep -vE "$PAPELEO")"
-    if [ -n "$otros" ]; then
-      err "hubo trabajo real después del último cierre — archivos fuera del papeleo cambiaron:"
-      printf '%s\n' "$otros" | sed 's/^/     · /' >&2
-      echo "  → revisa: git -C '$dir' log --oneline $commit_esc..HEAD" >&2
-      return 1
-    fi
-  fi
-
-  # Cambios SIN commitear que no sean el papeleo también son trabajo sin cerrar.
+  # Cambios SIN commitear que no sean el papeleo son trabajo sin cerrar, y eso es
+  # cierto en CUALQUIER rama. Va antes del cruce de ramas de abajo a propósito: el
+  # veredicto "no se puede reconciliar" no debe apagar el aviso más fuerte que hay.
   local sucios
-  sucios="$(git -C "$dir" status --porcelain 2>/dev/null | awk '{print $2}' | grep -vE "$PAPELEO")"
+  # El estado ocupa las 2 primeras columnas y la ruta empieza en la 4ª: se corta por
+  # POSICIÓN, no por campos. Lo que de verdad rompía al partir en espacios era el
+  # RENOMBRE ("R  ficha.md -> codigo.py"), donde cuentan LOS DOS lados: quedarse con el
+  # origen dejaba pasar mover el papeleo a un archivo real, y quedarse con el destino
+  # deja pasar lo contrario —que un archivo real desaparezca hacia un nombre de
+  # papeleo—, que es el mismo hueco del revés. (Las rutas con espacios NO eran el
+  # problema: git las entrecomilla, comprobado — `?? "CLAUDE.md viejo.py"` —, y por eso
+  # se quitan las comillas al final; el corte por posición las cubre de paso.)
+  sucios="$(git -C "$dir" status --porcelain 2>/dev/null | awk '
+              { ruta = substr($0, 4); i = index(ruta, " -> ")
+                if (i) { print substr(ruta, 1, i - 1); print substr(ruta, i + 4) }
+                else print ruta }' \
+            | sed -E 's/^"//; s/"$//' | grep -vE "$PAPELEO")"
   if [ -n "$sucios" ]; then
     err "hay cambios sin commitear después del cierre:"
     printf '%s\n' "$sucios" | sed 's/^/     · /' >&2
     return 1
   fi
 
+  # El ancla que COINCIDE con HEAD zanja el asunto sin mirar la rama: no hay nada
+  # entre el ancla y HEAD que reconciliar. Salir de main con `checkout -b` deja el
+  # estado fresco, no un caso sin resolver, así que esto va antes del cruce de abajo.
   if [ "$commit_esc" = "$commit_real" ]; then
     ok "estado fresco (ancla $commit_esc coincide con HEAD)"
-  else
-    ok "estado fresco (desde el ancla $commit_esc solo se movió el papeleo del cierre)"
+    return 0
   fi
+
+  # El ancla solo vale dentro de SU rama. Si el cierre se hizo en otra —el CONTINUAR
+  # de main que un rebase trae a una rama de feature—, "$commit_esc..HEAD" cuenta como
+  # trabajo nuevo todo lo que la rama ya tenía desde antes del cierre: sería un rancio
+  # falso, y un veredicto falso enseña a no creerle al panel. No se puede decidir
+  # mecánicamente, así que se dice eso y se dice cómo salir.
+  local rama_esc rama_real
+  rama_esc="$(printf '%s' "$cab" | grep -oE '\(rama [^ )]+\)' | head -1 | sed -E 's/^\(rama //; s/\)$//')"
+  rama_real="$(git -C "$dir" rev-parse --abbrev-ref HEAD 2>/dev/null)"
+  if [ -n "$rama_esc" ] && [ "$rama_esc" != "$rama_real" ]; then
+    local ncom; ncom="$(git -C "$dir" rev-list --count "$commit_esc..HEAD" 2>/dev/null || echo '?')"
+    err "el cierre se ancló en la rama '$rama_esc' y estás en '${rama_real:-?}' — no se puede reconciliar entre ramas ($ncom commit(s) desde el ancla, sin juzgar)"
+    echo "  → si es aquí donde trabajas, cierra aquí (/cierre): el encabezado nuevo queda anclado en esta rama" >&2
+    return 3
+  fi
+
+  # Llegados aquí el ancla NO es HEAD (eso ya se decidió arriba), pero puede no estar
+  # en el historial: si el diff falla, el ancla se reescribió y no hay nada que comparar.
+  local cambiados otros
+  cambiados="$(git -C "$dir" diff --name-only --no-renames "$commit_esc..HEAD" 2>/dev/null)" || {
+    err "el ancla $commit_esc no está en el historial — no se puede reconciliar; revisa a mano"
+    return 3; }
+  # grep devuelve 1 si no queda nada tras filtrar el papeleo: es el caso fresco,
+  # no un error — por eso se filtra sobre la variable, sin mirar su $?.
+  otros="$(printf '%s\n' "$cambiados" | grep -vE "$PAPELEO")"
+  if [ -n "$otros" ]; then
+    err "hubo trabajo real después del último cierre — archivos fuera del papeleo cambiaron:"
+    printf '%s\n' "$otros" | sed 's/^/     · /' >&2
+    echo "  → revisa: git -C '$dir' log --oneline $commit_esc..HEAD" >&2
+    return 1
+  fi
+
+  ok "estado fresco (desde el ancla $commit_esc solo se movió el papeleo del cierre)"
   return 0
 }
 
@@ -400,7 +437,7 @@ Fase 2 en curso.
 - Ninguno
 EOF
 
-  local f=0
+  local f=0 rcx
   cmd_rotar "$p" "$t/nuevo.md" >/dev/null || { err "autotest: la rotación falló"; f=1; }
   grep -q "dato histórico que debe sobrevivir" "$p/docs/bitacora.md" 2>/dev/null \
     || { err "autotest: se perdió una línea histórica"; f=1; }
@@ -481,7 +518,109 @@ EOF
 
   # Estado rancio: el ancla no coincide con HEAD → debe detectarlo.
   printf '# CONTINUAR — x  ·  cierre 2026-08-26  ·  commit 0000000  ·  cierre limpio: sí\n' > "$p/CONTINUAR.md"
-  if cmd_reconciliar "$p" >/dev/null 2>&1; then err "autotest: debió detectar el estado rancio"; f=1; fi
+  cmd_reconciliar "$p" >/dev/null 2>&1; rcx=$?
+  [ "$rcx" -eq 3 ] || { err "autotest: un ancla que no se resuelve debía dar 3 (no reconciliable), dio $rcx"; f=1; }
+
+  # Cierre anclado en OTRA rama. El ancla de main comparado contra una rama de
+  # feature cuenta como "trabajo nuevo" todo lo que la rama ya tenía desde antes
+  # (pasó el 2026-09-08: un rebase trajo a la rama del gate el CONTINUAR de main,
+  # con su ancla). Mecánicamente no se puede decidir → 3 (no se puede reconciliar),
+  # nunca rancio: un veredicto falso hace que se le deje de creer al panel.
+  local p4="$t/rama-demo"; mkdir -p "$p4"
+  ( cd "$p4" && git init -q && git config user.email t@t && git config user.name t )
+  : > "$p4/base.txt"; ( cd "$p4" && git add -A && git commit -qm base )
+  local M RM PLANTILLA rc4
+  M="$(cd "$p4" && git rev-parse --short HEAD)"
+  RM="$(cd "$p4" && git rev-parse --abbrev-ref HEAD)"   # no se asume el nombre por defecto
+  PLANTILLA='# CONTINUAR — rama-demo  ·  cierre 2026-09-08  ·  commit %s (rama %s)  ·  cierre limpio: sí\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Correr: make run\n\n## Bloqueadores / esperas\n- Ninguno\n'
+  printf "$PLANTILLA" "$M" "$RM" > "$p4/CONTINUAR.md"
+  ( cd "$p4" && git add -A && git commit -qm "cierre: papeleo" )
+  cmd_reconciliar "$p4" >/dev/null 2>&1 \
+    || { err "autotest: anclado en su propia rama y solo papeleo debió salir fresco"; f=1; }
+  # El contrato lee la PRIMERA línea: la forma nueva del encabezado tiene que pasarle.
+  cmd_contrato "$p4" >/dev/null 2>&1 \
+    || { err "autotest: el contrato debe aceptar el encabezado con rama"; f=1; }
+  # La rama de feature trae trabajo real propio; el ancla sigue siendo el de la otra.
+  ( cd "$p4" && git checkout -q -b feature && : > trabajo.sh && git add -A && git commit -qm "trabajo de la rama" )
+  cmd_reconciliar "$p4" >/dev/null 2>&1; rc4=$?
+  [ "$rc4" -eq 3 ] \
+    || { err "autotest: ancla de otra rama debe dar 3 (no reconciliable), dio $rc4"; f=1; }
+  # ...pero no puede volverse un agujero. Re-anclado en ESTA rama: fresco, y el
+  # trabajo real posterior vuelve a ser rancio.
+  local B; B="$(cd "$p4" && git rev-parse --short HEAD)"
+  printf "$PLANTILLA" "$B" feature > "$p4/CONTINUAR.md"
+  ( cd "$p4" && git add -A && git commit -qm "cierre: papeleo de la rama" )
+  cmd_reconciliar "$p4" >/dev/null 2>&1 \
+    || { err "autotest: re-anclado en su rama debió salir fresco"; f=1; }
+  : > "$p4/mas-trabajo.sh"; ( cd "$p4" && git add -A && git commit -qm "más trabajo" )
+  cmd_reconciliar "$p4" >/dev/null 2>&1; rc4=$?
+  [ "$rc4" -eq 1 ] || { err "autotest: trabajo real tras el cierre en la misma rama debía dar 1 (rancio), dio $rc4"; f=1; }
+  # Y lo que está SIN COMMITEAR es trabajo sin cerrar en cualquier rama: eso sigue
+  # siendo rancio aunque el ancla venga de otra rama (si no, el 3 apagaría el aviso).
+  printf "$PLANTILLA" "$M" "$RM" > "$p4/CONTINUAR.md"
+  ( cd "$p4" && git add -A && git commit -qm "papeleo con ancla de otra rama" )
+  : > "$p4/sucio.sh"
+  cmd_reconciliar "$p4" >/dev/null 2>&1; rc4=$?
+  [ "$rc4" -eq 1 ] \
+    || { err "autotest: lo sin commitear debe marcar rancio aunque el ancla sea de otra rama, dio $rc4"; f=1; }
+  rm -f "$p4/sucio.sh"
+  # `anclar` estampa la rama actual, y en HEAD desprendido no inventa una.
+  cmd_anclar "$p4" | grep -q '(rama feature)' \
+    || { err "autotest: anclar debe estampar la rama actual"; f=1; }
+  ( cd "$p4" && git checkout -q --detach HEAD )
+  if cmd_anclar "$p4" | grep -q '(rama '; then err "autotest: en HEAD desprendido no se estampa NINGUNA rama"; f=1; fi
+
+  # El ancla que COINCIDE con HEAD es prueba directa de que no hay nada que
+  # reconciliar, valga la rama que valga: salir de main con `checkout -b` deja el
+  # estado fresco, no un caso sin resolver. Por eso la igualdad se mira ANTES del
+  # cruce de ramas. (Aviso 3 de la revisión adversaria del 2026-09-08.)
+  local p5="$t/rama-nueva"; mkdir -p "$p5"
+  ( cd "$p5" && git init -q && git config user.email t@t && git config user.name t )
+  : > "$p5/base.txt"; ( cd "$p5" && git add -A && git commit -qm base )
+  printf "$PLANTILLA" "$(cd "$p5" && git rev-parse --short HEAD)" \
+                      "$(cd "$p5" && git rev-parse --abbrev-ref HEAD)" > "$p5/CONTINUAR.md"
+  ( cd "$p5" && git checkout -q -b recien-creada )
+  cmd_reconciliar "$p5" >/dev/null 2>&1 \
+    || { err "autotest: ancla == HEAD debe salir fresco aunque la rama sea otra"; f=1; }
+
+  # `git status --porcelain` no se parsea por campos: en un renombre el segundo campo
+  # es el ORIGEN, así que mover la ficha a un archivo real se colaba como papeleo y el
+  # veredicto salía fresco — y bajo el 3 esta es la única red que queda. (Aviso 3 de
+  # la revisión adversaria del 2026-09-08.) Repo aparte: aquí la rama SÍ coincide, para que el
+  # veredicto lo decida el chequeo de lo sin commitear y no el cruce de ramas.
+  local p6 rc6; p6="$t/renombre-demo"; mkdir -p "$p6"
+  ( cd "$p6" && git init -q && git config user.email t@t && git config user.name t )
+  : > "$p6/CLAUDE.md"; ( cd "$p6" && git add -A && git commit -qm ficha )
+  printf "$PLANTILLA" "$(cd "$p6" && git rev-parse --short HEAD)" \
+                      "$(cd "$p6" && git rev-parse --abbrev-ref HEAD)" > "$p6/CONTINUAR.md"
+  cmd_reconciliar "$p6" >/dev/null 2>&1 \
+    || { err "autotest: el repo del caso de renombre debía partir de fresco"; f=1; }
+  ( cd "$p6" && git mv CLAUDE.md codigo.py )
+  cmd_reconciliar "$p6" >/dev/null 2>&1; rc6=$?
+  [ "$rc6" -eq 1 ] || { err "autotest: renombrar papeleo a un archivo real debía dar 1 (rancio), dio $rc6"; f=1; }
+  # ...y el hueco del revés, en repo aparte porque deshacer el renombre dejaría el
+  # árbol limpio: un archivo real que DESAPARECE hacia un nombre de papeleo. Quedarse
+  # con un solo lado del "->" no cierra el agujero, lo invierte.
+  local p7="$t/renombre-inverso"; mkdir -p "$p7"
+  ( cd "$p7" && git init -q && git config user.email t@t && git config user.name t )
+  : > "$p7/codigo.py"; ( cd "$p7" && git add -A && git commit -qm codigo )
+  printf "$PLANTILLA" "$(cd "$p7" && git rev-parse --short HEAD)" \
+                      "$(cd "$p7" && git rev-parse --abbrev-ref HEAD)" > "$p7/CONTINUAR.md"
+  ( cd "$p7" && git mv codigo.py CLAUDE.md )
+  cmd_reconciliar "$p7" >/dev/null 2>&1; rc6=$?
+  [ "$rc6" -eq 1 ] || { err "autotest: un archivo real que desaparece hacia papeleo debía dar 1 (rancio), dio $rc6"; f=1; }
+
+  # El hueco del renombre también existe en lo YA COMMITEADO: `git diff --name-only`
+  # detecta renombres e imprime solo el destino, así que un commit que mueve un archivo
+  # real a un nombre de papeleo salía "fresco". Con --no-renames se ve el borrado.
+  local p8 rc8; p8="$t/renombre-commiteado"; mkdir -p "$p8"
+  ( cd "$p8" && git init -q && git config user.email t@t && git config user.name t )
+  : > "$p8/codigo.py"; ( cd "$p8" && git add -A && git commit -qm base )
+  printf "$PLANTILLA" "$(cd "$p8" && git rev-parse --short HEAD)" \
+                      "$(cd "$p8" && git rev-parse --abbrev-ref HEAD)" > "$p8/CONTINUAR.md"
+  ( cd "$p8" && git mv codigo.py CLAUDE.md && git add -A && git commit -qm "se va un archivo real" )
+  cmd_reconciliar "$p8" >/dev/null 2>&1; rc8=$?
+  [ "$rc8" -eq 1 ] || { err "autotest: un renombre COMMITEADO de archivo real a papeleo debía dar 1 (rancio), dio $rc8"; f=1; }
 
   [ "$f" -eq 0 ] && ok "autotest: rotación sin pérdida, contrato y reconciliación funcionan"
   return $f
@@ -493,5 +632,5 @@ case "$CMD" in
   reconciliar) shift; cmd_reconciliar "$@" ;;
   contrato)    shift; cmd_contrato "$@" ;;
   autotest)    cmd_autotest ;;
-  *) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
+  *) sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
 esac
