@@ -1,6 +1,6 @@
 # Changelog — Kit Chema
 
-## v1.19.2 — 2026-09-07
+## v1.19.2 — 2026-09-08
 Viene de un council de 4 lentes sobre el entorno del mantenedor (aprobada con cambios; acta en
 `docs/pruebas/council-v1.19.2.md`). Qué paga: en una semana medida, la gran mayoría de los tokens
 se iban al modelo más caro sin que ninguna regla lo frenara, y el escalón Fable de la escalera
@@ -14,7 +14,8 @@ no tenía ningún agente asignado.
   Con una salvedad que el documento carga: el único caso donde los brazos divergieron quedó fuera
   del conteo, y en él Fable 5.1 respondió dentro del mensaje y Opus 5 no —diferencia de
   comportamiento, con re-juicio pendiente—, así que la lectura "no se detectó diferencia" se toma
-  con eso encima. De ahí la
+  con eso encima, y con que en los casos limpios esa lectura de calidad se sostiene en 2 casos,
+  no en 4. De ahí la
   excepción que la regla lleva escrita: cuando manda la latencia y no el costo, salta de modelo.
   Resultados relativos y método en `docs/pruebas/medicion-esfuerzo-v1.19.2.md`.
 - **kit-propuestas:** en el protocolo de council, la síntesis del veredicto deja de hacerla el hilo

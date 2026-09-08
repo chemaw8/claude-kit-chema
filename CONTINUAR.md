@@ -17,10 +17,18 @@ a `--effort max` se queda corto; se midió (`docs/pruebas/medicion-esfuerzo-v1.1
 calidad no distinguible, subir el esfuerzo es 16 % más barato y 2.3 veces más lento que saltar
 de modelo (n = 2, la única lectura limpia que enfrenta los dos escalones: se lee como dirección,
 no como cifra). De ahí que la regla lleve excepción de latencia, que `lector-fresco` siga en Opus 5
-y que `sintetizador` se quede en Fable 5.1 por latencia, no por calidad. Siete vueltas del gate
-de push sobre esta rama; los hallazgos y su cierre están en los mensajes de commit.
+y que `sintetizador` se quede en Fable 5.1 por latencia, no por calidad. La rama pasó por varias
+vueltas del gate de push; los hallazgos y su cierre están en los mensajes de commit (el conteo se
+lee en `git log`, no aquí).
 
 ## Siguiente paso
+- [ ] **Pendientes que abre v1.19.2** (los tres viven en
+  `docs/pruebas/medicion-esfuerzo-v1.19.2.md`): (a) **re-juzgar el caso divergente** leyendo el
+  archivo que produjo el agente, para saber si la diferencia era de comportamiento o de calidad —
+  hoy queda fuera del conteo y su exclusión favorece la lectura que conviene; (b) **re-correr los
+  brazos 1 y 3 bajo el mismo núcleo**, para que la comparación con Fable 5.1 no dependa de n = 2;
+  (c) **medir calidad en síntesis** (pide un caso dorado nuevo y firma del mantenedor): es lo único
+  que bajaría a `sintetizador` de escalón, porque hoy se justifica solo por latencia.
 - [ ] **Fase 3 — gate de push local.** Spec, plan y tareas en
   `~/Trabajo/proyectos/claude-entorno/specs/002-gate-de-push/` (diseño por workflow
   de 8 agentes; D1-D4 decididas el 2026-09-06: revisor `opus`, base = main, ficha del
