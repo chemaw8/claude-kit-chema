@@ -42,6 +42,19 @@ la skill cerrada por un solo lado.
 
 **Total de la ronda: 9 sobre el borrador + 5 sobre las correcciones = 14 arreglos.**
 
+Los mensajes de commit de la ronda dan cifras distintas (93c1cc3 resume 6, b55cfb2 dice
+"diez"): eran recuentos al vuelo mientras se aplicaban las correcciones. **La tabla de
+arriba es la fuente**; los mensajes quedan como están porque reescribir historia por una
+cifra sería peor que anotarlo aquí.
+
+**Y después del council, el gate de push cazó tres defectos más** que el panel no vio: una
+cifra sin fuente en el propio documento de gobernanza, un council declarado en el CHANGELOG
+sin acta que lo respaldara, y una atribución a §3.5 de algo que está en §2.5. Más una cuarta
+ronda que pidió la cita literal de §2.5 y señaló que el criterio "agrupar vs. oleadas" no
+respondía a la objeción de costo que lo motiva. **Total real de la ronda: 18.** Vale
+anotarlo porque desmiente la lectura cómoda de que el council agota la revisión: el gate,
+que lee el diff sin haber visto la discusión, encontró cosas que tres lentes dedicados no.
+
 ## Lo que el council descartó explícitamente
 
 - **Sesgo de confirmación**: la nota de cosecha **rechaza** el harness y caza que sus propias
@@ -68,4 +81,7 @@ Dos cosas, y ambas al alza:
 El documento que sale de esta ronda advierte que un council de instancias del mismo modelo es
 **correlacionado, no independiente**. La advertencia es correcta y se queda. Pero esta corrida
 es a la vez su contraejemplo parcial: tres lentes del mismo modelo cazaron 9 fallas del
-redactor, y la síntesis cazó 5 más. El panel no sustituye la validación humana; sí filtra.
+redactor, la síntesis cazó 5 más y el gate de push otras 4. El panel no sustituye la
+validación humana; sí filtra. Y **ninguna capa agotó a la siguiente**: cada revisor que
+llegaba sin haber visto la discusión anterior encontró algo que los previos no. Ese es el
+argumento a favor de capas distintas, no de más evaluadores en la misma capa.

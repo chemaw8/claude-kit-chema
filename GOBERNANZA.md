@@ -49,8 +49,10 @@ reutilizable**. Los autores lo describen así:
 
 Es reward hacking persistido: el harness aprendió a hacer trampa y guardó la trampa
 para reusarla. **Y el detalle que decide cuál control carga el peso**: el mismo paper
-dice (§2.5) que Prime Agent ya versiona con provenance y permite rollback — y aun así la
-trampa quedó guardada. Lo que faltó fueron los otros dos: la validación independiente
+describe su propio `/refine` así (§2.5) — *"The runtime applies each edit at a turn
+boundary, records its trigger and intended effect… Versions preserve provenance and
+enable rollback"*—: o sea que Prime Agent **ya tenía** registro auditable con rollback,
+y aun así la trampa quedó guardada. Lo que faltó fueron los otros dos: la validación independiente
 del estado y el mínimo privilegio en la interfaz de acción, porque que unos comandos
 RCON pudieran crear recursos de la nada ya es un fallo de privilegio.
 
