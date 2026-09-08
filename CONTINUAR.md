@@ -15,7 +15,8 @@ PR #12 pasó por él.
 con la medición hecha antes de fusionar.** El aviso del council pedía evidencia de que Opus 5
 a `--effort max` se queda corto; se midió (`docs/pruebas/medicion-esfuerzo-v1.19.2.md`): a
 calidad no distinguible, subir el esfuerzo es 16 % más barato y 2.3 veces más lento que saltar
-de modelo. De ahí que la regla lleve excepción de latencia, que `lector-fresco` siga en Opus 5
+de modelo (n = 2, la única lectura limpia que enfrenta los dos escalones: se lee como dirección,
+no como cifra). De ahí que la regla lleve excepción de latencia, que `lector-fresco` siga en Opus 5
 y que `sintetizador` se quede en Fable 5.1 por latencia, no por calidad. Siete vueltas del gate
 de push sobre esta rama; los hallazgos y su cierre están en los mensajes de commit.
 

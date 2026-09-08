@@ -51,7 +51,7 @@ pagando contexto completo.
 Antes de repartir, considera la alternativa barata: **subir de esfuerzo o de modelo
 en un solo hilo, y en ese orden** (esfuerzo primero: Fable cuesta el doble que Opus 5
 por token y solo compensa cuando Opus a mayor esfuerzo se queda corto, o cuando manda la
-latencia — Fable sale más rápido). En cadenas
+latencia en un paso de síntesis o juicio — su alcance — porque ahí sale más rápido). En cadenas
 donde cada paso depende del anterior sobre el mismo material y todo cabe en contexto,
 un hilo con más esfuerzo gana; el fan-out ahí paga el sobrecosto sin cobrar nada.
 Cuando sí repartes, **declara el modelo y el esfuerzo de cada etapa** en el plan de la

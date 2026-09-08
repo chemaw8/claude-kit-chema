@@ -54,10 +54,11 @@ El panel son de 3 a 5 evaluadores independientes, cada uno con contexto fresco
 
 A cada evaluador se le entrega la propuesta y el mandato acotado de la sección
 siguiente. Antes de lanzar a los evaluadores, el hilo principal fija en una
-frase su postura inicial sobre la propuesta, sin haber leído ningún reporte; al
-sintetizar el veredicto dice explícitamente si los evaluadores le hicieron
-cambiar de opinión y en qué (que lo diga confirma que el council aportó y no fue
-teatral). La mecánica cambia según dónde corras:
+frase su postura inicial sobre la propuesta, sin haber leído ningún reporte; esa
+postura viaja a quien sintetice, y el veredicto dice explícitamente si los
+evaluadores le hicieron cambiar de opinión y en qué (que lo diga confirma que el
+council aportó y no fue teatral). Quién sintetiza y la mecánica cambian según
+dónde corras:
 
 - En Claude Code: lanza los evaluadores como subagentes en paralelo, con modelo
   Opus 5 cada uno. La síntesis en un solo veredicto la hace el agente
