@@ -51,10 +51,14 @@ en el núcleo; y en v1.14 obligó a corregir una cifra que sesgaba una decisión
 
 **4. El estado del trabajo no se pierde entre sesiones.**
 `CONTINUAR.md` cumple un contrato mínimo (dónde vamos, siguiente paso ejecutable,
-cómo retomar, bloqueadores) con una **ancla de git** que delata cuando el estado
-escrito ya no describe la realidad. La rotación del detalle viejo a la bitácora
-**verifica línea por línea que nada se pierde** y aborta sin tocar nada si algo se
-perdería.
+cómo retomar, bloqueadores) con una **ancla de git** —`commit <hash> (rama <rama>)`—
+que delata cuando el estado escrito ya no describe la realidad. Desde v1.19.4 el ancla
+lleva la rama, porque un hash solo es comparable dentro de la suya: si el `CONTINUAR`
+viaja a otra rama (un rebase que trae el de `main`), el helper **se abstiene y lo dice**
+en vez de inventar un "rancio" que sería falso para siempre. Un veredicto falso enseña a
+no creerle al aviso, que es lo único que el aviso tiene. La rotación del detalle viejo a
+la bitácora **verifica línea por línea que nada se pierde** y aborta sin tocar nada si
+algo se perdería.
 
 **5. Sabe cuándo NO hacer algo.**
 `DECISIONES.md` registra lo descartado y por qué. Cinco propuestas razonables de
@@ -134,9 +138,30 @@ en vez de reemplazarlo. Esta vía instala el kit completo, con o sin plugin.
 
 `/proyecto-init` y `/cierre` son un par: el primero crea la ficha, el segundo la
 mantiene viva. Se apoyan en `scripts/rotar-continuar.sh`, que garantiza —y
-verifica— que al archivar el detalle viejo no se pierda ninguna línea.
+verifica— que al archivar el detalle viejo no se pierda ninguna línea, y que además
+responde solo: `reconciliar <proyecto>` contesta **fresco** (0), **rancio** (1), **sin
+CONTINUAR** (2) o **no se puede reconciliar** (3, p. ej. el cierre se ancló en otra rama).
+Con eso un panel o un hook puede preguntar por el estado de un proyecto sin leerlo.
 
 ¿No usas terminal? Ve directo a la sección de claude.ai web más abajo.
+
+## El ciclo completo
+
+El kit no es una colección de archivos sueltos: es un ciclo, y cada pieza existe para
+que la siguiente pueda confiar en la anterior.
+
+1. **Pedido** → el núcleo (`CLAUDE.md`) fija el estándar y dispara la skill del dominio.
+2. **Trabajo verificado** → nada se declara listo sin comprobarlo: código ejecutado,
+   cifras recalculadas, fuentes abiertas y citadas.
+3. **Decisión cara o material que sale de la empresa** → council de evaluadores
+   independientes, con veredicto y objeciones respaldadas.
+4. **`/cierre`** → `CONTINUAR.md` anclado, lo descartado a `DECISIONES.md`, el detalle
+   viejo a la bitácora sin perder una línea.
+5. **Reanudar** → `reconciliar` dice si al estado escrito se le puede creer, antes de
+   creerle.
+6. **Lo que se repite se vuelve regla** → una corrección que aparece dos veces entra al
+   kit por PR con council (ver `GOBERNANZA.md`), nunca como commit directo.
+
 
 ## Instalación manual
 

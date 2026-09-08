@@ -29,11 +29,13 @@ alarma en dos casos: si el encabezado dice `cierre limpio: no` (una sesión muri
 sin cerrar), o si los archivos que lista son cambios que nadie de esta sesión hizo.
 En esos dos casos sí: reconstruye del `git diff` antes de creerle al estado viejo.
 
-Hay un tercer mensaje que **tampoco** es alarma: "el cierre se ancló en la rama X y
-estás en Y". Significa que el ancla viajó desde otra rama —lo típico es un rebase que
-trae a tu rama el `CONTINUAR` de `main`— y ahí no es comparable. No hay nada rancio
-que arreglar: cierra normal y el encabezado nuevo queda anclado en la rama en la que
-trabajas.
+Hay un tercer mensaje que no es ninguna de las dos cosas: "el cierre se ancló en la
+rama X y estás en Y". **No es un veredicto, es una abstención.** El ancla viajó desde
+otra rama —lo típico, un rebase que trae a tu rama el `CONTINUAR` de `main`— y entre
+ramas el hash no es comparable, así que el helper te dice cuántos commits hay desde el
+ancla y no los juzga. Míralos tú: si son trabajo tuyo sin cerrar, ciérralo aquí. El
+encabezado nuevo queda anclado en esta rama y desde ahí el veredicto vuelve a ser
+fiable.
 
 ## 2. Decide qué cambió de verdad — y no preguntes por lo demás
 
