@@ -88,17 +88,29 @@ for n in os.listdir(sellos):                                  # sellos de más d
 prompt_sha = hashlib.sha1((E["PROMPT"] + E["ESQUEMA"]).encode()).hexdigest()[:12]
 cli_version = E.get("CLI_VERSION") or None
 previo = leer_sello(os.path.join(sellos, head)) or {}
-prev_ids = [x for x in (previo.get("saltados_ids") or "").split(",") if x]
+prev_huellas = [x for x in (previo.get("saltados_huellas") or "").split(",") if x]
+
+def huella(h):
+    """Identidad de un hallazgo por CONTENIDO. El revisor renumera H1, H2… en cada pasada,
+    así que heredar el perdón por id perdona un hallazgo DISTINTO que reutilice el número.
+    Se guarda dentro del propio hallazgo para que `saltar` no repita este cálculo."""
+    base = (str(h.get("archivo", "")) + "\n" + str(h.get("que", ""))).strip().lower()
+    return hashlib.sha256(base.encode("utf-8")).hexdigest()[:12]
 def vigentes(hallazgos):
-    """Saltos heredados de una revisión anterior del MISMO sha: solo los ids que siguen siendo
-    bloqueantes ahora. Un hallazgo nuevo nunca nace perdonado."""
-    ids_b = {h["id"] for h in hallazgos if h.get("sev") == "bloquea"}
-    return [i for i in prev_ids if i in ids_b]
+    """Saltos heredados de una revisión anterior del MISMO sha: solo los hallazgos cuyo
+    CONTENIDO se saltó y que siguen bloqueando. Un hallazgo nuevo nunca nace perdonado,
+    aunque el revisor le dé un id ya usado. Un sello viejo sin huellas no hereda nada:
+    ante la duda, el perdón no se extiende."""
+    # La huella se calcula aquí si el hallazgo aún no la trae: `vigentes` se llama desde
+    # varios sitios y no todos han pasado por `escribir_sello`, que es quien la graba.
+    porh = {(h.get("huella") or huella(h)): h["id"] for h in hallazgos if h.get("sev") == "bloquea"}
+    return [(porh[x], x) for x in prev_huellas if x in porh]
 
 def escribir_sello(veredicto, hallazgos, bloquea, avisos, sin_ev, pruebas, ficha, extra=None):
-    ids = vigentes(hallazgos)
+    for h in hallazgos: h.setdefault("huella", huella(h))
+    pares = vigentes(hallazgos); ids = [i for i, _ in pares]
     campos = {"head": head, "rama": rama, "fecha": ahora(), "veredicto": veredicto, "bloquea": bloquea, "avisos": avisos,
-              "saltados": len(ids), "saltados_ids": ",".join(ids), "sin_evidencia": sin_ev, "pruebas": pruebas, "ficha": ficha, "modelo": MODELO,
+              "saltados": len(ids), "saltados_ids": ",".join(ids), "saltados_huellas": ",".join(x for _, x in pares), "sin_evidencia": sin_ev, "pruebas": pruebas, "ficha": ficha, "modelo": MODELO,
               "prompt_sha": prompt_sha, **(extra or {})}
     with open(os.path.join(sellos, head), "w", encoding="utf-8") as f:
         for k, v in campos.items(): f.write(f"{k}={v}\n")
@@ -293,8 +305,12 @@ if not 1 <= n <= len(h): print(f"✗ el sello tiene {len(h)} hallazgo(s); no exi
 if h[n-1].get("sev") != "bloquea": print(f"✗ el hallazgo {n} ({h[n-1].get('id')}) es un aviso: no bloquea, nada que saltar", file=sys.stderr); sys.exit(2)
 if h[n-1].get("archivo") == "(pruebas)": print("✗ las pruebas rojas no se saltan: arregla, commitea y vuelve a revisar", file=sys.stderr); sys.exit(2)
 ids = [x for x in (d.get("saltados_ids") or "").split(",") if x]
-if h[n-1].get("id") in ids: print(f"✗ el hallazgo {n} ({h[n-1].get('id')}) ya estaba saltado", file=sys.stderr); sys.exit(2)
-ids.append(h[n-1].get("id")); d["saltados_ids"] = ",".join(ids); d["saltados"] = str(len(ids))
+hus = [x for x in (d.get("saltados_huellas") or "").split(",") if x]
+hu = h[n-1].get("huella")
+if not hu: print(f"✗ el hallazgo {n} no tiene huella: es un sello de una versión anterior; vuelve a revisar", file=sys.stderr); sys.exit(2)
+if hu in hus: print(f"✗ el hallazgo {n} ({h[n-1].get('id')}) ya estaba saltado", file=sys.stderr); sys.exit(2)
+ids.append(h[n-1].get("id")); hus.append(hu)
+d["saltados_ids"] = ",".join(ids); d["saltados_huellas"] = ",".join(hus); d["saltados"] = str(len(hus))
 with open(p, "w", encoding="utf-8") as f:
     for k, v in d.items(): f.write(f"{k}={v}\n")
 try:
@@ -462,6 +478,21 @@ cmd_autotest() {
   hook_espera 0 "el hook debió dejar pasar tras saltar el único bloqueante"
   cmd_saltar 5 "x" "$R" >/dev/null 2>&1 && fallo "saltar un hallazgo inexistente debió fallar"
   cmd_saltar 1 "otra vez" "$R" >/dev/null 2>&1 && fallo "saltar dos veces el mismo hallazgo debió fallar"
+  # El perdón se hereda por CONTENIDO, no por número. El revisor renumera desde H1 en cada
+  # pasada, así que un hallazgo DISTINTO con el id ya saltado no puede nacer perdonado:
+  # sería el agujero de la válvula de escape del propio gate.
+  sobre '{"resumen":"otro","hallazgos":[{"id":"H1","sev":"bloquea","archivo":"a.txt","linea":2,"que":"OTRO defecto, mismo id","evidencia":"hola gate","por_que":"x","como_verificar":"cat a.txt"}],"previos":[],"no_verificable":[]}' > "$t/colision.json"
+  out=$(SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/colision.json'" cmd_revisar "$R" 2>&1); rc=$?
+  [ $rc -eq 1 ] || fallo "un hallazgo nuevo con un id ya saltado debió bloquear (rc=$rc): $out"
+  grep -q '^saltados=0$' "$SELLOS/$B" || fallo "el hallazgo nuevo heredó el perdón del id: $(grep -E '^saltado' "$SELLOS/$B")"
+  hook_espera 2 "el hook debió bloquear: el hallazgo nuevo no hereda el salto del id"
+  # ...y el MISMO hallazgo (misma huella) sí conserva su perdón entre pasadas del mismo sha.
+  out=$(SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/bloqueado.json'" cmd_revisar "$R" 2>&1); rc=$?
+  grep -q '^saltados=0$' "$SELLOS/$B" || fallo "tras la colisión el perdón no debía revivir sin volver a saltarlo"
+  out=$(cmd_saltar 1 "falso positivo, otra vez" "$R" 2>&1) || fallo "saltar tras la colisión falló: $out"
+  out=$(SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/bloqueado.json'" cmd_revisar "$R" 2>&1); rc=$?
+  grep -q '^saltados=1$' "$SELLOS/$B" || fallo "el mismo hallazgo debió conservar su perdón: $(grep -E '^saltado' "$SELLOS/$B")"
+  [ $rc -eq 0 ] || fallo "con el único bloqueante perdonado por huella, revisar debió salir 0 (rc=$rc)"
   grep -q '^saltados=1$' "$SELLOS/$B" || fallo "el segundo saltar cambió el contador"
   sobre '{"resumen":"x","hallazgos":[{"id":"H7","sev":"bloquea","archivo":"a.txt","que":"otro defecto","evidencia":"hola gate","por_que":"x"}],"previos":[],"no_verificable":[]}' > "$t/otro.json"
   out=$(SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/otro.json'" cmd_revisar "$R" 2>&1); rc=$?

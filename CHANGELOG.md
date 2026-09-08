@@ -19,7 +19,7 @@ además `KIT_GATE=s` (por la vía plugin el hook viaja siempre y solo cuenta la 
   con bloqueante automático; revisor `claude -p` con otro modelo, sin herramientas, sin
   settings ni MCP, sin `--bare`, cwd vacío, reintento sin `CLAUDECODE`; veredicto
   calculado cotejando evidencia literal; sello + ledger con tokens literales del sobre),
-  `saltar` (por id, solo bloqueantes, sin repetir; un hallazgo nuevo del mismo sha no hereda saltos; solo con la palabra del usuario, anotado), `estado --contra-remoto` (ramas
+  `saltar` (por id, solo bloqueantes, sin repetir; el perdón se ancla a la **huella del hallazgo** —archivo + resumen—, no a su número, porque el revisor renumera desde H1 en cada pasada y un hallazgo distinto con un id ya saltado nacería perdonado; solo con la palabra del usuario, anotado), `estado --contra-remoto` (ramas
   del remoto sin sello), `activar|desactivar`, `metricas` (línea greppable, redondeo
   half-up, sellos sin revisión, líneas ilegibles) y `autotest` (15 escenarios con
   revisor y pruebas inyectados; el propio autotest comprueba con un centinela que el ledger real no cambia).
