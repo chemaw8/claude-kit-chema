@@ -29,6 +29,12 @@ alarma en dos casos: si el encabezado dice `cierre limpio: no` (una sesión muri
 sin cerrar), o si los archivos que lista son cambios que nadie de esta sesión hizo.
 En esos dos casos sí: reconstruye del `git diff` antes de creerle al estado viejo.
 
+Hay un tercer mensaje que **tampoco** es alarma: "el cierre se ancló en la rama X y
+estás en Y". Significa que el ancla viajó desde otra rama —lo típico es un rebase que
+trae a tu rama el `CONTINUAR` de `main`— y ahí no es comparable. No hay nada rancio
+que arreglar: cierra normal y el encabezado nuevo queda anclado en la rama en la que
+trabajas.
+
 ## 2. Decide qué cambió de verdad — y no preguntes por lo demás
 
 Este comando es **silencioso en lo que no cambió**. Recorre esta lista y actúa
@@ -48,7 +54,7 @@ helper lo reemplaza de forma segura en el paso 4). Usa exactamente esta forma �
 arriba de la línea `---` va lo blindado, abajo lo recortable:
 
 ```markdown
-# CONTINUAR — <proyecto>  ·  cierre <YYYY-MM-DD>  ·  commit <hash>  ·  cierre limpio: sí
+# CONTINUAR — <proyecto>  ·  cierre <YYYY-MM-DD>  ·  commit <hash> (rama <rama>)  ·  cierre limpio: sí
 > Estado vivo de sesión. Los hechos estables (repo, remoto, stack) viven en
 > CLAUDE.md, no aquí.
 
@@ -94,6 +100,11 @@ ancla que estampa `anclar` es el `HEAD` de este momento, así que:
 Con ese orden, la sesión que retome verá "solo se movió el papeleo del cierre" =
 estado fresco. Si mezclas trabajo y papeleo en un mismo commit tras `anclar`, la
 próxima reanudación marcará un falso rancio (inofensivo, pero ruido).
+
+El ancla incluye la **rama** (`commit <hash> (rama <rama>)`) porque un hash solo es
+comparable dentro de la suya. Cierra en la rama donde trabajas: si cierras en `main`
+mientras el trabajo vive en una rama de feature, el `CONTINUAR` de `main` no describe
+esa rama y `reconciliar` lo dirá en vez de inventar un rancio.
 
 Tres reglas al redactar:
 

@@ -29,6 +29,14 @@ además `KIT_GATE=s` (por la vía plugin el hook viaja siempre y solo cuenta la 
 - Primeras vueltas del piloto sobre el propio PR: un `push --force` que rebobina la rama remota a
   un ancestro ya no pasa como "sin cambios" (exige sello); `error-hook` se anota también con bash
   3.2; la prueba usa `$BASH`; tope por defecto del revisor 3 USD.
+- **El ancla del `CONTINUAR` lleva la rama** (`commit <hash> (rama <rama>)`) y
+  `reconciliar` ya no compara entre ramas: si el cierre se ancló en otra, devuelve 3
+  ("no se puede reconciliar") con la salida para reanclar, en vez de un rancio falso.
+  Lo sin commitear se revisa antes de ese cruce, así que sigue marcando rancio en
+  cualquier rama. Los encabezados sin rama (los de antes) se comportan igual que siempre.
+  Lo destapó el panel el 2026-09-08: un rebase trajo a `fase-3-gate-push` el `CONTINUAR`
+  de `main` con su ancla, y los 20 commits que la rama ya tenía se leyeron como trabajo
+  sin cerrar — RANCIO en el panel y bloqueo del backstop, con el cierre recién hecho.
 - **Evidencia esperada para salir de borrador:** dos lunes de columna `Gate` en el
   historial de claude-entorno con el repo piloto y council de 5 (kit-propuestas).
 
