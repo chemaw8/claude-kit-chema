@@ -46,7 +46,25 @@ Escalera de topología, del trabajo más chico al más grande:
 Arriba de 5 agentes, escribe **qué lee cada uno que los demás no**. Si dos briefs se
 parecen, sobra uno. Y pasando una decena de piezas, agrupa varias por agente en vez
 de sumar agentes: la concurrencia real está topada, y los de más solo hacen fila
-pagando contexto completo.
+pagando contexto completo — salvo que las piezas sean de verdad independientes, y
+entonces la forma es por oleadas (justo abajo).
+
+**La forma que tomó un reparto grande, observada.** En una corrida de siete días de
+un harness con subagentes —en un dominio distinto al nuestro, un juego de horizonte
+largo— el agente raíz creó **633 subagentes de profundidad uno en 149 oleadas, con
+como máximo siete activos a la vez** (Prime Agent sobre Factorio, Sonnet 5; arXiv
+2608.23552 §3.5). El árbol salió plano **aunque ese harness sí permite recursión** —
+sus autores la venden como capacidad—, y los siete fueron el máximo de esa corrida,
+no un óptimo medido. El paper registra la forma; no compara ancho contra profundo,
+así que lo que sigue es lectura del kit sobre una sola corrida: **si tu diseño
+necesita que los subagentes lancen subagentes, sospecha del reparto** — esa corrida
+no lo necesitó. Y agrupar y hacer oleadas no compiten, porque no resuelven lo
+mismo: **agrupar ahorra contexto** —un agente lee una vez y despacha varias piezas—
+pero solo cuando las piezas comparten el material; si son independientes, agrupar no
+ahorra ninguna lectura y pagas los mismos contextos en cualquier orden. Ahí ya no
+queda decisión de costo, solo de calendario, y **la oleada es cómo drena la fila**
+contra el tope de concurrencia. Dicho al revés: si agrupar no te ahorra una lectura,
+no estás eligiendo entre dos costos, estás eligiendo cuándo pagas el mismo.
 
 Antes de repartir, considera la alternativa barata: **subir de esfuerzo o de modelo
 en un solo hilo, y en ese orden** (esfuerzo primero: Fable cuesta el doble que Opus 5
