@@ -25,7 +25,10 @@
      nadie (ni un agente) lo agregue de contrabando. -->
 
 ## Criterios de finalización
-<!-- Cómo se sabe que la feature está TERMINADA, no "casi". -->
+<!-- Cada criterio lleva comando + condición de éxito verificable, no un total
+     fijo de pruebas. Para una suite: ejecución completa del alcance previsto,
+     código de salida 0 y sin fallos ni errores. Conteos solo como evidencia
+     con fecha YYYY-MM-DD, nunca como criterio. -->
 
 ## Dudas abiertas
 <!-- Lo que no se pudo cerrar. Una duda abierta escrita vale más que un

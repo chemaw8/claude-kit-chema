@@ -39,10 +39,16 @@ CONTINUAR). Nunca lo decidas en silencio.
 2. **Clarificación** — releer la spec como QA: ambigüedades, contradicciones,
    casos límite ausentes. Solo detectar, no resolver.
 3. **Plan** — módulos, datos, y cada decisión con su alternativa descartada.
-4. **Tareas** — de ~30 min, con sus RF y una línea "Hecho cuando:" verificable.
+4. **Tareas** — de ~30 min, con sus RF y "Hecho cuando:" con comando + condición
+   de éxito verificable.
 5. **Implementación** — una tarea a la vez; TDD según kit-codigo.
 6. **Validación** — recorrer la spec RF por RF: qué comprobación cubre cada uno.
 7. **Cambio** — nuevo requisito → primero el diff de la spec, luego el código.
+
+En fichas, CONTINUAR y specs, cada gate lleva comando + condición de éxito, no
+un total fijo de pruebas. Para una suite: ejecución completa del alcance previsto,
+código de salida 0 y sin fallos ni errores. Los conteos solo son evidencia con
+fecha `YYYY-MM-DD`, nunca el criterio de aceptación.
 
 ## Qué no es esto
 

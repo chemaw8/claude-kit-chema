@@ -112,7 +112,7 @@ La línea `---` es el corte operativo: **arriba blindado, abajo recortable.**
 ## Cómo retomar
 - Abrir:    <archivo / carpeta>
 - Correr:   <comando>
-- Verificar arranque: <comando o qué debe verse>
+- Verificar arranque: <comando> → <condición de éxito verificable, no conteo de pruebas>
 
 ## Bloqueadores / esperas
 - <qué + de quién depende + desde qué fecha>        (o "Ninguno")
@@ -128,6 +128,12 @@ La línea `---` es el corte operativo: **arriba blindado, abajo recortable.**
 ## Detalle vivo              ← ZONA RECORTABLE (lo viejo → docs/bitacora.md)
 - ...
 ```
+
+Ajuste de la plantilla — 2026-09-11: cada gate pide comando + condición de éxito
+verificable; para una suite, ejecución completa del alcance previsto, código de
+salida 0 y sin fallos ni errores. Un resumen como `18/18 PASS` no es criterio:
+los conteos solo se conservan como evidencia fechada. No se ajustan para ocultar
+un fallo real. La plantilla operativa vive en `commands/cierre.md`.
 
 ### 4.3 Regla de recorte
 
@@ -172,7 +178,8 @@ solo-escritura: queda definido **cuándo** se lee.
    declarado en la ficha, credenciales en `.env`, o conexión a BD de producción. En
    un proyecto sensible **lista los comandos que correría y pide confirmación**;
    nunca ejecuta a ciegas. En un proyecto normal, los ejecuta para escribir solo
-   comandos verificados; si uno falla, lo reporta en vez de escribirlo.
+   comandos verificados con su condición de éxito (§4.2); si uno falla, lo reporta
+   en vez de escribirlo.
 3. **Propone permisos con evidencia**, derivados de los comandos verificados y del
    uso real. **Nunca auto-modifica `settings.json`**: propone y espera aprobación.
 4. **Muestra antes de escribir**: ficha propuesta, permisos propuestos y, si
