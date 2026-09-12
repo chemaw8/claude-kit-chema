@@ -69,7 +69,7 @@ arriba de la línea `---` va lo blindado, abajo lo recortable:
 ## Cómo retomar
 - Abrir:    <archivo / carpeta>
 - Correr:   <comando>
-- Verificar arranque: <comando o qué debe verse>
+- Verificar arranque: <comando> → <condición de éxito verificable, no conteo de pruebas>
 
 ## Bloqueadores / esperas
 - <qué + de quién o de qué depende + desde qué fecha>      (o "Ninguno")
@@ -108,7 +108,7 @@ comparable dentro de la suya. Cierra en la rama donde trabajas: si cierras en `m
 mientras el trabajo vive en una rama de feature, el `CONTINUAR` de `main` no describe
 esa rama y `reconciliar` lo dirá en vez de inventar un rancio.
 
-Tres reglas al redactar:
+Cuatro reglas al redactar:
 
 - **No repitas hechos estables.** Repo, remoto, stack y "qué es el proyecto" van en
   `CLAUDE.md`. Si los copias aquí, envejecerán aquí — es exactamente cómo una ficha
@@ -116,6 +116,12 @@ Tres reglas al redactar:
 - **El siguiente paso tiene que ser ejecutable.** Prueba: ¿alguien que llega en
   frío sabría exactamente qué abrir o qué teclear? "Continuar el análisis" no pasa;
   "correr `scripts/03-modelo.py` y comparar el R² contra el corte de junio" sí.
+- **Gates por condición, no por conteo.** Escribe comando + condición; por ejemplo,
+  `bash verificar.sh` → termina con código de salida 0, ejecuta la suite prevista
+  completa y no reporta fallos ni errores. No uses `18/18 PASS` como criterio:
+  añadir una prueba no cambia la condición. Los conteos van solo como evidencia
+  con fecha `YYYY-MM-DD`. Si hay un fallo real, repórtalo; no ajustes el conteo
+  para ocultarlo.
 - **Sobrescribe, no acumules.** El estado es una foto fresca de hoy, no un
   sedimento de todas las sesiones.
 
