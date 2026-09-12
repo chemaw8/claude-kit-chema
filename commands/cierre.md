@@ -56,7 +56,7 @@ helper lo reemplaza de forma segura en el paso 4). Usa exactamente esta forma �
 arriba de la línea `---` va lo blindado, abajo lo recortable:
 
 ```markdown
-# CONTINUAR — <proyecto>  ·  cierre <YYYY-MM-DD>  ·  commit <hash> (rama <rama>)  ·  cierre limpio: sí
+# CONTINUAR — <proyecto>  ·  cierre <YYYY-MM-DD>  ·  commit <hash> (rama <rama>)  ·  cierre limpio: <sí|no>
 > Estado vivo de sesión. Los hechos estables (repo, remoto, stack) viven en
 > CLAUDE.md, no aquí.
 
@@ -85,6 +85,12 @@ arriba de la línea `---` va lo blindado, abajo lo recortable:
 ## Detalle vivo
 <lo que sigue haciendo falta para el siguiente paso, y nada más>
 ```
+
+El campo `cierre limpio` **no se escribe a mano ni se asume**: lo calcula `anclar`
+mirando si queda trabajo real sin commitear (el papeleo del propio cierre no
+cuenta). Si sale `no`, no lo edites para que diga `sí`: o commiteas lo que falta,
+o lo dejas escrito como frente abierto — es justo el aviso que la próxima sesión
+necesita.
 
 Genera el encabezado con `bash "$ROTAR" anclar <proyecto>` para que la fecha y el
 ancla de git sean reales, no inventadas.
