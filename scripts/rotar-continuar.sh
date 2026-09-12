@@ -75,25 +75,29 @@ PAPELEO='(^|/)(CONTINUAR|CLAUDE|DECISIONES)\.md$|(^|/)docs/bitacora\.md$|(^|/)\.
 # submódulo roto), la salida vacía se leía como árbol limpio: el fallo abría hacia
 # el veredicto optimista, justo el que este cambio quiere dejar de regalar. Se
 # mira el código de salida y se responde "?" — desconocido, no limpio.
+# El fallo se señala por CÓDIGO DE SALIDA (3), nunca por un centinela de texto: una
+# ruta puede ser cualquier cosa, incluido un archivo llamado "?", y un centinela que
+# también puede ser un dato válido no distingue nada.
 sucios_de() {
-  local salida rc
+  local salida rc lista
   salida="$(git -C "$1" status --porcelain --untracked-files=all 2>/dev/null)"; rc=$?
-  [ "$rc" -ne 0 ] && { echo "?"; return 3; }
-  printf '%s\n' "$salida" | awk '
+  [ "$rc" -ne 0 ] && return 3
+  lista="$(printf '%s\n' "$salida" | awk '
       { ruta = substr($0, 4); i = index(ruta, " -> ")
         if (i) { print substr(ruta, 1, i - 1); print substr(ruta, i + 4) }
         else print ruta }' \
-    | sed -E 's/^"//; s/"$//' | grep -vE "$PAPELEO" || true   # grep sin coincidencias sale 1
+    | sed -E 's/^"//; s/"$//' | grep -vE "$PAPELEO" || true)"   # grep sin coincidencias sale 1
+  printf '%s' "$lista"
 }
 
 # ¿Queda trabajo real sin commitear? Se calcula, no se declara: el campo que se
 # estampaba siempre en "sí" no podía delatar nunca un cierre sucio, y la rama de
 # `reconciliar` que reacciona a "no" era código inalcanzable.
 limpio_de() {
-  local dir="$1" s
+  local dir="$1" s rc
   git -C "$dir" rev-parse --git-dir >/dev/null 2>&1 || { echo "sin-git"; return; }
-  s="$(sucios_de "$dir")"
-  [ "$s" = "?" ] && { echo "no-se-pudo-saber"; return; }
+  s="$(sucios_de "$dir")"; rc=$?
+  [ "$rc" -eq 3 ] && { echo "no-se-pudo-saber"; return; }
   [ -n "$s" ] && echo "no" || echo "sí"
 }
 
@@ -164,8 +168,9 @@ cmd_reconciliar() {
   # papeleo—, que es el mismo hueco del revés. (Las rutas con espacios NO eran el
   # problema: git las entrecomilla, comprobado — `?? "CLAUDE.md viejo.py"` —, y por eso
   # se quitan las comillas al final; el corte por posición las cubre de paso.)
-  sucios="$(sucios_de "$dir")"
-  if [ "$sucios" = "?" ]; then
+  local rcs
+  sucios="$(sucios_de "$dir")"; rcs=$?
+  if [ "$rcs" -eq 3 ]; then
     err "no se pudo leer el estado de git en $dir — no se puede reconciliar"; return 3
   fi
   if [ -n "$sucios" ]; then
@@ -712,6 +717,26 @@ EOF
   local p7="$t/sin-git-demo"; mkdir -p "$p7"
   cmd_anclar "$p7" | grep -q 'cierre limpio: sin-git' \
     || { err "autotest: sin repo git el campo no se inventa"; f=1; }
+  # Y si git EXISTE pero falla, el campo tampoco se inventa: el fallo no puede abrir
+  # hacia el veredicto optimista. Es la rama que nadie ejercita en uso normal — y que
+  # el revisor adversario del gate de push señaló como vendida y no probada.
+  local p8="$t/git-roto"; mkdir -p "$p8"
+  ( cd "$p8" && git init -q && git config user.email t@t && git config user.name t )
+  : > "$p8/a.txt"; ( cd "$p8" && git add -A && git commit -qm base )
+  printf 'esto no es un index de git' > "$p8/.git/index"
+  cmd_anclar "$p8" | grep -q 'cierre limpio: no-se-pudo-saber' \
+    || { err "autotest: con git roto el campo debe decir no-se-pudo-saber, no 'sí'"; f=1; }
+  printf '# CONTINUAR — x  ·  cierre 2026-09-12  ·  commit 0000000  ·  cierre limpio: sí\n' > "$p8/CONTINUAR.md"
+  cmd_reconciliar "$p8" >/dev/null 2>&1; local rc8=$?
+  [ "$rc8" -eq 3 ] \
+    || { err "autotest: con git roto reconciliar debe dar 3 (no reconciliable), dio $rc8"; f=1; }
+  # Un archivo llamado '?' es una ruta válida, no una señal de error.
+  local p9="$t/ruta-rara"; mkdir -p "$p9"
+  ( cd "$p9" && git init -q && git config user.email t@t && git config user.name t )
+  : > "$p9/base.txt"; ( cd "$p9" && git add -A && git commit -qm base )
+  : > "$p9/?"
+  cmd_anclar "$p9" | grep -q 'cierre limpio: no' \
+    || { err "autotest: un archivo llamado '?' es trabajo sin commitear, no un error"; f=1; }
 
   # `anclar` estampa la rama actual, y en HEAD desprendido no inventa una.
   cmd_anclar "$p4" | grep -q '(rama feature)' \
