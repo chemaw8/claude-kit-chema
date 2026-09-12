@@ -51,9 +51,12 @@ solo donde haya algo:
 
 ## 3. Escribe el estado nuevo en un borrador
 
-Redáctalo completo en un archivo temporal (no edites `CONTINUAR.md` directo; el
-helper lo reemplaza de forma segura en el paso 4). Usa exactamente esta forma —
-arriba de la línea `---` va lo blindado, abajo lo recortable:
+Redáctalo completo en un archivo temporal **fuera del proyecto** (`/tmp/…`; no
+edites `CONTINUAR.md` directo, que el helper lo reemplaza de forma segura en el
+paso 4). Fuera del proyecto porque un borrador dentro del árbol es un archivo sin
+commitear como cualquier otro, y haría que `anclar` estampe `cierre limpio: no` en
+todo cierre. Usa exactamente esta forma — arriba de la línea `---` va lo blindado,
+abajo lo recortable:
 
 ```markdown
 # CONTINUAR — <proyecto>  ·  cierre <YYYY-MM-DD>  ·  commit <hash> (rama <rama>)  ·  cierre limpio: <sí|no>
@@ -90,7 +93,9 @@ El campo `cierre limpio` **no se escribe a mano ni se asume**: lo calcula `ancla
 mirando si queda trabajo real sin commitear (el papeleo del propio cierre no
 cuenta). Si sale `no`, no lo edites para que diga `sí`: o commiteas lo que falta,
 o lo dejas escrito como frente abierto — es justo el aviso que la próxima sesión
-necesita.
+necesita. Puede salir también `sin-git` (el proyecto no es un repo) o
+`no-se-pudo-saber` (git no respondió): ninguno de los dos es un `sí`, y el segundo
+pide mirar qué pasa con el repo antes de fiarse del estado.
 
 Genera el encabezado con `bash "$ROTAR" anclar <proyecto>` para que la fecha y el
 ancla de git sean reales, no inventadas.
