@@ -1,5 +1,29 @@
 # Changelog — Kit Chema
 
+## v1.21 — 2026-09-12
+Sale de una auditoría del kit con 6 lectores y un council de 4 evaluadores en **dos familias de
+modelos** (el primero del repo), más el revisor adversario del gate de push. El hallazgo que la
+ordena: el kit tenía **reglas que nadie podía incumplir de forma detectable**, y una de ellas
+estaba cableada a la respuesta afirmativa. Núcleo intacto (133/150) y ninguna `description`
+tocada: el gate de disparo no aplica (GOBERNANZA §4).
+- **`scripts/rotar-continuar.sh`: el campo `cierre limpio` se calcula, ya no se estampa.**
+  `cmd_anclar` imprimía `cierre limpio: sí` literal, sin mirar el repo: no podía ser falso nunca
+  —20 de 20 encabezados de la máquina decían `sí`— y la rama de `reconciliar` que reacciona a `no`
+  era código inalcanzable. Ahora lo calcula `limpio_de`, excluyendo el papeleo que el propio
+  `/cierre` tiene pendiente por diseño; sin esa exclusión diría `no` siempre, que es igual de
+  inútil al revés. `sucios_de` queda como única definición de "trabajo real sin commitear" para
+  `anclar` y `reconciliar`: antes el renombre se parseaba distinto en cada sitio. Sin repo git el
+  campo dice `sin-git`: no se inventa un veredicto.
+- **El `contrato` rechaza un gate de arranque escrito como conteo.** `18/18`, `18 de 18`,
+  `199 pruebas`: caducan en cuanto la suite crece y dejan de distinguir un fallo real de un
+  desfase de conteo. El criterio tiene que ser invariante al tamaño (`sin FAIL`, `fail 0`, `todas
+  en verde`); el número puede ir al lado como referencia fechada. **Esto rompe a propósito
+  CONTINUAR.md existentes**: contra los 34 proyectos de una máquina cazó los que seguían caducos.
+- **Plantillas de `/cierre`, `/proyecto-init` y kit-codigo**: piden comando + condición
+  verificable, no "qué debe verse". Es el origen del vicio anterior.
+- Acta corta en `docs/pruebas/council-2026-09-11.md`; la completa vive en el repo privado del
+  entorno porque cita material de trabajo.
+
 ## v1.20 — 2026-09-08 (piloto hasta la puerta de la fase 3, el 2026-09-21)
 Fase 3 del programa de mejora del entorno: **gate de push local**, diseñado por un
 workflow de 3 diseños independientes, 3 jueces y un crítico de completitud (spec 002 de

@@ -51,12 +51,15 @@ solo donde haya algo:
 
 ## 3. Escribe el estado nuevo en un borrador
 
-Redáctalo completo en un archivo temporal (no edites `CONTINUAR.md` directo; el
-helper lo reemplaza de forma segura en el paso 4). Usa exactamente esta forma —
-arriba de la línea `---` va lo blindado, abajo lo recortable:
+Redáctalo completo en un archivo temporal **fuera del proyecto** (`/tmp/…`; no
+edites `CONTINUAR.md` directo, que el helper lo reemplaza de forma segura en el
+paso 4). Fuera del proyecto porque un borrador dentro del árbol es un archivo sin
+commitear como cualquier otro, y haría que `anclar` estampe `cierre limpio: no` en
+todo cierre. Usa exactamente esta forma — arriba de la línea `---` va lo blindado,
+abajo lo recortable:
 
 ```markdown
-# CONTINUAR — <proyecto>  ·  cierre <YYYY-MM-DD>  ·  commit <hash> (rama <rama>)  ·  cierre limpio: sí
+# CONTINUAR — <proyecto>  ·  cierre <YYYY-MM-DD>  ·  commit <hash> (rama <rama>)  ·  cierre limpio: <sí|no>
 > Estado vivo de sesión. Los hechos estables (repo, remoto, stack) viven en
 > CLAUDE.md, no aquí.
 
@@ -69,7 +72,7 @@ arriba de la línea `---` va lo blindado, abajo lo recortable:
 ## Cómo retomar
 - Abrir:    <archivo / carpeta>
 - Correr:   <comando>
-- Verificar arranque: <comando o qué debe verse>
+- Verificar arranque: <comando> → <condición de éxito verificable, no conteo de pruebas>
 
 ## Bloqueadores / esperas
 - <qué + de quién o de qué depende + desde qué fecha>      (o "Ninguno")
@@ -85,6 +88,14 @@ arriba de la línea `---` va lo blindado, abajo lo recortable:
 ## Detalle vivo
 <lo que sigue haciendo falta para el siguiente paso, y nada más>
 ```
+
+El campo `cierre limpio` **no se escribe a mano ni se asume**: lo calcula `anclar`
+mirando si queda trabajo real sin commitear (el papeleo del propio cierre no
+cuenta). Si sale `no`, no lo edites para que diga `sí`: o commiteas lo que falta,
+o lo dejas escrito como frente abierto — es justo el aviso que la próxima sesión
+necesita. Puede salir también `sin-git` (el proyecto no es un repo) o
+`no-se-pudo-saber` (git no respondió): ninguno de los dos es un `sí`, y el segundo
+pide mirar qué pasa con el repo antes de fiarse del estado.
 
 Genera el encabezado con `bash "$ROTAR" anclar <proyecto>` para que la fecha y el
 ancla de git sean reales, no inventadas.
@@ -108,7 +119,7 @@ comparable dentro de la suya. Cierra en la rama donde trabajas: si cierras en `m
 mientras el trabajo vive en una rama de feature, el `CONTINUAR` de `main` no describe
 esa rama y `reconciliar` lo dirá en vez de inventar un rancio.
 
-Tres reglas al redactar:
+Cuatro reglas al redactar:
 
 - **No repitas hechos estables.** Repo, remoto, stack y "qué es el proyecto" van en
   `CLAUDE.md`. Si los copias aquí, envejecerán aquí — es exactamente cómo una ficha
@@ -116,6 +127,12 @@ Tres reglas al redactar:
 - **El siguiente paso tiene que ser ejecutable.** Prueba: ¿alguien que llega en
   frío sabría exactamente qué abrir o qué teclear? "Continuar el análisis" no pasa;
   "correr `scripts/03-modelo.py` y comparar el R² contra el corte de junio" sí.
+- **Gates por condición, no por conteo.** Escribe comando + condición; por ejemplo,
+  `bash verificar.sh` → termina con código de salida 0, ejecuta la suite prevista
+  completa y no reporta fallos ni errores. No uses `18/18 PASS` como criterio:
+  añadir una prueba no cambia la condición. Los conteos van solo como evidencia
+  con fecha `YYYY-MM-DD`. Si hay un fallo real, repórtalo; no ajustes el conteo
+  para ocultarlo.
 - **Sobrescribe, no acumules.** El estado es una foto fresca de hoy, no un
   sedimento de todas las sesiones.
 

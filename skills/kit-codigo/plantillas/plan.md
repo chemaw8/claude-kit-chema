@@ -16,4 +16,8 @@
      es una preferencia sin auditar. Las caras van también a DECISIONES.md. -->
 
 ## Estrategia de verificación
-<!-- Qué se testea y qué se comprueba a mano. Cada RF debe aparecer aquí. -->
+<!-- Qué se testea y qué se comprueba a mano. Cada RF debe aparecer aquí.
+     Para cada gate: comando + condición de éxito verificable; en una suite,
+     ejecución completa del alcance previsto, código de salida 0 y sin fallos
+     ni errores, no un total fijo de pruebas. En lo manual, pasos + condición
+     observable. Conteos solo como evidencia con fecha YYYY-MM-DD, nunca criterio. -->
