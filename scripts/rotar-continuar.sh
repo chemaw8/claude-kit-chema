@@ -723,10 +723,21 @@ EOF
   local p8="$t/git-roto"; mkdir -p "$p8"
   ( cd "$p8" && git init -q && git config user.email t@t && git config user.name t )
   : > "$p8/a.txt"; ( cd "$p8" && git add -A && git commit -qm base )
+  # El encabezado se escribe con el ancla REAL y en su propia rama: así el ÚNICO
+  # motivo posible del veredicto 3 es que git no responda. Con un ancla inventada la
+  # aserción pasaba por el camino de 'ancla que no se resuelve', que también da 3, y
+  # no podía ponerse roja si se borrara la rama fail-closed (ronda 5 del revisor).
+  local H8 R8
+  H8="$(cd "$p8" && git rev-parse --short HEAD)"; R8="$(cd "$p8" && git rev-parse --abbrev-ref HEAD)"
+  printf '# CONTINUAR — git-roto  ·  cierre 2026-09-12  ·  commit %s (rama %s)  ·  cierre limpio: sí\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Correr: make run\n\n## Bloqueadores / esperas\n- Ninguno\n' \
+    "$H8" "$R8" > "$p8/CONTINUAR.md"
+  ( cd "$p8" && git add -A && git commit -qm papeleo )
+  # Con el repo sano y el ancla al día, reconciliar sale FRESCO: eso fija la línea base.
+  cmd_reconciliar "$p8" >/dev/null 2>&1 \
+    || { err "autotest: con el repo sano y el ancla al día debía salir fresco"; f=1; }
   printf 'esto no es un index de git' > "$p8/.git/index"
   cmd_anclar "$p8" | grep -qE 'cierre limpio: no-se-pudo-saber$' \
     || { err "autotest: con git roto el campo debe decir no-se-pudo-saber, no 'sí'"; f=1; }
-  printf '# CONTINUAR — x  ·  cierre 2026-09-12  ·  commit 0000000  ·  cierre limpio: sí\n' > "$p8/CONTINUAR.md"
   cmd_reconciliar "$p8" >/dev/null 2>&1; local rc8=$?
   [ "$rc8" -eq 3 ] \
     || { err "autotest: con git roto reconciliar debe dar 3 (no reconciliable), dio $rc8"; f=1; }
