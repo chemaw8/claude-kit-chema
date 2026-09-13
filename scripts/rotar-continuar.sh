@@ -673,12 +673,12 @@ EOF
   local p6="$t/limpio-demo"; mkdir -p "$p6"
   ( cd "$p6" && git init -q && git config user.email t@t && git config user.name t )
   : > "$p6/app.js"; ( cd "$p6" && git add -A && git commit -qm base )
-  cmd_anclar "$p6" | grep -q 'cierre limpio: sí' \
+  cmd_anclar "$p6" | grep -qE 'cierre limpio: sí$' \
     || { err "autotest: árbol limpio debe anclar 'cierre limpio: sí'"; f=1; }
   # El papeleo del propio /cierre está pendiente POR DISEÑO en el momento de anclar
   # (se commitea después): no puede contar como trabajo sin cerrar.
   : > "$p6/CONTINUAR.md"; mkdir -p "$p6/docs"; : > "$p6/docs/bitacora.md"
-  cmd_anclar "$p6" | grep -q 'cierre limpio: sí' \
+  cmd_anclar "$p6" | grep -qE 'cierre limpio: sí$' \
     || { err "autotest: el papeleo del cierre no debe marcar el cierre como sucio"; f=1; }
   # Un RENOMBRE cuenta por sus DOS lados: mover un archivo real a un nombre de
   # papeleo no puede blanquear el cierre (el mismo hueco que `reconciliar` ya
@@ -691,15 +691,15 @@ EOF
   ( cd "$p6" && git add -A && git commit -qm "app con contenido" && git mv app.js CLAUDE.md )
   ( cd "$p6" && git status --porcelain | grep -q '^R' ) \
     || { err "autotest: el caso del renombre no produjo un renombre ('R'), no prueba nada"; f=1; }
-  cmd_anclar "$p6" | grep -q 'cierre limpio: no' \
+  cmd_anclar "$p6" | grep -qE 'cierre limpio: no$' \
     || { err "autotest: mover un archivo real a un nombre de papeleo no blanquea el cierre"; f=1; }
   ( cd "$p6" && git mv CLAUDE.md app.js )
   # ...pero trabajo real sin commitear sí, esté indexado o no.
   mkdir -p "$p6/web"; : > "$p6/web/nuevo.js"
-  cmd_anclar "$p6" | grep -q 'cierre limpio: no' \
+  cmd_anclar "$p6" | grep -qE 'cierre limpio: no$' \
     || { err "autotest: trabajo real sin commitear debe anclar 'cierre limpio: no'"; f=1; }
   ( cd "$p6" && git add web/nuevo.js )
-  cmd_anclar "$p6" | grep -q 'cierre limpio: no' \
+  cmd_anclar "$p6" | grep -qE 'cierre limpio: no$' \
     || { err "autotest: trabajo indexado sin commitear también es cierre sucio"; f=1; }
   # Y lo que anclar escribe como "no", reconciliar tiene que saber leerlo. La rama se
   # aísla a propósito sobre un árbol LIMPIO: con archivos sucios presentes, reconciliar
@@ -715,7 +715,7 @@ EOF
     || { err "autotest: reconciliar debe reaccionar al 'no' del encabezado sobre árbol limpio, dio $rc6"; f=1; }
   # Sin git no se inventa un veredicto.
   local p7="$t/sin-git-demo"; mkdir -p "$p7"
-  cmd_anclar "$p7" | grep -q 'cierre limpio: sin-git' \
+  cmd_anclar "$p7" | grep -qE 'cierre limpio: sin-git$' \
     || { err "autotest: sin repo git el campo no se inventa"; f=1; }
   # Y si git EXISTE pero falla, el campo tampoco se inventa: el fallo no puede abrir
   # hacia el veredicto optimista. Es la rama que nadie ejercita en uso normal — y que
@@ -724,7 +724,7 @@ EOF
   ( cd "$p8" && git init -q && git config user.email t@t && git config user.name t )
   : > "$p8/a.txt"; ( cd "$p8" && git add -A && git commit -qm base )
   printf 'esto no es un index de git' > "$p8/.git/index"
-  cmd_anclar "$p8" | grep -q 'cierre limpio: no-se-pudo-saber' \
+  cmd_anclar "$p8" | grep -qE 'cierre limpio: no-se-pudo-saber$' \
     || { err "autotest: con git roto el campo debe decir no-se-pudo-saber, no 'sí'"; f=1; }
   printf '# CONTINUAR — x  ·  cierre 2026-09-12  ·  commit 0000000  ·  cierre limpio: sí\n' > "$p8/CONTINUAR.md"
   cmd_reconciliar "$p8" >/dev/null 2>&1; local rc8=$?
@@ -735,7 +735,7 @@ EOF
   ( cd "$p9" && git init -q && git config user.email t@t && git config user.name t )
   : > "$p9/base.txt"; ( cd "$p9" && git add -A && git commit -qm base )
   : > "$p9/?"
-  cmd_anclar "$p9" | grep -q 'cierre limpio: no' \
+  cmd_anclar "$p9" | grep -qE 'cierre limpio: no$' \
     || { err "autotest: un archivo llamado '?' es trabajo sin commitear, no un error"; f=1; }
 
   # `anclar` estampa la rama actual, y en HEAD desprendido no inventa una.
