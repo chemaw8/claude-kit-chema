@@ -59,6 +59,13 @@ juez Sonnet de contexto fresco por petición en paralelo (~15 s, una llamada cor
 tabla y el veredicto con el criterio de arriba; sale 1 si no pasa. Pega el resultado
 en `disparo-descriptions.md` con fecha.
 
+Al declarar este gate en una ficha o en `CONTINUAR.md`, usa
+`python3 docs/pruebas/disparo.py --modelo sonnet` → código de salida 0 tras evaluar
+el banco completo y cumplir proporcional + fronteras. No exijas un resumen como
+`21/21`: los conteos son evidencia con fecha `YYYY-MM-DD`, no el criterio de paso.
+El umbral sobre el núcleo canónico de arriba es una política explícita; esta
+regla no lo modifica ni permite relajarlo ante un fallo.
+
 ## Gate de push — prueba en vivo (2026-09-07, repo piloto claude-kit-chema)
 
 La única prueba del gate que gasta cuota. Todo lo demás corre sin red

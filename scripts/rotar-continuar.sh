@@ -56,11 +56,56 @@ ancla_de() {
 
 nombre_de() { basename "$(cd "$1" && pwd)"; }
 
+# Papeleo del propio cierre: /cierre escribe CONTINUAR.md, rota a la bitácora y de
+# paso puede tocar la ficha o DECISIONES. Esos archivos están pendientes por diseño
+# en el momento de anclar, así que no cuentan como trabajo sin cerrar. Lo usan
+# `anclar` (para calcular el campo) y `reconciliar` (para juzgarlo).
+PAPELEO='(^|/)(CONTINUAR|CLAUDE|DECISIONES)\.md$|(^|/)docs/bitacora\.md$|(^|/)\.claude/settings\.json$|(^|/)\.gitignore$'
+
+# Trabajo REAL sin commitear, una sola definición para los dos que la necesitan.
+# El estado ocupa las 2 primeras columnas y la ruta empieza en la 4ª: se corta por
+# POSICIÓN, no por campos. En un RENOMBRE ("R  ficha.md -> codigo.py") cuentan LOS
+# DOS lados: quedarse con el origen deja pasar mover el papeleo a un archivo real, y
+# quedarse con el destino deja pasar lo contrario —que un archivo real desaparezca
+# hacia un nombre de papeleo—, que es el mismo hueco del revés. (Las rutas con
+# espacios las entrecomilla git, por eso se quitan las comillas al final.)
+# --untracked-files=all: sin eso git colapsa una carpeta nueva en '?? docs/' y el
+# filtro de papeleo no la reconoce; con eso lista archivo por archivo.
+# Si `git status` falla dentro de un repo válido (index bloqueado, permisos,
+# submódulo roto), la salida vacía se leía como árbol limpio: el fallo abría hacia
+# el veredicto optimista, justo el que este cambio quiere dejar de regalar. Se
+# mira el código de salida y se responde "?" — desconocido, no limpio.
+# El fallo se señala por CÓDIGO DE SALIDA (3), nunca por un centinela de texto: una
+# ruta puede ser cualquier cosa, incluido un archivo llamado "?", y un centinela que
+# también puede ser un dato válido no distingue nada.
+sucios_de() {
+  local salida rc lista
+  salida="$(git -C "$1" status --porcelain --untracked-files=all 2>/dev/null)"; rc=$?
+  [ "$rc" -ne 0 ] && return 3
+  lista="$(printf '%s\n' "$salida" | awk '
+      { ruta = substr($0, 4); i = index(ruta, " -> ")
+        if (i) { print substr(ruta, 1, i - 1); print substr(ruta, i + 4) }
+        else print ruta }' \
+    | sed -E 's/^"//; s/"$//' | grep -vE "$PAPELEO" || true)"   # grep sin coincidencias sale 1
+  printf '%s' "$lista"
+}
+
+# ¿Queda trabajo real sin commitear? Se calcula, no se declara: el campo que se
+# estampaba siempre en "sí" no podía delatar nunca un cierre sucio, y la rama de
+# `reconciliar` que reacciona a "no" era código inalcanzable.
+limpio_de() {
+  local dir="$1" s rc
+  git -C "$dir" rev-parse --git-dir >/dev/null 2>&1 || { echo "sin-git"; return; }
+  s="$(sucios_de "$dir")"; rc=$?
+  [ "$rc" -eq 3 ] && { echo "no-se-pudo-saber"; return; }
+  [ -n "$s" ] && echo "no" || echo "sí"
+}
+
 # ── anclar ────────────────────────────────────────────────────────────────
 cmd_anclar() {
   local dir="${1:-.}"
-  printf '# CONTINUAR — %s  ·  cierre %s  ·  %s  ·  cierre limpio: sí\n' \
-    "$(nombre_de "$dir")" "$HOY" "$(ancla_de "$dir")"
+  printf '# CONTINUAR — %s  ·  cierre %s  ·  %s  ·  cierre limpio: %s\n' \
+    "$(nombre_de "$dir")" "$HOY" "$(ancla_de "$dir")" "$(limpio_de "$dir")"
 }
 
 # ── reconciliar ───────────────────────────────────────────────────────────
@@ -109,7 +154,7 @@ cmd_reconciliar() {
   # adelante aunque no haya trabajo real pendiente. El estado sigue fresco si lo
   # ÚNICO que cambió desde el ancla son esos archivos narrativos del kit — el
   # "trabajo real" que sí delata un estado rancio es código, datos, scripts.
-  local PAPELEO='(^|/)(CONTINUAR|CLAUDE|DECISIONES)\.md$|(^|/)docs/bitacora\.md$|(^|/)\.claude/settings\.json$|(^|/)\.gitignore$'
+  # (el patrón vive arriba, junto a limpio_de: lo comparten anclar y reconciliar)
 
   # Cambios SIN commitear que no sean el papeleo son trabajo sin cerrar, y eso es
   # cierto en CUALQUIER rama. Va antes del cruce de ramas de abajo a propósito: el
@@ -123,11 +168,11 @@ cmd_reconciliar() {
   # papeleo—, que es el mismo hueco del revés. (Las rutas con espacios NO eran el
   # problema: git las entrecomilla, comprobado — `?? "CLAUDE.md viejo.py"` —, y por eso
   # se quitan las comillas al final; el corte por posición las cubre de paso.)
-  sucios="$(git -C "$dir" status --porcelain 2>/dev/null | awk '
-              { ruta = substr($0, 4); i = index(ruta, " -> ")
-                if (i) { print substr(ruta, 1, i - 1); print substr(ruta, i + 4) }
-                else print ruta }' \
-            | sed -E 's/^"//; s/"$//' | grep -vE "$PAPELEO")"
+  local rcs
+  sucios="$(sucios_de "$dir")"; rcs=$?
+  if [ "$rcs" -eq 3 ]; then
+    err "no se pudo leer el estado de git en $dir — no se puede reconciliar"; return 3
+  fi
   if [ -n "$sucios" ]; then
     err "hay cambios sin commitear después del cierre:"
     printf '%s\n' "$sucios" | sed 's/^/     · /' >&2
@@ -208,9 +253,28 @@ tramos = re.findall(r"^## +Cómo retomar\n(.*?)(?=^## |\Z)", texto, re.M | re.S)
 # y el match ya llega normalizado a relativo.
 EXT = r"(?:py|sh|md|sql|R|rb|go|js|mjs|ts|tsx|ipynb)"
 PAT = re.compile(rf"[\w][\w./-]*\.{EXT}(?![\w.])")
-citados, faltantes = set(), []
+# Un gate de arranque escrito como conteo ('18/18', '199/199') caduca en cuanto la
+# suite crece, y entonces deja de distinguir un fallo real de un desfase de conteo:
+# medido el 2026-09-11, cuatro proyectos lo tenían caduco y uno escondía un FAIL de
+# verdad. El criterio tiene que ser INVARIANTE al tamaño de la suite. El conteo
+# puede quedar al lado como referencia fechada, nunca como criterio solo.
+# El criterio se busca por lo que la línea ES, no por una cadena literal: "Verificar
+# arranque", "Verificar el arranque", "Gate:" o "Arranque:", en cualquier caja.
+GATE = re.compile(r"verificar\b.{0,12}\barranque|^\s*[-*·]?\s*(?:gate|arranque)\s*:", re.I)
+# Una FECHA lleva barras y no es un conteo: se quita de la línea antes de buscar.
+FECHA = re.compile(r"\b\d{4}\s*/\s*\d{1,2}\s*/\s*\d{1,2}\b|\b\d{1,2}\s*/\s*\d{1,2}\s*/\s*\d{4}\b")
+# 'casos' queda fuera a propósito: 'procesa 5 casos y escribe salida.csv' es una
+# comprobación funcional, no un conteo de suite.
+CONTEO = re.compile(r"\b\d+\s*(?:/|\s+de\s+)\s*\d+\b|\b\d+\s+(?:tests?|pruebas?|chequeos?|checks?)\b", re.I)
+INVARIANTE = re.compile(
+    r"todas? en verde|en verde|fail\w*\s*[:=]?\s*0|sin\s+fail|sin\s+fallos?"
+    r"|0\s+fallos?|exit\s*(?:code\s*)?0|salida\s*0|sin\s+errores|todos?\s+los\s+chequeos",
+    re.I)
+citados, faltantes, caducos = set(), [], []
 for t in tramos:
     for linea in t.splitlines():
+        if GATE.search(linea) and CONTEO.search(FECHA.sub(" ", linea)) and not INVARIANTE.search(linea):
+            caducos.append(linea.strip()[:110])
         # Se valida por CAMPO (delimitado por espacios o backticks), no por línea
         # entera: así un glob o una URL en la línea no apaga la comprobación de un
         # archivo real citado al lado, y un '?' de la prosa no desactiva nada.
@@ -229,9 +293,13 @@ for t in tramos:
 for c in sorted(citados):
     if not os.path.exists(os.path.join(raiz, c)):
         faltantes.append(c)
-if faltantes:
-    for c in faltantes:
-        print(f"✗ 'Cómo retomar' cita un archivo que no existe: {c}", file=sys.stderr)
+for c in caducos:
+    print(f"✗ el gate de arranque es un conteo que caduca, no una condición: {c}", file=sys.stderr)
+    print("  → di el comando y qué debe verse ('sin FAIL', 'fail 0', 'todas en verde');"
+          " el número puede quedar al lado como referencia fechada.", file=sys.stderr)
+for c in faltantes:
+    print(f"✗ 'Cómo retomar' cita un archivo que no existe: {c}", file=sys.stderr)
+if faltantes or caducos:
     sys.exit(1)
 PY
   if [ "$faltan" -eq 0 ]; then ok "contrato completo ($(wc -l < "$f") líneas)"; return 0; fi
@@ -470,6 +538,40 @@ EOF
   printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] crear `salida/reporte-2026.csv`\n\n## Cómo retomar\n- Correr: `python scripts/run.py`\n- Logs: `tests/*.spec.js`\n- Estado: `registro-envios.jsonl`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
   if ! cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: falso positivo (glob/.jsonl/paso-futuro no deben fallar)"; f=1; fi
 
+  # El gate de arranque no puede ser un conteo que caduca (condición del council
+  # del 2026-09-11 al ítem de gates: sin esto, el cambio de plantilla es prosa que
+  # nada comprueba — `contrato` aceptaba tal cual un 'Verificar arranque: … 18/18').
+  printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Verificar arranque: `python scripts/run.py` → debe dar 18/18 PASS\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
+  if cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: un gate '18/18' debió fallar el contrato"; f=1; fi
+  # ...pero el conteo COMO REFERENCIA, con una condición invariante al lado, pasa.
+  printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Verificar arranque: `python scripts/run.py` → todas en verde, `fail 0` (hoy 18/18, 2026-09-12)\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
+  if ! cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: el conteo como referencia fechada no debe fallar"; f=1; fi
+  # Una cifra ESPERADA (un total que debe imprimirse) no es un conteo de suite y no
+  # se toca: si esto fallara, el chequeo sería inusable en medio proyecto de datos.
+  printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Verificar arranque: `python scripts/run.py` imprime 110,234,723 y termina en OK\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
+  if ! cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: una cifra esperada no es un gate caduco"; f=1; fi
+  # El conteo caduca igual sin barra: '18 de 18' y '199 pruebas' son la misma trampa.
+  # (Lo cazó el revisor adversario del gate de push: la primera versión del detector
+  # solo veía la forma con barra, y el caso que lo probaba no podía fallar nunca.)
+  local forma
+  for forma in '18 de 18' '199 pruebas OK' '32 tests'; do
+    printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Verificar arranque: `python scripts/run.py` → %s\n\n## Bloqueadores / esperas\n- Ninguno\n' "$forma" > "$p/CONTINUAR.md"
+    if cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: el gate '$forma' debió fallar el contrato"; f=1; fi
+  done
+  # El gate se reconoce por lo que la línea es, no por una cadena literal.
+  local variante
+  for variante in 'Verificar el arranque' 'verificar arranque' 'Gate'; do
+    printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- %s: `pytest` → 18/18\n\n## Bloqueadores / esperas\n- Ninguno\n' "$variante" > "$p/CONTINUAR.md"
+    if cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: '$variante' con 18/18 debió fallar"; f=1; fi
+  done
+  # Y no puede cazar lo que no es un conteo de suite: una FECHA con barras, o una
+  # comprobación funcional con un número de casos.
+  local inocente
+  for inocente in 'OK (revisado 2026/09/12)' 'procesa 5 casos y escribe salida.csv'; do
+    printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Verificar arranque: `make test` → %s\n\n## Bloqueadores / esperas\n- Ninguno\n' "$inocente" > "$p/CONTINUAR.md"
+    if ! cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: falso positivo del gate caduco en '$inocente'"; f=1; fi
+  done
+
   # URL en "Cómo retomar": no es un archivo local, no debe fallar.
   printf '# CONTINUAR — x  ·  cierre 2026-08-26\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Guía: https://raw.githubusercontent.com/foo/bar/main/README.md\n- Correr: `python scripts/run.py`\n\n## Bloqueadores / esperas\n- Ninguno\n' > "$p/CONTINUAR.md"
   if ! cmd_contrato "$p" >/dev/null 2>&1; then err "autotest: una URL en Cómo retomar no debe fallar el contrato"; f=1; fi
@@ -564,6 +666,89 @@ EOF
   [ "$rc4" -eq 1 ] \
     || { err "autotest: lo sin commitear debe marcar rancio aunque el ancla sea de otra rama, dio $rc4"; f=1; }
   rm -f "$p4/sucio.sh"
+  # El campo "cierre limpio" se CALCULA. Antes se estampaba "sí" siempre, así que
+  # no podía delatar un cierre sucio y la rama de reconciliar que reacciona a "no"
+  # era inalcanzable (medido el 2026-09-11: 20 de 20 CONTINUAR.md decían "sí", y
+  # uno de ellos tenía trabajo hecho y probado sin commitear desde hacía tres días).
+  local p6="$t/limpio-demo"; mkdir -p "$p6"
+  ( cd "$p6" && git init -q && git config user.email t@t && git config user.name t )
+  : > "$p6/app.js"; ( cd "$p6" && git add -A && git commit -qm base )
+  cmd_anclar "$p6" | grep -qE 'cierre limpio: sí$' \
+    || { err "autotest: árbol limpio debe anclar 'cierre limpio: sí'"; f=1; }
+  # El papeleo del propio /cierre está pendiente POR DISEÑO en el momento de anclar
+  # (se commitea después): no puede contar como trabajo sin cerrar.
+  : > "$p6/CONTINUAR.md"; mkdir -p "$p6/docs"; : > "$p6/docs/bitacora.md"
+  cmd_anclar "$p6" | grep -qE 'cierre limpio: sí$' \
+    || { err "autotest: el papeleo del cierre no debe marcar el cierre como sucio"; f=1; }
+  # Un RENOMBRE cuenta por sus DOS lados: mover un archivo real a un nombre de
+  # papeleo no puede blanquear el cierre (el mismo hueco que `reconciliar` ya
+  # documentaba y que la primera versión de limpio_de reabrió — aviso 4 del revisor
+  # adversario del gate de push, 2026-09-12).
+  # El archivo lleva contenido a propósito: git no detecta renombres entre blobs
+  # vacíos, y con 'D' + 'A' el caso pasaría también con el parseo viejo — no fijaría
+  # la regresión que dice fijar (aviso 6 del revisor adversario).
+  printf 'contenido real para que git detecte el renombre\n' > "$p6/app.js"
+  ( cd "$p6" && git add -A && git commit -qm "app con contenido" && git mv app.js CLAUDE.md )
+  ( cd "$p6" && git status --porcelain | grep -q '^R' ) \
+    || { err "autotest: el caso del renombre no produjo un renombre ('R'), no prueba nada"; f=1; }
+  cmd_anclar "$p6" | grep -qE 'cierre limpio: no$' \
+    || { err "autotest: mover un archivo real a un nombre de papeleo no blanquea el cierre"; f=1; }
+  ( cd "$p6" && git mv CLAUDE.md app.js )
+  # ...pero trabajo real sin commitear sí, esté indexado o no.
+  mkdir -p "$p6/web"; : > "$p6/web/nuevo.js"
+  cmd_anclar "$p6" | grep -qE 'cierre limpio: no$' \
+    || { err "autotest: trabajo real sin commitear debe anclar 'cierre limpio: no'"; f=1; }
+  ( cd "$p6" && git add web/nuevo.js )
+  cmd_anclar "$p6" | grep -qE 'cierre limpio: no$' \
+    || { err "autotest: trabajo indexado sin commitear también es cierre sucio"; f=1; }
+  # Y lo que anclar escribe como "no", reconciliar tiene que saber leerlo. La rama se
+  # aísla a propósito sobre un árbol LIMPIO: con archivos sucios presentes, reconciliar
+  # ya devolvería 1 por otra rama y el caso pasaría aunque la lectura del campo se
+  # borrara del script (aviso 2 del revisor adversario).
+  ( cd "$p6" && git add -A && git commit -qm "todo commiteado" )
+  printf '# CONTINUAR — limpio-demo  ·  cierre 2026-09-12  ·  commit %s  ·  cierre limpio: no\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Correr: make run\n\n## Bloqueadores / esperas\n- Ninguno\n' \
+    "$(cd "$p6" && git rev-parse --short HEAD)" > "$p6/CONTINUAR.md"
+  ( cd "$p6" && git add -A && git commit -qm "papeleo" )
+  [ -z "$(sucios_de "$p6")" ] || { err "autotest: el caso del 'no' debe correr sobre un árbol limpio"; f=1; }
+  cmd_reconciliar "$p6" >/dev/null 2>&1; local rc6=$?
+  [ "$rc6" -eq 1 ] \
+    || { err "autotest: reconciliar debe reaccionar al 'no' del encabezado sobre árbol limpio, dio $rc6"; f=1; }
+  # Sin git no se inventa un veredicto.
+  local p7="$t/sin-git-demo"; mkdir -p "$p7"
+  cmd_anclar "$p7" | grep -qE 'cierre limpio: sin-git$' \
+    || { err "autotest: sin repo git el campo no se inventa"; f=1; }
+  # Y si git EXISTE pero falla, el campo tampoco se inventa: el fallo no puede abrir
+  # hacia el veredicto optimista. Es la rama que nadie ejercita en uso normal — y que
+  # el revisor adversario del gate de push señaló como vendida y no probada.
+  local p8="$t/git-roto"; mkdir -p "$p8"
+  ( cd "$p8" && git init -q && git config user.email t@t && git config user.name t )
+  : > "$p8/a.txt"; ( cd "$p8" && git add -A && git commit -qm base )
+  # El encabezado se escribe con el ancla REAL y en su propia rama: así el ÚNICO
+  # motivo posible del veredicto 3 es que git no responda. Con un ancla inventada la
+  # aserción pasaba por el camino de 'ancla que no se resuelve', que también da 3, y
+  # no podía ponerse roja si se borrara la rama fail-closed (ronda 5 del revisor).
+  local H8 R8
+  H8="$(cd "$p8" && git rev-parse --short HEAD)"; R8="$(cd "$p8" && git rev-parse --abbrev-ref HEAD)"
+  printf '# CONTINUAR — git-roto  ·  cierre 2026-09-12  ·  commit %s (rama %s)  ·  cierre limpio: sí\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Correr: make run\n\n## Bloqueadores / esperas\n- Ninguno\n' \
+    "$H8" "$R8" > "$p8/CONTINUAR.md"
+  ( cd "$p8" && git add -A && git commit -qm papeleo )
+  # Con el repo sano y el ancla al día, reconciliar sale FRESCO: eso fija la línea base.
+  cmd_reconciliar "$p8" >/dev/null 2>&1 \
+    || { err "autotest: con el repo sano y el ancla al día debía salir fresco"; f=1; }
+  printf 'esto no es un index de git' > "$p8/.git/index"
+  cmd_anclar "$p8" | grep -qE 'cierre limpio: no-se-pudo-saber$' \
+    || { err "autotest: con git roto el campo debe decir no-se-pudo-saber, no 'sí'"; f=1; }
+  cmd_reconciliar "$p8" >/dev/null 2>&1; local rc8=$?
+  [ "$rc8" -eq 3 ] \
+    || { err "autotest: con git roto reconciliar debe dar 3 (no reconciliable), dio $rc8"; f=1; }
+  # Un archivo llamado '?' es una ruta válida, no una señal de error.
+  local p9="$t/ruta-rara"; mkdir -p "$p9"
+  ( cd "$p9" && git init -q && git config user.email t@t && git config user.name t )
+  : > "$p9/base.txt"; ( cd "$p9" && git add -A && git commit -qm base )
+  : > "$p9/?"
+  cmd_anclar "$p9" | grep -qE 'cierre limpio: no$' \
+    || { err "autotest: un archivo llamado '?' es trabajo sin commitear, no un error"; f=1; }
+
   # `anclar` estampa la rama actual, y en HEAD desprendido no inventa una.
   cmd_anclar "$p4" | grep -q '(rama feature)' \
     || { err "autotest: anclar debe estampar la rama actual"; f=1; }

@@ -44,6 +44,10 @@ Este es el orden; el primer paso es el que más se salta y el que más cuesta.
 4. Verificación end-to-end real. Corre la app o el script con datos verdaderos y
    mira la salida. Un script de datos se ejecuta contra el archivo real; un
    endpoint se llama y se revisa la respuesta.
+   Al documentar un gate, deja comando + condición verificable (suite prevista
+   completa, código de salida 0 y sin fallos ni errores), no un total fijo de tests.
+   Conserva el código de salida real; un conteo solo es evidencia fechada, nunca
+   criterio de aceptación. Si falla, repórtalo: no cambies el criterio para pasarlo.
 5. Limpieza del diff. Antes de cerrar, repasa el diff completo (`git diff`) y
    quita todo lo que no aporta a la tarea.
 

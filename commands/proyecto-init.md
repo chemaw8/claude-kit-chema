@@ -62,7 +62,7 @@ historia larga en docs/bitacora.md. **Al retomar, corre primero
 reconstruye del git diff antes de creerle. Luego léelos antes de proponer cambios.
 
 ## Stack y cómo correr
-<solo comandos verificados en el paso 2>
+<solo comandos verificados en el paso 2; cada gate con su condición de éxito, no un conteo>
 
 ## Datos
 <de dónde salen, dónde viven, qué NO se versiona>
@@ -78,10 +78,14 @@ reconstruye del git diff antes de creerle. Luego léelos antes de proponer cambi
 multi-sesión, recuerda aquí la capa specs/NNN del estándar de kit-codigo>
 ```
 
-Dos reglas de contenido:
+Tres reglas de contenido:
 
 - **Cero estado.** "Vamos en la fase 2" no es ficha, es `CONTINUAR.md`. La ficha
   es lo que sigue siendo cierto dentro de seis meses.
+- **Gates por condición.** Junto al comando verificado, escribe qué decide el éxito
+  (suite prevista completa, código de salida 0 y sin fallos ni errores), nunca un
+  total fijo de pruebas. Los conteos solo son evidencia fechada en `CONTINUAR.md`
+  o la bitácora, no un criterio ni un hecho estable de la ficha.
 - **La confidencialidad se verifica contra git**, nunca contra la memoria. Corre
   `git remote -v` y `git status --ignored`: una ficha que hereda un "sin remoto"
   viejo es justo el error que este diseño existe para evitar.
