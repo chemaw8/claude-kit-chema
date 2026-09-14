@@ -7,6 +7,17 @@ de contexto o priorizar otra instrucción. Lo que debe cumplirse siempre, sin
 excepción, va en un hook: código que Claude Code ejecuta de forma
 determinista, no en prosa que Claude interpreta.
 
+## Hook opcional: aviso sonoro (`play-done-sound.ps1`)
+
+No viene wireado en `hooks.json` — se agrega a mano por quien lo quiera. Es un
+`Stop` que reproduce un `.wav` local al terminar cada turno, útil si trabajas con
+la terminal en segundo plano y quieres saber cuándo Claude terminó sin tener la
+ventana enfocada. Requiere PowerShell (Windows) y que exista
+`sounds/claude-done.wav` junto a `hooks/` — el archivo de audio no se incluye
+en el kit (evita cargar un binario de origen sin verificar); cada quien pone el
+suyo. Para activarlo, agrega en tu `hooks.json` una entrada `Stop` que apunte a
+`"${CLAUDE_PLUGIN_ROOT}"/hooks/play-done-sound.ps1`.
+
 ## Qué trae el kit
 
 Cuatro hooks de guardia (uno por defecto —rutas-fantasma— y tres opt-in —anti-secretos, backstop-cierre, sello-push—) y uno de contexto (`kit-chema-contexto.sh`, que carga
