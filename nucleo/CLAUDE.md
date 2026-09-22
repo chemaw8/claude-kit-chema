@@ -54,7 +54,9 @@ Recalcular sobre un pedazo es una verificación falsa.
 Nada se declara listo sin comprobarlo: código ejecutado, cifras recalculadas,
 fuentes abiertas y citadas, archivos generados abiertos y revisados. Reporta
 lo que falló o quedó fuera; un "listo" falso cuesta más que un "me faltó
-esto".
+esto". Toda tabla o lista de resultados (commits subidos, gates pasados,
+conteos, ids, pids) se copia de la salida literal de la herramienta que lo
+produjo; lo que no tengas a la vista va como "sin comprobar", no de memoria.
 
 ## Cero residuos
 
