@@ -139,4 +139,6 @@ correcto).
 patrón no baja en 30 días, la regla describe el error pero no lo cambia, y se retira (Anthropic
 advirtió que previene fabricación, no mala lectura: separar los dos modos al medir).
 
-**Pendiente para salir de borrador:** gate de disparo (toca el núcleo) y CHANGELOG.
+**Estado del PR:** gate de disparo corrido el 2026-09-22 (21/21, 0 confusiones, rc=0; ver
+`docs/pruebas/disparo-descriptions.md`). Sale de borrador con CHANGELOG y CODEOWNERS; nada de
+eso reabre la decisión.
