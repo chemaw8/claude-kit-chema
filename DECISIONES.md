@@ -111,3 +111,40 @@ versión a mitad de la corrida: la magnitud varía entre lecturas, la dirección
 `sintetizador` a Opus 5 (dejaría el escalón Fable sin ningún agente, que era el hueco que el
 council quiso llenar); y medir síntesis antes de fusionar (pide un caso dorado nuevo y firma
 del mantenedor; queda pendiente y es lo que bajaría al agente de escalón).
+
+## 2026-09-22 — Regla de núcleo: los resultados reportados salen de la salida de la herramienta (PR #47)
+
+**Decidido.** Entra al núcleo, sección «Terminado significa verificado», una regla operativa:
+toda tabla o lista de resultados toma sus valores de la salida que los produjo, sin volcarla
+entera; lo que no se pueda comprobar tras intentarlo va como "sin comprobar", nunca de memoria.
+Núcleo 133 → 136 líneas; el margen (14) la absorbe.
+
+**Por qué al núcleo y no a una skill.** El fallo es transversal a los siete dominios y ocurrió
+*con* la regla general ("cifras recalculadas… un listo falso cuesta más") ya instalada: en el
+advisor, 59 de 76 hard_blockers (78 %) y 91 de 182 concerns del 2026-09-06 al 09-22 casan por
+palabra clave con "afirma X y la salida no lo respalda". **Es coincidencia por palabras clave,
+no errores confirmados uno a uno** (objeción de Codex, heredada); los ejemplos concretos
+(pid 902125 vs 902135; tabla de 9 corridas contra 7 listadas) bastan para una adición de tres
+líneas reversible por PR.
+
+**Council** (Anthropic Opus 5, OpenAI Astra, Kimi K3; ciegos entre sí): 3 × *aprobada con
+cambios*. Cambios aplicados: (1) "copia de la salida literal" era ambiguo con «Presupuesto de
+contexto» y con "nunca un volcado" → "toma sus valores… sin volcarla entera" (los tres);
+(2) ejemplos solo de código → se antepone "cifras" (Anthropic); (3) "sin comprobar" podía ser
+muletilla que vacía la regla → "lo que no puedas comprobar **tras intentarlo**" (Kimi).
+Descartado: definir "a la vista" (Anthropic lo dejó como menor; el default conservador ya es el
+correcto).
+
+**Cómo se sabrá si sirvió.** El advisor sigue midiendo; si la proporción de hard_blockers de este
+patrón no baja en 30 días, la regla describe el error pero no lo cambia, y se retira (Anthropic
+advirtió que previene fabricación, no mala lectura: separar los dos modos al medir).
+
+**Estado del PR:** gate de disparo corrido el 2026-09-22 (21/21, 0 confusiones, rc=0; ver
+`docs/pruebas/disparo-descriptions.md`). Sale de borrador con CHANGELOG y CODEOWNERS; nada de
+eso reabre la decisión.
+
+**Corrección (2026-09-24), antes de fusionar:** la evidencia de arriba estaba inflada. El «78 %» contaba
+alertas del advisor por palabra clave; juzgadas contra el turno real, 3 de 24 acertaban, y el ejemplo
+«subido 228c8c6..d2ae0b5» es falso positivo (el push sí está en el turno). Casos que sí sostienen la regla:
+una tabla con el estado de un repo que ningún comando consultó, cifras sin respaldo en el turno, y un
+«probado a 5 anchos» cuando se probaron 2. José aprobó el PR con esta evidencia (2026-09-24); ver CHANGELOG v1.22.

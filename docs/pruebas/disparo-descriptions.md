@@ -108,3 +108,11 @@ Runner `docs/pruebas/disparo.py`, juez Sonnet, 9 skills, 30 peticiones.
 
 núcleo: 21/21 (criterio ≥ 19/21) · confusiones de frontera no benignas: 0
 GATE DE DISPARO: PASA
+
+## Corrida 2026-09-22 — PR #47 (regla de resultados en el núcleo; descriptions sin cambio)
+
+`python3 docs/pruebas/disparo.py --paralelo 6 --modelo sonnet` sobre la rama
+`regla-resultados-literales` (HEAD 3992038) → **núcleo 21/21, confusiones de frontera no
+benignas 0, rc=0**. El PR no toca descriptions; el gate se corrió porque toca el núcleo
+(GOBERNANZA §4). Tabla completa en la salida del runner; las 30 filas coincidieron con la
+skill esperada, incluidas las fronteras 22–30.
