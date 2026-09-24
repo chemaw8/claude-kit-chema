@@ -1,5 +1,21 @@
 # Changelog — Kit Chema
 
+## v1.22 — 2026-09-24
+Una regla nueva en el núcleo, en «Terminado significa verificado» (PR #47; núcleo 133 → 136 de 150; el margen
+la absorbe, sin retirar nada).
+- **Los resultados reportados salen de la salida de la herramienta.** «Toda tabla o lista de resultados
+  (cifras, conteos, commits, gates, ids) toma sus valores de la salida que los produjo, sin volcarla entera; lo
+  que no puedas comprobar tras intentarlo va como "sin comprobar", nunca de memoria.»
+- **Por qué:** la regla general ya decía «cifras recalculadas» y el error siguió. Casos confirmados contra el turno
+  real: una tabla con el estado de un repo que ningún comando consultó, cifras sin respaldo en el turno, y un
+  «probado a 5 anchos» cuando se probaron 2.
+- **Evidencia corregida antes de aprobar:** el «78 %» del cuerpo del PR contaba alertas del advisor por palabra
+  clave, mayormente falsas (juzgadas contra el turno real: 3 de 24 acertaban); uno de los tres ejemplos era falso
+  positivo. El council revisó la versión inflada; José aprobó con la corregida (2026-09-24).
+- Council (Anthropic, OpenAI, Kimi): 3 × aprobada con cambios, aplicados. Gate de disparo 21/21.
+- **Cómo se sabrá si sirvió:** si en 30 días no baja ese patrón en los juicios del advisor, la regla describe el
+  error pero no lo cambia, y se retira.
+
 ## v1.21 — 2026-09-12
 Sale de una auditoría del kit con 6 lectores y un council de 4 evaluadores en **dos familias de
 modelos** (el primero del repo), más el revisor adversario del gate de push. El hallazgo que la
