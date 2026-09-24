@@ -142,3 +142,9 @@ advirtió que previene fabricación, no mala lectura: separar los dos modos al m
 **Estado del PR:** gate de disparo corrido el 2026-09-22 (21/21, 0 confusiones, rc=0; ver
 `docs/pruebas/disparo-descriptions.md`). Sale de borrador con CHANGELOG y CODEOWNERS; nada de
 eso reabre la decisión.
+
+**Corrección (2026-09-24), antes de fusionar:** la evidencia de arriba estaba inflada. El «78 %» contaba
+alertas del advisor por palabra clave; juzgadas contra el turno real, 3 de 24 acertaban, y el ejemplo
+«subido 228c8c6..d2ae0b5» es falso positivo (el push sí está en el turno). Casos que sí sostienen la regla:
+una tabla con el estado de un repo que ningún comando consultó, cifras sin respaldo en el turno, y un
+«probado a 5 anchos» cuando se probaron 2. José aprobó el PR con esta evidencia (2026-09-24); ver CHANGELOG v1.22.
