@@ -148,3 +148,47 @@ alertas del advisor por palabra clave; juzgadas contra el turno real, 3 de 24 ac
 «subido 228c8c6..d2ae0b5» es falso positivo (el push sí está en el turno). Casos que sí sostienen la regla:
 una tabla con el estado de un repo que ningún comando consultó, cifras sin respaldo en el turno, y un
 «probado a 5 anchos» cuando se probaron 2. José aprobó el PR con esta evidencia (2026-09-24); ver CHANGELOG v1.22.
+
+## 2026-09-25 — El hook de contexto y /init-contexto siguen a CLAUDE_CONFIG_DIR (PR en borrador)
+
+**Decidido.** `hooks/kit-chema-contexto.sh` y `/init-contexto` usan
+`${CLAUDE_CONFIG_DIR:-$HOME/.claude}/contexto/`; con `CLAUDE_CONFIG_DIR` definido **no hay caída a
+`~/.claude`**. `kit-presentaciones` y `kit-redaccion` dejan de nombrar la ruta fija, y `plugin.json`
+sube de 1.15.0 a 1.22.1.
+
+**Por qué.** Reproducción real: en una máquina con dos perfiles de Claude Code de ámbitos distintos, la
+sesión del perfil lanzado con `CLAUDE_CONFIG_DIR` recibió en `SessionStart`, al instalarle el plugin, los
+tres archivos de contexto del otro perfil. La prueba nueva (`hooks/test-kit-chema-contexto.sh`, 7 casos)
+da TODO OK con el hook nuevo y 4 fallas con el de `main`. No reabre el congelamiento del 2026-08-29:
+arregla una pieza que ya existe y falla, con reproducción y prueba de regresión, como v1.19.4 y v1.21.
+
+**Por qué sin caída.** El hook no distingue un perfil reubicado de un segundo perfil. En el caso reportado
+el perfil afectado no tiene `contexto/`, así que caer a `~/.claude` repetiría la fuga; quien pierda la
+autocarga cae en el «pregunta lo mínimo» del núcleo.
+
+**Por qué el plugin a 1.22.1.** Con `"version"` fijo en el manifiesto, `claude plugin update` deja a cada
+usuario en su copia en caché por más commits que haya (docs de Claude Code, «Versions and updates»). El
+manifiesto no se movía desde v1.15, así que quien actualice recibe de una vez todo v1.16–v1.22.1.
+
+**Council** (4 evaluadores Opus, ciegos entre sí: viabilidad técnica, riesgos, costo/beneficio y
+gobernanza, abogado del diablo; síntesis en el hilo principal porque el subagente `sintetizador` no estaba
+registrado en la sesión): 4 × *aprobada con cambios*. Aplicados: (1) subir la versión del plugin
+(costo/beneficio, abogado del diablo); (2) quitar la ruta fija de dos cuerpos de skill (riesgos); (3) acotar
+INSTRUCTIVO y hooks/README a lo que hace el hook (abogado del diablo); (4) no anunciarlo como fuga cerrada:
+cierra la inyección automática (los cuatro); (5) nota de migración en el CHANGELOG (riesgos,
+costo/beneficio). Descartados: un `systemMessage` cuando el perfil no tiene `contexto/` y `~/.claude` sí
+(deseable, no condición, y sería capacidad nueva bajo congelamiento); un chequeo en `verificar.sh` que
+obligue a subir la versión del plugin (decisión del dueño, aparte).
+
+**Queda abierto, a propósito.**
+- La línea 7 del núcleo sigue diciendo «El hook de sesión ya cargó `~/.claude/contexto/`… léelo tú». En un
+  perfil sin `contexto/` todavía manda al modelo a la carpeta de otro perfil. Va en un PR aparte con gate
+  de disparo (GOBERNANZA §4), que además decida el default para quien usa `CLAUDE_CONFIG_DIR` con el
+  contexto en `~/.claude`.
+- Instalación sin plugin: `instalar.sh` usa `CLAUDE_DIR` y `hooks/settings-fragment.json` fija
+  `$HOME/.claude/hooks/...`. Viene de antes y este cambio no lo empeora.
+- Fuera del kit: Claude Code carga el `.claude/CLAUDE.md` de las carpetas superiores al directorio de
+  trabajo, así que un perfil que vive en `~/.claude` llega como instrucciones de proyecto a toda sesión
+  bajo `$HOME`. Eso se resuelve en cada máquina.
+
+**Cuándo revisar.** Si alguien reporta haber perdido su contexto al definir `CLAUDE_CONFIG_DIR`.

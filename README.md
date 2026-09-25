@@ -111,8 +111,9 @@ aparte, en `~/.claude/CLAUDE.md`, con cualquiera de estas dos opciones:
   `~/.claude/CLAUDE.md`.
 
 Las plantillas de contexto las deja el slash command del plugin:
-`/kit-chema:init-contexto` copia `contexto/*.md` a `~/.claude/contexto/` solo si
-no existen y te recuerda rellenarlas.
+`/kit-chema:init-contexto` copia `contexto/*.md` a `~/.claude/contexto/` (o a
+`$CLAUDE_CONFIG_DIR/contexto/` si usas otro perfil) solo si no existen y te
+recuerda rellenarlas.
 
 ## (B) Instalación con git clone
 
@@ -134,7 +135,7 @@ en vez de reemplazarlo. Esta vía instala el kit completo, con o sin plugin.
 | `/proyecto-init` | Una vez por proyecto: le crea su ficha `CLAUDE.md` (qué es, stack, cómo correr, trampas, confidencialidad) y propone permisos. Verifica los comandos corriéndolos; en repos sensibles pide confirmación antes de ejecutar. |
 | `/cierre` | Al terminar o pausar el trabajo: deja `CONTINUAR.md` con el estado mínimo para reanudar en frío y archiva el detalle viejo en `docs/bitacora.md` sin perder nada. |
 | `/revisar-salud` | Revisa el reporte de observabilidad y propone arreglos a los errores recurrentes. |
-| `/init-contexto` | Copia las plantillas de contexto a `~/.claude/contexto/` sin pisar las tuyas. |
+| `/init-contexto` | Copia las plantillas de contexto a `~/.claude/contexto/` (o a `$CLAUDE_CONFIG_DIR/contexto/`) sin pisar las tuyas. |
 
 `/proyecto-init` y `/cierre` son un par: el primero crea la ficha, el segundo la
 mantiene viva. Se apoyan en `scripts/rotar-continuar.sh`, que garantiza —y

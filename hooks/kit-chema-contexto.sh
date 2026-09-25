@@ -19,9 +19,13 @@ command -v python3 >/dev/null 2>&1 || exit 0
 # silencioso sobre las reglas de confidencialidad (council v1.11, H-2).
 salida=$(
   primero=1
-  for f in "$HOME/.claude/contexto/CONTEXTO-EMPRESA.md" \
-           "$HOME/.claude/contexto/CONTEXTO-PERSONAL.md" \
-           "$HOME/.claude/contexto/BASE-CONOCIMIENTO.md"; do
+  # La carpeta sigue al perfil activo: si CLAUDE_CONFIG_DIR está definido se lee
+  # SU contexto/, sin caer a ~/.claude. Quien corre varios perfiles en una misma
+  # máquina no debe recibir en uno el contexto de otro.
+  dir="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/contexto"
+  for f in "$dir/CONTEXTO-EMPRESA.md" \
+           "$dir/CONTEXTO-PERSONAL.md" \
+           "$dir/BASE-CONOCIMIENTO.md"; do
     [ -f "$f" ] && [ -s "$f" ] || continue
     if [ "$primero" -eq 1 ]; then
       echo "# Contexto Kit Chema (cargado automáticamente al iniciar sesión)"
@@ -32,6 +36,8 @@ salida=$(
 )
 
 # Nada que inyectar: se sale limpio y el núcleo pedirá el contexto por su cuenta.
+# Ojo: el núcleo aún nombra ~/.claude/contexto/ como la carpeta a leer; alinearlo
+# con este hook va aparte, con gate de disparo (DECISIONES 2026-09-25).
 [ -n "$salida" ] || exit 0
 
 printf '%s' "$salida" | python3 -c 'import json, sys; texto = sys.stdin.read(); print(json.dumps({"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": texto}}, ensure_ascii=False))'

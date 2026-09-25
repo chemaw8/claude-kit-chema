@@ -10,7 +10,7 @@ Playbook para lo que se escribe todos los días: correos, minutas, notas, memos,
 documentación y mensajes de estatus. Dos disciplinas ya viven fuera de esta
 skill y no se repiten aquí: definir audiencia y objetivo antes de escribir, y
 abrir con la conclusión (pirámide invertida) — están en kit-presentaciones y en
-`~/.claude/contexto/`. Esta skill cubre lo que Claude hace mal por defecto en
+la carpeta `contexto/` de tu perfil. Esta skill cubre lo que Claude hace mal por defecto en
 formatos cortos: se enreda, entierra el pedido y no deja claro quién hace qué.
 
 La regla transversal es cortar relleno: cada oración que no cambia lo que el
