@@ -11,8 +11,8 @@ determinista, no en prosa que Claude interpreta.
 
 Cuatro hooks de guardia (uno por defecto —rutas-fantasma— y tres opt-in —anti-secretos, backstop-cierre, sello-push—) y uno de contexto (`kit-chema-contexto.sh`, que carga
 tu contexto al abrir sesión). Este último lee `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/contexto/`:
-con varios perfiles en una máquina, cada uno carga solo su carpeta, y uno sin `contexto/`
-no carga nada en vez de caer a `~/.claude`.
+con varios perfiles en una máquina, en cada uno inyecta solo la carpeta de ese perfil, y en
+uno sin `contexto/` no inyecta nada en vez de caer a `~/.claude`.
 
 ### `rutas-fantasma.sh` — por defecto
 
