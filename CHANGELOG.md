@@ -1,5 +1,14 @@
 # Changelog — Kit Chema
 
+## v1.22.1 — 2026-09-27
+Solo metadatos y documentación; núcleo, skills y descriptions intactos (el gate de disparo no aplica).
+- **El manifiesto del plugin estaba en `1.15.0` desde v1.15** y es lo que muestran GitHub y `/plugin`: decía tres
+  subagentes, cuatro comandos y dos hooks cuando ya había cuatro, cinco y cinco. Ahora dice `1.22.1` y lo que trae.
+- **`verificar.sh` lo vigila:** la versión del manifiesto sigue al CHANGELOG y su descripción nombra cada
+  subagente y comando del repo; añadir uno sin tocar el manifiesto sale en rojo.
+- README e INSTRUCTIVO: `/revisar-antes-de-subir` en la tabla de comandos, `kit-orquestacion` y `sintetizador`
+  en la tabla de piezas, y los tres hooks que faltaban (rutas-fantasma, backstop-cierre, sello-push).
+
 ## v1.22 — 2026-09-24
 Una regla nueva en el núcleo, en «Terminado significa verificado» (PR #47; núcleo 133 → 136 de 150; el margen
 la absorbe, sin retirar nada).

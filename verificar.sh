@@ -130,6 +130,27 @@ PYH
   chk "hooks/hooks.json y hooks/settings-fragment.json declaran los mismos hooks" $?
 fi
 
+# El manifiesto del plugin es lo que GitHub y /plugin muestran: se quedó en 1.15.0 durante siete
+# versiones (hallado 2026-09-27). Su versión sigue al CHANGELOG y su descripción nombra cada
+# subagente y comando del repo, para que añadir uno sin tocar el manifiesto salga en rojo.
+if command -v python3 >/dev/null 2>&1; then
+  python3 - <<'PYP'
+import json, os, re, sys
+ver = re.search(r"^## v(\d+\.\d+(?:\.\d+)?)", open("CHANGELOG.md").read(), re.M).group(1)
+p = json.load(open(".claude-plugin/plugin.json"))
+m = json.load(open(".claude-plugin/marketplace.json"))
+v = p["version"]
+ok = v == ver or v == ver + ".0"
+for d, pre in (("agents", ""), ("commands", "/")):
+    for f in os.listdir(d):
+        if f.endswith(".md"):
+            n = pre + f[:-3]
+            ok = ok and n in p["description"] and n in m["plugins"][0]["description"]
+sys.exit(0 if ok else 1)
+PYP
+  chk ".claude-plugin: versión = CHANGELOG y nombra todos los subagentes y comandos" $?
+fi
+
 # 4. Sin gritos: mayúsculas de énfasis prohibidas en contenido instalable
 if grep -rnE '(CRITICAL|IMPORTANTE:|OBLIGATORIO:|NUNCA HAGAS|SIEMPRE DEBES)' nucleo/ skills/ agents/ 2>/dev/null | grep -v ':#'; then
   chk "sin énfasis gritado en nucleo/, skills/ y agents/" 1
