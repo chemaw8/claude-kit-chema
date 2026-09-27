@@ -80,7 +80,7 @@ su parte de núcleo sigue **fuera** hasta que el piloto la gane con datos.
 Hay dos vías y ambas funcionan; elige una:
 
 - **(A) Como plugin de Claude Code** — la más cómoda si usas Claude Code. Trae
-  las skills y los dos hooks; el núcleo se añade en un paso corto aparte.
+  las skills, los subagentes, los comandos y los hooks; el núcleo se añade en un paso corto aparte.
 - **(B) Con `git clone` + `./instalar.sh`** — instala todo el kit de una vez
   (núcleo, skills, plantillas de contexto y el hook de contexto por defecto; el
   hook anti-secretos es opcional). Es la vía de siempre y sigue viva.
@@ -88,7 +88,9 @@ Hay dos vías y ambas funcionan; elige una:
 ## (A) Instalación como plugin de Claude Code
 
 Desde v1.2 el kit se distribuye también como plugin. El plugin empaqueta las
-9 skills de dominio y los dos hooks (contexto y anti-secretos). Dentro de Claude Code:
+9 skills de dominio, los 4 subagentes, los 5 comandos y los 5 hooks (contexto,
+anti-secretos, rutas-fantasma, backstop-cierre y sello-push, que solo actúa en repos
+con el gate activo). Dentro de Claude Code:
 
 ```
 /plugin marketplace add chemaw8/claude-kit-chema
@@ -135,6 +137,7 @@ en vez de reemplazarlo. Esta vía instala el kit completo, con o sin plugin.
 | `/cierre` | Al terminar o pausar el trabajo: deja `CONTINUAR.md` con el estado mínimo para reanudar en frío y archiva el detalle viejo en `docs/bitacora.md` sin perder nada. |
 | `/revisar-salud` | Revisa el reporte de observabilidad y propone arreglos a los errores recurrentes. |
 | `/init-contexto` | Copia las plantillas de contexto a `~/.claude/contexto/` sin pisar las tuyas. |
+| `/revisar-antes-de-subir` | Antes de un `git push` en un repo con el gate activo: corre las pruebas en copia limpia, manda el diff a un revisor adversario y produce el sello que el hook `sello-push` exige. |
 
 `/proyecto-init` y `/cierre` son un par: el primero crea la ficha, el segundo la
 mantiene viva. Se apoyan en `scripts/rotar-continuar.sh`, que garantiza —y
