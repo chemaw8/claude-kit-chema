@@ -1,5 +1,18 @@
 # Changelog — Kit Chema
 
+## v1.22.3 — 2026-09-28
+Arreglo de un comando; núcleo, skills y descriptions intactos (el gate de disparo no aplica).
+- **`/init-contexto` no copiaba nada si el kit se instaló con `instalar.sh`:** leía las plantillas de
+  `${CLAUDE_PLUGIN_ROOT}/contexto/`, variable que solo existe cuando el kit corre como plugin; sin ella buscaba en
+  `/contexto/*.md` y terminaba con `cp: cannot stat`. Lo encontró `/doctor prompt-audit` (Claude Code 2.1.283) y se
+  reprodujo en un HOME temporal antes de tocarlo.
+- `instalar.sh` deja además una copia intacta de las plantillas en `~/.claude/plantillas-kit/contexto/` (del kit, espejo que se
+  rehace en cada instalación: una plantilla retirada del kit no se sigue reponiendo; las de `~/.claude/contexto/` siguen sin tocarse). El comando usa
+  `${CLAUDE_PLUGIN_ROOT:-$HOME/.claude/plantillas-kit}/contexto`, el mismo patrón de respaldo que los otros comandos, y
+  si no encuentra plantillas lo dice y sale con error en vez de fallar a medias.
+- Probado en HOME temporal: sin plugin con todo presente (no toca nada), sin plugin con una faltante (la repone y deja
+  intacta una ya editada), como plugin (repone desde el plugin) y sin plantillas (error claro, rc=1).
+
 ## v1.22.2 — 2026-09-28
 Nombre del modelo al día; ninguna regla nueva y el núcleo sigue en 136 líneas.
 - **«Opus 5» → «Opus 5.5»** en la escalera de modelos del núcleo, en su lista de agentes listos (`evaluador-council`,
