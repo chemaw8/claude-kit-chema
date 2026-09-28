@@ -1,5 +1,16 @@
 # Changelog — Kit Chema
 
+## v1.22.2 — 2026-09-28
+Nombre del modelo al día; ninguna regla nueva y el núcleo sigue en 136 líneas.
+- **«Opus 5» → «Opus 5.5»** en la escalera de modelos del núcleo, en los agentes listos (`evaluador-council`,
+  `lector-fresco`), en el council de `kit-propuestas` y en `sintetizador`. El alias `opus` de los agentes ya
+  resolvía a `claude-opus-5-5` en Claude Code (lo registra la línea base de evals del 2026-09-28) y pi lo fija así
+  desde la misma fecha: el texto era lo único que seguía en Opus 5.
+- **La medición no se reescribe:** «subir el esfuerzo salió más barato que saltar de modelo» se midió con Opus 5 y
+  ahora lo dice. Opus 5.5 cuesta menos por token (4/20 contra 5/25 USD por millón en el catálogo de pi), así que
+  la regla apunta en la misma dirección, pero con 5.5 no se ha medido.
+- `kit-orquestacion`: «Fable cuesta el doble que Opus 5» → «2.5 veces lo que Opus 5.5» (10/50 contra 4/20).
+
 ## v1.22.1 — 2026-09-27
 Solo metadatos y documentación; núcleo, skills y descriptions intactos (el gate de disparo no aplica).
 - **El manifiesto del plugin estaba en `1.15.0` desde v1.15** y es lo que muestran GitHub y `/plugin`: decía tres

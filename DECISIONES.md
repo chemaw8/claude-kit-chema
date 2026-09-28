@@ -148,3 +148,19 @@ alertas del advisor por palabra clave; juzgadas contra el turno real, 3 de 24 ac
 «subido 228c8c6..d2ae0b5» es falso positivo (el push sí está en el turno). Casos que sí sostienen la regla:
 una tabla con el estado de un repo que ningún comando consultó, cifras sin respaldo en el turno, y un
 «probado a 5 anchos» cuando se probaron 2. José aprobó el PR con esta evidencia (2026-09-24); ver CHANGELOG v1.22.
+
+## 2026-09-28 — v1.22.2: el núcleo nombra Opus 5.5 (pedido de José)
+
+**Qué se decidió.** Donde el kit decía «Opus 5» como modelo de trabajo pesado, de evaluadores de council y de
+`lector-fresco`, ahora dice «Opus 5.5». Los agentes del kit declaran el alias `opus`, que en Claude Code ya
+resolvía a `claude-opus-5-5` (línea base de evals del 2026-09-28, `produccion-stdout.txt`) y que pi fija así desde
+el mismo día (pi-harness `688b0eb`): solo el texto seguía atrás. José lo pidió tras ver en un ultracode que el
+panel corría en Opus 5.
+
+**Lo que no se tocó a propósito.** La regla «sube el esfuerzo antes de saltar a Fable» se sostiene en una medición
+hecha con Opus 5 (`docs/pruebas/medicion-esfuerzo-v1.19.2.md`); el texto lo dice en vez de atribuírsela a 5.5.
+Opus 5.5 cuesta menos por token (4/20 contra 5/25), así que la regla no se debilita, pero no está medida con él.
+
+**Descartado:** re-medir esfuerzo contra Fable con Opus 5.5 antes de cambiar el nombre (cuesta ~10 USD de extra
+usage, como la corrida RF-11, y el cambio no depende de esa cifra); volver a los ids exactos en los agentes (el
+alias es lo que permite que el kit siga al modelo vigente sin tocar cada ficha).

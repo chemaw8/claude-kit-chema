@@ -49,7 +49,7 @@ de sumar agentes: la concurrencia real está topada, y los de más solo hacen fi
 pagando contexto completo.
 
 Antes de repartir, considera la alternativa barata: **subir de esfuerzo o de modelo
-en un solo hilo, y en ese orden** (esfuerzo primero: Fable cuesta el doble que Opus 5
+en un solo hilo, y en ese orden** (esfuerzo primero: Fable cuesta 2.5 veces lo que Opus 5.5
 por token y solo compensa cuando Opus a mayor esfuerzo se queda corto, o cuando manda la
 latencia en un paso de síntesis o juicio — su alcance — porque ahí sale más rápido). En cadenas
 donde cada paso depende del anterior sobre el mismo material y todo cabe en contexto,
