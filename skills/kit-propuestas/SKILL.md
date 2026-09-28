@@ -61,7 +61,7 @@ council aportó y no fue teatral). Quién sintetiza y la mecánica cambian segú
 dónde corras:
 
 - En Claude Code: lanza los evaluadores como subagentes en paralelo, con modelo
-  Opus 5 cada uno. La síntesis en un solo veredicto la hace el agente
+  Opus 5.5 cada uno. La síntesis en un solo veredicto la hace el agente
   `sintetizador` (Fable 5.1), que verifica cada hallazgo antes de heredarlo; pásale
   tu postura inicial, porque el veredicto debe decir si los evaluadores te hicieron
   cambiar de opinión. Si el agente no está disponible, sintetiza el hilo principal.

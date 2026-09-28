@@ -116,3 +116,10 @@ GATE DE DISPARO: PASA
 benignas 0, rc=0**. El PR no toca descriptions; el gate se corrió porque toca el núcleo
 (GOBERNANZA §4). Tabla completa en la salida del runner; las 30 filas coincidieron con la
 skill esperada, incluidas las fronteras 22–30.
+
+## 2026-09-28 — PR «Opus 5 → Opus 5.5» (v1.22.2)
+
+`python3 docs/pruebas/disparo.py --modelo sonnet` sobre la rama `nucleo/opus-5-5` (HEAD 3f3bb96) → **núcleo 21/21,
+confusiones de frontera no benignas 0, rc=0**; 30 de 30 filas coincidieron con la skill esperada. El PR
+no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4). El commit siguiente (9a4f8c6,
+cambios del council) no toca `nucleo/` ni ninguna description, así que el resultado sigue valiendo.

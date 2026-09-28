@@ -148,3 +148,28 @@ alertas del advisor por palabra clave; juzgadas contra el turno real, 3 de 24 ac
 «subido 228c8c6..d2ae0b5» es falso positivo (el push sí está en el turno). Casos que sí sostienen la regla:
 una tabla con el estado de un repo que ningún comando consultó, cifras sin respaldo en el turno, y un
 «probado a 5 anchos» cuando se probaron 2. José aprobó el PR con esta evidencia (2026-09-24); ver CHANGELOG v1.22.
+
+## 2026-09-28 — v1.22.2: el núcleo nombra Opus 5.5 (pedido de José)
+
+**Qué se decidió.** Donde el kit decía «Opus 5» como modelo de trabajo pesado, de evaluadores de council y de
+`lector-fresco`, ahora dice «Opus 5.5». Los agentes del kit declaran el alias `opus`, que en Claude Code ya
+resolvía a `claude-opus-5-5` (línea base de evals del 2026-09-28, `produccion-stdout.txt`) y que pi fija así desde
+el mismo día (pi-harness `688b0eb`): solo el texto seguía atrás. José lo pidió tras ver en un ultracode que el
+panel corría en Opus 5.
+
+**Lo que no se tocó a propósito.** La regla «sube el esfuerzo antes de saltar a Fable» se sostiene en una medición
+hecha con Opus 5 (`docs/pruebas/medicion-esfuerzo-v1.19.2.md`); el texto lo dice en vez de atribuírsela a 5.5.
+Lo mismo con la ventaja de latencia de Fable (`sintetizador`, `kit-orquestacion`): se midió frente a Opus 5. La tarifa
+de 5.5 (4/20 contra 5/25) favorece mantener la regla de forma provisional; el costo por corrida con 5.5 no está medido
+(Anthropic: sigue saliendo más barato que Fable mientras no consuma más de ~1.5 veces los tokens de Opus 5).
+
+**Council** (Anthropic Opus 5.5 —conflicto de interés declarado—, OpenAI Astra, Kimi K3; ciegos entre sí): 2 × *con
+cambios*, 1 × *aprobada*. Aplicado: la latencia atribuida a Opus 5 (Anthropic, OpenAI Astra); «2.5 veces» acotado a entrada y
+salida, y 5.5 citado del `models-store` local (Anthropic); «no se debilita» → provisional (Anthropic, OpenAI Astra).
+
+**Cuándo reabrir** (Kimi): si el alias `opus` de Claude Code o el mapa de `pi-harness/traducir-agentes.py` pasan a otro
+id, este texto vuelve a quedar atrás; se renombra en el mismo cambio, no cuando alguien lo note en un ultracode.
+
+**Descartado:** re-medir esfuerzo contra Fable con Opus 5.5 antes de cambiar el nombre (cuesta ~10 USD de extra
+usage, como la corrida RF-11, y el cambio no depende de esa cifra); volver a los ids exactos en los agentes (el
+alias es lo que permite que el kit siga al modelo vigente sin tocar cada ficha).
