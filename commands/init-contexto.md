@@ -5,20 +5,27 @@ description: Copia las plantillas de contexto del Kit Chema (empresa y personal)
 Tu tarea es dejar al usuario las plantillas de contexto del Kit Chema en
 `~/.claude/contexto/` sin sobrescribir nada de lo que ya tenga escrito.
 
-Las plantillas viajan dentro de este plugin, en `${CLAUDE_PLUGIN_ROOT}/contexto/`.
+Las plantillas están en `${CLAUDE_PLUGIN_ROOT}/contexto/` si el kit corre como
+plugin o, si se instaló con `instalar.sh`, en `~/.claude/plantillas-kit/contexto/`.
+Llámala `ORIGEN` de aquí en adelante.
 
 Haz lo siguiente:
 
 1. Crea `~/.claude/contexto/` si no existe.
-2. Por cada `.md` en `${CLAUDE_PLUGIN_ROOT}/contexto/`, cópialo a
+2. Por cada `.md` en `ORIGEN`, cópialo a
    `~/.claude/contexto/` solo si en el destino no existe ya un archivo con ese
    nombre. Nunca sobrescribas uno existente: el contenido del usuario manda.
 
 Comando sugerido (no destructivo, respeta lo que ya exista):
 
 ```bash
+ORIGEN="${CLAUDE_PLUGIN_ROOT:-$HOME/.claude/plantillas-kit}/contexto"
+if ! ls "$ORIGEN"/*.md >/dev/null 2>&1; then
+  echo "no encuentro las plantillas en $ORIGEN: vuelve a correr instalar.sh del kit"
+  exit 1
+fi
 mkdir -p ~/.claude/contexto
-for f in "${CLAUDE_PLUGIN_ROOT}"/contexto/*.md; do
+for f in "$ORIGEN"/*.md; do
   dest=~/.claude/contexto/"$(basename "$f")"
   if [ -e "$dest" ]; then
     echo "ya existe, no se toca: $dest"
