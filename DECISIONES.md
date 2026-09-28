@@ -159,7 +159,16 @@ panel corría en Opus 5.
 
 **Lo que no se tocó a propósito.** La regla «sube el esfuerzo antes de saltar a Fable» se sostiene en una medición
 hecha con Opus 5 (`docs/pruebas/medicion-esfuerzo-v1.19.2.md`); el texto lo dice en vez de atribuírsela a 5.5.
-Opus 5.5 cuesta menos por token (4/20 contra 5/25), así que la regla no se debilita, pero no está medida con él.
+Lo mismo con la ventaja de latencia de Fable (`sintetizador`, `kit-orquestacion`): se midió frente a Opus 5. La tarifa
+de 5.5 (4/20 contra 5/25) favorece mantener la regla de forma provisional; el costo por corrida con 5.5 no está medido
+(Anthropic: sigue saliendo más barato que Fable mientras no consuma más de ~1.5 veces los tokens de Opus 5).
+
+**Council** (Anthropic Opus 5.5 —conflicto de interés declarado—, OpenAI Astra, Kimi K3; ciegos entre sí): 2 × *con
+cambios*, 1 × *aprobada*. Aplicado: la latencia atribuida a Opus 5 (Anthropic, Codex); «2.5 veces» acotado a entrada y
+salida, y 5.5 citado del `models-store` local (Anthropic); «no se debilita» → provisional (Anthropic, Codex).
+
+**Cuándo reabrir** (Kimi): si el alias `opus` de Claude Code o el mapa de `pi-harness/traducir-agentes.py` pasan a otro
+id, este texto vuelve a quedar atrás; se renombra en el mismo cambio, no cuando alguien lo note en un ultracode.
 
 **Descartado:** re-medir esfuerzo contra Fable con Opus 5.5 antes de cambiar el nombre (cuesta ~10 USD de extra
 usage, como la corrida RF-11, y el cambio no depende de esa cifra); volver a los ids exactos en los agentes (el

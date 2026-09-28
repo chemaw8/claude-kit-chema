@@ -7,9 +7,13 @@ Nombre del modelo al día; ninguna regla nueva y el núcleo sigue en 136 líneas
   resolvía a `claude-opus-5-5` en Claude Code (lo registra la línea base de evals del 2026-09-28) y pi lo fija así
   desde la misma fecha: el texto era lo único que seguía en Opus 5.
 - **La medición no se reescribe:** «subir el esfuerzo salió más barato que saltar de modelo» se midió con Opus 5 y
-  ahora lo dice. Opus 5.5 cuesta menos por token (4/20 contra 5/25 USD por millón en el catálogo de pi), así que
-  la regla apunta en la misma dirección, pero con 5.5 no se ha medido.
-- `kit-orquestacion`: «Fable cuesta el doble que Opus 5» → «2.5 veces lo que Opus 5.5» (10/50 contra 4/20).
+  ahora lo dice, igual que la ventaja de latencia de Fable en `sintetizador` y `kit-orquestacion`. Opus 5.5 cuesta
+  menos por token de entrada y salida (4/20 contra 5/25 USD por millón; 5.5 en el `models-store` local de pi, 5 en
+  su catálogo), así que la regla apunta en la misma dirección si su consumo de tokens es comparable; no está medido.
+- `kit-orquestacion`: «Fable cuesta el doble que Opus 5» → «2.5 veces lo que Opus 5.5 por token de entrada y de
+  salida» (10/50 contra 4/20; en lectura de caché la brecha es otra).
+- Council (Anthropic Opus 5.5 con conflicto declarado, OpenAI Astra, Kimi K3): 2 × con cambios, 1 × aprobada;
+  cambios aplicados: atribuir a Opus 5 las mediciones de latencia y no afirmar costo por corrida con 5.5.
 
 ## v1.22.1 — 2026-09-27
 Solo metadatos y documentación; núcleo, skills y descriptions intactos (el gate de disparo no aplica).

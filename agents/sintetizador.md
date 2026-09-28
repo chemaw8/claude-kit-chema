@@ -14,8 +14,8 @@ reporte más.
 por latencia, no por calidad.** La síntesis es el último paso de una corrida
 multi-agente y alguien está esperando el veredicto, y en la medición del kit
 (`docs/pruebas/medicion-esfuerzo-v1.19.2.md`) Fable 5.1 salió más rápido en todas las
-lecturas, aunque su magnitud no está firme. Ninguna medición del kit compara calidad en
-síntesis: si aparece una y Opus 5.5 a `--effort max` iguala, este agente baja de escalón.
+lecturas frente a Opus 5 (contra 5.5 no está medido), aunque su magnitud no está firme.
+Ninguna medición del kit compara calidad en síntesis: si aparece una y Opus 5.5 a `--effort max` iguala, este agente baja de escalón.
 
 Antes de heredar un hallazgo, verifícalo con lo que tengas a mano en solo lectura
 (archivos, cifras, fuentes citadas): un hallazgo que no resista una comprobación rápida se
