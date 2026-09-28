@@ -2,8 +2,8 @@
 
 ## v1.22.2 — 2026-09-28
 Nombre del modelo al día; ninguna regla nueva y el núcleo sigue en 136 líneas.
-- **«Opus 5» → «Opus 5.5»** en la escalera de modelos del núcleo, en los agentes listos (`evaluador-council`,
-  `lector-fresco`), en el council de `kit-propuestas` y en `sintetizador`. El alias `opus` de los agentes ya
+- **«Opus 5» → «Opus 5.5»** en la escalera de modelos del núcleo, en su lista de agentes listos (`evaluador-council`,
+  `lector-fresco`; sus fichas no cambian: declaran el alias `opus`), en el council de `kit-propuestas` y en `sintetizador`. El alias `opus` de los agentes ya
   resolvía a `claude-opus-5-5` en Claude Code (lo registra la línea base de evals del 2026-09-28) y pi lo fija así
   desde la misma fecha: el texto era lo único que seguía en Opus 5.
 - **La medición no se reescribe:** «subir el esfuerzo salió más barato que saltar de modelo» se midió con Opus 5 y

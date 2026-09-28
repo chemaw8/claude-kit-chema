@@ -164,8 +164,8 @@ de 5.5 (4/20 contra 5/25) favorece mantener la regla de forma provisional; el co
 (Anthropic: sigue saliendo más barato que Fable mientras no consuma más de ~1.5 veces los tokens de Opus 5).
 
 **Council** (Anthropic Opus 5.5 —conflicto de interés declarado—, OpenAI Astra, Kimi K3; ciegos entre sí): 2 × *con
-cambios*, 1 × *aprobada*. Aplicado: la latencia atribuida a Opus 5 (Anthropic, Codex); «2.5 veces» acotado a entrada y
-salida, y 5.5 citado del `models-store` local (Anthropic); «no se debilita» → provisional (Anthropic, Codex).
+cambios*, 1 × *aprobada*. Aplicado: la latencia atribuida a Opus 5 (Anthropic, OpenAI Astra); «2.5 veces» acotado a entrada y
+salida, y 5.5 citado del `models-store` local (Anthropic); «no se debilita» → provisional (Anthropic, OpenAI Astra).
 
 **Cuándo reabrir** (Kimi): si el alias `opus` de Claude Code o el mapa de `pi-harness/traducir-agentes.py` pasan a otro
 id, este texto vuelve a quedar atrás; se renombra en el mismo cambio, no cuando alguien lo note en un ultracode.
