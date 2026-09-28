@@ -6,8 +6,8 @@ Arreglo de un comando; núcleo, skills y descriptions intactos (el gate de dispa
   `${CLAUDE_PLUGIN_ROOT}/contexto/`, variable que solo existe cuando el kit corre como plugin; sin ella buscaba en
   `/contexto/*.md` y terminaba con `cp: cannot stat`. Lo encontró `/doctor prompt-audit` (Claude Code 2.1.283) y se
   reprodujo en un HOME temporal antes de tocarlo.
-- `instalar.sh` deja además una copia intacta de las plantillas en `~/.claude/plantillas-kit/contexto/` (del kit, se
-  sobrescribe en cada instalación; las de `~/.claude/contexto/` siguen sin tocarse). El comando usa
+- `instalar.sh` deja además una copia intacta de las plantillas en `~/.claude/plantillas-kit/contexto/` (del kit, espejo que se
+  rehace en cada instalación: una plantilla retirada del kit no se sigue reponiendo; las de `~/.claude/contexto/` siguen sin tocarse). El comando usa
   `${CLAUDE_PLUGIN_ROOT:-$HOME/.claude/plantillas-kit}/contexto`, el mismo patrón de respaldo que los otros comandos, y
   si no encuentra plantillas lo dice y sale con error en vez de fallar a medias.
 - Probado en HOME temporal: sin plugin con todo presente (no toca nada), sin plugin con una faltante (la repone y deja

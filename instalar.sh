@@ -82,6 +82,7 @@ done
 # 3. Contexto: cada plantilla solo si no existe (son del usuario). Copia intacta
 # aparte, del kit, para que /init-contexto pueda reponer una sin plugin.
 mkdir -p "$DIR/plantillas-kit/contexto"
+rm -f "$DIR/plantillas-kit/contexto/"*.md   # espejo: una plantilla retirada del kit no se repone
 cp "$KIT"/contexto/*.md "$DIR/plantillas-kit/contexto/"
 for plantilla in "$KIT"/contexto/*.md; do
   nombre=$(basename "$plantilla")
