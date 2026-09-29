@@ -1,5 +1,16 @@
 # Changelog — Kit Chema
 
+## v1.23.1 — 2026-09-29
+Arreglo del gate de push; núcleo y descriptions intactos (el gate de disparo no aplica).
+- **`sello-push.sh revisar` fija HEAD al arrancar y avisa si cambió mientras revisaba (salida 4).** Si el commit se
+  lanzaba en el mismo bloque que `revisar`, el Python leía el HEAD anterior, lo sellaba y la salida decía «aprobado»
+  aunque el commit nuevo no estuviera revisado. El push no pasaba sin sello, así que no subió nada sin revisar, pero el
+  agente creía que sí. Pasó tres veces el 2026-09-28, con la trampa ya anotada: hacía falta que lo detectara el script,
+  no la memoria del agente. Caso nuevo en el autotest (11b), y se comprobó que falla sin el arreglo.
+- **`/revisar-antes-de-subir`:** paso 5b para la salida 4.
+- **Ficha del repo:** con `main` protegido, el aviso de `reconciliar` («el cierre se ancló en la rama X») es lo esperado
+  al retomar, no un estado rancio.
+
 ## v1.23 — 2026-09-28
 Dos reglas nuevas; núcleo 136 → 137 líneas (tope 150). Council de tres familias (Anthropic Opus 5.5, OpenAI Astra,
 Kimi K3): 3 × aprobada con cambios; los cambios están aplicados abajo.

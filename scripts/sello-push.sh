@@ -8,7 +8,8 @@
 #                                   settings del usuario, cwd vacío) → veredicto CALCULADO aquí
 #                                   cotejando la evidencia literal → sello por sha + ledger.
 #                                   salida 0 = sin pendientes · 1 = bloqueado (pruebas rojas o
-#                                   hallazgos) · 3 = revisor no disponible (no se escribe sello).
+#                                   hallazgos) · 3 = revisor no disponible (no se escribe sello) ·
+#                                   4 = HEAD cambió mientras revisaba (el sello es del commit anterior).
 #   saltar <n> "<razón>" [repo]     descarta el hallazgo n del sello de HEAD. Solo con la
 #                                   palabra del usuario; queda anotado con la razón.
 #   estado [repo] [--contra-remoto] sello de HEAD y configuración; con la bandera, ramas del
@@ -50,7 +51,11 @@ cmd_revisar() {
   pruebas="${SELLO_PRUEBAS-$(git -C "$repo" config --get kit-chema.pruebas 2>/dev/null)}"
   if [ -z "${SELLO_PRUEBAS+x}" ] && [ -z "$pruebas" ] && [ -f "$repo/verificar.sh" ]; then pruebas="bash verificar.sh"; fi
   cli="$(command -v claude >/dev/null 2>&1 && claude --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
-  REPO="$repo" BASE_ARG="$base" PRUEBAS_CMD="$pruebas" MODELO="$(git -C "$repo" config --get kit-chema.revisor 2>/dev/null || echo opus)" \
+  # HEAD se fija AQUÍ y se revisa ese, no el que haya cuando el Python lo lea: si el commit se lanza en paralelo con
+  # `revisar` (mismo bloque de herramientas), antes se sellaba el commit anterior y la salida decía "aprobado" igual.
+  # Pasó tres veces el 2026-09-28 con la trampa ya escrita; ahora lo detecta el script, no la memoria del agente.
+  local head0; head0="$(git -C "$repo" rev-parse HEAD 2>/dev/null)"
+  REPO="$repo" HEAD_FIJO="$head0" BASE_ARG="$base" PRUEBAS_CMD="$pruebas" MODELO="$(git -C "$repo" config --get kit-chema.revisor 2>/dev/null || echo opus)" \
   LEDGER="$(ledger_path)" PROMPT="$PROMPT" ESQUEMA="$ESQUEMA" TOPE="${SELLO_TOPE_USD:-3}" SEG="${SELLO_PRUEBAS_SEG:-600}" REV_SEG="${SELLO_REVISOR_SEG:-900}" \
   SIN_TIMEOUT="${SELLO_SIN_TIMEOUT:-}" REVISOR_CMD="${SELLO_REVISOR:-}" DEBUG="${SELLO_DEBUG:-}" CLI_VERSION="$cli" \
   python3 - <<'PY'
@@ -72,7 +77,7 @@ def leer_sello(p):
     try:
         with open(p, encoding="utf-8") as f: return dict(l.rstrip("\n").split("=", 1) for l in f if "=" in l)
     except Exception: return None
-head = git("rev-parse", "HEAD"); rama = git("rev-parse", "--abbrev-ref", "HEAD") or "HEAD"
+head = E.get("HEAD_FIJO") or git("rev-parse", "HEAD"); rama = git("rev-parse", "--abbrev-ref", "HEAD") or "HEAD"
 if not head: print("✗ el repo no tiene commits", file=sys.stderr); sys.exit(2)
 ident = git("config", "--get", "remote.origin.url") or REPO
 common = git("rev-parse", "--path-format=absolute", "--git-common-dir")
@@ -286,6 +291,13 @@ if salida.get("resumen"): print(f"Resumen del revisor: {str(salida['resumen'])[:
 if salida.get("no_verificable"): print("No verificable sin navegar el repo: " + " · ".join(str(x)[:100] for x in salida["no_verificable"][:5]))
 sys.exit(0 if pendientes == 0 else 1)
 PY
+  local rc=$? head1
+  head1="$(git -C "$repo" rev-parse HEAD 2>/dev/null)"
+  if [ -n "$head0" ] && [ "$head1" != "$head0" ]; then
+    err "HEAD se movió durante la revisión: se selló ${head0:0:7}, pero HEAD ahora es ${head1:0:7}. Ese commit NO está revisado y su push seguirá bloqueado. Vuelve a correr \`sello-push.sh revisar\` cuando ya no haya commits en curso (nunca en el mismo paso que el commit)."
+    return 4
+  fi
+  return $rc
 }
 
 # ── saltar ────────────────────────────────────────────────────────────────
@@ -542,6 +554,12 @@ cmd_autotest() {
   local G; G=$(git -C "$R" rev-parse HEAD)
   out=$(SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" 2>&1); rc=$?
   [ $rc -eq 1 ] && grep -q '^truncado=1$' "$SELLOS/$G" && grep -q '"D1"' "$SELLOS/$G" || fallo "diff > 200 KB debió truncar y bloquear con D1 (rc=$rc)"
+  git -C "$R" reset -q --hard "$C"
+  # 11b commit en paralelo con revisar: se sella el HEAD del arranque, no el nuevo, y sale rc 4 con aviso
+  local H0; H0=$(git -C "$R" rev-parse HEAD); rm -f "$SELLOS"/*
+  out=$(SELLO_PRUEBAS='exit 0' SELLO_REVISOR="printf 'p\\n' >> '$R/a.txt'; git -C '$R' commit -qam paralelo; cat '$t/aprobado.json'" cmd_revisar "$R" 2>&1); rc=$?
+  local H1; H1=$(git -C "$R" rev-parse HEAD)
+  [ $rc -eq 4 ] && [ "$H1" != "$H0" ] && [ -f "$SELLOS/$H0" ] && [ ! -f "$SELLOS/$H1" ] && printf '%s' "$out" | grep -q "HEAD se movió" || fallo "commit durante revisar debió sellar ${H0:0:7}, no ${H1:0:7}, y dar rc 4 (rc=$rc): $(printf '%s' "$out" | tail -2)"
   git -C "$R" reset -q --hard "$C"
   # 12 invocación real (sin claude en PATH): rc 3 y la línea de debug con los flags correctos
   out=$(SELLO_DEBUG=1 SELLO_PRUEBAS='exit 0' cmd_revisar "$R" 2>&1); rc=$?

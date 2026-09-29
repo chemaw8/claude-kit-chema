@@ -33,6 +33,9 @@ bash "${SELLO:-$HOME/.claude/scripts/sello-push.sh}" revisar     # Bash con run_
 5. **Revisor no disponible (salida 3).** No hay sello y el push sigue bloqueado. Díselo al
    usuario tal cual: `KIT_SELLO=omitir git push …` es una decisión suya, no tuya, y queda
    anotada en el ledger. No la ejecutes sin que la pida expresamente.
+5b. **HEAD cambió mientras revisaba (salida 4).** Hubo un commit en paralelo con `revisar`:
+   se selló el commit anterior y el nuevo sigue sin revisar. Vuelve al paso 1, en un paso
+   aparte y sin commits en curso. Nunca lances `revisar` en el mismo bloque que el commit.
 6. **Subir.** Con 0 pendientes, `git push` solo, en su propio **comando aparte** (nunca
    `git commit … && git push`: el hook rechaza comandos que mueven HEAD y empujan en la
    misma línea).
