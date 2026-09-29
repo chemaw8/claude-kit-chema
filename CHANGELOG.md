@@ -9,6 +9,11 @@ familias: 3 × aprobada con cambios, aplicados (`docs/pruebas/council-v1.24.md`)
   vendemos el paquete en 85 mil pesos?» cargó la skill 0 de 3 veces y, con los costos a la mano, 1 de 3. La description
   ya dice «margen de»: la apagaba la regla hermana «tarea trivial → respuesta directa». El council pidió cambiar el
   disparador de «una cifra de dinero» a «calcular dinero», quitar «cotización» y medir antes de fusionar.
+- **A/B del disparo real antes de fusionar** (lo pidió el council; banco `evals-entregables/specs/005-disparo-real/
+  banco-dinero.md`, Opus, 4 corridas por caso y por brazo). Cuatro cálculos de dinero con los costos a la mano:
+  **7/16 → 16/16**. Cuatro controles triviales (precio público, conversión con tipo de cambio dado, suma del súper,
+  ortografía de una frase con «100 pesos»): **0/16 → 1/16**, una conversión, que respondió en dos líneas. Umbral de
+  retiro: más de 20 % en los controles. 7.43 USD nominales.
 - **Gate de disparo:** 21/21, sin confusiones de frontera (Sonnet 5.5). No lee el núcleo, así que aquí solo confirma
   que las descriptions no cambiaron; el efecto lo mide el A/B del disparo real.
 

@@ -19,3 +19,12 @@ carga kit-finanzas».
 Texto final (núcleo 137 → 139 líneas, 11 al tope):
 > Tarea trivial → respuesta directa. Calcular o analizar dinero del negocio (precio a cobrar, costo, margen) no lo es
 > aunque la cuenta sea simple: carga kit-finanzas. Consultar un precio público o convertir unidades sí es trivial.
+
+## Medición antes de fusionar (2026-09-29)
+| Grupo | Antes (v1.23.2) | Después (v1.24) |
+|---|---|---|
+| Positivos: margen, «¿cuánto nos queda?», «¿cuánto nos cuesta?», precio para ganar 30 % (con `costos-paquete.csv`) | 7/16 | 16/16 |
+| Controles: plan Pro de Claude, 250 USD a 18.50, suma del súper, ortografía con «100 pesos» | 0/16 | 1/16 (conversión) |
+
+Reportes en evals-entregables: `reportes/2026-09-29-0322-disparo` (antes) y `2026-09-29-0340-disparo` (después), fuera
+de git. Cumple el criterio del council: los positivos suben y los controles quedan por debajo del 20 %.
