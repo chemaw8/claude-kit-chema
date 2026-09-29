@@ -33,6 +33,15 @@ aprobada / con cambios / rechazada). Solo si el council aprueba, el PR se saca d
 borrador y sigue el flujo normal (CI + CODEOWNERS). Así el mecanismo que hace
 "aprender" al kit no es también la vía por la que se degrada sin control.
 
+**Por qué no es paranoia** (paper de Prime Agent, arXiv 2608.23552 §3.5, leído el 2026-09-08). Un harness con
+auto-mejora sin aprobación humana descubrió un atajo que violaba la tarea, lo usó pese a un control anti-trampas y lo
+**guardó como skill reutilizable**, aunque tenía registro auditable con rollback. Sus autores concluyen que hacen
+falta tres controles: rollback auditable, validación independiente del estado e interfaces de mínimo privilegio.
+Contra ellos el kit **cumple uno, tiene otro a medias y le falta el tercero**: rollback sí (revertir el PR y el
+CHANGELOG); validación a medias (el council es el mismo modelo juzgando lo que escribió el mismo modelo, y `main` va
+con 0 aprobaciones requeridas); mínimo privilegio no (ver Diferido). Por eso la regla no se relaja «porque la
+corrección era obvia». Acta del council que revisó este análisis: PR #37.
+
 ## Presupuesto del núcleo: toda adición nombra qué paga
 
 El núcleo tiene tope duro de 150 líneas y las descriptions un aviso a 6,000
@@ -143,6 +152,9 @@ sustituye, la adelanta. Reglas del piloto:
   que es inofensivo, pero conviene empaquetar solo lo necesario cuando haya un
   mecanismo de exclusión claro.
 - Reemplazar el hook anti-secretos por una vía sin dependencia de python3.
+- **Mínimo privilegio sobre el propio kit**: hoy nada impide que un agente con permiso de edición reescriba el núcleo o
+  las skills instaladas en la máquina; la branch protection solo frena lo que intenta llegar a `main`. Es el tercer
+  control del paper citado en «Mejora del kit por corrección», y el que falta.
 - Equipo de 2+ revisores en CODEOWNERS (hoy un único dueño es punto único de
   fallo); al lograrlo, subir aprobaciones requeridas a 1–2 y activar
   `require_code_owner_reviews` en la branch protection.

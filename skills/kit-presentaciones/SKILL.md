@@ -22,7 +22,8 @@ final, no al principio.
 - Toda cifra tiene fuente. Ningún número aparece sin de dónde salió y de cuándo.
   Un dato sin fuente es una afirmación que no puedes defender si te preguntan.
 - El visual tiene identidad. Colores, tipografía y logos siguen la marca:
-  consulta `~/.claude/contexto/CONTEXTO-EMPRESA.md` para tono y audiencias, y los
+  consulta `CONTEXTO-EMPRESA.md` en la carpeta `contexto/` de tu perfil
+  (`${CLAUDE_CONFIG_DIR:-~/.claude}/contexto/`) para tono y audiencias, y los
   recursos de marca (p. ej. `~/Trabajo/recursos/marca`) para logos y paleta. Un
   deck que parece plantilla genérica resta credibilidad al mensaje.
 - El deck se sostiene sin narrador. Alguien que lo abra sin ti debe entender la

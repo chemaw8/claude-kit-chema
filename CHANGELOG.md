@@ -1,5 +1,19 @@
 # Changelog — Kit Chema
 
+## v1.23.2 — 2026-09-29
+Integra dos PR que llevaban semanas abiertos; núcleo y descriptions intactos (el gate de disparo no aplica).
+- **El hook de contexto y `/init-contexto` siguen a `CLAUDE_CONFIG_DIR`** (PR #48, de franciscopedroza-stack). Con dos
+  perfiles de Claude Code en una máquina, el perfil lanzado con `CLAUDE_CONFIG_DIR` recibía el contexto de
+  `~/.claude`, es decir, el de otro ámbito. Ahora el hook lee `${CLAUDE_CONFIG_DIR:-$HOME/.claude}/contexto/` y no cae
+  a `~/.claude`; sin la variable, nada cambia. `hooks/test-kit-chema-contexto.sh` trae 7 casos. Se integró sobre main
+  a mano porque chocaba con v1.22.3: las plantillas se siguen tomando de `ORIGEN` (plugin o
+  `~/.claude/plantillas-kit`), y solo el destino sigue al perfil. Pendiente, como decía el PR: el núcleo aún nombra
+  `~/.claude/contexto/`; alinearlo va aparte y con gate de disparo.
+- **GOBERNANZA: por qué la mejora por corrección nunca se auto-aplica** (rescate del PR #37, borrador desde el
+  2026-09-08). Entra la evidencia del paper de Prime Agent en versión corta y el hueco de mínimo privilegio en Diferido.
+  **No entra** el párrafo de 18 líneas para `kit-orquestacion`: sale de una sola corrida de otro dominio, el propio
+  texto admite que no compara ancho contra profundo, y se pagaría cada vez que carga la skill.
+
 ## v1.23.1 — 2026-09-29
 Arreglo del gate de push; núcleo y descriptions intactos (el gate de disparo no aplica).
 - **`sello-push.sh revisar` fija HEAD al arrancar y avisa si cambió mientras revisaba (salida 4).** Si el commit se
