@@ -24,6 +24,14 @@ gráfica.
 - El hecho está separado de la interpretación. "Las ventas cayeron 18% en junio"
   es un hecho; "cayeron porque subió el precio" es una hipótesis. Se marcan como
   cosas distintas y no se mezclan en la misma frase.
+- Lo que descubres en el dato gobierna el resultado; no se queda en una nota. Si el
+  propio insumo prueba que una etiqueta o una cifra está mal (filas marcadas como
+  venta que por su folio y su serie son devoluciones), corrige antes de calcular.
+  El titular y las tablas salen de la lectura corregida, y dices qué corregiste y
+  cuánto movió; la lectura literal va como referencia. Decirlo explícitamente no
+  es dejarlo sin resolver. Si la evidencia no alcanza para saber qué lectura vale,
+  no escojas una ni inventes una tercera: el resultado queda como discrepancia,
+  con las dos cifras y la diferencia a la vista.
 - El análisis es reproducible. Otra persona (o tú en un mes) puede volver a
   correrlo sobre los mismos datos y llegar al mismo número. Nada de cálculos
   hechos a mano en una celda que nadie puede repetir.
@@ -62,6 +70,8 @@ Antes de entregar, con los datos y el análisis delante:
 - ¿Reporté la calidad del dato (huecos, duplicados, periodo, unidades)?
 - ¿Cada hallazgo tiene su evidencia y su magnitud en números?
 - ¿Separé el hecho de la hipótesis, marcados como cosas distintas?
+- Si encontré algo que no cuadra, ¿el titular sale de la lectura corregida (o
+  marca la discrepancia) y no de la literal con la anomalía en una nota?
 - ¿Los scripts están guardados y se pueden re-ejecutar para llegar al mismo
   resultado?
 - ¿Las gráficas van sin trucos visuales (ejes desde cero, periodo completo)?
