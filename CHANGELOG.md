@@ -1,5 +1,18 @@
 # Changelog — Kit Chema
 
+## v1.25 — 2026-09-29 (borrador, pendiente de council)
+Una regla nueva en el cuerpo de `kit-analisis-datos` y `kit-finanzas`; núcleo y descriptions intactos (el gate de
+disparo no aplica). Evidencia y acta: `docs/pruebas/council-v1.25.md`.
+- **Lo que no cuadra gobierna el resultado; no se queda en una nota.** Si el insumo prueba cuál lectura vale, se
+  corrige antes de calcular y el titular sale corregido. Si no alcanza, el renglón queda como discrepancia con las dos
+  cifras, sin escoger una ni inventar otra. **Evidencia:** en la línea base de entregables, el agente detectaba la
+  anomalía pero titulaba con la lectura literal (canal mal etiquetado en un P&L, 0/3) o escogía por su cuenta una
+  cifra cobrable (monto declarado que no cuadra con su cálculo, 1/3). A/B con el texto de las skills inyectado (Opus,
+  3 corridas por brazo, contra las mismas skills sin la regla): **0/3 → 2/3** y **0/3 → 3/3**; dos controles que hoy
+  pasan siguen en 3/3. 30.91 USD nominales.
+- **Hallazgo del instrumento:** la línea base de evals-entregables no carga skills (el productor corre «sin
+  herramientas»); mide el núcleo. Una regla en una skill no mueve esa línea base.
+
 ## v1.24 — 2026-09-29
 Una regla nueva en el núcleo, pedida por José; núcleo 137 → 139 líneas (tope 150, quedan 11). Council de tres
 familias: 3 × aprobada con cambios, aplicados (`docs/pruebas/council-v1.24.md`).
