@@ -2,7 +2,8 @@
 
 **Conclusión:** `plugin eval` **complementa** al gate de disparo; no lo sustituye. Mide otra cosa: si el modelo, de
 verdad y con herramientas, llama a la skill (`tool_used: Skill`), mientras que el gate pregunta a un juez qué skill
-*debería* cargar leyendo solo las descriptions. En los 3 casos el gate dijo ✓ y la activación real fue bastante menor.
+*debería* cargar leyendo solo las descriptions. El gate dijo ✓ en los 3 casos; en la realidad, la frontera #27 se
+activó 3/3, pero #5 y #16 fallaron en más de la mitad de las corridas en alguna de las dos variantes.
 
 ## Qué se corrió
 - Claude Code 2.1.283, modelo `opus`, kit v1.23.1 como plugin (copia en `/tmp`, `--trust-plugin`, `--no-publish`).
