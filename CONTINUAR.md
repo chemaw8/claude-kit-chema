@@ -8,8 +8,9 @@ mano sobre main, y de #37 solo la evidencia de GOBERNANZA; #37 cerrado. El dispa
 medición periódica, pero vive en `evals-entregables` (spec 005, `disparo.sh`), no aquí: el kit solo aporta el banco.
 
 ## Siguiente paso
-- [ ] Leer la medición de disparo real (`evals-entregables/estado/ultimo-disparo.json`): si una skill sale floja con
-      núcleo y 3 corridas, ajustar su description por PR con el gate de disparo, y volver a medir.
+- [ ] Disparo real con v1.23.2: **77/90** (núcleo 48/60, fronteras 29/30; `evals-entregables` spec 005). Flojos: #11
+      código 0/3, #18 margen 0/3, #8 research 1/3, #13 propuestas 1/3. En #11 y #18 el modelo pide los datos antes de
+      cargar la skill (revisado a mano): no basta para tocar descriptions. Primero, casos con material; después decidir.
 - [ ] Alinear el núcleo con `CLAUDE_CONFIG_DIR` (sigue nombrando `~/.claude/contexto/`): va con gate de disparo.
 - [ ] 2026-10-28: revisar la vigilancia de «cierre en palabras llanas» (`~/.claude/kit-chema/reglas-vigiladas.json`,
       respaldada en claude-entorno `kit-estado/`): se retira si hubo 2 o más correcciones del tema.
