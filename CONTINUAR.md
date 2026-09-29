@@ -1,4 +1,4 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-29  ·  commit b1b8380 (rama main)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-29  ·  commit 380ae45 (rama main)  ·  cierre limpio: sí
 > Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
@@ -18,7 +18,7 @@ evals-entregables no carga skills, mide el núcleo.
 - [ ] 2026-10-28: revisar la vigilancia de «cierre en palabras llanas» (`~/.claude/kit-chema/reglas-vigiladas.json`).
 
 ## Cómo retomar
-- Abrir:    CHANGELOG.md (v1.24 → v1.25) · `docs/pruebas/council-v1.25.md` · evals-entregables `docs/ab-kit-v1.25-anomalia.md`
+- Abrir:    CHANGELOG.md (v1.24 → v1.25) · `docs/pruebas/council-v1.25.md` · `~/Trabajo/proyectos/evals-entregables/docs/ab-kit-v1.25-anomalia.md`
 - Correr:   `bash verificar.sh` → código 0 y ninguna línea `FALLA`
 - Verificar arranque: `head -2 ~/.claude/CLAUDE.md` → dice la versión del primer `## v` del CHANGELOG
 

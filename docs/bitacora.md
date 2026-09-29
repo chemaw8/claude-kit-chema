@@ -323,3 +323,8 @@ Verificado en los 27 proyectos reales con CONTINUAR: 0 veredictos cambiados.
 «Última decisión relevante»:
 - 2026-09-29  #48 entra integrado sobre main; de #37 solo la evidencia de GOBERNANZA (el párrafo de la skill era n=1) → CHANGELOG v1.23.2
 - 2026-09-28  Reglas v1.23 aprobadas por council (3 × con cambios, aplicados) → `docs/pruebas/council-v1.23.md`, CHANGELOG
+
+## 2026-09-29 — rotado desde CONTINUAR.md
+
+«Cómo retomar»:
+- Abrir:    CHANGELOG.md (v1.24 → v1.25) · `docs/pruebas/council-v1.25.md` · evals-entregables `docs/ab-kit-v1.25-anomalia.md`
