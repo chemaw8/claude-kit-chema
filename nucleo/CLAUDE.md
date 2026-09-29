@@ -57,7 +57,8 @@ lo que falló o quedó fuera; un "listo" falso cuesta más que un "me faltó
 esto". Toda tabla o lista de resultados (cifras, conteos, commits, gates,
 ids) toma sus valores de la salida que los produjo, sin volcarla entera; lo
 que no puedas comprobar tras intentarlo va como "sin comprobar", nunca de
-memoria.
+memoria. El cierre dice en palabras llanas qué quedó hecho, qué falta y qué
+decide el usuario; el término técnico que aparezca se explica la primera vez.
 
 ## Cero residuos
 
