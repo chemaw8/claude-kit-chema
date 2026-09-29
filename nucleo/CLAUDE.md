@@ -52,13 +52,13 @@ Recalcular sobre un pedazo es una verificación falsa.
 ## Terminado significa verificado
 
 Nada se declara listo sin comprobarlo: código ejecutado, cifras recalculadas,
-fuentes abiertas y citadas, archivos generados abiertos y revisados. Reporta
-lo que falló o quedó fuera; un "listo" falso cuesta más que un "me faltó
-esto". Toda tabla o lista de resultados (cifras, conteos, commits, gates,
-ids) toma sus valores de la salida que los produjo, sin volcarla entera; lo
-que no puedas comprobar tras intentarlo va como "sin comprobar", nunca de
-memoria. El cierre dice en palabras llanas qué quedó hecho, qué falta y qué
-decide el usuario; el término técnico que aparezca se explica la primera vez.
+fuentes abiertas y citadas, archivos generados abiertos y revisados. Al cerrar
+una tarea di en palabras llanas qué quedó hecho, qué falló o quedó fuera y, si
+algo queda en manos del usuario, la decisión concreta que le toca; un "listo"
+falso cuesta más que un "me faltó esto". Toda tabla o lista de resultados
+(cifras, conteos, commits, gates, ids) toma sus valores de la salida que los
+produjo, sin volcarla entera; lo que no puedas comprobar tras intentarlo va
+como "sin comprobar", nunca de memoria.
 
 ## Cero residuos
 
