@@ -9,6 +9,9 @@ Integra dos PR que llevaban semanas abiertos; núcleo y descriptions intactos (e
   a mano porque chocaba con v1.22.3: las plantillas se siguen tomando de `ORIGEN` (plugin o
   `~/.claude/plantillas-kit`), y solo el destino sigue al perfil. Pendiente, como decía el PR: el núcleo aún nombra
   `~/.claude/contexto/`; alinearlo va aparte y con gate de disparo.
+  **Migración:** si usas un perfil con `CLAUDE_CONFIG_DIR` y dependías de que leyera `~/.claude/contexto/`, ese
+  perfil deja de recibir contexto. Copia la carpeta (`cp -r ~/.claude/contexto "$CLAUDE_CONFIG_DIR"/`) o corre
+  `/init-contexto` en ese perfil y llénalo con lo de su ámbito.
 - **GOBERNANZA: por qué la mejora por corrección nunca se auto-aplica** (rescate del PR #37, borrador desde el
   2026-09-08). Entra la evidencia del paper de Prime Agent en versión corta y el hueco de mínimo privilegio en Diferido.
   **No entra** el párrafo de 18 líneas para `kit-orquestacion`: sale de una sola corrida de otro dominio, el propio
