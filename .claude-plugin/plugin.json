@@ -1,6 +1,6 @@
 {
   "name": "kit-chema",
-  "version": "1.23.2",
+  "version": "1.24.0",
   "description": "Estándar de calidad Kit Chema para Claude Code: empaqueta las 9 skills de dominio (presentaciones, análisis de datos, research, código, propuestas, finanzas, automatización, redacción, orquestación multi-agente), cuatro subagentes (verificador, evaluador-council, lector-fresco, sintetizador), cinco comandos (/proyecto-init, /cierre, /revisar-salud, /init-contexto, /revisar-antes-de-subir) y cinco hooks: contexto (SessionStart, autocarga la carpeta contexto/ de tu perfil), anti-secretos, rutas-fantasma, sello-push (gate de push, solo en repos con kit-chema.gate=true) y backstop-cierre (Stop). El núcleo de reglas universales no viaja en el plugin (un CLAUDE.md en la raíz de un plugin no se carga como contexto): se instala aparte como ~/.claude/CLAUDE.md.",
   "author": {
     "name": "chemaw8"

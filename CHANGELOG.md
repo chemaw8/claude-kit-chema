@@ -1,5 +1,22 @@
 # Changelog — Kit Chema
 
+## v1.24 — 2026-09-29
+Una regla nueva en el núcleo, pedida por José; núcleo 137 → 139 líneas (tope 150, quedan 11). Council de tres
+familias: 3 × aprobada con cambios, aplicados (`docs/pruebas/council-v1.24.md`).
+- **«Esfuerzo proporcional al riesgo»: calcular o analizar dinero del negocio no es trivial.** Precio a cobrar, costo
+  o margen cargan `kit-finanzas` aunque la cuenta sea simple; consultar un precio público o convertir unidades sí es
+  trivial. **Evidencia:** en el disparo real (evals-entregables spec 005, Opus con el núcleo), «¿Cuál es el margen si
+  vendemos el paquete en 85 mil pesos?» cargó la skill 0 de 3 veces y, con los costos a la mano, 1 de 3. La description
+  ya dice «margen de»: la apagaba la regla hermana «tarea trivial → respuesta directa». El council pidió cambiar el
+  disparador de «una cifra de dinero» a «calcular dinero», quitar «cotización» y medir antes de fusionar.
+- **A/B del disparo real antes de fusionar** (lo pidió el council; banco `evals-entregables/specs/005-disparo-real/
+  banco-dinero.md`, Opus, 4 corridas por caso y por brazo). Cuatro cálculos de dinero con los costos a la mano:
+  **7/16 → 16/16**. Cuatro controles triviales (precio público, conversión con tipo de cambio dado, suma del súper,
+  ortografía de una frase con «100 pesos»): **0/16 → 1/16**, una conversión, que respondió en dos líneas. Umbral de
+  retiro: más de 20 % en los controles. 7.43 USD nominales.
+- **Gate de disparo:** 21/21, sin confusiones de frontera (Sonnet 5.5). No lee el núcleo, así que aquí solo confirma
+  que las descriptions no cambiaron; el efecto lo mide el A/B del disparo real.
+
 ## v1.23.2 — 2026-09-29
 Integra dos PR que llevaban semanas abiertos; núcleo y descriptions intactos (el gate de disparo no aplica).
 - **El hook de contexto y `/init-contexto` siguen a `CLAUDE_CONFIG_DIR`** (PR #48, de franciscopedroza-stack). Con dos
