@@ -6,7 +6,10 @@ Arreglo del gate de push; núcleo y descriptions intactos (el gate de disparo no
   lanzaba en el mismo bloque que `revisar`, el Python leía el HEAD anterior, lo sellaba y la salida decía «aprobado»
   aunque el commit nuevo no estuviera revisado. El push no pasaba sin sello, así que no subió nada sin revisar, pero el
   agente creía que sí. Pasó tres veces el 2026-09-28, con la trampa ya anotada: hacía falta que lo detectara el script,
-  no la memoria del agente. Caso nuevo en el autotest (11b), y se comprobó que falla sin el arreglo.
+  no la memoria del agente. Si no hubo sello (salida 2 o 3), se conserva ese código y solo se añade el aviso.
+  Casos nuevos en el autotest: 11b (commit durante la revisión), 11c (commit entre fijar HEAD y leerlo, con el
+  gancho de prueba `SELLO_TRAS_FIJAR`) y 11d (revisor caído y commit a la vez). Se comprobó que cada uno falla sin
+  su parte del arreglo; 11c y 11d salen de los dos avisos del propio sello.
 - **`/revisar-antes-de-subir`:** paso 5b para la salida 4.
 - **Ficha del repo:** con `main` protegido, el aviso de `reconciliar` («el cierre se ancló en la rama X») es lo esperado
   al retomar, no un estado rancio.

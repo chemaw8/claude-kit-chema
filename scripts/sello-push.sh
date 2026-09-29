@@ -22,7 +22,7 @@
 # kit-chema.revisor (opus), kit-chema.base (rama base). Variables: KIT_GATE_LEDGER,
 # SELLO_TOPE_USD (3; revisiones reales de ~1,600 líneas han costado hasta 1.57), SELLO_PRUEBAS_SEG (600, pruebas),
 # SELLO_REVISOR_SEG (900, revisor: una revisión real ya tardó 632 s; por eso revisar va en background), SELLO_DEBUG=1 (imprime la invocación).
-# Solo para pruebas: SELLO_REVISOR (sustituye el comando claude -p), SELLO_PRUEBAS
+# Solo para pruebas: SELLO_REVISOR (sustituye el comando claude -p), SELLO_TRAS_FIJAR (corre tras fijar HEAD), SELLO_PRUEBAS
 # (sustituye las pruebas), SELLO_SIN_TIMEOUT=1 (simula que no hay coreutils timeout).
 set -uo pipefail
 AQUI="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -55,6 +55,7 @@ cmd_revisar() {
   # `revisar` (mismo bloque de herramientas), antes se sellaba el commit anterior y la salida decía "aprobado" igual.
   # Pasó tres veces el 2026-09-28 con la trampa ya escrita; ahora lo detecta el script, no la memoria del agente.
   local head0; head0="$(git -C "$repo" rev-parse HEAD 2>/dev/null)"
+  [ -n "${SELLO_TRAS_FIJAR:-}" ] && bash -c "$SELLO_TRAS_FIJAR"   # solo pruebas: un commit justo después de fijar HEAD
   REPO="$repo" HEAD_FIJO="$head0" BASE_ARG="$base" PRUEBAS_CMD="$pruebas" MODELO="$(git -C "$repo" config --get kit-chema.revisor 2>/dev/null || echo opus)" \
   LEDGER="$(ledger_path)" PROMPT="$PROMPT" ESQUEMA="$ESQUEMA" TOPE="${SELLO_TOPE_USD:-3}" SEG="${SELLO_PRUEBAS_SEG:-600}" REV_SEG="${SELLO_REVISOR_SEG:-900}" \
   SIN_TIMEOUT="${SELLO_SIN_TIMEOUT:-}" REVISOR_CMD="${SELLO_REVISOR:-}" DEBUG="${SELLO_DEBUG:-}" CLI_VERSION="$cli" \
@@ -294,8 +295,12 @@ PY
   local rc=$? head1
   head1="$(git -C "$repo" rev-parse HEAD 2>/dev/null)"
   if [ -n "$head0" ] && [ "$head1" != "$head0" ]; then
-    err "HEAD se movió durante la revisión: se selló ${head0:0:7}, pero HEAD ahora es ${head1:0:7}. Ese commit NO está revisado y su push seguirá bloqueado. Vuelve a correr \`sello-push.sh revisar\` cuando ya no haya commits en curso (nunca en el mismo paso que el commit)."
-    return 4
+    if [ "$rc" -eq 0 ] || [ "$rc" -eq 1 ]; then   # hubo sello, pero de head0: el veredicto no vale para head1
+      err "HEAD se movió durante la revisión: el sello es de ${head0:0:7}, pero HEAD ahora es ${head1:0:7}. Ese commit NO está revisado y su push seguirá bloqueado. Vuelve a correr \`sello-push.sh revisar\` cuando ya no haya commits en curso (nunca en el mismo paso que el commit)."
+      return 4
+    fi
+    # rc 2/3: no hubo sello; se conserva el código, que dice lo que pasó, y solo se añade el aviso
+    err "Además, HEAD se movió durante la revisión (${head0:0:7} → ${head1:0:7}): al reintentar, que no haya commits en curso."
   fi
   return $rc
 }
@@ -560,6 +565,16 @@ cmd_autotest() {
   out=$(SELLO_PRUEBAS='exit 0' SELLO_REVISOR="printf 'p\\n' >> '$R/a.txt'; git -C '$R' commit -qam paralelo; cat '$t/aprobado.json'" cmd_revisar "$R" 2>&1); rc=$?
   local H1; H1=$(git -C "$R" rev-parse HEAD)
   [ $rc -eq 4 ] && [ "$H1" != "$H0" ] && [ -f "$SELLOS/$H0" ] && [ ! -f "$SELLOS/$H1" ] && printf '%s' "$out" | grep -q "HEAD se movió" || fallo "commit durante revisar debió sellar ${H0:0:7}, no ${H1:0:7}, y dar rc 4 (rc=$rc): $(printf '%s' "$out" | tail -2)"
+  git -C "$R" reset -q --hard "$C"
+  # 11c commit entre fijar HEAD y que el Python lo lea: se sella el fijado (HEAD_FIJO), no el nuevo
+  H0=$(git -C "$R" rev-parse HEAD); rm -f "$SELLOS"/*
+  out=$(SELLO_TRAS_FIJAR="printf 'q\\n' >> '$R/a.txt'; git -C '$R' commit -qam temprano" SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" 2>&1); rc=$?
+  H1=$(git -C "$R" rev-parse HEAD)
+  [ $rc -eq 4 ] && [ "$H1" != "$H0" ] && [ -f "$SELLOS/$H0" ] && [ ! -f "$SELLOS/$H1" ] || fallo "commit antes de que el Python lea HEAD debió sellar ${H0:0:7} (HEAD_FIJO), no ${H1:0:7} (rc=$rc)"
+  git -C "$R" reset -q --hard "$C"
+  # 11d revisor caído y commit en paralelo: se conserva la salida 3 (no hubo sello) y se añade el aviso
+  out=$(SELLO_PRUEBAS='exit 0' SELLO_REVISOR="printf 'r\\n' >> '$R/a.txt'; git -C '$R' commit -qam caido; exit 1" cmd_revisar "$R" 2>&1); rc=$?
+  [ $rc -eq 3 ] && printf '%s' "$out" | grep -q "Además, HEAD se movió" && ! printf '%s' "$out" | grep -q "el sello es de" || fallo "revisor caído + commit en paralelo debió quedar en rc 3 sin decir que hubo sello (rc=$rc): $(printf '%s' "$out" | tail -2)"
   git -C "$R" reset -q --hard "$C"
   # 12 invocación real (sin claude en PATH): rc 3 y la línea de debug con los flags correctos
   out=$(SELLO_DEBUG=1 SELLO_PRUEBAS='exit 0' cmd_revisar "$R" 2>&1); rc=$?
