@@ -4,9 +4,11 @@ description: Revisa el reporte de salud del agente y propone/corrige los errores
 
 Flujo de revisión-y-corrección de la observabilidad del agente. Al invocarlo:
 
-1. **Lee el reporte más reciente** en
-   `~/Trabajo/proyectos/claude-entorno/reportes-salud/` (el `.md` con fecha más
-   nueva) y el `historial.md` (la tendencia semana a semana).
+1. **Lee el reporte más reciente** en la carpeta de reportes de salud de
+   claude-entorno (en la instalación de referencia,
+   `~/Trabajo/proyectos/claude-entorno/reportes-salud/`; si no existe, pregunta
+   dónde está antes de seguir): el `.md` con fecha más nueva y el `historial.md`
+   (la tendencia semana a semana).
 
 2. **Compara con la semana anterior** (renglones del historial): ¿la tasa de error
    subió o bajó? ¿aparecieron tipos de error nuevos? ¿algún proyecto se disparó?
