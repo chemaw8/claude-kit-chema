@@ -65,3 +65,27 @@ brazos: A = skills de v1.24, B = skills con la regla. El disparo real ya muestra
 - **Costo:** inyectar las skills multiplica el trabajo del productor. El caso 1 pasa de ~1.5 min y 0.40 USD a 6–7 min
   y ~2.4 USD por corrida; el caso 2, de ~1 a ~2.3 min. Se descartaron 4 corridas por timeout (INFRA, sin veredicto);
   con 900 s de timeout no hubo más. En total, 22 corridas y 30.91 USD nominales del plan.
+
+## Council (2026-09-29)
+Panel de tres familias, cada una sin ver a las otras: Anthropic (Opus 5.5, costo/beneficio y sobrecorrección), OpenAI
+(Astra, redacción y ambigüedad operativa), Moonshot (K3, abogado del diablo sobre el método). **Veredicto: aprobada
+con cambios** (Anthropic: aprobada; OpenAI: aprobada con cambios; Moonshot: aprobada). La síntesis la hizo el hilo
+principal: los tres coinciden y el único cambio se comprobó contra el archivo.
+
+Postura inicial del hilo principal, antes de leer al panel: «aprobar con cambios menores; falta un control contra
+discrepancias falsas y la regla está duplicada en dos skills con redacción distinta». El panel me hizo cambiar de
+opinión en la duplicación: las dos redacciones dicen lo mismo con ejemplos de su dominio y no se contradicen al
+cargarse juntas. El problema real era más chico: el checklist de finanzas.
+
+| Hallazgo | Quién | Qué se hizo |
+|---|---|---|
+| El checklist de `kit-finanzas` solo pregunta por la discrepancia y deja fuera la rama «corregir si el insumo prueba cuál lectura vale»; con finanzas cargada sola, empujaría todo a «por aclarar» | OpenAI (condición), Anthropic (deseable) | Pregunta reescrita con las dos ramas (texto de OpenAI). No se re-midió: alinea el checklist con el cuerpo que sí se midió |
+| El caso 1 solo da 2/3 contra 0/3 (Fisher, una cola, p ≈ 0.20); sumando los dos casos, 0/6 contra 5/6 (p ≈ 0.008) | Moonshot, Anthropic | Se registra como evidencia **provisional**, no concluyente |
+| Falta un control de «parece que no cuadra y sí cuadra», la dirección riesgosa de la regla | Moonshot, Anthropic | **Vigía y umbral de retiro, abajo** |
+| Solo está medido el disparo de `kit-finanzas`; el de `kit-analisis-datos` en un P&L no se ha medido | Moonshot | Anotado. Acota el beneficio, no la corrección: una regla que no se carga no hace nada |
+| Sin umbral de materialidad, un redondeo de centavos podría declararse discrepancia | Anthropic | Anotado como mejora posible; no entra |
+| La mejora se atribuye a la regla (el brazo A tiene las mismas skills), la medición es dentro de la muestra y los ejemplos distintos lo mitigan en parte | las tres | Sin cambio |
+
+**Vigía y umbral de retiro.** En la próxima medición con skills cargadas: si alguno de los dos controles que hoy pasan
+cae por declarar una discrepancia que no existe, o el caso de «dos fuentes que no deben cuadrar» muestra al agente
+forzando una reconciliación, la regla se revisa. Si hay regresión clara, se revierte el PR.

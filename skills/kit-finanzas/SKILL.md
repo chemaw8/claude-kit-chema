@@ -77,8 +77,9 @@ Antes de entregar, con los números y el cálculo delante:
   una hoja de cálculo: fórmulas vivas en las celdas calculadas, no valores
   pegados — cambiar un supuesto debe actualizar el resultado sin rehacer nada.
 - ¿Los totales se verificaron dos veces, por caminos distintos?
-- Si una cifra declarada no cuadra con su propio cálculo, ¿el renglón la marca
-  como discrepancia con las dos cifras, en vez de escoger una o inventar otra?
+- Si una cifra declarada no cuadra con su propio cálculo, ¿el resultado sale
+  corregido cuando el insumo prueba cuál lectura vale y, si no alcanza, queda como
+  discrepancia con las dos cifras y su diferencia, sin escoger una ni inventar otra?
 - ¿Las proyecciones traen escenarios, no una sola cifra?
 - ¿Están declaradas la moneda y la fecha del tipo de cambio?
 
