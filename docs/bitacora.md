@@ -306,3 +306,20 @@ Verificado en los 27 proyectos reales con CONTINUAR: 0 veredictos cambiados.
 
 «Última decisión relevante»:
 - 2026-09-06 Gate de push = Sello de push v2 (hook PreToolUse + helper + comando), no Esclusa ni check de GitHub → DECISIONES.md de claude-entorno.
+
+## 2026-09-29 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+**Estado al 2026-09-29 (tarde):** v1.24 en main e instalado: calcular o analizar dinero del negocio carga
+`kit-finanzas` (council 3 × con cambios; A/B 7/16 → 16/16 y controles 0/16 → 1/16). Disparo real con v1.24: 86/90
+(`evals-entregables` spec 005). Claude Code 2.1.284: `sonnet` es Sonnet 5.5; el gate de disparo ya corrió con él (21/21).
+
+«Cómo retomar»:
+- Abrir:    CHANGELOG.md (v1.23 → v1.24) · `docs/pruebas/council-v1.24.md` · evals-entregables spec 005
+
+«Bloqueadores / esperas»:
+- Ninguno. Los PR #48 y #37 quedaron resueltos el 2026-09-29 (#59).
+
+«Última decisión relevante»:
+- 2026-09-29  #48 entra integrado sobre main; de #37 solo la evidencia de GOBERNANZA (el párrafo de la skill era n=1) → CHANGELOG v1.23.2
+- 2026-09-28  Reglas v1.23 aprobadas por council (3 × con cambios, aplicados) → `docs/pruebas/council-v1.23.md`, CHANGELOG
