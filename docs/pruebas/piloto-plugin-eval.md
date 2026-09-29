@@ -33,7 +33,8 @@ Costo: 1.79 USD nominales en 16 corridas (~0.11 por corrida con Opus), 136 s la 
 ## Qué se aprendió
 1. **No hay contaminación por el kit instalado** (la duda del 2026-09-28): cada corrida arranca con HOME, cwd y
    configuración temporales, sin `~/.claude`, CLAUDE.md, skills ni MCP del usuario (doc oficial, «How runs are
-   isolated»). La comparación con y sin plugin es limpia.
+   isolated»). Lo dice la documentación; en este piloto no se corrió el brazo sin plugin. Lo que sí se vio es
+   coherente con eso: el agente evaluado intentó leer la carpeta de configuración temporal y le negaron el permiso.
 2. **Tampoco carga el núcleo.** El plugin trae skills, agentes y hooks; el núcleo lo instala `instalar.sh` en
    `~/.claude/CLAUDE.md`. Para medirlo como se usa, la variante «con núcleo» lo pasa en `append_system_prompt` (se
    genera al vuelo desde el núcleo instalado; no se versiona para que no envejezca).
