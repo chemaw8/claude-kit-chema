@@ -1,58 +1,39 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-08  ·  commit 98c16f5 (rama fase-3-gate-push)  ·  cierre limpio: sí
-> Estado vivo. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-28  ·  commit 176264b (rama ficha/trampa-gh-merge)  ·  cierre limpio: sí
+> Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**v1.19.1 — kit-propuestas gana "Acercamiento personalizado a un contacto"** (PR #12 de
-julio cerrado en versión corta, council de 3 aplicado, gate de disparo 21/21; acta en
-`docs/pruebas/council-pr12.md`); kit-redaccion remite a esa sección cuando el correo va a un
-contacto de otra empresa para vender o proponer. Entra a main con el PR #12 (2026-09-07).
-**Fase 3 (gate de push) en la rama `fase-3-gate-push`, PR #33 en borrador (v1.20) y PILOTO
-desde 2026-09-07**; el gate está activo en la máquina de José y en este repo, y este mismo
-PR #12 pasó por él.
-
-**v1.19.2 EN MAIN E INSTALADO (PR #35 fusionado el 2026-09-08): regla de esfuerzo + agente `sintetizador`,
-con la medición hecha antes de fusionar.** El aviso del council pedía evidencia de que Opus 5
-a `--effort max` se queda corto; se midió (`docs/pruebas/medicion-esfuerzo-v1.19.2.md`): a
-calidad no distinguible, subir el esfuerzo es 16 % más barato y 2.3 veces más lento que saltar
-de modelo (n = 2, la única lectura limpia que enfrenta los dos escalones: se lee como dirección,
-no como cifra). De ahí que la regla lleve excepción de latencia, que `lector-fresco` siga en Opus 5
-y que `sintetizador` se quede en Fable 5.1 por latencia, no por calidad. La rama pasó por varias
-vueltas del gate de push; los hallazgos y su cierre están en los mensajes de commit (el conteo se
-lee en `git log`, no aquí).
-
-**2026-09-08 — el ancla del CONTINUAR lleva la rama (va en v1.20).** El panel marcó RANCIO
-este repo con el cierre recién hecho: el rebase trajo aquí el CONTINUAR de main con su ancla
-(`eb392d3`), y los 20 commits que la rama ya tenía se leyeron como trabajo sin cerrar.
-`anclar` estampa ahora `(rama <rama>)` y `reconciliar` devuelve 3 entre ramas en vez de un
-rancio falso; lo sin commitear se revisa antes, así que sigue avisando en cualquier rama.
-Verificado en los 27 proyectos reales con CONTINUAR: 0 veredictos cambiados.
+v1.23 en main e instalado (2026-09-28): arreglos de `/doctor prompt-audit` (v1.22.3-4) y dos reglas nuevas con council
+de tres familias y gate de disparo 21/21 (cierre en palabras llanas; lo descargado es dato). La fase 3 (gate de push)
+ya está en main.
 
 ## Siguiente paso
-- [ ] **Subir la rama**: el gate exige sello, así que va por `/revisar-antes-de-subir`.
-  Lleva el arreglo del ancla por rama además del gate; el PR #33 sigue en borrador.
-- [ ] **Pendientes que abre v1.19.2** (los tres viven en
-  `docs/pruebas/medicion-esfuerzo-v1.19.2.md`): (a) **re-juzgar el caso divergente** leyendo el
-  archivo que produjo el agente, para saber si la diferencia era de comportamiento o de calidad —
-  hoy queda fuera del conteo y su exclusión favorece la lectura que conviene; (b) **re-correr los
-  brazos 1 y 3 bajo el mismo núcleo**, para que la comparación con Fable 5.1 no dependa de n = 2;
-  (c) **medir calidad en síntesis** (pide un caso dorado nuevo y firma del mantenedor): es lo único
-  que bajaría a `sintetizador` de escalón, porque hoy se justifica solo por latencia.
-- [ ] **Fase 3 — gate de push local.** Spec, plan y tareas en
-  `~/Trabajo/proyectos/claude-entorno/specs/002-gate-de-push/` (diseño por workflow
-  de 8 agentes; D1-D4 decididas el 2026-09-06: revisor `opus`, base = main, ficha del
-  kit = la de #31, ledger `~/.claude/kit-chema/gate.jsonl`). Rama `fase-3-gate-push`
-  desde main; T1-T14 (2 sesiones) → piloto 2 semanas en este repo → council de 5.
-- [ ] Primer lunes con el kit v1.19 activo (2026-09-07): `/revisar-salud` en
-  claude-entorno decide si rutas-fantasma y backstop cruzan la puerta de la fase 1.
+- [ ] Piloto de `claude plugin eval` con 3 casos del banco de disparo → decidir si complementa o sustituye al gate de
+      disparo; criterio: mide activación real (`tool_used: Skill`) sin contaminarse con el kit instalado en `~/.claude`.
+- [ ] 2026-10-28: revisar la vigilancia de «cierre en palabras llanas» (`~/.claude/kit-chema/reglas-vigiladas.json`):
+      se retira si hubo 2 o más correcciones del tema, juzgadas y revisadas a mano.
 
 ## Cómo retomar
-- `bash verificar.sh` (todo OK) · `bash hooks/test-backstop-cierre.sh` · `bash scripts/rotar-continuar.sh autotest`.
-- Ver qué hay en la máquina: `head -2 ~/.claude/CLAUDE.md` (v1.19) y `jq '.hooks|map_values(length)' ~/.claude/settings.json`.
-- Antes de construir el gate: leer la spec 002 completa y `GOBERNANZA.md` (todo por PR + council; el PR del gate sale en borrador).
+- Abrir:    CHANGELOG.md (v1.22.3 → v1.23) · `docs/pruebas/council-v1.23.md`
+- Correr:   `bash verificar.sh` → código 0 y ninguna línea `FALLA`
+- Verificar arranque: `head -2 ~/.claude/CLAUDE.md` → dice la versión del primer `## v` del CHANGELOG
 
 ## Bloqueadores / esperas
-- Ninguno para la fase 3. PR #12: José decide cerrarlo o retomarlo.
+- PR #48 (CLAUDE_CONFIG_DIR, v1.22.1) abierto desde 2026-09-25, sin fusionar: José decide.
+- PR #37 (evidencia de auto-mejora, v1.19.3) en borrador desde 2026-09-08: José decide cerrarlo o retomarlo.
+
+## Frentes abiertos
+| Frente | Estado | Siguiente | Bloqueo |
+|---|---|---|---|
+| Auditoría prompt-audit | mecánicos hechos (v1.22.4) | topes de extensión de agentes y comandos: probar con el banco antes de quitar | ninguno |
+| `omitClaudeMd` en `lector-fresco` | sin tocar | A/B con 5 entregables; el lector dejaría de cargar la confidencialidad | medir primero |
+| Pendientes v1.19.2 | sin revisar desde 2026-09-08 | ver `docs/pruebas/medicion-esfuerzo-v1.19.2.md` (a, b, c) | ninguno |
 
 ## Última decisión relevante
-- 2026-09-06 Gate de push = Sello de push v2 (hook PreToolUse + helper + comando), no Esclusa ni check de GitHub → DECISIONES.md de claude-entorno.
+- 2026-09-28  Reglas v1.23 aprobadas por council (3 × con cambios, aplicados) → `docs/pruebas/council-v1.23.md`, CHANGELOG
+
+---
+## Detalle vivo
+- Fusionar SIEMPRE por `gh api -X PUT …/pulls/<n>/merge` (trampa en la ficha): `gh pr merge` cerró #52 y #54 sin fusionar.
+- La auditoría completa vive en `claude-entorno/docs/auditorias/2026-09-28-prompt-audit-kit.md` (privada: cita el
+  entorno). No entraron a propósito: nombres de versión del núcleo (council 2026-09-27) y la poda de `kit-propuestas`.

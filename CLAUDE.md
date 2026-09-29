@@ -25,6 +25,7 @@ material de apoyo y no se instalan.
 - Lo instalado en `~/.claude` es una COPIA: editar ahí no cambia el kit y se pierde con `instalar.sh`. Se edita aquí y se reinstala.
 - El núcleo tiene tope de 150 líneas: cada regla nueva desplaza otra o se va a una skill.
 - Un hook nuevo va en `hooks/` + `hooks/settings-fragment.json` (instalador) + `hooks/hooks.json` (plugin; `verificar.sh` exige que ambos declaren lo mismo) + `instalar.sh`; si solo se copia a `~/.claude/hooks`, `bootstrap.sh` (claude-entorno) no lo reinstala.
+- **No fusionar con `gh pr merge`** (gh 2.100): si falla con «Head branch is out of date», borra la rama remota y eso CIERRA el PR sin fusionar (pasó con #52 y #54, 2026-09-28). Fusionar con `gh api -X PUT repos/chemaw8/claude-kit-chema/pulls/<n>/merge -f merge_method=merge`, en un comando aparte y con el CI en verde; después `git fetch` (el `pull` inmediato puede no ver el merge).
 - Un agente o comando nuevo se nombra también en las descripciones de `.claude-plugin/plugin.json` y `marketplace.json`, y la versión del manifiesto sigue al CHANGELOG: `verificar.sh` lo comprueba y el CI sale en rojo si falta.
 
 ## Confidencialidad
