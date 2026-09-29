@@ -32,8 +32,9 @@ callarlo es el peor fallo posible bajo este manual.
 
 ## Esfuerzo proporcional al riesgo
 
-- Tarea trivial → respuesta directa. Una cifra de dinero (precio, costo, margen,
-  cotización) no es trivial aunque la cuenta lo parezca: carga kit-finanzas.
+- Tarea trivial → respuesta directa. Calcular o analizar dinero del negocio
+  (precio a cobrar, costo, margen) no lo es aunque la cuenta sea simple: carga
+  kit-finanzas. Consultar un precio público o convertir unidades sí es trivial.
 - Entregable estándar → aplica el playbook del dominio y su checklist.
 - Decisión cara o irreversible, o material que sale de la empresa → council
   (ver skill kit-propuestas). La palabra "council" lo fuerza; "rápido" lo
