@@ -10,13 +10,21 @@ verdad y con herramientas, llama a la skill (`tool_used: Skill`), mientras que e
   Casos en `plugin-eval/`, con graders sin costo: `tool_used: Skill` con `input_match` al nombre de la skill; el #27
   suma que `kit-redaccion` NO se active.
 - `--ablation none`: un grader de Skill no puede pasar sin el plugin, así que el brazo sin plugin no informa nada.
-- Reproducir: `claude plugin eval . --eval-dir docs/pruebas/plugin-eval --ablation none --runs 3 --model opus --no-publish`.
+- Reproducir «sin núcleo»: `claude plugin eval . --eval-dir docs/pruebas/plugin-eval --ablation none --runs 3 --model opus --no-publish`.
+- Reproducir «con núcleo»: generar la variante desde el núcleo instalado, en una copia del repo, no en el árbol de trabajo:
+  ```bash
+  N=$(sed -n '/kit-chema:inicio/,/kit-chema:fin/p' ~/.claude/CLAUDE.md | grep -v 'kit-chema:')
+  for c in c05-datos-csv c16-finanzas-cobro; do d=docs/pruebas/plugin-eval/$c-nucleo; mkdir -p $d; cp -r docs/pruebas/plugin-eval/$c/graders $d/
+    { printf -- '---\nmax_turns: 6\ntimeout_seconds: 180\nallowed_tools: [Read, Glob, Grep, Skill]\nappend_system_prompt: |\n'
+      printf '%s\n' "$N" | sed 's/^/  /'; printf -- '---\n\n'; awk '/^---$/{f++; next} f>=2 && NF' docs/pruebas/plugin-eval/$c/prompt.md; } > $d/prompt.md; done
+  claude plugin eval . --eval-dir docs/pruebas/plugin-eval --case '*-nucleo' --ablation none --runs 3 --model opus --no-publish
+  ```
 
 ## Resultado (corridas que activaron la skill esperada)
 | Caso | Gate de disparo | Real, sin núcleo | Real, con núcleo |
 |---|---|---|---|
 | #5 datos («¿Por qué bajaron las ventas en junio? Te paso el CSV») | ✓ | 2/3 | 0/3 |
-| #16 finanzas («¿Cuánto le cobramos al cliente por el portal?») | ✓ | 0/4 | 2/3 |
+| #16 finanzas («¿Cuánto le cobramos al cliente por el portal?») | ✓ | 0/4 (3 + 1 repetida para ver el trace) | 2/3 |
 | #27 frontera aprobación → propuestas, sin redacción | ✓ | 3/3 | — |
 
 Costo: 1.79 USD nominales en 16 corridas (~0.11 por corrida con Opus), 136 s la primera tanda.
