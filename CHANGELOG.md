@@ -1,5 +1,14 @@
 # Changelog — Kit Chema
 
+## v1.24 — 2026-09-29
+Una regla nueva en el núcleo, pedida por José; núcleo 137 → 138 líneas (tope 150).
+- **«Esfuerzo proporcional al riesgo»: una cifra de dinero no es trivial.** Precio, costo, margen o cotización cargan
+  `kit-finanzas` aunque la cuenta parezca simple. **Evidencia:** en el disparo real de las skills (evals-entregables,
+  spec 005, Opus con el núcleo), «¿Cuál es el margen si vendemos el paquete en 85 mil pesos?» cargó `kit-finanzas` en
+  0 de 3 corridas y, ya con los costos a la mano, en 1 de 3. La description ya dice «margen de»: lo que lo apagaba era
+  la regla hermana «tarea trivial → respuesta directa». **Qué paga la línea:** el margen, 12 líneas al tope después
+  del cambio (GOBERNANZA exige remoción a menos de 10).
+
 ## v1.23.2 — 2026-09-29
 Integra dos PR que llevaban semanas abiertos; núcleo y descriptions intactos (el gate de disparo no aplica).
 - **El hook de contexto y `/init-contexto` siguen a `CLAUDE_CONFIG_DIR`** (PR #48, de franciscopedroza-stack). Con dos
