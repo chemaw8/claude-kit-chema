@@ -1,5 +1,19 @@
 # Changelog — Kit Chema
 
+## v1.22.4 — 2026-09-28
+Arreglos mecánicos de la auditoría `/doctor prompt-audit` (Claude Code 2.1.283); núcleo y descriptions intactos (el gate de
+disparo no aplica). Cada hallazgo se contrastó contra el archivo que cita antes de aplicarlo.
+- **Ficha del repo (`CLAUDE.md`):** el congelamiento se busca en `DECISIONES.md` (2026-08-29 y su matiz del 08-31), no en
+  CONTINUAR, que ya no lo lleva; `verificar.sh` se describe por su criterio de éxito (código 0 y sin `FALLA`) en vez de un
+  «verificado 2026-09-05»; la trampa de hooks nombra `hooks/hooks.json`, que `verificar.sh` exige a la par del fragmento;
+  y una trampa nueva: todo agente o comando se nombra en los manifiestos del plugin.
+- **`kit-codigo`:** fuera la frase sobre el estado de `rotar-continuar.sh` (estado del kit dentro de una skill que carga en
+  todo proyecto).
+- **`/revisar-salud`:** la ruta de los reportes es la de la instalación de referencia, y si no existe pregunta antes de seguir.
+- No entraron, a propósito: quitar los nombres de versión de los modelos del núcleo (revierte el council del 2026-09-27),
+  los topes de extensión de agentes y comandos (hipótesis: se prueban antes con el banco de `docs/pruebas`) y la poda de
+  repeticiones en `kit-propuestas` (es el mandato anti-anclaje del council; la redundancia ahí se conserva).
+
 ## v1.22.3 — 2026-09-28
 Arreglo de un comando; núcleo, skills y descriptions intactos (el gate de disparo no aplica).
 - **`/init-contexto` no copiaba nada si el kit se instaló con `instalar.sh`:** leía las plantillas de
