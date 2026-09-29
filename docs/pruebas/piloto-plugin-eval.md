@@ -15,6 +15,7 @@ activó 3/3, pero #5 y #16 fallaron en más de la mitad de las corridas en algun
 - Reproducir «con núcleo»: generar la variante desde el núcleo instalado, en una copia del repo, no en el árbol de trabajo:
   ```bash
   N=$(sed -n '/kit-chema:inicio/,/kit-chema:fin/p' ~/.claude/CLAUDE.md | grep -v 'kit-chema:')
+  [ "$(printf '%s\n' "$N" | wc -l)" -gt 50 ] || { echo "✗ no encontré el núcleo instalado en ~/.claude/CLAUDE.md" >&2; exit 1; }
   for c in c05-datos-csv c16-finanzas-cobro; do d=docs/pruebas/plugin-eval/$c-nucleo; mkdir -p $d; cp -r docs/pruebas/plugin-eval/$c/graders $d/
     { printf -- '---\nmax_turns: 6\ntimeout_seconds: 180\nallowed_tools: [Read, Glob, Grep, Skill]\nappend_system_prompt: |\n'
       printf '%s\n' "$N" | sed 's/^/  /'; printf -- '---\n\n'; awk '/^---$/{f++; next} f>=2 && NF' docs/pruebas/plugin-eval/$c/prompt.md; } > $d/prompt.md; done
