@@ -42,7 +42,11 @@ Costo: 1.79 USD nominales en 16 corridas (~0.11 por corrida con Opus), 136 s la 
 4. **Por qué bajó #5 con núcleo:** el caso dice «te paso el CSV», pero el directorio está vacío. Con núcleo, Claude
    buscó el archivo, no lo halló y lo pidió, sin cargar la skill. Es un defecto del **caso**: sin el archivo, pedirlo
    es la respuesta correcta. Un caso de datos necesita el CSV en el workspace (`scaffold_script` con `--scaffold`).
-5. Con 3 corridas por caso el ruido es alto; nada de esto basta para cambiar una description.
+5. **Hay una variable confundida:** la variante «con núcleo» también sube `max_turns` de 3 a 6. Los traces lo acotan
+   sin descartarlo: con núcleo, cuando la skill se cargó fue en la primera llamada, y ninguna corrida llegó al tope. Pero
+   dos de las corridas del #16 sin núcleo sí se cortaron en el tope de 3, y con más turnos quizá la habrían cargado
+   después. La próxima corrida debe dejar `max_turns` igual en las dos variantes.
+6. Con 3 corridas por caso el ruido es alto; nada de esto basta para cambiar una description.
 
 ## Recomendación
 - El **gate de disparo sigue** como control barato de cada cambio a descriptions (un juez Sonnet, centavos).
