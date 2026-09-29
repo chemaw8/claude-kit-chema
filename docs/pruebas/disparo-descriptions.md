@@ -123,3 +123,9 @@ skill esperada, incluidas las fronteras 22–30.
 confusiones de frontera no benignas 0, rc=0**; 30 de 30 filas coincidieron con la skill esperada. El PR
 no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4). El commit siguiente (9a4f8c6,
 cambios del council) no toca `nucleo/` ni ninguna description, así que el resultado sigue valiendo.
+
+## 2026-09-28 — PR «reglas v1.23» (cierre en palabras llanas en el núcleo)
+
+`python3 docs/pruebas/disparo.py --paralelo 6 --modelo sonnet` sobre la rama `reglas/descargas-y-cierres`, dos veces:
+en 37d753f (primer texto) y en **ed0923d (texto final, tras el council)** → **núcleo 21/21, confusiones de frontera no
+benignas 0, rc=0** en ambas. El PR no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4).
