@@ -15,12 +15,12 @@ aplicados. Proponer `/crear-verificacion` espera su primera corrida real.
 - [ ] 2026-10-28: revisar la vigilancia de «cierre en palabras llanas» (`~/.claude/kit-chema/reglas-vigiladas.json`).
 
 ## Cómo retomar
-- Abrir:    `investigacion/2026-09-30-pstack-y-mercado.md` (secciones 3 y 4) · `git log main..pstack/ronda-1`
+- Abrir:    `investigacion/2026-09-30-pstack-y-mercado.md` (secciones 3 y 4) · `git log main..pstack/ronda-2`
 - Correr:   `bash verificar.sh` → código 0 y ninguna línea `FALLA`
 - Verificar: `bash scripts/muletillas.sh autotest` → «todo en verde»
 
 ## Bloqueadores / esperas
-- Ninguno. Lo siguiente es fusionar v1.26 y los dos pendientes del acta.
+- Ninguno. Lo siguiente es fusionar v1.27 y la primera corrida real de `/crear-verificacion`.
 
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |

@@ -143,7 +143,7 @@ EOF
   chk "texto sucio sale con 1" "$rc" 1
   for id in F1 F2 F3 F4 F5 F6 F8 F9 F10 F11; do chk "detecta $id" "$(hay "$out" "$id")" si; done
   out="$(printf 'El flujo multi-agente se puede re-ejecutar.\n' | motor - 2>/dev/null)"; chk "detecta F12 (prefijo con guion)" "$(grep -c ': F12 ' <<<"$out")" 2
-  printf 'Campaña anti-OTAN, torneo sub-21, `kit-chema` y la ruta mi-proyecto/docs/a.md.\n' | motor - >/dev/null 2>&1; chk "F12 respeta sigla, número, código y rutas" "$?" 0
+  printf 'Campaña anti-OTAN, torneo sub-21, el hook `multi-agente`, la ruta re-ejecutar/docs/a.md y el archivo multi-tienda.md.\n' | motor - >/dev/null 2>&1; chk "F12 respeta sigla, número, código y rutas" "$?" 0
   printf '# Impacto De La Transformación Digital\nLas ventas subieron.\n' | motor - >/dev/null 2>&1; chk "F11 solo es candidata: no cambia la salida" "$?" 0
 
   # Densidad: 200 palabras neutras + vocabulario de IA repetido pasa el umbral; el mismo texto sin él, no.
