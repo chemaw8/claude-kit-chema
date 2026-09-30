@@ -135,4 +135,5 @@ Tras la aprobación:
 
 Qué quedó en la ficha, qué comandos verificaste (y cuáles fallaron), qué permisos
 propusiste, y qué se rotó. Si el proyecto era sensible y hubo comandos que no
-corriste, dilo explícitamente.
+corriste, dilo explícitamente. Si es una app con interfaz o servicio y la ficha no
+tiene cómo probarla de verdad, ofrece `/crear-verificacion` una vez, sin insistir.

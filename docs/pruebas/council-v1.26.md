@@ -99,3 +99,24 @@ hallazgo contra los archivos. Revisión del gate (sello-push, Opus): aprobado, 0
 **¿El panel movió la postura del autor?** En la dirección, no: la duda sobre la pieza 2 se volvió bloqueante con
 evidencia (el kit se contradecía). En la pieza 1, sí: el autor la daba por lista y el panel encontró tres defectos
 de texto (ajustar el mapa a un defecto, sembrar sin guarda, comando sin ejecutar).
+
+## Primera corrida real de `/crear-verificacion` (2026-09-30)
+
+Sesión nueva (subagente Opus 5.5 sin contexto), clon limpio de la app piloto en un commit anterior al mapa hecho a
+mano, con BD y proyecto de Docker propios y sin clave de API. El agente recibió solo el texto del comando instalado
+en el harness del autor (pi, el otro agente de terminal además de Claude Code) y el permiso que el comando exige pedir.
+
+- **Qué generó:** mapa en `docs/verificacion/` con 5 funciones, `scripts/verificar-app.sh doctor | recorrer |
+  limpiar` (limpiar en simulacro por defecto), un ayudante que se niega si la BD no es local y otro para capturas.
+  Levanta su propia instancia en otro puerto y bloquea la llamada al LLM, así que no gasta aunque haya clave.
+- **Defectos del agente** (en su copia desechable): la ruta de matching no pasa a revisión; la ingesta deja de
+  guardar cantidades. Suite 72/72 en verde en ambos; su `recorrer` sale 1 en ambos.
+- **Defecto independiente del autor**, en otra copia y sin avisar al agente: el contador de decididos del admin
+  solo cuenta los S/C. Suite 72/72 en verde; `recorrer` sale 1 («admin cuenta 1 decididos de 115»). Con el código
+  sano, sale 0 y la BD queda sin proyectos de verificación.
+- **Residuos:** ninguno según el umbral (procesos, puertos, datos fuera del prefijo). Quedan un contenedor detenido
+  y su volumen, que son el entorno del clon, no restos de la corrida.
+- **Encontró además** una inconsistencia real del proyecto piloto que el mapa hecho a mano no vio: la ficha y el
+  código proponen un factor de siembra que contradice una decisión registrada del proyecto.
+
+**Resultado: pasa.** Corridas reales: 1 de 2 contra el umbral de retiro. Entran las dos filas en espera (v1.28).

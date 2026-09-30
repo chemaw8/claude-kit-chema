@@ -1,5 +1,14 @@
 # Changelog — Kit Chema
 
+## v1.28 — 2026-09-30
+Primera corrida real de `/crear-verificacion`, la condición que dejaron los councils v1.26 y v1.27. Pasó, así que
+entran las dos piezas que esperaban: `kit-codigo` propone el comando en una app sin «Probar de verdad» y
+`/proyecto-init` lo ofrece una vez. Núcleo y descriptions intactos. Detalle en `docs/pruebas/council-v1.26.md`.
+- **La corrida:** un agente nuevo (Opus 5.5) corrió el texto del comando en un clon limpio de la app piloto, sin
+  mapa previo. Generó mapa y script; su script detectó los dos defectos que el agente sembró (la suite, 72/72 en
+  verde) y **un tercero que sembró el autor sin que el agente lo supiera** (un contador del admin), y salió 0 con
+  el código sano. Sin residuos: sus servidores detenidos, ningún puerto abierto y ningún dato fuera del prefijo.
+
 ## v1.27 — 2026-09-30
 Cierra el pendiente del council v1.26 sobre la raya y conecta las piezas de pstack al trabajo diario. Núcleo y
 descriptions intactos (el gate de disparo no aplica). Acta y evidencia: `docs/pruebas/council-v1.27.md`.

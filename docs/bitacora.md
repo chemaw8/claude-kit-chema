@@ -379,3 +379,23 @@ de verificación por proyecto en una app web: el mapa lleva a los agentes a reco
 - [ ] v1.26 en PR: fusionar con el CI en verde e instalar (`bash instalar.sh`).
 - [ ] A/B de la raya (mismo modelo, con y sin kit, n=3) → decide si el revisor vuelve a un checklist o si se
       quita la raya del texto del kit.
+
+## 2026-09-30 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+**Estado al 2026-09-30:** v1.27 en PR (rama `pstack/ronda-2`): el revisor de señales de IA vuelve al checklist de
+`kit-redaccion`, regla F12 (prefijo con guion) y «Probar de verdad» se corre solo. Council v1.27: aprobada con cambios,
+aplicados. Proponer `/crear-verificacion` espera su primera corrida real.
+
+«Siguiente paso»:
+- [ ] Primera corrida real de `/crear-verificacion` (sesión nueva, clon limpio, defecto sembrado) → anotar en
+      `docs/pruebas/council-v1.26.md`.
+
+«Cómo retomar»:
+- Abrir:    `investigacion/2026-09-30-pstack-y-mercado.md` (secciones 3 y 4) · `git log main..pstack/ronda-2`
+
+«Bloqueadores / esperas»:
+- Ninguno. Lo siguiente es fusionar v1.27 y la primera corrida real de `/crear-verificacion`.
+
+«Frentes abiertos»:
+| Ronda pstack (v1.27) | v1.26 en main; A/B de la raya hecho (no concluyente); v1.27 en PR | fusionar v1.27; primera corrida real de `/crear-verificacion`; limpiar rayas y prefijos del texto del kit | ninguno |
