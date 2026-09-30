@@ -1,19 +1,16 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-30  ·  commit 25902a0 (rama pstack/ronda-1)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-30  ·  commit b402119 (rama pstack/ronda-2)  ·  cierre limpio: sí
 > Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**Estado al 2026-09-30:** v1.25 en main; v1.26 lista en la rama `pstack/ronda-1` (council aprobada con cambios, aplicados): investigación de pstack y del
-mercado (`investigacion/2026-09-30-pstack-y-mercado.md`), `scripts/muletillas.sh` v2 (señales de IA en español,
-calibrado: 0 falsos positivos en texto humano) como herramienta opcional (la línea en `kit-redaccion` se retiró hasta un A/B) y el comando `/crear-verificacion`. Piloto
-de verificación por proyecto en una app web: el mapa lleva a los agentes a recorrer la app real 0/3 → 3/3.
+**Estado al 2026-09-30:** v1.27 en PR (rama `pstack/ronda-2`): el revisor de señales de IA vuelve al checklist de
+`kit-redaccion`, regla F12 (prefijo con guion) y «Probar de verdad» se corre solo. Council v1.27: aprobada con cambios,
+aplicados. Proponer `/crear-verificacion` espera su primera corrida real.
 
 ## Siguiente paso
-- [ ] v1.26 en PR: fusionar con el CI en verde e instalar (`bash instalar.sh`).
 - [ ] Primera corrida real de `/crear-verificacion` (sesión nueva, clon limpio, defecto sembrado) → anotar en
       `docs/pruebas/council-v1.26.md`.
-- [ ] A/B de la raya (mismo modelo, con y sin kit, n=3) → decide si el revisor vuelve a un checklist o si se
-      quita la raya del texto del kit.
+- [ ] Limpiar el texto del kit: 39 rayas espaciadas y 15 prefijos con guion (toca descriptions: gate de disparo).
 - [ ] Vigía de v1.25 (umbral de retiro en `docs/pruebas/council-v1.25.md`).
 - [ ] 2026-10-28: revisar la vigilancia de «cierre en palabras llanas» (`~/.claude/kit-chema/reglas-vigiladas.json`).
 
