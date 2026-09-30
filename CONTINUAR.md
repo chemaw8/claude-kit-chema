@@ -1,4 +1,4 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-30  ·  commit b402119 (rama pstack/ronda-2)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-30  ·  commit b105ebc (rama pstack/ronda-2)  ·  cierre limpio: sí
 > Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
