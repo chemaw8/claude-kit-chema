@@ -17,7 +17,8 @@ skill, así que el gate de disparo no aplica. Agrega un comando.
    reescrito con Wikipedia «Signs of AI writing» en inglés y portugués y la norma de la raya de la RAE). Una línea
    en el checklist de `kit-redaccion`: correrlo antes de entregar a dirección o a un cliente.
 
-Adiciones por skill en esta ronda: `kit-redaccion` 1, `kit-codigo` 1 (tope 2).
+Adiciones por skill en esta ronda: `kit-redaccion` 1, `kit-codigo` 1 (tope 2). Esto es la propuesta tal como
+llegó al panel; tras el acta (abajo), la línea de `kit-redaccion` se retiró y esa skill queda en 0 adiciones.
 
 ## Evidencia
 
