@@ -170,3 +170,50 @@ por alto.
   el dato.
 - Narrativa institucional (misión, visión, historia de la empresa). No cambia
   cómo se hace el trabajo, así que solo ocupa espacio.
+
+## 8. Probar que tu app sirve: `/crear-verificacion`
+
+Es para proyectos de software con pantalla o API: una web, un servicio, una herramienta de terminal. Que las pruebas
+salgan en verde no dice que la app sirva, porque casi nunca cubren las rutas ni las páginas. Si tu proyecto genera
+reportes, PDF o Excel, no lo necesitas: su ficha ya dice cómo revisar la salida.
+
+**Una sola vez por proyecto**
+
+1. Abre Claude Code en la carpeta del proyecto y escribe `/crear-verificacion`.
+2. Antes de correr nada, Claude te pide permiso: el recorrido crea y borra datos en tu base de desarrollo, y si la
+   app llama a una API de pago (un modelo de IA, SMS, correo) te dice cómo evitar el gasto.
+3. Al terminar te deja tres cosas, listas para que las revises y las subas con commit:
+   - `docs/verificacion/`, el mapa: cómo arrancar la app, qué funciones tiene y qué prueba que cada una sirve.
+   - `scripts/verificar-app.sh`, el script que recorre la app como la usaría una persona.
+   - Una línea «Probar de verdad» en la ficha del proyecto (`CLAUDE.md`).
+
+   En su reporte te dice qué error metió a propósito, en una copia desechable, para comprobar que el script lo
+   detecta. Si no lo detectó, el script todavía no sirve.
+
+**Cada vez que cambies algo**
+
+Claude corre el recorrido solo antes de decirte que un cambio quedó (y te pide permiso si toca tu entorno o gasta).
+Tú también puedes correrlo:
+
+| Comando | Qué hace |
+|---|---|
+| `scripts/verificar-app.sh doctor` | Solo revisa: ¿la app arranca, la base responde, los datos de arranque están bien? |
+| `scripts/verificar-app.sh recorrer` | El flujo completo. Sale `0` si todo cuadró, `1` si la app se portó mal y `2` si el problema es el entorno. |
+| `scripts/verificar-app.sh limpiar` | Borra solo lo que creó el recorrido (sus datos llevan el prefijo `verificacion-`). |
+
+La evidencia (respuestas, capturas, archivos exportados) queda en `~/.cache/<proyecto>-verificacion/<fecha>/`.
+Ábrela: una captura se mira, no basta con que exista.
+
+**Lo que no hace:** no sustituye las pruebas (si arreglas un bug, deja también la prueba que lo reproduce), no corre
+contra producción (se niega si la base no es local) y no sube nada a ningún lado.
+
+**Ejemplo real:** en una app web interna, el recorrido detectó un error en una ruta con las 72 pruebas en verde, y en
+su primera corrida encontró además un valor por defecto que habría inflado todos los importes.
+
+## 9. Antes de mandar un texto a dirección o a un cliente
+
+`bash ~/.claude/scripts/muletillas.sh revisar informe.md` lista las señales que delatan texto de IA en español, con
+su línea: la raya con espacio a ambos lados (en español va pegada, «texto —inciso— texto»), el prefijo con guion
+(se escribe «multiagente»), frases de chatbot y viñetas que abren con «**Tema:**». Claude lo corre solo cuando
+redacta algo para dirección o para un cliente; tú puedes correrlo sobre cualquier texto. Marca candidatos: quien
+escribe decide.
