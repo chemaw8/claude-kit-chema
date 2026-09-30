@@ -23,7 +23,7 @@ de verificación por proyecto en una app web: el mapa lleva a los agentes a reco
 - Verificar: `bash scripts/muletillas.sh autotest` → «todo en verde»
 
 ## Bloqueadores / esperas
-- Ninguno técnico. La ronda espera decisiones de José (arriba).
+- Ninguno. Lo siguiente es fusionar v1.26 y los dos pendientes del acta.
 
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |
