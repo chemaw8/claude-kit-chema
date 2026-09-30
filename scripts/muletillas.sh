@@ -37,7 +37,7 @@ F = [
   "rodeo", "di qué hace"),
  ("F4", r"\bno (solo|sólo|solamente|únicamente)\b[^.;:\n]{1,80}?\bsino (también|que)\b|\bno se trata (solo |sólo )?de\b[^.;:\n]{1,80}?\bsino (de|que)\b|\bno es (solo |sólo |un[ao]? )?[^.;:\n,]{1,40}, es\b",
   "paralelismo negativo («no es X, es Y»)", "di el punto directo"),
- ("F5", r"\bespero que (esto |este [a-záéíóúñ]+ )?(te |les |le )?(sea de (gran )?(ayuda|utilidad)|sirva|ayude)\b|\bno dudes en\b|\b(excelente|buena|gran) pregunta\b|\btienes (toda la )?razón\b|¡(claro|por supuesto|excelente)!|\b(aquí tienes|a continuación te presento)\b|\b¿(quieres|te gustaría) que (profundice|amplíe|prepare)\b",
+ ("F5", r"\bespero que (esto |este [a-záéíóúñ]+ )?(te |les |le )?(sea de (gran )?(ayuda|utilidad)|sirva|ayude)\b|\bno dudes en\b|\b(excelente|buena|gran) pregunta\b|\btienes (toda la )?razón\b|¡(claro|por supuesto|excelente)!|\b(aquí tienes|a continuación te presento)\b|¿(quieres|te gustaría) que (profundice|amplíe|prepare)\b",
   "frase de chatbot", "quítala"),
  ("F6", r"\bel futuro (es|luce|se ve) (prometedor|brillante)\b|\blas posibilidades son infinitas\b|\besto es (solo|sólo) el (comienzo|principio)\b|\bun antes y un después\b|\bal siguiente nivel\b",
   "cierre genérico", "di el plan o el hecho"),
@@ -163,6 +163,7 @@ EOF
   motor >/dev/null 2>&1; chk "sin archivos sale con 2" "$?" 2
   motor "$tmp/no-existe.md" >/dev/null 2>&1; chk "archivo inexistente sale con 2" "$?" 2
   out="$(printf 'Cabe mencionar esto.\n' | motor - 2>/dev/null)"; chk "lee de stdin" "$(hay "$out" F1)" si
+  out="$(printf '¿Quieres que profundice en esto?\n' | motor - 2>/dev/null)"; chk "detecta la oferta de chatbot con «¿»" "$(hay "$out" F5)" si
   [ "$fallas" -eq 0 ] && echo "autotest: todo en verde" || echo "autotest: $fallas falla(s)"
   return "$fallas"
 }

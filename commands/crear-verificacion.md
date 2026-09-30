@@ -41,8 +41,8 @@ manda datos fuera. Di cuál de las dos cosas pasará y cómo evitarla.
    se mira, no solo se confirma que existe). Después de `limpiar`, la evidencia debe seguir ahí. Luego
    mete a propósito un defecto en una parte sin pruebas (una ruta, una transición de estado) y confirma
    que el script lo detecta. Siembra el defecto en un worktree o clon desechable, nunca en el árbol de
-   trabajo del usuario; si solo hay ese árbol y tiene cambios sin commitear, no siembres: pide permiso
-   o sáltalo y dilo en el reporte. Revierte solo tu cambio. Si el script no lo detecta, no prueba nada:
+   trabajo del usuario. Si no puedes crear uno, no siembres: pide permiso o sáltalo y dilo en el
+   reporte. Al terminar, borra esa copia. Si el script no lo detecta, no prueba nada:
    corrígelo. Una herramienta que nunca se corrió es un borrador.
 6. **Una línea en la ficha**, en «Stack y cómo correr»: `Probar de verdad: docs/verificacion/README.md
    y scripts/verificar-app.sh recorrer → sale 0 y deja evidencia en …`. Y en el mapa, arriba: el
