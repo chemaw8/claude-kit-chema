@@ -25,7 +25,7 @@ aplicados. Proponer `/crear-verificacion` espera su primera corrida real.
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |
 |---|---|---|---|
-| Ronda pstack (v1.26) | council aprobada con cambios, aplicados | fusionar; luego primera corrida del comando y A/B de la raya | ninguno |
+| Ronda pstack (v1.27) | v1.26 en main; A/B de la raya hecho (no concluyente); v1.27 en PR | fusionar v1.27; primera corrida real de `/crear-verificacion`; limpiar rayas y prefijos del texto del kit | ninguno |
 | Debilidades de la línea base | «dato literal» atacado en v1.25 | siguiente patrón: «se cubre en vez de afirmar» (reclasificación, onepager 0/3) | José elige |
 | Auditoría prompt-audit | mecánicos hechos (v1.22.4) | topes de extensión de agentes y comandos: probar con el banco antes de quitar | ninguno |
 | `omitClaudeMd` en `lector-fresco` | sin tocar | A/B con 5 entregables; el lector dejaría de cargar la confidencialidad | medir primero |
