@@ -1,31 +1,29 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-30  ·  commit b105ebc (rama pstack/ronda-2)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-30  ·  commit 467d354 (rama pstack/ronda-3)  ·  cierre limpio: sí
 > Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**Estado al 2026-09-30:** v1.27 en PR (rama `pstack/ronda-2`): el revisor de señales de IA vuelve al checklist de
-`kit-redaccion`, regla F12 (prefijo con guion) y «Probar de verdad» se corre solo. Council v1.27: aprobada con cambios,
-aplicados. Proponer `/crear-verificacion` espera su primera corrida real.
+**Estado al 2026-09-30:** v1.27 en main; v1.28 en PR (rama `pstack/ronda-3`): `/crear-verificacion` pasó su primera
+corrida real (1 de 2 contra el umbral de retiro) y entran la propuesta en `kit-codigo` y la oferta de `/proyecto-init`.
 
 ## Siguiente paso
-- [ ] Primera corrida real de `/crear-verificacion` (sesión nueva, clon limpio, defecto sembrado) → anotar en
-      `docs/pruebas/council-v1.26.md`.
+- [ ] Segunda corrida real de `/crear-verificacion`, en otro proyecto (umbral de retiro: 2 corridas).
 - [ ] Limpiar el texto del kit: 39 rayas espaciadas y 15 prefijos con guion (toca descriptions: gate de disparo).
 - [ ] Vigía de v1.25 (umbral de retiro en `docs/pruebas/council-v1.25.md`).
 - [ ] 2026-10-28: revisar la vigilancia de «cierre en palabras llanas» (`~/.claude/kit-chema/reglas-vigiladas.json`).
 
 ## Cómo retomar
-- Abrir:    `investigacion/2026-09-30-pstack-y-mercado.md` (secciones 3 y 4) · `git log main..pstack/ronda-2`
+- Abrir:    `investigacion/2026-09-30-pstack-y-mercado.md` (secciones 3 y 4) · `git log main..pstack/ronda-3`
 - Correr:   `bash verificar.sh` → código 0 y ninguna línea `FALLA`
 - Verificar: `bash scripts/muletillas.sh autotest` → «todo en verde»
 
 ## Bloqueadores / esperas
-- Ninguno. Lo siguiente es fusionar v1.27 y la primera corrida real de `/crear-verificacion`.
+- Ninguno. Lo siguiente es fusionar v1.28.
 
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |
 |---|---|---|---|
-| Ronda pstack (v1.27) | v1.26 en main; A/B de la raya hecho (no concluyente); v1.27 en PR | fusionar v1.27; primera corrida real de `/crear-verificacion`; limpiar rayas y prefijos del texto del kit | ninguno |
+| Ronda pstack (v1.28) | v1.27 en main; primera corrida real del comando: pasa | fusionar v1.28; segunda corrida en otro proyecto; limpiar rayas y prefijos del texto del kit | ninguno |
 | Debilidades de la línea base | «dato literal» atacado en v1.25 | siguiente patrón: «se cubre en vez de afirmar» (reclasificación, onepager 0/3) | José elige |
 | Auditoría prompt-audit | mecánicos hechos (v1.22.4) | topes de extensión de agentes y comandos: probar con el banco antes de quitar | ninguno |
 | `omitClaudeMd` en `lector-fresco` | sin tocar | A/B con 5 entregables; el lector dejaría de cargar la confidencialidad | medir primero |
