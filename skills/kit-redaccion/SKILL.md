@@ -62,6 +62,13 @@ Antes de enviar, con el texto delante:
 - Correo: ¿queda claro qué se pide, a quién y para cuándo?
 - Minuta: ¿cada acuerdo tiene responsable y fecha, y los pendientes tienen dueño?
 - ¿Sobra algo? ¿Qué párrafo puedo borrar sin perder información?
+- Si sale a dirección o a un cliente, ¿pasó el revisor de señales de IA?
+  `bash "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/scripts/muletillas.sh" revisar <archivo>`;
+  si el script no está (claude.ai, instalación sin scripts), revisa a mano lo mismo y
+  no digas que pasó. Corrige las señales F: la raya con espacio a ambos lados va pegada al inciso
+  («texto —inciso— texto») o se cambia por punto o coma, y el prefijo va junto,
+  sin guion («multiagente»). Las candidatas y lo marcado con ⚠ los decide
+  quien escribe.
 - Estatus a dirección: ¿informa sin pedir aprobar? Si pide aprobar, es
   kit-propuestas.
 - ¿Nombres de clientes y cifras reales tratados según la confidencialidad del

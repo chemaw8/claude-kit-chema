@@ -366,3 +366,16 @@ calibrado: 0 falsos positivos en texto humano) y 1 línea en `kit-redaccion` que
 
 «Frentes abiertos»:
 | Ronda pstack (rama `pstack/ronda-1`) | revisor de slop v2 + 1 línea en kit-redaccion; piloto de verificación hecho | decidir si la verificación por proyecto entra como comando `/crear-verificacion`; luego PR + council | José decide |
+
+## 2026-09-30 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+**Estado al 2026-09-30:** v1.25 en main; v1.26 lista en la rama `pstack/ronda-1` (council aprobada con cambios, aplicados): investigación de pstack y del
+mercado (`investigacion/2026-09-30-pstack-y-mercado.md`), `scripts/muletillas.sh` v2 (señales de IA en español,
+calibrado: 0 falsos positivos en texto humano) como herramienta opcional (la línea en `kit-redaccion` se retiró hasta un A/B) y el comando `/crear-verificacion`. Piloto
+de verificación por proyecto en una app web: el mapa lleva a los agentes a recorrer la app real 0/3 → 3/3.
+
+«Siguiente paso»:
+- [ ] v1.26 en PR: fusionar con el CI en verde e instalar (`bash instalar.sh`).
+- [ ] A/B de la raya (mismo modelo, con y sin kit, n=3) → decide si el revisor vuelve a un checklist o si se
+      quita la raya del texto del kit.

@@ -1,34 +1,31 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-30  ·  commit 25902a0 (rama pstack/ronda-1)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-30  ·  commit b105ebc (rama pstack/ronda-2)  ·  cierre limpio: sí
 > Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**Estado al 2026-09-30:** v1.25 en main; v1.26 lista en la rama `pstack/ronda-1` (council aprobada con cambios, aplicados): investigación de pstack y del
-mercado (`investigacion/2026-09-30-pstack-y-mercado.md`), `scripts/muletillas.sh` v2 (señales de IA en español,
-calibrado: 0 falsos positivos en texto humano) como herramienta opcional (la línea en `kit-redaccion` se retiró hasta un A/B) y el comando `/crear-verificacion`. Piloto
-de verificación por proyecto en una app web: el mapa lleva a los agentes a recorrer la app real 0/3 → 3/3.
+**Estado al 2026-09-30:** v1.27 en PR (rama `pstack/ronda-2`): el revisor de señales de IA vuelve al checklist de
+`kit-redaccion`, regla F12 (prefijo con guion) y «Probar de verdad» se corre solo. Council v1.27: aprobada con cambios,
+aplicados. Proponer `/crear-verificacion` espera su primera corrida real.
 
 ## Siguiente paso
-- [ ] v1.26 en PR: fusionar con el CI en verde e instalar (`bash instalar.sh`).
 - [ ] Primera corrida real de `/crear-verificacion` (sesión nueva, clon limpio, defecto sembrado) → anotar en
       `docs/pruebas/council-v1.26.md`.
-- [ ] A/B de la raya (mismo modelo, con y sin kit, n=3) → decide si el revisor vuelve a un checklist o si se
-      quita la raya del texto del kit.
+- [ ] Limpiar el texto del kit: 39 rayas espaciadas y 15 prefijos con guion (toca descriptions: gate de disparo).
 - [ ] Vigía de v1.25 (umbral de retiro en `docs/pruebas/council-v1.25.md`).
 - [ ] 2026-10-28: revisar la vigilancia de «cierre en palabras llanas» (`~/.claude/kit-chema/reglas-vigiladas.json`).
 
 ## Cómo retomar
-- Abrir:    `investigacion/2026-09-30-pstack-y-mercado.md` (secciones 3 y 4) · `git log main..pstack/ronda-1`
+- Abrir:    `investigacion/2026-09-30-pstack-y-mercado.md` (secciones 3 y 4) · `git log main..pstack/ronda-2`
 - Correr:   `bash verificar.sh` → código 0 y ninguna línea `FALLA`
 - Verificar: `bash scripts/muletillas.sh autotest` → «todo en verde»
 
 ## Bloqueadores / esperas
-- Ninguno. Lo siguiente es fusionar v1.26 y los dos pendientes del acta.
+- Ninguno. Lo siguiente es fusionar v1.27 y la primera corrida real de `/crear-verificacion`.
 
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |
 |---|---|---|---|
-| Ronda pstack (v1.26) | council aprobada con cambios, aplicados | fusionar; luego primera corrida del comando y A/B de la raya | ninguno |
+| Ronda pstack (v1.27) | v1.26 en main; A/B de la raya hecho (no concluyente); v1.27 en PR | fusionar v1.27; primera corrida real de `/crear-verificacion`; limpiar rayas y prefijos del texto del kit | ninguno |
 | Debilidades de la línea base | «dato literal» atacado en v1.25 | siguiente patrón: «se cubre en vez de afirmar» (reclasificación, onepager 0/3) | José elige |
 | Auditoría prompt-audit | mecánicos hechos (v1.22.4) | topes de extensión de agentes y comandos: probar con el banco antes de quitar | ninguno |
 | `omitClaudeMd` en `lector-fresco` | sin tocar | A/B con 5 entregables; el lector dejaría de cargar la confidencialidad | medir primero |
