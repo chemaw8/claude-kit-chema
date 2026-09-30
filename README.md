@@ -150,10 +150,10 @@ Con eso un panel o un hook puede preguntar por el estado de un proyecto sin leer
 
 ¿No usas terminal? Ve directo a la sección de claude.ai web más abajo.
 
-Herramienta opcional, sin comando: `scripts/muletillas.sh` marca señales de texto de IA en español
+Herramienta sin comando: `scripts/muletillas.sh` marca señales de texto de IA en español
 (raya con espacio a ambos lados, viñetas «**Tema:** texto», frases de chatbot) con umbrales calibrados contra texto
 humano. `bash "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/scripts/muletillas.sh" revisar <archivo>`. Marca candidatos;
-quien escribe decide. No está en ningún checklist hasta medir su efecto (acta del council v1.26).
+quien escribe decide. El checklist de `kit-redaccion` lo pide antes de entregar a dirección o a un cliente.
 
 ## El ciclo completo
 
@@ -172,6 +172,19 @@ que la siguiente pueda confiar en la anterior.
 6. **Lo que se repite se vuelve regla** → una corrección que aparece dos veces entra al
    kit por PR con council (ver `GOBERNANZA.md`), nunca como commit directo.
 
+### Cuándo entran solos `/crear-verificacion` y el revisor de señales de IA
+
+El agente los usa en estos momentos. Las dos filas marcadas «en espera» entran cuando `/crear-verificacion`
+pase su primera corrida real (acta del council v1.26); hasta entonces el comando solo corre si lo pides.
+
+| Momento | Qué hace el agente | Estado |
+|---|---|---|
+| Termina un cambio en una app con interfaz o servicio y la ficha trae «Probar de verdad» | Corre ese recorrido antes de decir que quedó (regla de `kit-codigo`). Pide permiso si toca tu entorno o gasta en una API de pago. | activo |
+| Arreglo de un bug con recorrido disponible | Deja la prueba de regresión **y** corre el recorrido: el recorrido no sustituye a la prueba. | activo |
+| Un texto va a dirección o a un cliente | Pasa el revisor de señales de IA (checklist de `kit-redaccion`) y corrige las señales F antes de entregar. | activo |
+| Termina un cambio en una app con interfaz o servicio sin «Probar de verdad» en la ficha | Te propone `/crear-verificacion`. | en espera |
+| `/proyecto-init` en una app con interfaz o servicio | Al final te ofrece `/crear-verificacion` una vez, sin insistir. | en espera |
+
 
 ## Instalación manual
 
@@ -181,10 +194,11 @@ Si ya tienes un `~/.claude/CLAUDE.md`, no uses `cp` (lo pisaría) — usa
 `./instalar.sh` o pega el contenido de `nucleo/CLAUDE.md` al final a mano.
 
 ```bash
-mkdir -p ~/.claude/skills ~/.claude/contexto
+mkdir -p ~/.claude/skills ~/.claude/contexto ~/.claude/scripts
 cp nucleo/CLAUDE.md ~/.claude/CLAUDE.md
 cp -r skills/kit-* ~/.claude/skills/
 cp contexto/* ~/.claude/contexto/
+cp scripts/*.sh ~/.claude/scripts/ && chmod +x ~/.claude/scripts/*.sh
 ```
 
 ## Uso en claude.ai web

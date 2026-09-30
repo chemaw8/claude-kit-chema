@@ -41,7 +41,11 @@ Este es el orden; el primer paso es el que más se salta y el que más cuesta.
    de test mal armada: verifica ese fallo esperado antes de tocar el código de
    producción. Para código sin lógica (config, scripts de un solo uso, ajustes
    triviales) no fuerces tests; para parsers, cálculos, reglas de negocio, sí.
-4. Verificación end-to-end real. Corre la app o el script con datos verdaderos y
+4. Verificación end-to-end real. En una app con interfaz o servicio, si la ficha
+   trae «Probar de verdad», córrelo antes de decir que quedó (con permiso si toca
+   el entorno del usuario o gasta en una API): las pruebas en verde no cubren
+   rutas ni páginas.
+   Corre la app o el script con datos verdaderos y
    mira la salida. Un script de datos se ejecuta contra el archivo real; un
    endpoint se llama y se revisa la respuesta.
    Al documentar un gate, deja comando + condición verificable (suite prevista

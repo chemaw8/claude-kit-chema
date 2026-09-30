@@ -1,5 +1,21 @@
 # Changelog — Kit Chema
 
+## v1.27 — 2026-09-30
+Cierra el pendiente del council v1.26 sobre la raya y conecta las piezas de pstack al trabajo diario. Núcleo y
+descriptions intactos (el gate de disparo no aplica). Acta y evidencia: `docs/pruebas/council-v1.27.md`.
+- **El revisor de señales de IA vuelve al checklist de `kit-redaccion`.** Condición del council v1.26: un A/B que
+  separara kit de modelo. Opus 5.5, 5 encargos × 2 × 3 brazos: sin kit, 0 de 10 textos con raya espaciada; con kit,
+  2 de 10; con el kit sin rayas, 1 de 10. **No concluyente** (0/10 contra 2/10, Fisher p ≈ 0.47). Entra por su bajo
+  costo y porque el chequeo a la salida cubre cualquier fuente: el kit tiene 2.9 rayas espaciadas por 1,000
+  palabras y las notas de trabajo 10.9, aunque esas notas no estaban en el A/B. Si el script falta, se revisa a mano.
+- **Regla F12 del revisor: prefijo con guion** (`multi-agente`, `re-ejecutar`), contra la Ortografía de la RAE
+  (2010): el prefijo va junto a la base y el guion solo ante sigla, número o mayúscula. Calibrada: 0 en texto humano,
+  16 en 11 entregables reales, 15 en el propio texto del kit; respeta rutas, nombres de archivo y código.
+- **Uso automático de lo que ya existe**: `kit-codigo` pide correr el «Probar de verdad» de la ficha antes de dar por
+  terminado un cambio en una app con interfaz o servicio. Proponer `/crear-verificacion` donde falta queda en espera
+  de su primera corrida real (el council lo quitó por falta de evidencia). Tabla en el README con el estado de cada
+  pieza. La instalación manual del README ahora copia `scripts/`.
+
 ## v1.26 — 2026-09-30
 Ronda pstack (skills de Lauren Tan para Cursor, MIT): se copian piezas medidas, no el tamaño. Un comando nuevo y un
 script; núcleo y descriptions intactos (el gate de disparo no aplica). Council de tres familias: 3 × aprobada con

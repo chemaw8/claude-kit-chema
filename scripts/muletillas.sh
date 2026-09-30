@@ -49,6 +49,8 @@ F = [
   "raya al estilo inglés (espacio a ambos lados)", "inciso pegado «—así—», o punto o coma"),
  ("F10", r"^\s*(#{1,6}\s*|[-*+]\s+|\d+[.)]\s+)(?![\U0001F7E0-\U0001F7EB\u2705\u274C\u26A0\u2B50])[\U0001F300-\U0001FAFF\u2600-\u27BF]",
   "emoji decorativo", "quítalo (los semáforos 🟢🟡🔴 y ✅❌⚠ no cuentan)"),
+ ("F12", r"(?<![\w/.\-])(multi|auto|pre|post|pos|anti|co|re|sub|super|inter|intra|micro|macro|semi|ex|pro|contra|extra|infra|mini|mega|ultra|hiper|neo|pseudo|seudo|bi|tri|sobre|meta|omni|tele|ciber)-(?-i:[a-záéíóúñ]{3,})(?![\w/\-]|\.\w)",
+  "prefijo con guion (calco del inglés)", "se escribe junto: «multiagente», «reejecutar»; el guion solo va ante sigla, número o mayúscula («anti-OTAN», «sub-21»); un nombre de archivo va entre `comillas de código`"),
 ]
 # Densidad: (id, patrón, qué es, umbral por 1,000 palabras). Umbrales calibrados 2026-09-30 (ver investigación).
 D = [
@@ -140,6 +142,8 @@ EOF
   out="$(motor "$tmp/sucio.md" 2>/dev/null)"; rc=$?
   chk "texto sucio sale con 1" "$rc" 1
   for id in F1 F2 F3 F4 F5 F6 F8 F9 F10 F11; do chk "detecta $id" "$(hay "$out" "$id")" si; done
+  out="$(printf 'El flujo multi-agente se puede re-ejecutar.\n' | motor - 2>/dev/null)"; chk "detecta F12 (prefijo con guion)" "$(grep -c ': F12 ' <<<"$out")" 2
+  printf 'Campaña anti-OTAN, torneo sub-21, `kit-chema` y la ruta mi-proyecto/docs/a.md.\n' | motor - >/dev/null 2>&1; chk "F12 respeta sigla, número, código y rutas" "$?" 0
   printf '# Impacto De La Transformación Digital\nLas ventas subieron.\n' | motor - >/dev/null 2>&1; chk "F11 solo es candidata: no cambia la salida" "$?" 0
 
   # Densidad: 200 palabras neutras + vocabulario de IA repetido pasa el umbral; el mismo texto sin él, no.
