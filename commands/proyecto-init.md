@@ -62,7 +62,8 @@ historia larga en docs/bitacora.md. **Al retomar, corre primero
 reconstruye del git diff antes de creerle. Luego léelos antes de proponer cambios.
 
 ## Stack y cómo correr
-<solo comandos verificados en el paso 2; cada gate con su condición de éxito, no un conteo>
+<solo comandos verificados en el paso 2; cada gate con su condición de éxito, no un conteo.
+En una app con interfaz o servicio, la línea «Probar de verdad» (la genera /crear-verificacion)>
 
 ## Datos
 <de dónde salen, dónde viven, qué NO se versiona>

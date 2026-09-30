@@ -17,6 +17,7 @@ proyecto/
 ├── .gitignore             desde el primer commit (secretos y datos fuera)
 ├── .claude/settings.json  permisos (propuestos, aprobados por el usuario)
 ├── specs/NNN-nombre/      por feature sustantiva: spec.md · plan.md · tasks.md
+├── docs/verificacion/     app con interfaz o servicio: cómo probarla de verdad (/crear-verificacion)
 └── docs/bitacora.md       historia append-only (la alimenta el helper)
 ```
 
