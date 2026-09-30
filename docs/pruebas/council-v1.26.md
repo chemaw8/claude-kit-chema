@@ -104,7 +104,7 @@ de texto (ajustar el mapa a un defecto, sembrar sin guarda, comando sin ejecutar
 
 Sesión nueva (subagente Opus 5.5 sin contexto), clon limpio de la app piloto en un commit anterior al mapa hecho a
 mano, con BD y proyecto de Docker propios y sin clave de API. El agente recibió solo el texto del comando instalado
-en pi y el permiso que el comando exige pedir.
+en el harness del autor (pi, el otro agente de terminal además de Claude Code) y el permiso que el comando exige pedir.
 
 - **Qué generó:** mapa en `docs/verificacion/` con 5 funciones, `scripts/verificar-app.sh doctor | recorrer |
   limpiar` (limpiar en simulacro por defecto), un ayudante que se niega si la BD no es local y otro para capturas.

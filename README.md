@@ -183,7 +183,7 @@ proponerlo.
 | Arreglo de un bug con recorrido disponible | Deja la prueba de regresión **y** corre el recorrido: el recorrido no sustituye a la prueba. | activo |
 | Un texto va a dirección o a un cliente | Pasa el revisor de señales de IA (checklist de `kit-redaccion`) y corrige las señales F antes de entregar. | activo |
 | Termina un cambio en una app con interfaz o servicio sin «Probar de verdad» en la ficha | Te propone `/crear-verificacion`. | activo |
-| `/proyecto-init` en una app con interfaz o servicio | Al final te ofrece `/crear-verificacion` una vez, sin insistir. | activo |
+| `/proyecto-init` en una app con interfaz o servicio cuya ficha no trae cómo probarla | Al final te ofrece `/crear-verificacion` una vez, sin insistir. | activo |
 
 
 ## Instalación manual
