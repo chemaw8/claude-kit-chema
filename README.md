@@ -174,16 +174,16 @@ que la siguiente pueda confiar en la anterior.
 
 ### Cuándo entran solos `/crear-verificacion` y el revisor de señales de IA
 
-El agente los usa en estos momentos. Las dos filas marcadas «en espera» entran cuando `/crear-verificacion`
-pase su primera corrida real (acta del council v1.26); hasta entonces el comando solo corre si lo pides.
+El agente los usa en estos momentos. `/crear-verificacion` mismo solo corre si lo pides; lo que hace solo es
+proponerlo.
 
 | Momento | Qué hace el agente | Estado |
 |---|---|---|
 | Termina un cambio en una app con interfaz o servicio y la ficha trae «Probar de verdad» | Corre ese recorrido antes de decir que quedó (regla de `kit-codigo`). Pide permiso si toca tu entorno o gasta en una API de pago. | activo |
 | Arreglo de un bug con recorrido disponible | Deja la prueba de regresión **y** corre el recorrido: el recorrido no sustituye a la prueba. | activo |
 | Un texto va a dirección o a un cliente | Pasa el revisor de señales de IA (checklist de `kit-redaccion`) y corrige las señales F antes de entregar. | activo |
-| Termina un cambio en una app con interfaz o servicio sin «Probar de verdad» en la ficha | Te propone `/crear-verificacion`. | en espera |
-| `/proyecto-init` en una app con interfaz o servicio | Al final te ofrece `/crear-verificacion` una vez, sin insistir. | en espera |
+| Termina un cambio en una app con interfaz o servicio sin «Probar de verdad» en la ficha | Te propone `/crear-verificacion`. | activo |
+| `/proyecto-init` en una app con interfaz o servicio | Al final te ofrece `/crear-verificacion` una vez, sin insistir. | activo |
 
 
 ## Instalación manual

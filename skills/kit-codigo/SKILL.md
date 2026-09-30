@@ -43,8 +43,8 @@ Este es el orden; el primer paso es el que más se salta y el que más cuesta.
    triviales) no fuerces tests; para parsers, cálculos, reglas de negocio, sí.
 4. Verificación end-to-end real. En una app con interfaz o servicio, si la ficha
    trae «Probar de verdad», córrelo antes de decir que quedó (con permiso si toca
-   el entorno del usuario o gasta en una API): las pruebas en verde no cubren
-   rutas ni páginas.
+   el entorno del usuario o gasta en una API); si no lo trae, propón
+   `/crear-verificacion`: las pruebas en verde no cubren rutas ni páginas.
    Corre la app o el script con datos verdaderos y
    mira la salida. Un script de datos se ejecuta contra el archivo real; un
    endpoint se llama y se revisa la respuesta.
