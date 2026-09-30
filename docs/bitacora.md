@@ -328,3 +328,41 @@ Verificado en los 27 proyectos reales con CONTINUAR: 0 veredictos cambiados.
 
 «Cómo retomar»:
 - Abrir:    CHANGELOG.md (v1.24 → v1.25) · `docs/pruebas/council-v1.25.md` · evals-entregables `docs/ab-kit-v1.25-anomalia.md`
+
+## 2026-09-30 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+**Estado al 2026-09-29 (noche):** v1.25 en main e instalado: «lo que no cuadra gobierna el resultado» en
+`kit-analisis-datos` y `kit-finanzas` (PR #63; council 2 × aprobada + 1 × con cambios, aplicado). A/B con las skills
+inyectadas: 0/3 → 2/3 y 0/3 → 3/3; controles 3/3. Evidencia provisional (n=3). Hallazgo: la línea base de
+evals-entregables no carga skills, mide el núcleo.
+
+«Siguiente paso»:
+- [ ] Vigía de v1.25 (umbral de retiro en `docs/pruebas/council-v1.25.md`): en la próxima medición con skills cargadas,
+      revisar que los controles no caigan por discrepancias falsas y que el caso de «dos fuentes que no deben cuadrar» no
+      fuerce reconciliaciones.
+- [ ] Gate de disparo: no lee el núcleo, así que no mide cambios al núcleo. Para esos, la evidencia es el disparo
+      real con banco de control (como `banco-dinero.md`). Anotarlo en RUNBOOK/GOBERNANZA si se repite.
+- [ ] Alinear el núcleo con `CLAUDE_CONFIG_DIR` (sigue nombrando `~/.claude/contexto/`): va con council.
+
+«Cómo retomar»:
+- Abrir:    CHANGELOG.md (v1.24 → v1.25) · `docs/pruebas/council-v1.25.md` · `~/Trabajo/proyectos/evals-entregables/docs/ab-kit-v1.25-anomalia.md`
+- Verificar arranque: `head -2 ~/.claude/CLAUDE.md` → dice la versión del primer `## v` del CHANGELOG
+
+«Bloqueadores / esperas»:
+- Ninguno.
+
+## 2026-09-30 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+**Estado al 2026-09-30:** v1.25 en main. Rama `pstack/ronda-1` abierta, sin push: investigación de pstack y del
+calibrado: 0 falsos positivos en texto humano) y 1 línea en `kit-redaccion` que lo pide antes de entregar. Piloto
+
+«Siguiente paso»:
+- [ ] José decide si la verificación por proyecto entra al kit (comando `/crear-verificacion` + línea en el
+      estándar de fichas) y si el mapa y el script del piloto se suben al repo del proyecto piloto.
+      Artefactos en `~/.cache/<piloto>/artefactos/` (privados: no van a este repo).
+- [ ] Cerrar la ronda: PR en borrador de `pstack/ronda-1` + council (cuerpo de skill, sin gate de disparo).
+
+«Frentes abiertos»:
+| Ronda pstack (rama `pstack/ronda-1`) | revisor de slop v2 + 1 línea en kit-redaccion; piloto de verificación hecho | decidir si la verificación por proyecto entra como comando `/crear-verificacion`; luego PR + council | José decide |

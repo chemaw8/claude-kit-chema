@@ -4,12 +4,12 @@ license: MIT
 description: 'Estándar Kit Chema para la comunicación escrita del día a día — correos, minutas y actas de reunión, notas y memos internos, documentación y comunicados internos, y mensajes de avance que solo informan. Úsala al pedir "escribe un correo", "haz la minuta" o "el acta", "redáctame la nota" o "el memo", "documenta X", "un comunicado interno", "un mensaje de avance o estatus que solo avise". Obliga a un pedido claro y accionable en el correo, a separar acuerdos de discusión con responsables y fechas en la minuta, a una idea principal arriba en notas y memos, y a poner conclusión y números primero en el estatus. Cuándo no usarla — si el mensaje pide aprobar, autorizar o decidir algo (aunque vaya a dirección) → kit-propuestas; correo a un contacto de otra empresa para vender o proponer → kit-propuestas (primero confirmar quién es); material con láminas o identidad visual → kit-presentaciones.'
 ---
 
-# Comunicación escrita — estándar Kit Chema
+# Comunicación escrita: estándar Kit Chema
 
 Playbook para lo que se escribe todos los días: correos, minutas, notas, memos,
 documentación y mensajes de estatus. Dos disciplinas ya viven fuera de esta
 skill y no se repiten aquí: definir audiencia y objetivo antes de escribir, y
-abrir con la conclusión (pirámide invertida) — están en kit-presentaciones y en
+abrir con la conclusión (pirámide invertida). Están en kit-presentaciones y en
 la carpeta `contexto/` de tu perfil. Esta skill cubre lo que Claude hace mal por defecto en
 formatos cortos: se enreda, entierra el pedido y no deja claro quién hace qué.
 

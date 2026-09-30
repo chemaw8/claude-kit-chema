@@ -1,5 +1,22 @@
 # Changelog — Kit Chema
 
+## v1.26 — 2026-09-30
+Ronda pstack (skills de Lauren Tan para Cursor, MIT): se copian piezas medidas, no el tamaño. Un comando nuevo y un
+script; núcleo y descriptions intactos (el gate de disparo no aplica). Council de tres familias: 3 × aprobada con
+cambios, aplicados; síntesis: aprobada con cambios. Acta, evidencia y pendientes: `docs/pruebas/council-v1.26.md`;
+análisis: `investigacion/2026-09-30-pstack-y-mercado.md`.
+- **`/crear-verificacion`** (de `create-verification-skill`): le deja a una app con interfaz o servicio un mapa en
+  `docs/verificacion/` y un script que la recorre como usuario, guarda evidencia fuera del repo y limpia, probado
+  con un defecto sembrado. **Evidencia:** en el piloto, el script detectó un defecto de una ruta con la suite 72/72
+  en verde; con el mapa, agentes nuevos recorrieron la app real 3/3 contra 0/3 sin él (n=3, provisional). **El texto
+  del comando no se ha ejecutado como comando:** el piloto midió el mapa y el script hechos a mano. Una línea en la
+  plantilla de ficha (`/proyecto-init`) y otra en el árbol del estándar de proyectos (`kit-codigo`).
+- **`scripts/muletillas.sh`**, opcional y fuera de todo checklist: señales de texto de IA en español, calibradas (0
+  falsos positivos en texto humano de 2021). La línea que lo pedía en `kit-redaccion` se retiró por el council: la
+  raya espaciada aparece en 11/11 entregables, pero el kit mismo la usa en 41 líneas de skills y núcleo (39 tras esta versión) y la medición no separa kit de
+  modelo. Pendiente: A/B con el mismo modelo, con y sin kit. Mientras, `kit-redaccion` quitó esa raya de su título
+  y su cuerpo.
+
 ## v1.25 — 2026-09-29
 Una regla nueva en el cuerpo de `kit-analisis-datos` y `kit-finanzas`; núcleo y descriptions intactos (el gate de
 disparo no aplica). Council de tres familias: aprobada con cambios (2 × aprobada, 1 × con cambios, aplicado: el

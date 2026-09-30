@@ -139,6 +139,7 @@ en vez de reemplazarlo. Esta vía instala el kit completo, con o sin plugin.
 | `/revisar-salud` | Revisa el reporte de observabilidad y propone arreglos a los errores recurrentes. |
 | `/init-contexto` | Copia las plantillas de contexto a `~/.claude/contexto/` (o a `$CLAUDE_CONFIG_DIR/contexto/`) sin pisar las tuyas. |
 | `/revisar-antes-de-subir` | Antes de un `git push` en un repo con el gate activo: corre las pruebas en copia limpia, manda el diff a un revisor adversario y produce el sello que el hook `sello-push` exige. |
+| `/crear-verificacion` | En apps con interfaz o servicio: le deja al proyecto un mapa y un script que recorren la app como usuario, guardan evidencia y limpian, probados una vez con un defecto sembrado. Las pruebas en verde no bastan para decir que la app sirve. |
 
 `/proyecto-init` y `/cierre` son un par: el primero crea la ficha, el segundo la
 mantiene viva. Se apoyan en `scripts/rotar-continuar.sh`, que garantiza —y
@@ -148,6 +149,11 @@ CONTINUAR** (2) o **no se puede reconciliar** (3, p. ej. el cierre se ancló en 
 Con eso un panel o un hook puede preguntar por el estado de un proyecto sin leerlo.
 
 ¿No usas terminal? Ve directo a la sección de claude.ai web más abajo.
+
+Herramienta opcional, sin comando: `scripts/muletillas.sh` marca señales de texto de IA en español
+(raya con espacio a ambos lados, viñetas «**Tema:** texto», frases de chatbot) con umbrales calibrados contra texto
+humano. `bash "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/scripts/muletillas.sh" revisar <archivo>`. Marca candidatos;
+quien escribe decide. No está en ningún checklist hasta medir su efecto (acta del council v1.26).
 
 ## El ciclo completo
 
