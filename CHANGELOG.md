@@ -1,5 +1,9 @@
 # Changelog — Kit Chema
 
+## v1.28.1 — 2026-09-30
+Solo documentación: `COMO-PEDIR.md` explica paso a paso cómo usar `/crear-verificacion` (sección 8) y el revisor
+de señales de IA antes de mandar un texto (sección 9), para quien use el kit sin haber seguido la ronda pstack.
+
 ## v1.28 — 2026-09-30
 Primera corrida real de `/crear-verificacion`, la condición que dejaron los councils v1.26 y v1.27. Pasó, así que
 entran las dos piezas que esperaban: `kit-codigo` propone el comando en una app sin «Probar de verdad» y
