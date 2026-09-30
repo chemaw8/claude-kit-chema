@@ -399,3 +399,18 @@ aplicados. Proponer `/crear-verificacion` espera su primera corrida real.
 
 «Frentes abiertos»:
 | Ronda pstack (v1.27) | v1.26 en main; A/B de la raya hecho (no concluyente); v1.27 en PR | fusionar v1.27; primera corrida real de `/crear-verificacion`; limpiar rayas y prefijos del texto del kit | ninguno |
+
+## 2026-09-30 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+**Estado al 2026-09-30:** v1.27 en main; v1.28 en PR (rama `pstack/ronda-3`): `/crear-verificacion` pasó su primera
+corrida real (1 de 2 contra el umbral de retiro) y entran la propuesta en `kit-codigo` y la oferta de `/proyecto-init`.
+
+«Cómo retomar»:
+- Abrir:    `investigacion/2026-09-30-pstack-y-mercado.md` (secciones 3 y 4) · `git log main..pstack/ronda-3`
+
+«Bloqueadores / esperas»:
+- Ninguno. Lo siguiente es fusionar v1.28.
+
+«Frentes abiertos»:
+| Ronda pstack (v1.28) | v1.27 en main; primera corrida real del comando: pasa | fusionar v1.28; segunda corrida en otro proyecto; limpiar rayas y prefijos del texto del kit | ninguno |
