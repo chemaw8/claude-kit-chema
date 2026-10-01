@@ -75,6 +75,34 @@ muy chico se pregunta, no se impone. Entró como manda el punto 5: council de
 cinco evaluadores (aprobada con cambios, hallazgos verificados contra disco), y
 su parte de núcleo sigue **fuera** hasta que el piloto la gane con datos.
 
+## Instalar todo con un comando
+
+En Linux con pacman, apt o dnf, abre una terminal como tu usuario normal (no con
+sudo). Necesitas conexión a internet y `curl` para descargar el asistente:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/chemaw8/claude-kit-chema/main/entorno/instalar.sh | bash
+```
+
+El perfil `colega` prepara paquetes base, uv, Claude Code y el kit en
+`~/Trabajo/proyectos/claude-kit-chema`; ofrece pi 0.87.0 como opción. El perfil
+`completo` además pide tu repositorio `dueño/repo`, guía el login de GitHub y
+entrega el control a su `asistente.sh` en `~/Trabajo/proyectos/claude-entorno`.
+No incluye una lista pública de repos privados.
+
+Para revisar el plan sin cambiar nada, sustituye el final `| bash` por
+`| bash -s -- --perfil colega --dry-run`. Con `--si` no pregunta: usa `colega`
+si no indicas perfil, omite pi y deja pendientes los logins que falten. Para
+`--perfil completo --si` es obligatorio `--entorno dueño/repo`;
+`--con-proyectos` se transmite a ese asistente. Sin `--si`, las respuestas se
+leen de la terminal, no de la tubería.
+
+El plan anuncia sudo antes de instalar paquetes; npm y uv se instalan sin sudo
+en tu usuario. En pacman también actualiza el sistema. Repetirlo conserva tus
+repos existentes (no hace pull) y tu contexto. Termina con un semáforo y el
+comando de arreglo de cada pendiente; no declares éxito si aparece un ✗.
+Prueba aislada, sin red ni sudo real: `bash entorno/test-instalar.sh`.
+
 ## Dos formas de instalar
 
 Hay dos vías y ambas funcionan; elige una:

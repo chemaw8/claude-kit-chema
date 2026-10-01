@@ -108,6 +108,11 @@ for f in scripts/*.sh; do
   fi
 done
 
+# El asistente de un comando (entorno/instalar.sh) trae su prueba sin red ni sudo.
+if [ -f entorno/test-instalar.sh ]; then
+  bash entorno/test-instalar.sh >/dev/null 2>&1; chk "entorno/test-instalar.sh pasa (asistente de un comando)" $?
+fi
+
 # Los hooks que traen prueba deben pasarla: hooks/test-<nombre>.sh prueba hooks/<nombre>.sh.
 for t in hooks/test-*.sh; do
   [ -e "$t" ] || continue
