@@ -113,6 +113,15 @@ hallazgo que no resista una verificación rápida (dato erróneo, fuera de alcan
 ya resuelto) se descarta explicando por qué. Que venga de un evaluador no lo
 hace verdad por sí solo.
 
+Cada hallazgo cae en una sola clase, con quién lo aportó y su razón en una
+línea: actuar (cambia la decisión o la corrección; solo estos forman la lista
+de `aprobada con cambios`), considerar (real pero opcional o de otro momento;
+lo decide el usuario), anotado (cierto y sin acción; queda en el acta) o
+descartado (las razones de arriba, o preferencia de estilo sin problema
+concreto). Junto va un mapa de acuerdos: qué señalaron varios evaluadores por
+separado, qué uno solo y dónde se contradijeron, con la familia y el lente de
+cada uno. El agente `sintetizador` trae el formato completo.
+
 ## Acercamiento personalizado a un contacto
 
 Aplica cuando el usuario quiere llegar a una persona concreta de otra empresa
