@@ -1,10 +1,11 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-09-30  ·  commit dd09191 (rama docs/como-usar-verificacion)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-01  ·  commit 7593a3d (rama cierre/2026-09-30-v1.29)  ·  cierre limpio: sí
 > Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**Estado al 2026-09-30:** v1.28 en main; v1.28.1 en PR (solo documentación: `COMO-PEDIR.md` secciones 8 y 9).
-`/crear-verificacion` lleva 1 de 2 corridas reales contra el umbral de retiro.
+**Estado al 2026-09-30:** v1.29 en main e instalado: `entorno/instalar.sh`, el asistente de un comando
+(`curl -fsSL https://raw.githubusercontent.com/chemaw8/claude-kit-chema/main/entorno/instalar.sh | bash`), probado
+real en contenedores limpios de Debian y Arch. `/crear-verificacion` lleva 1 de 2 corridas reales contra su umbral.
 
 ## Siguiente paso
 - [ ] Segunda corrida real de `/crear-verificacion`, en otro proyecto (umbral de retiro: 2 corridas).
@@ -23,7 +24,7 @@
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |
 |---|---|---|---|
-| Ronda pstack (v1.28.1) | v1.28 en main; primera corrida real del comando: pasa; guía de uso en COMO-PEDIR | segunda corrida en otro proyecto; limpiar rayas y prefijos del texto del kit | ninguno |
+| Ronda pstack y entorno portable (v1.29) | asistente de un comando en main y en el CI | segunda corrida de `/crear-verificacion`; limpiar rayas y prefijos del texto del kit; probar el asistente en Fedora | ninguno |
 | Debilidades de la línea base | «dato literal» atacado en v1.25 | siguiente patrón: «se cubre en vez de afirmar» (reclasificación, onepager 0/3) | José elige |
 | Auditoría prompt-audit | mecánicos hechos (v1.22.4) | topes de extensión de agentes y comandos: probar con el banco antes de quitar | ninguno |
 | `omitClaudeMd` en `lector-fresco` | sin tocar | A/B con 5 entregables; el lector dejaría de cargar la confidencialidad | medir primero |
