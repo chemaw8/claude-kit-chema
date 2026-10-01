@@ -19,6 +19,11 @@ import unittest
 RAIZ = Path(sys.argv[1])
 ASISTENTE = RAIZ / "entorno/instalar.sh"
 BASH = shutil.which("bash")
+DISTROS = (
+    ("pacman", "pacman", "-T", ("git", "curl", "ca-certificates", "python", "nodejs", "npm", "github-cli", "jq")),
+    ("apt-get", "dpkg", "-s", ("git", "curl", "ca-certificates", "python3", "nodejs", "npm", "gh", "jq")),
+    ("dnf", "rpm", "-q", ("git", "curl", "ca-certificates", "python3", "nodejs", "npm", "gh", "jq")),
+)
 
 # Solo estos comandos del sistema son accesibles; los que instalan o usan la red
 # se sustituyen incluso si existen en la máquina que corre la prueba.
@@ -57,19 +62,44 @@ def clonar(repo, destino, privado=False):
             else: shutil.copyfile(origen, destino / nombre)
         if fallo == "kit":
             (destino / "instalar.sh").write_text("exit 8\n")
+        elif fallo == "comando-kit":
+            with (destino / "instalar.sh").open("a") as f:
+                f.write('\nrm -f -- "$HOME/.claude/commands/cierre.md"\n')
+        elif fallo == "muletillas":
+            (destino / "scripts/muletillas.sh").write_text(
+                'printf "%s\\n" "$@" > "$HOME/autotest-args"\nexit 7\n')
 if nombre == "sudo":
     if a and a[0] == "-n": a = a[1:]
     if not a or a[0] not in ("pacman", "apt-get", "dnf"):
         sys.exit(88)
     sys.exit(subprocess.run(a, stdin=subprocess.DEVNULL).returncode)
-elif nombre in ("pacman", "apt-get", "dnf"):
-    pass
+elif nombre in ("pacman", "apt-get", "dnf", "dpkg", "rpm"):
+    gestor = {"dpkg": "apt-get", "rpm": "dnf"}.get(nombre, nombre)
+    registro = home / (".paquetes-" + gestor)
+    instalados = set(registro.read_text().splitlines()) if registro.exists() else set()
+    consulta = {"pacman": "-T", "dpkg": "-s", "rpm": "-q"}.get(nombre)
+    if consulta and a[:1] == [consulta]:
+        faltantes = [p for p in a[1:] if p not in instalados]
+        if nombre == "dpkg" and (not faltantes or fallo == "dpkg-residual"):
+            print("Status: deinstall ok config-files" if faltantes else "Status: install ok installed")
+            sys.exit(0)
+        if faltantes:
+            print("\n".join(faltantes))
+            sys.exit(127 if nombre == "pacman" else 1)
+    elif nombre == "apt-get" and a == ["update"]:
+        pass
+    else:
+        opciones = {"pacman": ["-Syu", "--needed", "--noconfirm"],
+                    "apt-get": ["install", "-y"], "dnf": ["install", "-y"]}.get(nombre)
+        if not opciones or a[:len(opciones)] != opciones: sys.exit(89)
+        instalados.update(a[len(opciones):])
+        registro.write_text("\n".join(sorted(instalados)))
 elif nombre == "curl":
     destino = Path(a[a.index("-o") + 1])
     destino.write_text('cp "$TEST_BIN/modelo" "$UV_INSTALL_DIR/uv"\n'
                        'chmod +x "$UV_INSTALL_DIR/uv"\n')
     if fallo == "descarga-parcial":
-        destino.write_text('touch "$HOME/descarga-ejecutada"\n')
+        destino.write_text(': > "$HOME/descarga-ejecutada"\n')
         sys.exit(22)
 elif nombre == "node":
     print(os.environ.get("TEST_NODE", "22"))
@@ -116,7 +146,7 @@ else:
 
 class Instalador(unittest.TestCase):
     def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory(prefix=".prueba-", dir=RAIZ / "entorno")
+        self.tmp = tempfile.TemporaryDirectory(prefix="kit-entorno-", dir="/tmp")
         self.addCleanup(self.tmp.cleanup)
         self.base = Path(self.tmp.name)
         self.home = self.base / "casa con espacios"
@@ -129,7 +159,7 @@ class Instalador(unittest.TestCase):
         modelo = self.bin / "modelo"
         modelo.write_text(f"#!{sys.executable}\n" + MODELO)
         modelo.chmod(0o755)
-        for cmd in ("sudo", "apt-get", "curl", "git", "node", "npm", "gh"):
+        for cmd in ("sudo", "apt-get", "dpkg", "rpm", "curl", "git", "node", "npm", "gh"):
             (self.bin / cmd).symlink_to(modelo)
         self.log = self.base / "llamadas.jsonl"
         self.env = {"HOME": str(self.home), "PATH": str(self.bin), "SHELL": "/bin/bash",
@@ -158,6 +188,11 @@ class Instalador(unittest.TestCase):
     def llamadas(self, comando=None):
         filas = [json.loads(s) for s in self.log.read_text().splitlines()] if self.log.exists() else []
         return [a for n, a in filas if n == comando] if comando else filas
+
+    def usar_gestor(self, gestor):
+        for comando in ("pacman", "apt-get", "dnf"):
+            (self.bin / comando).unlink(missing_ok=True)
+        (self.bin / gestor).symlink_to(self.bin / "modelo")
 
     def test_01_falta_tty(self):
         """Sin TTY aborta antes de modificar nada y explica --si."""
@@ -205,7 +240,10 @@ class Instalador(unittest.TestCase):
         contexto.write_text("contexto de prueba que se conserva\n")
         ajustes = (self.home / ".claude/settings.json").read_bytes()
         perfil = (self.home / ".profile").read_bytes()
+        sudo = self.llamadas("sudo")
+        self.assertTrue(sudo)
         self.corre("--si", "--perfil", "colega")
+        self.assertEqual(self.llamadas("sudo"), sudo)
         self.assertEqual(contexto.read_text(), "contexto de prueba que se conserva\n")
         self.assertEqual(ajustes, (self.home / ".claude/settings.json").read_bytes())
         self.assertEqual(perfil, (self.home / ".profile").read_bytes())
@@ -214,7 +252,7 @@ class Instalador(unittest.TestCase):
         self.assertEqual(len([a for a in self.llamadas("npm") if a[0] == "i"]), 1)
         self.assertTrue((self.home / ".claude/commands/cierre.md").is_file())
         for a in self.llamadas("sudo"):
-            self.assertIn(a[0], ("-n", "apt-get"))
+            self.assertEqual(a[0], "-n")
             self.assertIn("apt-get", a)
         self.assertFalse((self.home / ".local/bin/pi").exists())
 
@@ -223,31 +261,33 @@ class Instalador(unittest.TestCase):
         for fallo in ("sudo", "apt-get", "descarga-parcial", "npm", "git", "kit"):
             with self.subTest(fallo=fallo):
                 self.env["TEST_FALLO"] = fallo
-                self.corre("--si", "--perfil", "completo", "--entorno", "ejemplo/repo", rc=1)
-                self.assertIn("✗", self.salida)
-                self.assertIn("Arreglo", self.salida)
-                self.assertFalse((self.home / "descarga-ejecutada").exists())
-                self.assertFalse((self.home / "delegado-args").exists())
-                self.assertFalse(any(a[:2] == ["repo", "clone"] for a in self.llamadas("gh")))
-                if fallo in ("sudo", "apt-get"):
-                    self.assertEqual(self.llamadas("curl"), [])
-                if fallo in ("sudo", "apt-get", "descarga-parcial", "npm"):
-                    self.assertEqual(self.llamadas("git"), [])
-                self.assertEqual(list(self.base.glob("tmp.*")), [])
-                shutil.rmtree(self.home)
-                self.home.mkdir()
-                self.log.unlink(missing_ok=True)
+                try:
+                    self.corre("--si", "--perfil", "completo", "--entorno", "ejemplo/repo", rc=1)
+                    self.assertIn("✗", self.salida)
+                    self.assertIn("Arreglo", self.salida)
+                    self.assertFalse((self.home / "descarga-ejecutada").exists())
+                    self.assertFalse((self.home / "delegado-args").exists())
+                    self.assertFalse(any(a[:2] == ["repo", "clone"] for a in self.llamadas("gh")))
+                    if fallo in ("sudo", "apt-get"):
+                        self.assertEqual(self.llamadas("curl"), [])
+                    if fallo in ("sudo", "apt-get", "descarga-parcial", "npm"):
+                        self.assertEqual(self.llamadas("git"), [])
+                    self.assertEqual(list(self.base.glob("tmp.*")), [])
+                finally:
+                    shutil.rmtree(self.home)
+                    self.home.mkdir()
+                    self.log.unlink(missing_ok=True)
 
     def test_07_destino_ajeno(self):
         """No ejecuta ni sobrescribe una carpeta ajena al kit."""
         destino = self.home / "Trabajo/proyectos/claude-kit-chema"
         destino.mkdir(parents=True)
         propio = destino / "instalar.sh"
-        propio.write_text('touch "$HOME/no-debe-ejecutarse"\n')
+        propio.write_text(': > "$HOME/no-debe-ejecutarse"\n')
         self.corre("--si", rc=1)
         self.assertIn("✗", self.salida)
         self.assertFalse((self.home / "no-debe-ejecutarse").exists())
-        self.assertEqual(propio.read_text(), 'touch "$HOME/no-debe-ejecutarse"\n')
+        self.assertEqual(propio.read_text(), ': > "$HOME/no-debe-ejecutarse"\n')
 
     def test_08_login_pendiente(self):
         """--si no abre logins y devuelve el arreglo del login pendiente."""
@@ -352,11 +392,14 @@ class Instalador(unittest.TestCase):
         self.corre("--si")
         origen = self.home / "Trabajo/proyectos/claude-kit-chema/.git/origin"
         origen.write_text("https://github.com/ejemplo/otro.git")
+        instalador = origen.parent.parent / "instalar.sh"
+        instalador.write_text(': > "$HOME/no-debe-ejecutarse"\n' + instalador.read_text())
         self.log.unlink()
         self.corre("--si", rc=1)
         self.assertIn("origin del clon no corresponde", self.salida)
         self.assertIn("respaldo=$(mktemp", self.salida)
         self.assertNotIn("núcleo:", self.salida)
+        self.assertFalse((self.home / "no-debe-ejecutarse").exists())
         self.assertEqual(origen.read_text(), "https://github.com/ejemplo/otro.git")
 
     def test_16_completo_repetible(self):
@@ -406,8 +449,68 @@ class Instalador(unittest.TestCase):
         (self.bin / "sudo").unlink()
         self.corre("--si", rc=1)
         self.assertIn("su -c", self.salida)
-        self.assertEqual(self.llamadas(), [])
+        self.assertTrue(self.llamadas("dpkg"))
+        self.assertEqual(self.llamadas("sudo"), [])
         self.assertEqual(list(self.home.iterdir()), [])
+
+    def test_21_comando_kit_ausente(self):
+        """La comprobación final detecta un comando borrado después de instalar."""
+        self.env["TEST_FALLO"] = "comando-kit"
+        self.corre("--si", "--perfil", "completo", "--entorno", "ejemplo/repo", rc=1)
+        self.assertIn("Falta un comando del kit.", self.salida)
+        self.assertIn("✗ | Comandos del kit instalados | Arreglo:", self.salida)
+        self.assertFalse((self.home / ".claude/commands/cierre.md").exists())
+        self.assertFalse((self.home / "delegado-args").exists())
+
+    def test_22_autotest_fallido(self):
+        """Un autotest fallido se reporta y evita delegar al perfil completo."""
+        self.env["TEST_FALLO"] = "muletillas"
+        self.corre("--si", "--perfil", "completo", "--entorno", "ejemplo/repo", rc=1)
+        self.assertEqual((self.home / "autotest-args").read_text(), "autotest\n")
+        self.assertIn("Falló muletillas.sh autotest.", self.salida)
+        self.assertIn("✗ | muletillas.sh autotest | Arreglo:", self.salida)
+        self.assertFalse((self.home / "delegado-args").exists())
+
+    def test_23_paquetes_instalados(self):
+        """--si consulta las tres distros y sigue sin necesitar sudo si ya están."""
+        (self.bin / "sudo").unlink()
+        for gestor, consulta, opcion, paquetes in DISTROS:
+            with self.subTest(gestor=gestor):
+                self.usar_gestor(gestor)
+                (self.home / (".paquetes-" + gestor)).write_text("\n".join(paquetes))
+                self.log.unlink(missing_ok=True)
+                self.corre("--si")
+                self.assertNotIn("✗", self.salida)
+                esperadas = ([[opcion, p] for p in paquetes] if consulta == "dpkg"
+                             else [[opcion, *paquetes]])
+                self.assertEqual(self.llamadas(consulta), esperadas)
+                self.assertEqual(self.llamadas("sudo"), [])
+                self.assertEqual(self.llamadas(gestor), esperadas if gestor == consulta else [])
+
+    def test_24_paquetes_parciales(self):
+        """Si falta un solo paquete, consulta e instala con sudo -n en cada distro."""
+        for gestor, consulta, opcion, paquetes in DISTROS:
+            with self.subTest(gestor=gestor):
+                self.usar_gestor(gestor)
+                (self.home / (".paquetes-" + gestor)).write_text("\n".join(paquetes[:-1]))
+                self.log.unlink(missing_ok=True)
+                self.corre("--si")
+                self.assertNotIn("✗", self.salida)
+                esperadas = ([[opcion, p] for p in paquetes] if consulta == "dpkg"
+                             else [[opcion, *paquetes]])
+                self.assertEqual([a for a in self.llamadas(consulta) if a[0] == opcion], esperadas)
+                self.assertTrue(self.llamadas("sudo"))
+                for a in self.llamadas("sudo"):
+                    self.assertEqual(a[:2], ["-n", gestor])
+
+    def test_25_dpkg_residual(self):
+        """dpkg -s con rc=0 y solo configuración residual no cuenta como instalado."""
+        self.env["TEST_FALLO"] = "dpkg-residual"
+        self.corre("--si")
+        self.assertNotIn("✗", self.salida)
+        self.assertTrue(self.llamadas("dpkg"))
+        self.assertEqual(self.llamadas("sudo")[0], ["-n", "apt-get", "update"])
+        self.assertIn("install", self.llamadas("sudo")[1])
 
 suite = unittest.defaultTestLoader.loadTestsFromTestCase(Instalador)
 resultado = unittest.TextTestRunner(verbosity=2).run(suite)

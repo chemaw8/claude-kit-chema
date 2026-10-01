@@ -89,7 +89,8 @@ configurar() {
 
 plan() {
   printf 'Perfil: %s. Se usará sudo solo para paquetes del sistema (%s).\n' "$perfil" "$gestor"
-  [ "$gestor" != pacman ] || printf 'pacman actualizará el sistema para evitar una actualización parcial.\n'
+  [ "$si" -eq 0 ] || printf 'Se consultarán primero los paquetes instalados; si ya están todos, se omite sudo.\n'
+  [ "$gestor" != pacman ] || printf 'Al instalar paquetes, pacman actualizará el sistema para evitar una actualización parcial.\n'
   [ "$gestor" != apt-get ] || printf '  %s\n' "$(comando "${privilegio[@]}" apt-get update)"
   printf '  %s\n' "$(comando "${privilegio[@]}" "${sistema[@]}")"
   printf 'Se añadirá ~/.local/bin al PATH de esta sesión y de tus archivos de inicio.\n'
@@ -132,6 +133,20 @@ cerrar() {
   exit "$rc"
 }
 ejecutar() { printf 'Ejecutando: %s\n' "$(comando "$@")"; "$@" </dev/null; }
+
+paquetes_instalados() {
+  local paquete estado
+  case "$gestor" in
+    pacman) pacman -T "${paquetes[@]}" >/dev/null 2>&1 ;;
+    apt-get)
+      for paquete in "${paquetes[@]}"; do
+        estado=$(dpkg -s "$paquete" 2>/dev/null) || return 1
+        # dpkg también devuelve 0 si solo quedan archivos de configuración.
+        grep -qx 'Status: install ok installed' <<< "$estado" || return 1
+      done ;;
+    dnf) rpm -q "${paquetes[@]}" >/dev/null 2>&1 ;;
+  esac
+}
 
 preparar_path() {
   local archivo
@@ -200,19 +215,23 @@ main() {
   trap cerrar EXIT
 
   # No se hereda stdin a herramientas que pudieran consumir el script de la tubería.
-  if ! command -v sudo >/dev/null 2>&1; then
-    local instalar_sudo
-    case "$gestor" in
-      pacman) instalar_sudo='pacman -Syu --needed sudo' ;;
-      apt-get) instalar_sudo='apt-get update && apt-get install sudo' ;;
-      dnf) instalar_sudo='dnf install sudo' ;;
-    esac
-    arreglos[sistema]="$(comando su -c "$instalar_sudo") && $reintento"
-    error 'Falta sudo. El arreglo requiere acceso de administrador; también debes tener permiso para usar sudo.'
+  if [ "$si" -eq 1 ] && paquetes_instalados; then
+    printf 'Paquetes del sistema ya instalados; se continúa sin sudo.\n'
+  else
+    if ! command -v sudo >/dev/null 2>&1; then
+      local instalar_sudo
+      case "$gestor" in
+        pacman) instalar_sudo='pacman -Syu --needed sudo' ;;
+        apt-get) instalar_sudo='apt-get update && apt-get install sudo' ;;
+        dnf) instalar_sudo='dnf install sudo' ;;
+      esac
+      arreglos[sistema]="$(comando su -c "$instalar_sudo") && $reintento"
+      error 'Falta sudo. El arreglo requiere acceso de administrador; también debes tener permiso para usar sudo.'
+    fi
+    arreglos[sistema]="sudo -v && $reintento"
+    if [ "$gestor" = apt-get ]; then ejecutar "${privilegio[@]}" apt-get update || error 'Falló la actualización del índice de paquetes.'; fi
+    ejecutar "${privilegio[@]}" "${sistema[@]}" || error 'Falló la instalación de paquetes (con --si, sudo debe estar autorizado sin preguntas).'
   fi
-  arreglos[sistema]="sudo -v && $reintento"
-  if [ "$gestor" = apt-get ]; then ejecutar "${privilegio[@]}" apt-get update || error 'Falló la actualización del índice de paquetes.'; fi
-  ejecutar "${privilegio[@]}" "${sistema[@]}" || error 'Falló la instalación de paquetes (con --si, sudo debe estar autorizado sin preguntas).'
   export PATH="$HOME/.local/bin:$PATH"
   local herramienta mayor minimo=18
   for herramienta in git curl python3 node npm gh; do
