@@ -414,3 +414,12 @@ corrida real (1 de 2 contra el umbral de retiro) y entran la propuesta en `kit-c
 
 «Frentes abiertos»:
 | Ronda pstack (v1.28) | v1.27 en main; primera corrida real del comando: pasa | fusionar v1.28; segunda corrida en otro proyecto; limpiar rayas y prefijos del texto del kit | ninguno |
+
+## 2026-10-01 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+**Estado al 2026-09-30:** v1.28 en main; v1.28.1 en PR (solo documentación: `COMO-PEDIR.md` secciones 8 y 9).
+`/crear-verificacion` lleva 1 de 2 corridas reales contra el umbral de retiro.
+
+«Frentes abiertos»:
+| Ronda pstack (v1.28.1) | v1.28 en main; primera corrida real del comando: pasa; guía de uso en COMO-PEDIR | segunda corrida en otro proyecto; limpiar rayas y prefijos del texto del kit | ninguno |
