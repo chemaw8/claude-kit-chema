@@ -96,7 +96,7 @@ plan() {
   printf 'Se añadirá ~/.local/bin al PATH de esta sesión y de tus archivos de inicio.\n'
   printf 'Si faltan, se descargarán y ejecutarán el instalador oficial de uv y el paquete de Claude Code:\n'
   printf '  %s (UV_INSTALL_DIR=~/.local/bin, UV_NO_MODIFY_PATH=1)\n' "$URL_UV"
-  printf '  %s\n' "$(comando npm i -g --prefix "$HOME/.local" @anthropic-ai/claude-code)"
+  printf '  %s\n' "$(comando npm i -g --prefix "$HOME/.local" --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code)"
   if [ "$con_pi" -eq 1 ]; then
     printf '  %s\n' "$(comando npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE")"
   else
@@ -202,7 +202,7 @@ main() {
   registrar sistema 'Paquetes del sistema y Node.js' "$reintento"
   registrar path 'PATH persistente (~/.local/bin)' "$reintento"
   registrar uv 'uv ejecutable' "$reintento"
-  registrar claude 'Claude Code ejecutable' "$(comando npm i -g --prefix "$HOME/.local" @anthropic-ai/claude-code)"
+  registrar claude 'Claude Code ejecutable' "$(comando npm i -g --prefix "$HOME/.local" --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code)"
   registrar kit 'Kit instalado y versión' "$reintento"
   registrar comandos 'Comandos del kit instalados' "$(comando bash "$kit/instalar.sh")"
   registrar autotest 'muletillas.sh autotest' "$(comando bash "$kit/instalar.sh") && $(comando bash "$HOME/.claude/scripts/muletillas.sh" autotest)"
@@ -255,11 +255,15 @@ main() {
   fi
   uv --version >/dev/null 2>&1 || error 'uv está presente pero no funciona.'
   hechos[uv]=1
-  if ! command -v claude >/dev/null 2>&1; then
-    ejecutar npm i -g --prefix "$HOME/.local" @anthropic-ai/claude-code || error 'Falló la instalación de Claude Code.'
+  # npm >= 11 bloquea los scripts de instalación, y Claude Code necesita el suyo para bajar su binario:
+  # sin --allow-scripts queda «presente pero no funciona» (visto en Arch, 2026-09-30). Si aun así falla,
+  # se sigue con el kit, que no depende de Claude Code, y el semáforo lo marca con su arreglo.
+  if ! claude --version >/dev/null 2>&1; then
+    ejecutar npm i -g --prefix "$HOME/.local" --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code \
+      || printf 'Aviso: falló la instalación de Claude Code; sigo con el kit.\n' >&2
   fi
-  claude --version >/dev/null 2>&1 || error 'Claude Code está presente pero no funciona.'
-  hechos[claude]=1
+  if claude --version >/dev/null 2>&1; then hechos[claude]=1
+  else printf 'Aviso: Claude Code no funciona todavía; sigo con el kit (el semáforo dice cómo arreglarlo).\n' >&2; fi
 
   export GIT_TERMINAL_PROMPT=0
   validar_clon "$kit" chemaw8/claude-kit-chema kit
@@ -279,6 +283,7 @@ main() {
   hechos[comandos]=1
   bash "$HOME/.claude/scripts/muletillas.sh" autotest >/dev/null || error 'Falló muletillas.sh autotest.'
   hechos[autotest]=1
+  [ "${hechos[claude]}" -eq 1 ] || error 'El kit quedó instalado, pero Claude Code no funciona: arréglalo y vuelve a correr el asistente.'
   if [ "$con_pi" -eq 1 ]; then
     if ! command -v pi >/dev/null 2>&1 || [ "$(pi --version 2>/dev/null)" != 0.87.0 ]; then
       ejecutar npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE" || error 'Falló la instalación de pi.'
@@ -286,12 +291,12 @@ main() {
     [ "$(pi --version 2>/dev/null)" = 0.87.0 ] || error 'pi en PATH no corresponde a la versión 0.87.0.'
     hechos[pi]=1
   fi
-  if ! claude_autenticado && [ "$si" -eq 0 ]; then
+  if [ "${hechos[claude]}" -eq 1 ] && ! claude_autenticado && [ "$si" -eq 0 ]; then
     if aceptar '¿Abrir el login de Claude Code en esta terminal?'; then
       claude auth login <&3 >&3 2>&3 || error 'Falló el login de Claude Code.'
     fi
   fi
-  if claude_autenticado; then hechos[login]=1; fi
+  if [ "${hechos[claude]}" -eq 1 ] && claude_autenticado; then hechos[login]=1; fi
   if [ "$perfil" = colega ]; then
     [ "${hechos[login]}" -eq 1 ] || error 'Quedó pendiente el login de Claude Code.'
     return

@@ -249,7 +249,10 @@ class Instalador(unittest.TestCase):
         self.assertEqual(perfil, (self.home / ".profile").read_bytes())
         self.assertEqual(len([a for a in self.llamadas("git") if a[0] == "clone"]), 1)
         self.assertEqual(len(self.llamadas("curl")), 1)
-        self.assertEqual(len([a for a in self.llamadas("npm") if a[0] == "i"]), 1)
+        npm_i = [a for a in self.llamadas("npm") if a[0] == "i"]
+        self.assertEqual(len(npm_i), 1)
+        # npm >= 11 bloquea el script de instalación de Claude Code; sin este permiso queda inservible (Arch, 2026-09-30)
+        self.assertIn("--allow-scripts=@anthropic-ai/claude-code", npm_i[0])
         self.assertTrue((self.home / ".claude/commands/cierre.md").is_file())
         for a in self.llamadas("sudo"):
             self.assertEqual(a[0], "-n")
@@ -257,7 +260,7 @@ class Instalador(unittest.TestCase):
         self.assertFalse((self.home / ".local/bin/pi").exists())
 
     def test_06_fallas_instalacion(self):
-        """Una falla de paquetes, descarga, npm, git o kit corta la cadena."""
+        """Una falla de paquetes, descarga, git o kit corta la cadena; la de npm (Claude Code) deja el kit y termina en rojo."""
         for fallo in ("sudo", "apt-get", "descarga-parcial", "npm", "git", "kit"):
             with self.subTest(fallo=fallo):
                 self.env["TEST_FALLO"] = fallo
@@ -270,8 +273,12 @@ class Instalador(unittest.TestCase):
                     self.assertFalse(any(a[:2] == ["repo", "clone"] for a in self.llamadas("gh")))
                     if fallo in ("sudo", "apt-get"):
                         self.assertEqual(self.llamadas("curl"), [])
-                    if fallo in ("sudo", "apt-get", "descarga-parcial", "npm"):
+                    if fallo in ("sudo", "apt-get", "descarga-parcial"):
                         self.assertEqual(self.llamadas("git"), [])
+                    if fallo == "npm":
+                        # Claude Code no corta el kit: el kit queda instalado y el asistente termina en rojo
+                        self.assertTrue((self.home / ".claude/commands/cierre.md").is_file())
+                        self.assertIn("Claude Code", self.salida)
                     self.assertEqual(list(self.base.glob("tmp.*")), [])
                 finally:
                     shutil.rmtree(self.home)
