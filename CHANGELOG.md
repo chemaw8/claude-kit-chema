@@ -1,5 +1,17 @@
 # Changelog — Kit Chema
 
+## v1.29 — 2026-09-30
+**Instalar todo con un comando.** `entorno/instalar.sh`, el asistente público (corrida ultracode «entorno portable»):
+`curl -fsSL https://raw.githubusercontent.com/chemaw8/claude-kit-chema/main/entorno/instalar.sh | bash`. Detecta la
+distro (pacman, apt, dnf), instala lo base, `uv` y Claude Code, clona e instala el kit y cierra con un semáforo que
+da el arreglo de cada ✗. Perfil `colega` (kit, y pi si se pide) o `completo`, que pasa el control al asistente
+privado de un repo de entorno (`--entorno dueño/repo`). Núcleo y descriptions intactos.
+- **Evidencia:** 25 pruebas sin red ni sudo, conectadas a `verificar.sh` (y por tanto al CI), con mutaciones que
+  demuestran que las de seguridad atrapan lo que cuidan. Revisión cruzada de otra familia (con cambios, aplicados).
+  Instalación real en contenedores limpios: Debian bookworm, todo en verde salvo el login (que pide a una persona);
+  Arch, la primera corrida encontró que npm ≥ 11 bloquea el instalador de Claude Code y el kit no se instalaba;
+  corregido con `--allow-scripts` y el kit ya no depende de que Claude Code funcione.
+
 ## v1.28.1 — 2026-09-30
 Solo documentación: `COMO-PEDIR.md` explica paso a paso cómo usar `/crear-verificacion` (sección 8) y el revisor
 de señales de IA antes de mandar un texto (sección 9), para quien use el kit sin haber seguido la ronda pstack.
