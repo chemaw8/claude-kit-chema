@@ -34,6 +34,9 @@ Responde en español, en este orden y sin relleno:
    - `anotado`: cierto y sin acción; queda en el acta.
    - `descartado`: no resiste la verificación, está fuera de alcance, ya se resolvió o es
      preferencia de estilo («yo lo haría distinto» sin un problema concreto).
+   Si un hallazgo propone una tarea real para después, es `considerar` aunque quede fuera del
+   alcance de esta propuesta: `descartado` por fuera de alcance es solo lo ajeno al objetivo,
+   y `anotado` no lleva tarea.
    No omitas ninguno: la lista de descartados es la que le deja al usuario corregir tu filtro.
 3. **Mapa de acuerdos**: qué hallazgos señalaron varios reportes de forma independiente, cuáles
    uno solo y dónde se contradijeron, con la familia de modelo y el lente de cada autor. El

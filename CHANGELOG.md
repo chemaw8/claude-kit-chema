@@ -1,5 +1,20 @@
 # Changelog — Kit Chema
 
+## v1.30 — 2026-10-01
+Ronda pstack 2 (corrida ultracode uc-202610012332-fav8): dos piezas de pstack (`cursor/plugins/pstack`, commit
+fae2c6e, MIT © Lauren Tan) adaptadas, cada una revisada por otra familia de modelos que corrió las pruebas y rompió
+el código a propósito. Núcleo y descriptions de skills intactos (el gate de disparo no aplica).
+- **El council clasifica cada hallazgo** (de `interrogate`): el `sintetizador` pone cada hallazgo en una sola clase,
+  actuar, considerar, anotado o descartado, con su razón y quién lo aportó, y entrega un mapa de acuerdos entre
+  evaluadores (familia y lente de cada uno). `kit-propuestas` suma un párrafo en «Veredicto» (1 adición neta).
+  Evidencia: `docs/pruebas/resintesis-council-v1.11.md` rehace el acta v1.11; el veredicto no cambia, cambian 4
+  hallazgos de trato y se ve el filtro (el original aplicó 13 de 14 y no descartó ninguno).
+- **`/por-que <algo>`** (de `why` y `recall`): `scripts/por-que.sh` junta la evidencia citada de git (log --follow,
+  blame, pickaxe), `DECISIONES.md`, `CONTINUAR.md`, `docs/bitacora.md` y el vault, con topes y fallo cerrado; no lee
+  transcripciones de sesiones ni `*.jsonl`, ni siguiendo enlaces. Su `autotest` (sin red, sin tocar el HOME real)
+  entra solo en `verificar.sh`; el revisor confirmó que tumba al quitar las exclusiones o al tragarse un error de git.
+- Acta del council: `docs/pruebas/council-v1.30.md`.
+
 ## v1.29 — 2026-09-30
 **Instalar todo con un comando.** `entorno/instalar.sh`, el asistente público (corrida ultracode «entorno portable»):
 `curl -fsSL https://raw.githubusercontent.com/chemaw8/claude-kit-chema/main/entorno/instalar.sh | bash`. Detecta la

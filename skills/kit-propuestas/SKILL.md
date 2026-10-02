@@ -118,7 +118,8 @@ línea: actuar (cambia la decisión o la corrección; solo estos forman la lista
 de `aprobada con cambios`), considerar (real pero opcional o de otro momento;
 lo decide el usuario), anotado (cierto y sin acción; queda en el acta) o
 descartado (las razones de arriba, o preferencia de estilo sin problema
-concreto). Junto va un mapa de acuerdos: qué señalaron varios evaluadores por
+concreto; lo que propone una tarea para después es considerar, no
+descartado). Junto va un mapa de acuerdos: qué señalaron varios evaluadores por
 separado, qué uno solo y dónde se contradijeron, con la familia y el lente de
 cada uno. El agente `sintetizador` trae el formato completo.
 
