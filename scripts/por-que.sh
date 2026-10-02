@@ -132,6 +132,13 @@ def historia_archivo(repo, ruta, existe):
     if len(cuentas) > BLAME_MAX:
         print(f'[git blame] truncado: {BLAME_MAX} de {len(cuentas)} commits contribuyentes')
 
+def borrado_en_historia(repo, ruta):
+    # Un archivo que ya no existe sigue teniendo historia: sin esto caía a -S, que busca contenido y no nombres
+    # (council v1.30, hallazgo de council-codex). Solo cuenta si se borró exactamente esa ruta, no algo bajo ella.
+    datos = git(repo, 'log', '-1', '--diff-filter=D', '--no-renames', '-z', '--name-only', '--format=',
+                'HEAD', '--', literal(ruta))
+    return os.fsencode(ruta) in re.split(rb'[\0\n]', datos)
+
 def buscar_git(repo, objetivo, rastreados):
     print(f'\n## git log -S (literal; máximo {HISTORIA_MAX} commits de HEAD y {LOG_MAX} coincidencias)')
     commits = git(repo, 'rev-list', f'--max-count={HISTORIA_MAX + 1}', 'HEAD').splitlines()
@@ -216,7 +223,9 @@ def documentos(repo, objetivo):
 
 def vault(objetivo):
     print(f'\n## vault (Markdown; rutas relativas; máximo {VAULT_MAX})')
-    raiz = Path(os.path.abspath(os.environ.get('POR_QUE_VAULT') or Path.home() / 'vault'))
+    # La raíz se resuelve antes de aplicar la política: un HOME con enlace (/home → var/home en Fedora Atomic) no
+    # deja fuera el vault; la ruta resuelta pasa igual por los nombres excluidos (aviso del gate, v1.30).
+    raiz = Path(os.path.realpath(os.environ.get('POR_QUE_VAULT') or Path.home() / 'vault'))
     if not permitida(raiz):
         print('[vault] vault excluido por política de rutas/enlaces')
         return
@@ -253,7 +262,7 @@ def main():
     objetivo = args[0]
     if not objetivo.strip() or '\n' in objetivo or '\r' in objetivo:
         raise ErrorConsulta('el objetivo debe ser texto no vacío de una sola línea')
-    repo = Path(os.path.abspath(args[2] if len(args) == 3 else '.'))
+    repo = Path(os.path.realpath(args[2] if len(args) == 3 else '.'))
     if not permitida(repo):
         raise ErrorConsulta('repo excluido por política de rutas/enlaces')
     repo = Path(os.fsdecode(git(repo, 'rev-parse', '--show-toplevel')).rstrip('\n'))
@@ -263,8 +272,8 @@ def main():
     try:
         ruta = candidato.relative_to(repo).as_posix()
     except ValueError:
-        raise ErrorConsulta('objetivo fuera del repo') from None
-    if not permitida(candidato):
+        ruta = None   # «/cierre» o «../x» no son rutas del repo: se buscan como término (aviso del gate, v1.30)
+    if ruta is not None and not permitida(candidato):
         raise ErrorConsulta('objetivo excluido por política de rutas/enlaces')
     head = cita_commit(git(repo, 'log', '-1', '--format=%h%x09%cs%x09%s', 'HEAD').rstrip(b'\n'))
     rastreados = sorted(set(os.fsdecode(p) for p in git(repo, 'ls-files', '-z').split(b'\0') if p))
@@ -273,8 +282,8 @@ def main():
     print('[alcance] sin red; sin sesiones/JSONL ni enlaces; búsqueda literal sensible a mayúsculas')
     if git(repo, 'rev-parse', '--is-shallow-repository').strip() == b'true':
         print('[git] historial incompleto: clon superficial (shallow)')
-    existe = regular(candidato)
-    if existe or ruta in rastreados:
+    existe = ruta is not None and regular(candidato)
+    if ruta is not None and (existe or ruta in rastreados or borrado_en_historia(repo, ruta)):
         historia_archivo(repo, ruta, existe)
     else:
         buscar_git(repo, objetivo, rastreados)
@@ -440,6 +449,36 @@ cmd_autotest() (
   hay '[vault] truncado: primeras 40 coincidencias'
   no_hay 'muchas_coincidencias 44'
   echo '✓ topes de coincidencias y longitud visibles'
+
+  printf 'pass\n' > "$repo/borrado.py"
+  mkdir -p "$repo/carpeta" && printf 'x\n' > "$repo/carpeta/hijo.txt"
+  commit 2026-01-04 'crea borrado.py'
+  local h3; h3="$(g rev-parse --short HEAD)"
+  g rm -q borrado.py carpeta/hijo.txt
+  commit 2026-01-05 'borra borrado.py'
+  consulta borrado.py
+  hay 'git log --follow'
+  hay "$h3 | 2026-01-04 | crea borrado.py"
+  hay 'borra borrado.py'
+  hay 'archivo ausente'
+  consulta carpeta
+  hay 'git log -S'
+  echo '✓ archivo borrado: su historia, no una búsqueda por contenido (una carpeta sigue siendo término)'
+
+  printf 'Se usa /comando_barra y ../termino_arriba.\n' >> "$repo/DECISIONES.md"
+  consulta /comando_barra
+  hay 'git log -S'
+  hay 'DECISIONES.md:'
+  consulta ../termino_arriba
+  hay 'DECISIONES.md:'
+  ln -s "$t" "$t/enlace-raiz"
+  out="$(POR_QUE_VAULT="$t/enlace-raiz/vault" motor calcular_demo --repo "$t/enlace-raiz/repo")"
+  hay 'git log -S'
+  hay 'nota.md:2'
+  no_hay 'excluid'
+  no_hay CANARIO_EXCLUIDO
+  rm "$t/enlace-raiz"
+  echo '✓ término con barra o «..», y raíces (repo, vault) alcanzadas por un enlace'
 
   rm "$repo/CONTINUAR.md" "$repo/docs/bitacora.md"
   out="$(POR_QUE_VAULT="$t/no-vault" motor calcular_demo --repo "$repo")"
