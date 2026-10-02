@@ -1,15 +1,13 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-01  ·  rama pstack/ronda-4 (PR en borrador)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-02  ·  rama main (v1.30 fusionada, PR #73)  ·  cierre limpio: sí
 > Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**Estado al 2026-10-01:** v1.29 en main e instalado. v1.30 en PR en borrador (rama `pstack/ronda-4`, council
-aprobada con cambios, aplicados): el sintetizador clasifica hallazgos y entra `/por-que` con criterio de retiro.
-Acta y pruebas de uso en `docs/pruebas/council-v1.30.md`. `/crear-verificacion` lleva 1 de 2 corridas reales.
+**Estado al 2026-10-02:** v1.30 en main (PR #73) e instalado en Claude Code y en pi: el sintetizador clasifica
+hallazgos y entra `/por-que` con criterio de retiro (acta y pruebas en `docs/pruebas/council-v1.30.md`).
+`/crear-verificacion` lleva 1 de 2 corridas reales.
 
 ## Siguiente paso
-- [ ] Fusionar el PR de v1.30 (`gh api -X PUT …/pulls/<n>/merge`) e instalar el kit; luego, en pi,
-      `python3 traducir-comandos.py` (pi-harness) para que `/por-que` lleve su apéndice.
 - [ ] `/por-que`: anotar en el acta v1.30 los primeros 5 usos reales (umbral de retiro).
 - [ ] Próximo council: archivar los reportes crudos para medir la clasificación de hallazgos (resíntesis v1.11).
 - [ ] Segunda corrida real de `/crear-verificacion`, en otro proyecto (umbral de retiro: 2 corridas).
@@ -28,7 +26,7 @@ Acta y pruebas de uso en `docs/pruebas/council-v1.30.md`. `/crear-verificacion` 
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |
 |---|---|---|---|
-| Ronda pstack 2 (v1.30) | PR en borrador, council aplicado | fusionar; 5 usos reales de `/por-que` | José fusiona |
+| Ronda pstack 2 (v1.30) | en main e instalada | 5 usos reales de `/por-que` (umbral de retiro) | ninguno |
 | Entorno portable (v1.29) | asistente de un comando en main y en el CI | probar el asistente en Fedora | ninguno |
 | Debilidades de la línea base | «dato literal» atacado en v1.25 | siguiente patrón: «se cubre en vez de afirmar» (reclasificación, onepager 0/3) | José elige |
 | Auditoría prompt-audit | mecánicos hechos (v1.22.4) | topes de extensión de agentes y comandos: probar con el banco antes de quitar | ninguno |
