@@ -274,7 +274,11 @@ def main():
     except ValueError:
         ruta = None   # «/cierre» o «../x» no son rutas del repo: se buscan como término (aviso del gate, v1.30)
     if ruta is not None and not permitida(candidato):
-        raise ErrorConsulta('objetivo excluido por política de rutas/enlaces')
+        # Una ruta excluida que existe falla cerrado; una palabra como «sessions» que no es archivo se busca como
+        # término, y git y el vault siguen excluyendo esas rutas (aviso del gate, v1.30).
+        if os.path.lexists(candidato):
+            raise ErrorConsulta('objetivo excluido por política de rutas/enlaces')
+        ruta = None
     head = cita_commit(git(repo, 'log', '-1', '--format=%h%x09%cs%x09%s', 'HEAD').rstrip(b'\n'))
     rastreados = sorted(set(os.fsdecode(p) for p in git(repo, 'ls-files', '-z').split(b'\0') if p))
     print(f'# Evidencia local: {visible(objetivo)}')
@@ -478,7 +482,10 @@ cmd_autotest() (
   no_hay 'excluid'
   no_hay CANARIO_EXCLUIDO
   rm "$t/enlace-raiz"
-  echo '✓ término con barra o «..», y raíces (repo, vault) alcanzadas por un enlace'
+  consulta sessions
+  hay 'git log -S'
+  no_hay CANARIO_EXCLUIDO
+  echo '✓ término con barra o «..», raíces alcanzadas por un enlace y una palabra excluida que no es archivo'
 
   rm "$repo/CONTINUAR.md" "$repo/docs/bitacora.md"
   out="$(POR_QUE_VAULT="$t/no-vault" motor calcular_demo --repo "$repo")"
