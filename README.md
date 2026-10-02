@@ -168,7 +168,7 @@ en vez de reemplazarlo. Esta vía instala el kit completo, con o sin plugin.
 | `/init-contexto` | Copia las plantillas de contexto a `~/.claude/contexto/` (o a `$CLAUDE_CONFIG_DIR/contexto/`) sin pisar las tuyas. |
 | `/revisar-antes-de-subir` | Antes de un `git push` en un repo con el gate activo: corre las pruebas en copia limpia, manda el diff a un revisor adversario y produce el sello que el hook `sello-push` exige. |
 | `/crear-verificacion` | En apps con interfaz o servicio: le deja al proyecto un mapa y un script que recorren la app como usuario, guardan evidencia y limpian, probados una vez con un defecto sembrado. Las pruebas en verde no bastan para decir que la app sirve. |
-| `/por-que <algo>` | Para entender por qué un archivo, una función o una decisión está como está: junta la evidencia de git (log, blame), `DECISIONES.md`, `CONTINUAR.md`, `docs/bitacora.md` y el vault, y responde con el estado de hoy y la cadena de decisiones, citando cada fuente. Nunca lee transcripciones de sesiones. |
+| `/por-que <algo>` | Para entender por qué un archivo, una función o una decisión está como está: junta la evidencia de git (log, blame), `DECISIONES.md`, `CONTINUAR.md`, `docs/bitacora.md` y el vault, y responde con el estado de hoy y la cadena de decisiones, citando cada fuente. Nunca lee transcripciones de sesiones. Rinde más donde la razón solo vive en git; entró con criterio de retiro (acta v1.30). |
 
 `/proyecto-init` y `/cierre` son un par: el primero crea la ficha, el segundo la
 mantiene viva. Se apoyan en `scripts/rotar-continuar.sh`, que garantiza —y

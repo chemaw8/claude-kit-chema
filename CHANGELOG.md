@@ -13,7 +13,15 @@ el código a propósito. Núcleo y descriptions de skills intactos (el gate de d
   blame, pickaxe), `DECISIONES.md`, `CONTINUAR.md`, `docs/bitacora.md` y el vault, con topes y fallo cerrado; no lee
   transcripciones de sesiones ni `*.jsonl`, ni siguiendo enlaces. Su `autotest` (sin red, sin tocar el HOME real)
   entra solo en `verificar.sh`; el revisor confirmó que tumba al quitar las exclusiones o al tragarse un error de git.
-- Acta del council: `docs/pruebas/council-v1.30.md`.
+  Del council y del gate: un archivo borrado ahora sigue su historia (antes caía a una búsqueda por contenido),
+  `/cierre` o `../x` se buscan como término, y un repo o vault alcanzado por un enlace (`/home` en Fedora Atomic)
+  ya no queda excluido.
+- **Prueba de uso real de `/por-que`** (condición del council): agentes nuevos, calificación ciega por otra familia.
+  En este repo, muy documentado, empata con el modelo solo (cero inventos en ambos). En un repo desordenado (305
+  commits, razones solo en git) sube las afirmaciones citadas de 73% a 88% y la cobertura de 12/14 a 14/14, sin
+  inventos en ninguno. Entra con criterio de retiro: si en los primeros 5 usos reales no aporta una cita o un commit
+  que la pregunta simple no habría dado, vuelve a borrador.
+- Acta del council, con los reportes del panel archivados: `docs/pruebas/council-v1.30.md`.
 
 ## v1.29 — 2026-09-30
 **Instalar todo con un comando.** `entorno/instalar.sh`, el asistente público (corrida ultracode «entorno portable»):
