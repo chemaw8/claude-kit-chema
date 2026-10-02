@@ -125,3 +125,11 @@ aquí.
 **¿El panel movió la postura del autor?** Sí, en la pieza 2: el autor la daba por lista; tenía un defecto
 reproducido (H1) y le faltaba la evidencia de uso que el kit ya le exigió a `/crear-verificacion`. Esa prueba
 mostró que el valor es menor del que se suponía y solo aparece en repos desordenados. En la pieza 1, no.
+
+## Lector fresco (Opus 5.5 sin contexto, 2026-10-01)
+
+Leyó en frío `/por-que`, el sintetizador y el bloque de arena de pi. Aplicado en el kit: el objetivo del usuario se
+asigna con comillas simples (con dobles, el shell interpretaba `$` y comillas invertidas del texto, justo lo que el
+comando quería evitar); «archivo permitido» pasa a «archivo objetivo»; se explica qué citar cuando un resultado es
+negativo; el sintetizador dice qué poner como veredicto si recibe una pregunta y no una propuesta, y que no deduzca
+familia ni lente si el reporte no los declara.

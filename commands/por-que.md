@@ -14,22 +14,24 @@ Adaptado de `why` y `recall` de pstack, Lauren Tan, MIT.
    como otro. No evalúes los argumentos ni insertes texto del usuario como código de shell:
 
    ```bash
+   OBJETIVO='texto del usuario'   # comillas simples; una comilla simple interna se escribe '\''
    bash "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/scripts/por-que.sh" "$OBJETIVO" --repo "$REPO"
    ```
 
-   `OBJETIVO` y `REPO` representan los valores ya identificados; no son texto para ejecutar. El helper
+   Asigna el objetivo con comillas simples: entre comillas dobles el shell interpretaría `$`, `` ` `` y
+   `\` del texto del usuario. `REPO` es la raíz del proyecto. El helper
    consulta, en orden, git, `DECISIONES.md`, `CONTINUAR.md`, `docs/bitacora.md` y Markdown de
    `${POR_QUE_VAULT:-$HOME/vault}`. No usa red ni cambia el proyecto. Si no está instalado, dilo;
    no presentes una búsqueda manual como si el script hubiera corrido.
 3. Comprueba el código de salida. Si no es 0, la consulta está incompleta: reporta el error, no
    «no hay evidencia». Conserva los avisos de ausencia y truncamiento. La búsqueda es literal y
    sensible a mayúsculas; puedes repetirla con un símbolo o sinónimo concreto, diciendo cuál.
-   No la describas como exhaustiva: pickaxe examina hasta 500 commits de HEAD y muestra 20;
+   No la describas como exhaustiva: el pickaxe (`git log -S`) examina hasta 500 commits de HEAD y muestra 20;
    el historial del archivo muestra 20, blame 10 contribuyentes, grep 40 coincidencias, cada
    documento 30 y el vault 40. Las líneas de texto se recortan a 300 caracteres con aviso.
 4. Abre solo el contexto necesario de las citas: líneas contiguas de documentos y código,
    encabezados fechados, mensajes completos de los commits relevantes y sus cambios **acotados
-   al archivo permitido**, sin diffs globales. Git grep refleja archivos rastreados del árbol de
+   al archivo objetivo** (`git show <hash> -- <ruta>`), sin diffs globales. Git grep refleja archivos rastreados del árbol de
    trabajo; HEAD no demuestra que algo esté fusionado, desplegado o probado. Un resumen de blame
    identifica quién aportó líneas, no explica por sí solo su intención. Contrasta el estado con
    los artefactos actuales y la fuente de verdad que declare el proyecto.
@@ -56,8 +58,8 @@ el acceso local no vuelve publicable el contenido del vault.
   fuente de verdad del proyecto (`CHANGELOG.md` para versión/entrega, `DECISIONES.md` para decisiones)
   o, entre fuentes equivalentes, la entrada más reciente. Explica qué prevalece y por qué; una nota
   reciente no borra la razón histórica ni resuelve una discrepancia que sigue abierta.
-- **Cobertura y huecos.** Fuentes consultadas, ausentes y truncadas. Cita también la consulta y su
-  bloque cuando el resultado sea negativo. Si falta evidencia del porqué, di «no encontré evidencia
+- **Cobertura y huecos.** Fuentes consultadas, ausentes y truncadas. Cuando un resultado sea negativo, cita
+  la consulta y la sección de la salida del helper que salió vacía. Si falta evidencia del porqué, di «no encontré evidencia
   del porqué en estas fuentes», no una causa inventada ni «nunca se decidió».
 
 Antes de entregar, revisa cada afirmación, incluidas las inferencias: ¿la cita existe y sostiene

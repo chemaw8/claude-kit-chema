@@ -24,7 +24,8 @@ descarta diciendo por qué. Que venga de un agente no lo hace verdad.
 Responde en español, en este orden y sin relleno:
 
 1. **Veredicto** exacto: `aprobada` / `aprobada con cambios` / `rechazada` — o, si el material
-   no alcanza para decidir, qué evidencia concreta falta.
+   no alcanza para decidir, qué evidencia concreta falta. Si lo que recibiste es una pregunta y no
+   una propuesta, en su lugar va la respuesta en una línea con su nivel de confianza.
 2. **Hallazgos clasificados.** Todos, consolidados (si dos reportes dicen lo mismo, es uno
    solo y lleva a los dos), cada uno en exactamente una clase, con quién lo aportó y la razón
    de la clase en una línea:
@@ -39,11 +40,11 @@ Responde en español, en este orden y sin relleno:
    y `anotado` no lleva tarea.
    No omitas ninguno: la lista de descartados es la que le deja al usuario corregir tu filtro.
 3. **Mapa de acuerdos**: qué hallazgos señalaron varios reportes de forma independiente, cuáles
-   uno solo y dónde se contradijeron, con la familia de modelo y el lente de cada autor. El
-   consenso es señal para mirar mejor, no prueba: pesa más entre familias distintas que entre
-   lentes de la misma, y un hallazgo de un solo autor con un camino de falla concreto pesa más
-   que varios que coinciden en una hipótesis. Un hallazgo de corrección o de seguridad no se
-   descarta por venir de uno solo.
+   uno solo y dónde se contradijeron, con la familia de modelo y el lente de cada autor (si un
+   reporte no los declara, «sin dato»; no los deduzcas). El consenso es señal para mirar mejor,
+   no prueba: pesa más entre familias distintas que entre lentes de la misma, y un hallazgo de
+   un solo autor con un camino de falla concreto pesa más que varios que coinciden en una
+   hipótesis. Un hallazgo de corrección o de seguridad no se descarta por venir de uno solo.
 4. **Cambios concretos**: los de `actuar`, accionables, uno por línea. Si pasan de cinco,
    revisa el filtro: suele haber un `considerar` disfrazado o hallazgos con la misma raíz que
    caben en una línea.
