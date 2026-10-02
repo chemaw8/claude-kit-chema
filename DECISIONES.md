@@ -219,3 +219,16 @@ id, este texto vuelve a quedar atrás; se renombra en el mismo cambio, no cuando
 **Descartado:** re-medir esfuerzo contra Fable con Opus 5.5 antes de cambiar el nombre (cuesta ~10 USD de extra
 usage, como la corrida RF-11, y el cambio no depende de esa cifra); volver a los ids exactos en los agentes (el
 alias es lo que permite que el kit siga al modelo vigente sin tocar cada ficha).
+
+## 2026-10-01 · v1.30: el council clasifica hallazgos y `/por-que` entra con criterio de retiro
+
+**Qué.** (1) El `sintetizador` clasifica cada hallazgo como actuar / considerar / anotado / descartado y entrega un
+mapa de acuerdos entre evaluadores (de `interrogate` de pstack). (2) Entra `/por-que` (de `why` y `recall`), sin
+leer sesiones, con un criterio de retiro: si en los primeros 5 usos reales no aporta una cita o un commit que una
+pregunta simple no habría dado, vuelve a borrador.
+**Por qué.** (1) Es barata y reversible, y la resíntesis de v1.11 hace visible el filtro (13 de 14 hallazgos
+aplicados, ninguno descartado); no prueba más acierto. (2) El council exigió una prueba de uso real. En este repo,
+muy documentado, empató con el modelo solo; en un repo desordenado subió las afirmaciones citadas de 73% a 88% y la
+cobertura de 12/14 a 14/14, sin inventos en ningún brazo (n = 3 preguntas por caso). Decidió José.
+**Descartado.** Aparcar `/por-que` en una rama (beneficio modesto, pero medido y con costo marginal casi nulo) y
+dejarlo entrar sin prueba (lo impedían el congelamiento y H2 del council). Detalle: `docs/pruebas/council-v1.30.md`.
