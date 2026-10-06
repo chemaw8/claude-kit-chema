@@ -1,13 +1,16 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-02  ·  rama main (v1.30 fusionada, PR #73)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  2026-10-06  ·  rama pstack/ronda-5 (v1.31 propuesta, sin PR)  ·  cierre limpio: sí
 > Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**Estado al 2026-10-02:** v1.30 en main (PR #73) e instalado en Claude Code y en pi: el sintetizador clasifica
-hallazgos y entra `/por-que` con criterio de retiro (acta y pruebas en `docs/pruebas/council-v1.30.md`).
-`/crear-verificacion` lleva 1 de 2 corridas reales.
+**Estado al 2026-10-06:** v1.30 en main e instalada. v1.31 (ronda pstack 3, candidatos 5 a 8) en la rama
+`pstack/ronda-5`, sin PR ni council: entran arena y cegado en `kit-orquestacion` con `scripts/cegar.sh`; el registro
+TSV y «córrelo antes de preguntar» quedan como ya cubiertos. Acta `docs/pruebas/pstack-ronda-3.md`, nota de la arena
+`docs/pruebas/ARENA-uc-202610061430-aogq.md`. `/crear-verificacion` lleva 1 de 2 corridas reales.
 
 ## Siguiente paso
+- [ ] v1.31: abrir PR en borrador de `pstack/ronda-5` y correr el council (4 preguntas en «Para el council» del acta).
+- [ ] pi-harness: las carpetas `arena-<n>` de `/ultracode --arena` delatan la medición al candidato (`cegar.sh` las marca).
 - [ ] `/por-que`: anotar en el acta v1.30 los primeros 5 usos reales (umbral de retiro).
 - [ ] Próximo council: archivar los reportes crudos para medir la clasificación de hallazgos (resíntesis v1.11).
 - [ ] Segunda corrida real de `/crear-verificacion`, en otro proyecto (umbral de retiro: 2 corridas).
@@ -26,6 +29,7 @@ hallazgos y entra `/por-que` con criterio de retiro (acta y pruebas en `docs/pru
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |
 |---|---|---|---|
+| Ronda pstack 3 (v1.31) | rama `pstack/ronda-5`, verificar.sh en verde | PR en borrador + council | José abre el council |
 | Ronda pstack 2 (v1.30) | en main e instalada | 5 usos reales de `/por-que` (umbral de retiro) | ninguno |
 | Entorno portable (v1.29) | asistente de un comando en main y en el CI | probar el asistente en Fedora | ninguno |
 | Debilidades de la línea base | «dato literal» atacado en v1.25 | siguiente patrón: «se cubre en vez de afirmar» (reclasificación, onepager 0/3) | José elige |
@@ -34,6 +38,7 @@ hallazgos y entra `/por-que` con criterio de retiro (acta y pruebas en `docs/pru
 | Pendientes v1.19.2 | sin revisar desde 2026-09-08 | ver `docs/pruebas/medicion-esfuerzo-v1.19.2.md` (a, b, c) | ninguno |
 
 ## Última decisión relevante
+- 2026-10-06  v1.31 (propuesta): arena y cegado entran, el 6 y el 7 ya están cubiertos; base A de la arena, contra el juez → `DECISIONES.md`
 - 2026-10-01  v1.30: `/por-que` entra con criterio de retiro tras la prueba de uso real → `docs/pruebas/council-v1.30.md`
 - 2026-09-29  v1.25: la regla va en las skills, medida por A/B con inyección (no en el núcleo) → `docs/pruebas/council-v1.25.md`
 - 2026-09-29  v1.24: el dinero carga kit-finanzas; la regla va en el núcleo, no en la description → `docs/pruebas/council-v1.24.md`

@@ -15,8 +15,8 @@ clientes ni cifras de negocio.
 | 7 | «si la duda se resuelve corriendo algo, córrelo» | ya está cubierto | 65 preguntas reales al usuario, 2 caían en la regla | no aplica |
 | 8 | reglas de cegado (`eval`) | entra (1 viñeta en `kit-orquestacion`) | 6 de 10 encargos de una medición real delataban la medición | sí: `scripts/cegar.sh revisar` |
 
-Presupuesto: `kit-orquestacion` recibe 2 adiciones netas (el tope de la ronda) y pasa de 1,531 a 1,767 palabras
-(tope 5,000); las paga ese margen. Ninguna otra skill cambia.
+Presupuesto: `kit-orquestacion` recibe 2 adiciones netas (el tope de la ronda) y pasa de 1,531 a 1,769 palabras
+(tope 5,000); las paga ese margen. `docs/pruebas/RUNBOOK.md` suma un apunte de 6 líneas que remite a la skill. Ninguna otra skill cambia.
 
 ## (5) Arena
 
@@ -76,6 +76,11 @@ Un verificador de punteros marcaría 26 casos y acertaría a lo más 3 (precisi�
 por corrida tampoco: la granularidad que añade (una fila por decisión dentro de una sesión) no tiene un fallo medido
 que corregir, y su auditoría depende de leer transcripciones, que el kit dejó fuera en v1.30.
 
+El helper de pstack tampoco lo cubre: `log.sh` acepta una fila con `evidence=archivo-inexistente:99` y
+`result=tests green` y sale 0 (sonda de otra solución de esta arena, repetible con el clon de pstack): valida forma,
+no evidencia. El valor de pstack está en la auditoría contra la transcripción y en el revisor de otra familia, y
+esa parte queda sin medir frente a `/cierre` más revisión de artefactos.
+
 Para repetirlo: un script de python que extraiga con regex las rutas entre comillas de código que empiezan por
 `docs/`, `scripts/`, `specs/`, etc. y los ids hexadecimales de 7 a 12 caracteres, y compruebe `os.path.exists` y
 `git cat-file -e <id>^{commit}` en el repo de cada archivo.
@@ -99,7 +104,8 @@ No va al núcleo. Si el council lo quiere de todos modos, el texto exacto (sin l
 contexto, memoria, la propia conversación, o corriendo algo si la respuesta es un hecho observable)», con gate de
 disparo en un PR aparte.
 
-**Límites.** No cuenta las preguntas hechas en prosa (sin la herramienta) ni las sesiones de pi. La clasificación de
+**Límites.** El conteo de 65 preguntas sale de sesiones locales y no se puede repetir desde este repo: es un
+indicio, no la base del veredicto. La base son las citas de arriba, que cualquiera puede abrir. No cuenta las preguntas hechas en prosa (sin la herramienta) ni las sesiones de pi. La clasificación de
 las 65 es mía y las preguntas no se publican (traen datos de clientes): se repite extrayendo los bloques
 `AskUserQuestion` de los `*.jsonl` locales y aplicando el criterio de arriba.
 
@@ -123,7 +129,8 @@ encargos en una carpeta neutral:
 | ronda 3, ya corregidos a mano (4) | 0 |
 
 **Falsos positivos.** 0 en 57 pedidos normales: las 30 peticiones del banco de disparo y los 27 primeros mensajes
-de sesiones interactivas locales. Los primeros mensajes de sesiones automáticas (965, sobre todo jueces y revisores)
+de sesiones interactivas locales. Tras los injertos de la integración (abajo) se repitió lo que es repetible: 6 de 6,
+0 de 4 y 0 de 30 en el banco de disparo; los 27 mensajes de sesiones no se repitieron. Los primeros mensajes de sesiones automáticas (965, sobre todo jueces y revisores)
 no sirven de control, porque ahí «juez» es legítimo.
 
 **Hallazgo de paso.** La carpeta de trabajo de esta misma corrida se llama `arena-1` y `cegar.sh revisar` la marca:
@@ -144,9 +151,28 @@ desde el kit no las vería); la lista de palabras de pstack tal cual («test», 
 cada encargo de código); un chequeo de nombres de modelo en el contenido de las copias (el contenido de este repo los
 nombra de forma legítima: «Opus 5.5» en el núcleo).
 
+## Integración de la arena
+
+Esta acta es la base (solución A) de una arena de tres soluciones con juez de otra familia; la nota de síntesis está
+en `docs/pruebas/ARENA-uc-202610061430-aogq.md`. Se le injertó:
+
+- **Lector seguro** (de la solución B): un enlace, un FIFO u otro archivo especial, o una carpeta sin permiso, dan
+  salida 2 (revisión incompleta) en vez de «limpio»; `etiquetar` revisa los candidatos antes de copiar, porque la
+  copia seguiría el enlace. Los binarios se listan como «sin revisar» en vez de saltarse en silencio. Python corre
+  con `-I`: el juez mostró que un `random.py` en la carpeta actual se ejecutaba.
+- **Casos que ninguna solución cubría** (del juez): anunciar una nota («de 0 a 5»), elegir «la mejor entrega»,
+  decir que otra IA resuelve el mismo encargo, pedir que enumere las reglas que aplicó (la pista de cadena de
+  pstack), «calificador», «con-kit», y las mayúsculas. En el banco del juez (8 fugas, 8 pedidos normales) la base
+  pasó de 4 fugas sin detectar a 0. Siguen marcados 2 pedidos normales («diseña un experimento», «candidatos a
+  vacantes»): es léxico y quien arma la comparación decide. Ese banco sirvió para ajustar, así que no es una
+  prueba independiente; la independiente es la calibración de arriba, repetida.
+- **Apunte en el RUNBOOK** (de la solución C), sin su lista propia: remite a la skill para no tener dos versiones.
+
 ## Verificación
 
-- `bash scripts/cegar.sh autotest` → «todo en verde», 19 casos, sin red, en ~0.8 s; `verificar.sh` lo corre solo.
+- `bash scripts/cegar.sh autotest` → «todo en verde», 34 casos, sin red; `verificar.sh` lo corre solo. Tras los
+  injertos, cada mutación nueva lo pone en rojo: quitar `-I`, aceptar un enlace, saltar un binario en silencio. Quitar
+  solo el patrón «elegiremos la mejor» no lo pone en rojo porque «la mejor entrega» atrapa la misma línea.
 - Rompiendo el script a propósito, el autotest falla en cada caso: sin el patrón de «pruebas ocultas»; sin revisar la
   ruta; ruta inexistente tratada como limpia; mapa escrito dentro de lo que ve el juez; sin buscar al autor en las
   copias; copiando `.git`; `etiquetar` sin devolver 1 ante fugas; sin barajar; buscando al autor sin límite de palabra.

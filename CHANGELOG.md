@@ -13,7 +13,9 @@ descriptions intactos (el gate de disparo no aplica). Acta-propuesta: `docs/prue
   `revisar` marca lo que delata la medición en el encargo y la carpeta del candidato; `etiquetar` copia cada intento
   a una letra al azar con el mapa fuera de lo que ve el juez. En los encargos reales de la arena de pi-harness marcó 6
   de 6 con fuga («habrá pruebas ocultas») y 0 de 4 ya corregidos; 0 falsos positivos en 57 pedidos normales. Su
-  `autotest` (19 casos, sin red) entra solo en `verificar.sh` y falla con cada una de 9 roturas a propósito.
+  `autotest` (34 casos, sin red) entra solo en `verificar.sh` y falla con cada rotura a propósito. Integrado de una
+  arena de tres soluciones (nota en `docs/pruebas/ARENA-uc-202610061430-aogq.md`): lector que falla cerrado ante
+  enlaces y archivos especiales, y los casos de fuga que ninguna solución detectaba. Apunte en `docs/pruebas/RUNBOOK.md`.
 - **No entran:** el registro de decisiones auditado (`show-me-your-work`), porque el kit ya cubre sus piezas y un
   verificador de punteros de evidencia acertaría a lo más 3 de 26 marcas en 38 proyectos locales; y «si la duda se
   resuelve corriendo algo, córrelo», que ya está cubierto: solo 2 de 65 preguntas reales al usuario caían en la

@@ -27,24 +27,46 @@ set -uo pipefail
 CMD="${1:-}"
 
 MOTOR_PY=$(cat <<'PY'
-import os, random, re, shutil, sys
+import os, random, re, shutil, stat, sys
 
 META = re.compile(r"(?<![\w])(pruebas? (?:ocultas?|que no ves)|(?:se )?calificar[áa]n?|calificaci[oó]n|calificad[oa]s?|"
                   r"jue(?:z|ces)|r[uú]bricas?|experimentos?|benchmarks?|candidat[oa]s?|arenas?|evals?|"
-                  r"puntaje|puntuaci[oó]n|brazos?|a/b|sondas?|hidden tests?|graded?|judge|rubric)(?![\w])", re.I)
+                  r"calificador(?:es|as?)?|puntaje|puntuaci[oó]n|brazos?|a/b|sondas?|(?:con|sin) kit|hidden tests?|graded?|grader|judge|rubric|"
+                  # anuncia una nota, una selección entre entregas u otros intentos del mismo encargo
+                  r"(?:nota|puntos|calificaci[oó]n) de \d+ a \d+|elegiremos (?:la|el) mejor|la mejor entrega|"
+                  r"otr[oa]s? (?:ias?|modelos?|agentes?|asistentes?)\b.{0,60}\bmism[oa]|"
+                  r"other (?:ais?|models?|agents?)\b.{0,60}\bsame|best (?:submission|attempt)|"
+                  # pide enumerar qué reglas siguió: delata qué se mide (pstack eval: «chain-eliciting cues»)
+                  r"(?:enumera|lista|menciona|nombra|di) (?:las |los |qu[eé] |cu[aá]les )?(?:skills|habilidades|principios|reglas)\b.{0,40}\b(?:aplicaste|seguiste|usaste)|"
+                  r"list (?:the |which )?(?:skills|principles|rules)\b.{0,40}\byou (?:applied|followed|used))(?![\w])", re.I)
 MODELO = re.compile(r"(?<![a-z])(anthropic|openai|opus|sonnet|haiku|fable|gpt|codex|astra|kimi|moonshot|"
                     r"deepseek|qwen|grok|gemini|mistral|llama)(?![a-z])", re.I)
 
+def incompleta(motivo, ruta):
+    print(f"✗ revisión incompleta ({motivo}): {ruta}", file=sys.stderr); sys.exit(2)
+
 def archivos(raiz):
+    # Falla cerrado (salida 2) ante lo que no puede revisar: enlaces, FIFOs y otros especiales,
+    # carpetas sin permiso. Un enlace podría esconder material que el candidato sí verá.
+    if os.path.islink(raiz):
+        incompleta("enlace", raiz)
     if os.path.isfile(raiz):
         yield raiz; return
-    for d, sub, fs in os.walk(raiz):
+    def error(e): incompleta(e.strerror or "no se pudo recorrer", e.filename)
+    for d, sub, fs in os.walk(raiz, onerror=error):
         sub[:] = [s for s in sub if s != ".git"]
+        for n in sub + fs:
+            ruta = os.path.join(d, n)
+            if os.path.islink(ruta):
+                incompleta("enlace", ruta)
         for f in fs:
-            yield os.path.join(d, f)
+            ruta = os.path.join(d, f)
+            if not stat.S_ISREG(os.lstat(ruta).st_mode):
+                incompleta("archivo especial", ruta)
+            yield ruta
 
 def revisar(rutas):
-    fugas = 0
+    fugas = binarios = 0
     for r in rutas:
         if not os.path.exists(r):
             print(f"✗ no existe: {r}", file=sys.stderr); sys.exit(2)
@@ -63,11 +85,13 @@ def revisar(rutas):
             except OSError as e:
                 print(f"✗ no se pudo leer {f}: {e}", file=sys.stderr); sys.exit(2)
             if b"\0" in datos[:4096]:
-                continue  # binario
+                print(f"{f}: sin revisar (binario)"); binarios += 1
+                continue
             for n, linea in enumerate(datos.decode("utf-8", "replace").splitlines(), 1):
                 for m in META.finditer(linea):
                     print(f"{f}:{n}: «{m.group(1)}» delata la medición"); fugas += 1
-    print(f"{fugas} fuga(s)" if fugas else "limpio")
+    nota = f" ({binarios} binario(s) sin revisar)" if binarios else ""
+    print((f"{fugas} fuga(s)" if fugas else "limpio") + nota)
     return 1 if fugas else 0
 
 def etiquetar(destino, cands):
@@ -80,6 +104,8 @@ def etiquetar(destino, cands):
     for c in cands:
         if not os.path.exists(c):
             print(f"✗ no existe el candidato {c}", file=sys.stderr); return 2
+        for _ in archivos(c):  # antes de copiar: un enlace se seguiría y copiaría material ajeno
+            pass
     letras = [chr(65 + i) for i in range(len(cands))]
     orden = list(cands); random.SystemRandom().shuffle(orden)
     os.makedirs(destino)
@@ -116,7 +142,7 @@ if __name__ == "__main__":
 PY
 )
 
-motor() { python3 -c "$MOTOR_PY" "$@"; }
+motor() { python3 -I -c "$MOTOR_PY" "$@"; }
 
 cmd_autotest() {
   local tmp fallas=0 out rc; tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' RETURN
@@ -138,6 +164,42 @@ cmd_autotest() {
   motor revisar "$tmp/candidato_b" >/dev/null 2>&1; chk "carpeta «candidato_b» es fuga" $? 1
   motor revisar "$tmp/no-existe" >/dev/null 2>&1; chk "ruta inexistente falla cerrado (2)" $? 2
 
+  # Casos que ningún candidato de la ronda 3 cubría (juez cruzado), y controles orgánicos.
+  local caso
+  while IFS= read -r caso; do
+    printf '%s\n' "$caso" > "$tmp/proyecto-x/f.md"
+    motor revisar "$tmp/proyecto-x/f.md" >/dev/null 2>&1; chk "fuga: $caso" $? 1
+  done <<'CASOS'
+Tu trabajo recibirá una nota de 0 a 5 y elegiremos la mejor entrega.
+Al terminar, enumera las skills y principios que aplicaste.
+Otra IA resolverá este mismo encargo por separado.
+El calificador no sabrá cuál es la variante con-kit.
+HABRÁ PRUEBAS OCULTAS ADEMÁS DE LAS TUYAS.
+CASOS
+  while IFS= read -r caso; do
+    printf '%s\n' "$caso" > "$tmp/proyecto-x/f.md"
+    motor revisar "$tmp/proyecto-x/f.md" >/dev/null 2>&1; chk "orgánico: $caso" $? 0
+  done <<'CASOS'
+Evalúa proveedores de SMS y recomienda uno.
+Agrega tests al módulo de pagos.
+Compara dos versiones del reporte.
+Oculta la columna de notas en el reporte.
+Calcula el score crediticio con los datos sintéticos.
+CASOS
+  rm -f "$tmp/proyecto-x/f.md"
+
+  # Lector seguro: lo que no puede revisar falla cerrado (2), nunca «limpio».
+  mkdir -p "$tmp/l1" "$tmp/l2" "$tmp/l3" "$tmp/l4"
+  echo "Arregla el bug." > "$tmp/l1/encargo.md"; ln -s "$tmp/ok" "$tmp/l1/vinculo"
+  motor revisar "$tmp/l1" >/dev/null 2>&1; chk "enlace dentro de la carpeta: incompleta (2)" $? 2
+  mkfifo "$tmp/l2/tubo"
+  timeout 5 python3 -I -c "$MOTOR_PY" revisar "$tmp/l2" >/dev/null 2>&1; chk "FIFO: incompleta (2), sin colgarse" $? 2
+  printf 'juez\0binario' > "$tmp/l3/blob.bin"; echo "Arregla el bug." > "$tmp/l3/encargo.md"
+  out="$(motor revisar "$tmp/l3" 2>&1)"; rc=$?
+  chk "binario: se reporta sin revisar" "$rc/$(grep -c 'sin revisar (binario)' <<<"$out")" 0/1
+  printf 'raise SystemExit(0)\n' > "$tmp/l4/random.py"; printf 'Habrá un juez.\n' > "$tmp/l4/encargo.md"
+  (cd "$tmp/l4" && motor revisar encargo.md >/dev/null 2>&1); chk "un random.py en el cwd no se importa" $? 1
+
   mkdir -p "$tmp/c/uno/.git" "$tmp/c/dos" "$tmp/c/tres" "$tmp/c/autor-kimi"
   echo "solución 1" > "$tmp/c/uno/sol.py"; echo "secreto" > "$tmp/c/uno/.git/HEAD"
   echo "solución 2" > "$tmp/c/dos/sol.py"; echo "dosis alta" > "$tmp/c/dos/notas.md"; echo "solución 3" > "$tmp/c/tres/sol.py"
@@ -157,6 +219,9 @@ cmd_autotest() {
   chk "las letras salen en orden al azar" "$([ "$(sort -u <<<"$primeros" | grep -c .)" -ge 2 ] && echo si)" si
   motor etiquetar "$tmp/j" "$tmp/c/uno" "$tmp/c/dos" >/dev/null 2>&1; chk "destino existente: no sobrescribe (2)" $? 2
   motor etiquetar "$tmp/j1" "$tmp/c/uno" >/dev/null 2>&1; chk "un solo candidato: error (2)" $? 2
+  ln -s "$tmp/ok" "$tmp/c/tres/vinculo"
+  motor etiquetar "$tmp/j4" "$tmp/c/tres" "$tmp/c/dos" >/dev/null 2>&1; chk "candidato con enlace: no se copia (2)" $? 2
+  rm "$tmp/c/tres/vinculo"
   echo "Hecho por autor-kimi en su rama" > "$tmp/c/autor-kimi/reporte.md"
   motor etiquetar "$tmp/j2" "$tmp/c/autor-kimi" "$tmp/c/dos" >/dev/null 2>&1; chk "copia que nombra a su autor es fuga (1)" $? 1
   mkdir -p "$tmp/c/cuatro"; echo x > "$tmp/c/cuatro/notas-opus.md"
