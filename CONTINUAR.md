@@ -1,16 +1,15 @@
-# CONTINUAR — claude-kit-chema  ·  2026-10-06  ·  rama pstack/ronda-5 (v1.31 propuesta, sin PR)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  2026-10-06  ·  rama pstack/ronda-5 (v1.31, council aprobada con cambios, PR en borrador)  ·  cierre limpio: sí
 > Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
 **Estado al 2026-10-06:** v1.30 en main e instalada. v1.31 (ronda pstack 3, candidatos 5 a 8) en la rama
-`pstack/ronda-5`, sin PR ni council: entran arena y cegado en `kit-orquestacion` con `scripts/cegar.sh`; el registro
+`pstack/ronda-5`, con council (aprobada con cambios, aplicados; `docs/pruebas/council-v1.31.md`) y PR en borrador: entran arena y cegado en `kit-orquestacion` con `scripts/cegar.sh`; el registro
 TSV y «córrelo antes de preguntar» quedan como ya cubiertos. Acta `docs/pruebas/pstack-ronda-3.md`, nota de la arena
 `docs/pruebas/ARENA-uc-202610061430-aogq.md`. `/crear-verificacion` lleva 1 de 2 corridas reales.
 
 ## Siguiente paso
-- [ ] v1.31: abrir PR en borrador de `pstack/ronda-5` y correr el council (4 preguntas en «Para el council» del acta).
-- [ ] pi-harness: las carpetas `arena-<n>` de `/ultracode --arena` delatan la medición al candidato (`cegar.sh` las marca).
+- [ ] v1.31: José saca el PR de borrador, fusiona con `gh api … /merge` (CI en verde) y reinstala con `bash instalar.sh`.
 - [ ] `/por-que`: anotar en el acta v1.30 los primeros 5 usos reales (umbral de retiro).
 - [ ] Próximo council: archivar los reportes crudos para medir la clasificación de hallazgos (resíntesis v1.11).
 - [ ] Segunda corrida real de `/crear-verificacion`, en otro proyecto (umbral de retiro: 2 corridas).
@@ -29,7 +28,7 @@ TSV y «córrelo antes de preguntar» quedan como ya cubiertos. Acta `docs/prueb
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |
 |---|---|---|---|
-| Ronda pstack 3 (v1.31) | rama `pstack/ronda-5`, verificar.sh en verde | PR en borrador + council | José abre el council |
+| Ronda pstack 3 (v1.31) | council aprobada con cambios (aplicados); PR en borrador | fusionar e instalar | José |
 | Ronda pstack 2 (v1.30) | en main e instalada | 5 usos reales de `/por-que` (umbral de retiro) | ninguno |
 | Entorno portable (v1.29) | asistente de un comando en main y en el CI | probar el asistente en Fedora | ninguno |
 | Debilidades de la línea base | «dato literal» atacado en v1.25 | siguiente patrón: «se cubre en vez de afirmar» (reclasificación, onepager 0/3) | José elige |

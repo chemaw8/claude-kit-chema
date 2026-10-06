@@ -246,3 +246,7 @@ recomendación del juez (B), porque es la única que demuestra el aporte; se le 
 casos de fuga que ninguna solución cubría.
 **Descartado.** Referencias nuevas y reescritura de «un solo escritor» (B); «prototipo desechable» en `kit-codigo`
 sin medición (C); cambiar el núcleo por el candidato 7 sin una sonda. Detalle: `docs/pruebas/ARENA-uc-202610061430-aogq.md`.
+**Council (2026-10-06): aprobada con cambios, aplicados.** `cegar.sh` no renombraba los candidatos que son archivo,
+dejaba el mapa dentro con el destino `x/.` y revisaba el contenido de las carpetas (codex, anthropic). El párrafo de la
+arena pasó a «dos o tres», con su procedencia (anthropic, kimi). Las carpetas `arena-<n>` de pi-harness pasaron a
+`trabajo-<n>` (pi-harness `56d1c3f`). Acta: `docs/pruebas/council-v1.31.md`.

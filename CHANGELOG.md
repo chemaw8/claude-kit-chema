@@ -3,12 +3,12 @@
 ## v1.31 — 2026-10-06
 Ronda pstack 3 (corrida ultracode uc-202610061430-aogq): los candidatos 5 a 8 de la lista de pstack
 (`cursor/plugins/pstack`, commit df58112, MIT © Lauren Tan), cada uno con veredicto medido sin modelos. Núcleo y
-descriptions intactos (el gate de disparo no aplica). Acta-propuesta: `docs/pruebas/pstack-ronda-3.md`.
+descriptions intactos (el gate de disparo no aplica). Acta-propuesta: `docs/pruebas/pstack-ronda-3.md`; council: `docs/pruebas/council-v1.31.md` (aprobada con cambios, aplicados).
 - **Arena en `kit-orquestacion`** (de `arena`): un párrafo la pone como excepción medida a «un solo escritor».
-  Tres intentos en copias aisladas, juez que ve letras y dice qué caso no cubre ninguno, integrador que decide qué
+  Dos o tres intentos en copias aisladas, juez que ve letras y dice qué caso no cubre ninguno, integrador que decide qué
   hace con él. Evidencia: la medición de pi-harness (3 rondas, 10 tareas). En 8 un intento ya daba el máximo; en
   las 2 que discriminan, la arena superó al intento promedio en 5 de 7 configuraciones, y con cinco intentos el juez
-  siguió a la mayoría equivocada.
+  siguió a la mayoría equivocada; con una sola familia los intentos tienden a equivocarse igual.
 - **Cegado al comparar variantes** (del playbook `eval`): una viñeta en «Cómo se verifica» y `scripts/cegar.sh`.
   `revisar` marca lo que delata la medición en el encargo y la carpeta del candidato; `etiquetar` copia cada intento
   a una letra al azar con el mapa fuera de lo que ve el juez. En los encargos reales de la arena de pi-harness marcó 6

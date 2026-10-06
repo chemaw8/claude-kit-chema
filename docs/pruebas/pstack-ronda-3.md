@@ -15,7 +15,7 @@ clientes ni cifras de negocio.
 | 7 | «si la duda se resuelve corriendo algo, córrelo» | ya está cubierto | 65 preguntas reales al usuario, 2 caían en la regla | no aplica |
 | 8 | reglas de cegado (`eval`) | entra (1 viñeta en `kit-orquestacion`) | 6 de 10 encargos de una medición real delataban la medición | sí: `scripts/cegar.sh revisar` |
 
-Presupuesto: `kit-orquestacion` recibe 2 adiciones netas (el tope de la ronda) y pasa de 1,531 a 1,769 palabras
+Presupuesto: `kit-orquestacion` recibe 2 adiciones netas (el tope de la ronda) y pasa de 1,531 a 1,800 palabras (tras los cambios del council)
 (tope 5,000); las paga ese margen. `docs/pruebas/RUNBOOK.md` suma un apunte de 6 líneas que remite a la skill. Ninguna otra skill cambia.
 
 ## (5) Arena

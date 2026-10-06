@@ -49,12 +49,14 @@ de sumar agentes: la concurrencia real está topada, y los de más solo hacen fi
 pagando contexto completo.
 
 **Varios intentos del mismo encargo (arena)** es la excepción medida a «un solo
-escritor»: tres autores resuelven lo mismo, cada uno en su copia aislada, y un solo
-integrador toma el mejor como base y le injerta lo que valga de los otros. Solo paga
-donde un intento puede fallar (un bug cuyo primer arreglo real se equivocó, una forma
-abierta como un diseño o un texto); con un encargo preciso y verificable un intento
-ya da el máximo. Más de tres no suma: con cinco, el juez siguió a la mayoría
-equivocada. El juez, de contexto limpio, ve los intentos por letra con una rúbrica de
+escritor»: dos o tres autores resuelven lo mismo, cada uno en su copia aislada, y un
+solo integrador toma el mejor como base y le injerta lo que valga de los otros. Solo
+paga donde un intento puede fallar (un bug cuyo primer arreglo real se equivocó, una
+forma abierta como un diseño o un texto); con un encargo preciso y verificable un
+intento ya da el máximo. Se midió en pi-harness con familias de modelos mezcladas: dos
+y tres empataron, y con cinco el juez siguió a la mayoría equivocada. El juez no decide
+por mayoría; con una sola familia, como en Claude Code, los intentos tienden a
+equivocarse igual. El juez, de contexto limpio, ve los intentos por letra con una rúbrica de
 3 a 6 criterios que los autores no ven, y dice qué caso no cubre ninguno; el
 integrador decide por escrito qué hace con ese caso, que es donde la arena superó al
 mejor intento. `cegar.sh etiquetar` (en `${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/scripts/`)

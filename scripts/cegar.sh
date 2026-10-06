@@ -6,14 +6,18 @@
 # de su skill `arena`. Va como script porque un chequeo que corre fuera del modelo no le suma
 # instrucciones al contexto. Evidencia y calibración: docs/pruebas/pstack-ronda-3.md.
 #
-#   revisar <archivo|carpeta> [...]   lo que verá un CANDIDATO (encargo, carpeta de trabajo): busca
-#                                     palabras que delatan que se le mide («pruebas ocultas», «se
-#                                     calificará», juez, rúbrica, candidato, arena…) en el texto y en
-#                                     cada parte de la ruta absoluta (la carpeta de trabajo también se ve).
+#   revisar [--contenido] <archivo|carpeta> [...]
+#                                     lo que verá un CANDIDATO: busca palabras que delatan que se le
+#                                     mide («pruebas ocultas», «se calificará», juez, rúbrica, candidato,
+#                                     arena…). En un ARCHIVO (el encargo, un README plantado) revisa el
+#                                     texto y la ruta. En una CARPETA (la de trabajo) solo las rutas: el
+#                                     contenido de un repo nombra esas palabras de forma legítima y no
+#                                     está calibrado; --contenido lo revisa también.
 #                                     salida 0 = limpio · 1 = hay fugas · 2 = uso o lectura.
 #   etiquetar <destino> <cand> <cand> [...]
 #                                     lo que verá el JUEZ: copia cada candidato (sin .git) a
-#                                     <destino>/A, B, C… en orden al azar y escribe el mapa en
+#                                     <destino>/A, B, C… en orden al azar (un candidato que es archivo
+#                                     queda como <letra>/entrega<ext>, sin su nombre) y escribe el mapa en
 #                                     <destino>.mapa.tsv, FUERA de lo que ve el juez. Falla con 1 si
 #                                     una copia todavía nombra a su autor (el nombre de su carpeta de
 #                                     origen) o un modelo en sus rutas. No sobrescribe nada.
@@ -66,6 +70,10 @@ def archivos(raiz):
             yield ruta
 
 def revisar(rutas):
+    contenido = "--contenido" in rutas
+    rutas = [r for r in rutas if r != "--contenido"]
+    if not rutas:
+        print("✗ falta la ruta", file=sys.stderr); sys.exit(2)
     fugas = binarios = 0
     for r in rutas:
         if not os.path.exists(r):
@@ -80,6 +88,8 @@ def revisar(rutas):
                 m = META.search(parte.replace("-", " ").replace("_", " ").replace(".", " "))
                 if m:
                     print(f"{f}: ruta: «{parte}» delata la medición ({m.group(1)})"); fugas += 1
+            if os.path.isdir(r) and not contenido:
+                continue  # carpeta: solo rutas (council v1.31)
             try:
                 with open(f, "rb") as h: datos = h.read()
             except OSError as e:
@@ -97,7 +107,8 @@ def revisar(rutas):
 def etiquetar(destino, cands):
     if len(cands) < 2:
         print("✗ hacen falta al menos 2 candidatos", file=sys.stderr); return 2
-    mapa = destino.rstrip("/") + ".mapa.tsv"
+    destino = os.path.normpath(os.path.abspath(destino))  # «salida/.» dejaba el mapa dentro (council v1.31)
+    mapa = destino + ".mapa.tsv"
     for p in (destino, mapa):
         if os.path.exists(p):
             print(f"✗ ya existe {p}: no se sobrescribe", file=sys.stderr); return 2
@@ -115,7 +126,8 @@ def etiquetar(destino, cands):
         if os.path.isdir(c):
             shutil.copytree(c, dst, ignore=shutil.ignore_patterns(".git"))
         else:
-            os.makedirs(dst); shutil.copy2(c, dst)
+            # un archivo conserva solo su extensión: «con-kit.md» delataría el brazo (council v1.31)
+            os.makedirs(dst); shutil.copy2(c, os.path.join(dst, "entrega" + os.path.splitext(c)[1]))
         filas.append(f"{letra}\t{os.path.abspath(c)}")
         autor = os.path.basename(os.path.abspath(c).rstrip("/"))
         quien = re.compile(rb"(?<![\w-])" + re.escape(autor.encode()) + rb"(?![\w-])")
@@ -188,6 +200,12 @@ Calcula el score crediticio con los datos sintéticos.
 CASOS
   rm -f "$tmp/proyecto-x/f.md"
 
+  # Carpeta: solo rutas; el contenido con --contenido (council v1.31: un repo nombra «juez» de forma legítima).
+  mkdir -p "$tmp/repo-x/docs"; echo "El juez del council usa una rúbrica." > "$tmp/repo-x/docs/acta.md"
+  motor revisar "$tmp/repo-x" >/dev/null 2>&1; chk "carpeta con contenido legítimo: solo rutas, limpio" $? 0
+  motor revisar --contenido "$tmp/repo-x" >/dev/null 2>&1; chk "carpeta con --contenido: lo marca" $? 1
+  motor revisar "$tmp/repo-x/docs/acta.md" >/dev/null 2>&1; chk "archivo explícito: se revisa su texto" $? 1
+
   # Lector seguro: lo que no puede revisar falla cerrado (2), nunca «limpio».
   mkdir -p "$tmp/l1" "$tmp/l2" "$tmp/l3" "$tmp/l4"
   echo "Arregla el bug." > "$tmp/l1/encargo.md"; ln -s "$tmp/ok" "$tmp/l1/vinculo"
@@ -195,7 +213,7 @@ CASOS
   mkfifo "$tmp/l2/tubo"
   timeout 5 python3 -I -c "$MOTOR_PY" revisar "$tmp/l2" >/dev/null 2>&1; chk "FIFO: incompleta (2), sin colgarse" $? 2
   printf 'juez\0binario' > "$tmp/l3/blob.bin"; echo "Arregla el bug." > "$tmp/l3/encargo.md"
-  out="$(motor revisar "$tmp/l3" 2>&1)"; rc=$?
+  out="$(motor revisar --contenido "$tmp/l3" 2>&1)"; rc=$?
   chk "binario: se reporta sin revisar" "$rc/$(grep -c 'sin revisar (binario)' <<<"$out")" 0/1
   printf 'raise SystemExit(0)\n' > "$tmp/l4/random.py"; printf 'Habrá un juez.\n' > "$tmp/l4/encargo.md"
   (cd "$tmp/l4" && motor revisar encargo.md >/dev/null 2>&1); chk "un random.py en el cwd no se importa" $? 1
@@ -219,6 +237,13 @@ CASOS
   chk "las letras salen en orden al azar" "$([ "$(sort -u <<<"$primeros" | grep -c .)" -ge 2 ] && echo si)" si
   motor etiquetar "$tmp/j" "$tmp/c/uno" "$tmp/c/dos" >/dev/null 2>&1; chk "destino existente: no sobrescribe (2)" $? 2
   motor etiquetar "$tmp/j1" "$tmp/c/uno" >/dev/null 2>&1; chk "un solo candidato: error (2)" $? 2
+  # Candidatos que son archivo: el nombre no viaja (council v1.31).
+  echo "uno" > "$tmp/c/con-kit.md"; echo "otro" > "$tmp/c/sin-kit.md"
+  motor etiquetar "$tmp/jf" "$tmp/c/con-kit.md" "$tmp/c/sin-kit.md" >/dev/null 2>&1; rc=$?
+  chk "candidatos archivo: copias como entrega.md, sin su nombre" "$rc/$(find "$tmp/jf" -type f -name 'entrega.md' | wc -l | tr -d ' ')/$(find "$tmp/jf" -name '*kit*' | wc -l | tr -d ' ')" 0/2/0
+  mkdir -p "$tmp/sal"
+  motor etiquetar "$tmp/sal/x/." "$tmp/c/uno" "$tmp/c/dos" >/dev/null 2>&1
+  chk "destino «x/.»: el mapa queda fuera" "$([ -f "$tmp/sal/x.mapa.tsv" ] && [ -z "$(find "$tmp/sal/x" -name '*.tsv')" ] && echo si)" si
   ln -s "$tmp/ok" "$tmp/c/tres/vinculo"
   motor etiquetar "$tmp/j4" "$tmp/c/tres" "$tmp/c/dos" >/dev/null 2>&1; chk "candidato con enlace: no se copia (2)" $? 2
   rm "$tmp/c/tres/vinculo"
@@ -233,7 +258,7 @@ CASOS
 
 command -v python3 >/dev/null 2>&1 || { echo "✗ cegar.sh necesita python3" >&2; exit 2; }
 case "$CMD" in
-  revisar)   shift; [ "$#" -ge 1 ] || { echo "uso: cegar.sh revisar <archivo|carpeta> [...]" >&2; exit 2; }; motor revisar "$@" ;;
+  revisar)   shift; [ "$#" -ge 1 ] || { echo "uso: cegar.sh revisar [--contenido] <archivo|carpeta> [...]" >&2; exit 2; }; motor revisar "$@" ;;
   etiquetar) shift; [ "$#" -ge 3 ] || { echo "uso: cegar.sh etiquetar <destino> <cand> <cand> [...]" >&2; exit 2; }; motor etiquetar "$@" ;;
   autotest)  cmd_autotest ;;
   *) sed -n '2,24p' "$0" | sed 's/^# \{0,1\}//'; [ -z "$CMD" ] && exit 2; [ "$CMD" = "-h" ] || [ "$CMD" = "--help" ] && exit 0; exit 2 ;;
