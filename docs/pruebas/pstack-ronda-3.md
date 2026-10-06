@@ -170,7 +170,7 @@ en `docs/pruebas/ARENA-uc-202610061430-aogq.md`. Se le injertó:
 
 ## Verificación
 
-- `bash scripts/cegar.sh autotest` → «todo en verde», 34 casos, sin red; `verificar.sh` lo corre solo. Tras los
+- `bash scripts/cegar.sh autotest` → «todo en verde», 34 casos tras la integración y 40 tras el council (`council-v1.31.md`), sin red; `verificar.sh` lo corre solo. Tras los
   injertos, cada mutación nueva lo pone en rojo: quitar `-I`, aceptar un enlace, saltar un binario en silencio. Quitar
   solo el patrón «elegiremos la mejor» no lo pone en rojo porque «la mejor entrega» atrapa la misma línea.
 - Rompiendo el script a propósito, el autotest falla en cada caso: sin el patrón de «pruebas ocultas»; sin revisar la

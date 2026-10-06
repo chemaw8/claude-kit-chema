@@ -54,7 +54,9 @@ def archivos(raiz):
     # carpetas sin permiso. Un enlace podría esconder material que el candidato sí verá.
     if os.path.islink(raiz):
         incompleta("enlace", raiz)
-    if os.path.isfile(raiz):
+    if not os.path.isdir(raiz):
+        if not stat.S_ISREG(os.lstat(raiz).st_mode):
+            incompleta("archivo especial", raiz)  # un FIFO pasado directo salía «limpio» (aviso del sello)
         yield raiz; return
     def error(e): incompleta(e.strerror or "no se pudo recorrer", e.filename)
     for d, sub, fs in os.walk(raiz, onerror=error):
@@ -212,6 +214,7 @@ CASOS
   motor revisar "$tmp/l1" >/dev/null 2>&1; chk "enlace dentro de la carpeta: incompleta (2)" $? 2
   mkfifo "$tmp/l2/tubo"
   timeout 5 python3 -I -c "$MOTOR_PY" revisar "$tmp/l2" >/dev/null 2>&1; chk "FIFO: incompleta (2), sin colgarse" $? 2
+  timeout 5 python3 -I -c "$MOTOR_PY" revisar "$tmp/l2/tubo" >/dev/null 2>&1; chk "FIFO pasado directo: incompleta (2)" $? 2
   printf 'juez\0binario' > "$tmp/l3/blob.bin"; echo "Arregla el bug." > "$tmp/l3/encargo.md"
   out="$(motor revisar --contenido "$tmp/l3" 2>&1)"; rc=$?
   chk "binario: se reporta sin revisar" "$rc/$(grep -c 'sin revisar (binario)' <<<"$out")" 0/1
