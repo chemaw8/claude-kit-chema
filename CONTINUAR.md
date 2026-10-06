@@ -36,7 +36,7 @@ pi-harness ya nombra `trabajo-<n>` los worktrees de la arena (`56d1c3f`). `/crea
 | Pendientes v1.19.2 | sin revisar desde 2026-09-08 | ver `docs/pruebas/medicion-esfuerzo-v1.19.2.md` (a, b, c) | ninguno |
 
 ## Última decisión relevante
-- 2026-10-06  v1.31 (propuesta): arena y cegado entran, el 6 y el 7 ya están cubiertos; base A de la arena, contra el juez → `DECISIONES.md`
+- 2026-10-06  v1.31 (fusionada, PR #75): arena y cegado entran, el 6 y el 7 ya están cubiertos; base A de la arena, contra el juez → `DECISIONES.md`
 - 2026-10-01  v1.30: `/por-que` entra con criterio de retiro tras la prueba de uso real → `docs/pruebas/council-v1.30.md`
 - 2026-09-29  v1.25: la regla va en las skills, medida por A/B con inyección (no en el núcleo) → `docs/pruebas/council-v1.25.md`
 - 2026-09-29  v1.24: el dinero carga kit-finanzas; la regla va en el núcleo, no en la description → `docs/pruebas/council-v1.24.md`
