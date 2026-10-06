@@ -9,7 +9,7 @@ pi-harness ya nombra `trabajo-<n>` los worktrees de la arena (`56d1c3f`). `/crea
 
 ## Siguiente paso
 - [ ] `cegar.sh`: anotar sus 3 próximos usos reales en `docs/pruebas/council-v1.31.md` (umbral de retiro: ninguna fuga real en 3 usos).
-- [ ] Primera arena desde Claude Code: anotar si superó al mejor intento (criterio en el mismo acta).
+- [ ] Arenas desde Claude Code: anotar las 2 primeras y si superaron al mejor intento (criterio en el mismo acta).
 - [ ] `/por-que`: anotar en el acta v1.30 los primeros 5 usos reales (umbral de retiro).
 - [ ] Próximo council: archivar los reportes crudos para medir la clasificación de hallazgos (resíntesis v1.11).
 - [ ] Segunda corrida real de `/crear-verificacion`, en otro proyecto (umbral de retiro: 2 corridas).
