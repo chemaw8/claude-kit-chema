@@ -184,6 +184,12 @@ Herramienta sin comando: `scripts/muletillas.sh` marca señales de texto de IA e
 humano. `bash "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/scripts/muletillas.sh" revisar <archivo>`. Marca candidatos;
 quien escribe decide. El checklist de `kit-redaccion` lo pide antes de entregar a dirección o a un cliente.
 
+Herramienta sin comando: `scripts/cegar.sh`, para comparar varios intentos con un juez (arena o A/B).
+`revisar <encargo> <carpeta>` marca lo que delata la medición al candidato (de la carpeta, solo rutas) («habrá pruebas ocultas», «se calificará»,
+juez, rúbrica, una carpeta llamada `arena-2`); `etiquetar <destino> <cand>…` copia cada intento a una letra al azar,
+deja el mapa fuera de lo que ve el juez y falla si una copia nombra a su autor. De pstack (`eval`, `arena`), acta en
+`docs/pruebas/pstack-ronda-3.md`.
+
 ## El ciclo completo
 
 El kit no es una colección de archivos sueltos: es un ciclo, y cada pieza existe para

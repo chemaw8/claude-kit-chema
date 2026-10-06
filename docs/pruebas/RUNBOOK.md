@@ -66,6 +66,15 @@ el banco completo y cumplir proporcional + fronteras. No exijas un resumen como
 El umbral sobre el núcleo canónico de arriba es una política explícita; esta
 regla no lo modifica ni permite relajarlo ante un fallo.
 
+## Cegado en un A/B o una sonda con candidatos
+
+Las reglas viven en `skills/kit-orquestacion` («Cómo se verifica»): el encargo se lee como un pedido
+normal y el juez ve letras, no modelos. Antes de lanzar, `bash scripts/cegar.sh revisar <encargo> <carpeta>` (de la carpeta, solo las rutas;
+`--contenido` revisa también su texto, sin calibrar en repos);
+para el juez, `bash scripts/cegar.sh etiquetar <destino> <cand>…` (mapa fuera de lo que ve). Un acta que
+mide con juez modelo dice si hubo cegado y cómo. Del playbook `eval` de pstack (MIT © Lauren Tan);
+evidencia en `docs/pruebas/pstack-ronda-3.md`.
+
 ## Gate de push — prueba en vivo (2026-09-07, repo piloto claude-kit-chema)
 
 La única prueba del gate que gasta cuota. Todo lo demás corre sin red

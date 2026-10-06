@@ -232,3 +232,21 @@ muy documentado, empató con el modelo solo; en un repo desordenado subió las a
 cobertura de 12/14 a 14/14, sin inventos en ningún brazo (n = 3 preguntas por caso). Decidió José.
 **Descartado.** Aparcar `/por-que` en una rama (beneficio modesto, pero medido y con costo marginal casi nulo) y
 dejarlo entrar sin prueba (lo impedían el congelamiento y H2 del council). Detalle: `docs/pruebas/council-v1.30.md`.
+
+## 2026-10-06 · v1.31 (propuesta): ronda pstack 3, candidatos 5 a 8, por arena
+
+**Qué.** Corrida ultracode uc-202610061430-aogq en modo arena: tres soluciones, una por familia, y un juez. Entran
+la arena (1 párrafo) y el cegado (1 viñeta) en `kit-orquestacion`, con `scripts/cegar.sh` (`revisar` y `etiquetar`).
+El registro de decisiones TSV (`show-me-your-work`) y «córrelo antes de preguntar» quedan como ya cubiertos: no
+entran ni van al núcleo. Las tres soluciones coincidieron en lo de fondo. El council, al final de esta entrada.
+**Por qué.** El cegado es la única pieza con aporte medido sobre datos reales: el chequeo marcó 6 de 6 encargos con
+fuga en la medición de arena de pi-harness y 0 falsos positivos en el banco de disparo. La arena se sostiene en esa
+misma medición: en 8 de 10 tareas un intento basta y en 2 paga. Se eligió como base la solución A contra la
+recomendación del juez (B), porque es la única que demuestra el aporte; se le injertó el lector seguro de B y los
+casos de fuga que ninguna solución cubría.
+**Descartado.** Referencias nuevas y reescritura de «un solo escritor» (B); «prototipo desechable» en `kit-codigo`
+sin medición (C); cambiar el núcleo por el candidato 7 sin una sonda. Detalle: `docs/pruebas/ARENA-uc-202610061430-aogq.md`.
+**Council (2026-10-06): aprobada con cambios, aplicados.** `cegar.sh` no renombraba los candidatos que son archivo,
+dejaba el mapa dentro con el destino `x/.` y revisaba el contenido de las carpetas (codex, anthropic). El párrafo de la
+arena pasó a «dos o tres», con su procedencia (anthropic, kimi). Las carpetas `arena-<n>` de pi-harness pasaron a
+`trabajo-<n>` (pi-harness `56d1c3f`). Acta: `docs/pruebas/council-v1.31.md`.
