@@ -8,7 +8,7 @@
     {
       "name": "kit-chema",
       "source": "./",
-      "description": "Kit Chema: 9 skills de dominio, cuatro subagentes (verificador, evaluador-council, lector-fresco, sintetizador), siete comandos (/proyecto-init y /cierre para fichas de proyecto, /revisar-salud, /init-contexto, /revisar-antes-de-subir, /crear-verificacion, /por-que) y cinco hooks (contexto, anti-secretos, rutas-fantasma, sello-push y backstop-cierre). El núcleo se instala aparte como ~/.claude/CLAUDE.md (ver README).",
+      "description": "Kit Chema: 9 skills de dominio, cuatro subagentes (verificador, evaluador-council, lector-fresco, sintetizador), siete comandos (/proyecto-init y /cierre para fichas de proyecto, /revisar-salud, /init-contexto, /revisar-antes-de-subir, /crear-verificacion, /por-que) dos scripts de revisión (muletillas.sh, cegar.sh) y cinco hooks (contexto, anti-secretos, rutas-fantasma, sello-push y backstop-cierre). El núcleo se instala aparte como ~/.claude/CLAUDE.md (ver README).",
       "license": "MIT"
     }
   ]

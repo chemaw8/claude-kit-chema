@@ -1,5 +1,24 @@
 # Changelog — Kit Chema
 
+## v1.31 — 2026-10-06
+Ronda pstack 3 (corrida ultracode uc-202610061430-aogq): los candidatos 5 a 8 de la lista de pstack
+(`cursor/plugins/pstack`, commit df58112, MIT © Lauren Tan), cada uno con veredicto medido sin modelos. Núcleo y
+descriptions intactos (el gate de disparo no aplica). Acta-propuesta: `docs/pruebas/pstack-ronda-3.md`.
+- **Arena en `kit-orquestacion`** (de `arena`): un párrafo la pone como excepción medida a «un solo escritor».
+  Tres intentos en copias aisladas, juez que ve letras y dice qué caso no cubre ninguno, integrador que decide qué
+  hace con él. Evidencia: la medición de pi-harness (3 rondas, 10 tareas). En 8 un intento ya daba el máximo; en
+  las 2 que discriminan, la arena superó al intento promedio en 5 de 7 configuraciones, y con cinco intentos el juez
+  siguió a la mayoría equivocada.
+- **Cegado al comparar variantes** (del playbook `eval`): una viñeta en «Cómo se verifica» y `scripts/cegar.sh`.
+  `revisar` marca lo que delata la medición en el encargo y la carpeta del candidato; `etiquetar` copia cada intento
+  a una letra al azar con el mapa fuera de lo que ve el juez. En los encargos reales de la arena de pi-harness marcó 6
+  de 6 con fuga («habrá pruebas ocultas») y 0 de 4 ya corregidos; 0 falsos positivos en 57 pedidos normales. Su
+  `autotest` (19 casos, sin red) entra solo en `verificar.sh` y falla con cada una de 9 roturas a propósito.
+- **No entran:** el registro de decisiones auditado (`show-me-your-work`), porque el kit ya cubre sus piezas y un
+  verificador de punteros de evidencia acertaría a lo más 3 de 26 marcas en 38 proyectos locales; y «si la duda se
+  resuelve corriendo algo, córrelo», que ya está cubierto: solo 2 de 65 preguntas reales al usuario caían en la
+  regla, y ambas las cubre `kit-codigo`.
+
 ## v1.30 — 2026-10-01
 Ronda pstack 2 (corrida ultracode uc-202610012332-fav8): dos piezas de pstack (`cursor/plugins/pstack`, commit
 fae2c6e, MIT © Lauren Tan) adaptadas, cada una revisada por otra familia de modelos que corrió las pruebas y rompió
