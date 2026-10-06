@@ -56,3 +56,42 @@ real se repitió: 6 de 6 y 0 de 4 en los encargos de la medición de pi-harness,
 **¿El panel movió la postura del integrador?** El veredicto no cambió, y el panel confirmó que el párrafo de la arena
 afirmaba de más. Lo que sí cambió fue el cegado: la postura lo daba por firme, y el panel mostró tres usos reales que
 la medición no había cubierto (candidatos como archivo, destino sin normalizar, contenido de carpetas).
+
+## Costo de la ronda (2026-10-06)
+
+Fuentes: el recibo de la corrida (`uc-202610061430-aogq.jsonl`) para la arena y el juez; la transcripción de la
+sesión para el council y el sintetizador, que corrieron después de cerrarse el recibo; el registro del gate
+(`gate.jsonl`) para los sellos. Dinero real = lo que corre en Anthropic por extra usage; Codex y Kimi entran en sus
+planes.
+
+| Etapa | Agentes | USD nominales | Dinero real |
+|---|---|---|---|
+| Arena | autor-anthropic 3.42, autor-codex 8.79, autor-kimi 2.59 | 14.80 | 3.42 |
+| Juez | revisor-codex | 4.20 | 0 |
+| Council | codex 1.08, kimi 0.45, anthropic 0.71 | 2.24 | 0.71 |
+| Síntesis | sintetizador (Fable 5.1) | 1.35 | 1.35 |
+| Sellos del gate | 7 revisiones (kit y pi-harness) | 1.15 | sin comprobar |
+| **Total** | | **23.74** | **5.48 más los sellos** |
+
+Los sellos corren con `claude -p` y su cobro depende de la cuenta de esa sesión: no se comprobó si fue plan o extra
+usage. No incluye el sello de este cambio ni el hilo del orquestador.
+
+## Criterio de retiro y lo que falta medir (José, 2026-10-06)
+
+**Retiro de `cegar.sh`.** Se anotan aquí sus usos reales (fecha, corrida, qué marcó y si era fuga). Si en los
+próximos 3 usos (arena, A/B o sonda) no atrapa ninguna fuga real, o todo lo que marca son falsos positivos, la viñeta
+de cegado y el script vuelven a revisión. Una fuga real basta para que se queden.
+
+**Lo que la evidencia no cubre, y cuándo medirlo.**
+- *Arena desde Claude Code, con una sola familia.* Lo medido es de pi-harness con familias mezcladas. Se mide en la
+  primera arena real que se corra desde Claude Code: anotar si la base con sus injertos superó al mejor intento y si
+  los intentos se equivocaron igual. Si en 2 corridas no supera al mejor intento, el párrafo dice que en Claude Code no
+  rinde.
+- *Si el cegado cambia resultados.* Hoy está medido que el chequeo detecta fugas, no que una fuga mueva las
+  calificaciones. Medirlo exige un A/B con y sin fuga sobre las mismas tareas (del orden de 10 USD de extra usage,
+  como la corrida RF-11). No se corre mientras no haya una decisión que dependa de esa cifra.
+
+### Usos reales de `cegar.sh`
+
+| Fecha | Corrida | Qué marcó | ¿Fuga real? |
+|---|---|---|---|
