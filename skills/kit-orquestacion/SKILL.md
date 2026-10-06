@@ -48,6 +48,18 @@ parecen, sobra uno. Y pasando una decena de piezas, agrupa varias por agente en 
 de sumar agentes: la concurrencia real está topada, y los de más solo hacen fila
 pagando contexto completo.
 
+**Varios intentos del mismo encargo (arena)** es la excepción medida a «un solo
+escritor»: tres autores resuelven lo mismo, cada uno en su copia aislada, y un solo
+integrador toma el mejor como base y le injerta lo que valga de los otros. Solo paga
+donde un intento puede fallar (un bug cuyo primer arreglo real se equivocó, una forma
+abierta como un diseño o un texto); con un encargo preciso y verificable un intento
+ya da el máximo. Más de tres no suma: con cinco, el juez siguió a la mayoría
+equivocada. El juez, de contexto limpio, ve los intentos por letra con una rúbrica de
+3 a 6 criterios que los autores no ven, y dice qué caso no cubre ninguno; el
+integrador decide por escrito qué hace con ese caso, que es donde la arena superó al
+mejor intento. `cegar.sh etiquetar` (en `${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/scripts/`)
+arma las copias por letra y deja el mapa aparte. (De `arena` de pstack, Lauren Tan, MIT.)
+
 Antes de repartir, considera la alternativa barata: **subir de esfuerzo o de modelo
 en un solo hilo, y en ese orden** (esfuerzo primero: Fable cuesta 2.5 veces lo que Opus 5.5
 por token de entrada y de salida, y solo compensa cuando Opus a mayor esfuerzo se queda corto, o
@@ -86,6 +98,12 @@ sistemas — que no son del modelo, sino del reparto:
   vale más que un panel: no hay nada que refutar objetivamente.
 - **Verifica los hallazgos antes de heredarlos.** Que venga de un agente no lo hace
   verdad; un hallazgo que no resiste comprobación se descarta explicando por qué.
+- **Al comparar variantes, el encargo no delata la medición.** El de cada candidato
+  se lee como un pedido normal: no menciona juez, rúbrica, pruebas ocultas ni otros
+  intentos, y su carpeta de trabajo tampoco. El juez sabe que juzga, pero ve cada
+  salida por letra, nunca por modelo ni brazo, y uno solo puntúa todas en una pasada.
+  `cegar.sh revisar` busca esas fugas antes de lanzar. (Del playbook `eval`
+  de pstack, Lauren Tan, MIT.)
 
 ## Lo que no se hace
 
