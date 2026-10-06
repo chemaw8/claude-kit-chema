@@ -56,3 +56,23 @@ real se repitió: 6 de 6 y 0 de 4 en los encargos de la medición de pi-harness,
 **¿El panel movió la postura del integrador?** El veredicto no cambió, y el panel confirmó que el párrafo de la arena
 afirmaba de más. Lo que sí cambió fue el cegado: la postura lo daba por firme, y el panel mostró tres usos reales que
 la medición no había cubierto (candidatos como archivo, destino sin normalizar, contenido de carpetas).
+
+## Criterio de retiro y lo que falta medir (José, 2026-10-06)
+
+**Retiro de `cegar.sh`.** Se anotan aquí sus usos reales (fecha, corrida, qué marcó y si era fuga). Si en los
+próximos 3 usos (arena, A/B o sonda) no atrapa ninguna fuga real, o todo lo que marca son falsos positivos, la viñeta
+de cegado y el script vuelven a revisión. Una fuga real basta para que se queden.
+
+**Lo que la evidencia no cubre, y cuándo medirlo.**
+- *Arena desde Claude Code, con una sola familia.* Lo medido es de pi-harness con familias mezcladas. Se mide en la
+  primera arena real que se corra desde Claude Code: anotar si la base con sus injertos superó al mejor intento y si
+  los intentos se equivocaron igual. Si en 2 corridas no supera al mejor intento, el párrafo dice que en Claude Code no
+  rinde.
+- *Si el cegado cambia resultados.* Hoy está medido que el chequeo detecta fugas, no que una fuga mueva las
+  calificaciones. Medirlo exige un A/B con y sin fuga sobre las mismas tareas (del orden de 10 USD de extra usage,
+  como la corrida RF-11). No se corre mientras no haya una decisión que dependa de esa cifra.
+
+### Usos reales de `cegar.sh`
+
+| Fecha | Corrida | Qué marcó | ¿Fuga real? |
+|---|---|---|---|

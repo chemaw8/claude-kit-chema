@@ -8,7 +8,8 @@
 pi-harness ya nombra `trabajo-<n>` los worktrees de la arena (`56d1c3f`). `/crear-verificacion` lleva 1 de 2 corridas reales.
 
 ## Siguiente paso
-- [ ] `cegar.sh`: usarlo en la próxima arena o A/B y anotar en `docs/pruebas/council-v1.31.md` si atrapó algo real.
+- [ ] `cegar.sh`: anotar sus 3 próximos usos reales en `docs/pruebas/council-v1.31.md` (umbral de retiro: ninguna fuga real en 3 usos).
+- [ ] Primera arena desde Claude Code: anotar si superó al mejor intento (criterio en el mismo acta).
 - [ ] `/por-que`: anotar en el acta v1.30 los primeros 5 usos reales (umbral de retiro).
 - [ ] Próximo council: archivar los reportes crudos para medir la clasificación de hallazgos (resíntesis v1.11).
 - [ ] Segunda corrida real de `/crear-verificacion`, en otro proyecto (umbral de retiro: 2 corridas).
@@ -27,7 +28,7 @@ pi-harness ya nombra `trabajo-<n>` los worktrees de la arena (`56d1c3f`). `/crea
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |
 |---|---|---|---|
-| Ronda pstack 3 (v1.31) | en main e instalada | primer uso real de `cegar.sh` | ninguno |
+| Ronda pstack 3 (v1.31) | en main e instalada | 3 usos reales de `cegar.sh` (umbral de retiro) | ninguno |
 | Ronda pstack 2 (v1.30) | en main e instalada | 5 usos reales de `/por-que` (umbral de retiro) | ninguno |
 | Entorno portable (v1.29) | asistente de un comando en main y en el CI | probar el asistente en Fedora | ninguno |
 | Debilidades de la línea base | «dato literal» atacado en v1.25 | siguiente patrón: «se cubre en vez de afirmar» (reclasificación, onepager 0/3) | José elige |
