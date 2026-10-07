@@ -141,3 +141,8 @@ las fronteras y el umbral del núcleo lo toleró. Ese intento no prueba cobertur
 El script mide las descriptions de skills, no valida YAML ni mide por sí solo todo el comportamiento del núcleo.
 La validación del parser se documenta aparte en `council-v1.31.1.md`. Después de esta corrida solo cambian actas,
 continuidad y versión; no cambian las descriptions medidas.
+## 2026-10-07 — PR «regla v1.32» (el estado en la primera frase)
+
+`python3 docs/pruebas/disparo.py --paralelo 6 --modelo sonnet` sobre la rama `regla/si-o-no-primero`, con el texto final
+del núcleo (tras el council) → **núcleo 21/21, confusiones de frontera no benignas 0, rc=0**; 30 de 30 filas
+coincidieron con la skill esperada. El PR no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4).

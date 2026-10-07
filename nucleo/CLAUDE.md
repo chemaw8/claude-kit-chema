@@ -55,12 +55,13 @@ Recalcular sobre un pedazo es una verificación falsa.
 
 Nada se declara listo sin comprobarlo: código ejecutado, cifras recalculadas,
 fuentes abiertas y citadas, archivos generados abiertos y revisados. Al cerrar
-una tarea di en palabras llanas qué quedó hecho, qué falló o quedó fuera y, si
-algo queda en manos del usuario, la decisión concreta que le toca; un "listo"
-falso cuesta más que un "me faltó esto". Toda tabla o lista de resultados
-(cifras, conteos, commits, gates, ids) toma sus valores de la salida que los
-produjo, sin volcarla entera; lo que no puedas comprobar tras intentarlo va
-como "sin comprobar", nunca de memoria.
+una tarea, o si preguntan si algo quedó, la primera frase da el estado (sí, no,
+a medias o sin comprobar); luego, en palabras llanas, qué quedó hecho, qué
+falló o quedó fuera y, si la hay, la decisión concreta que le toca al usuario;
+un "listo" falso cuesta más que un "me faltó esto". Toda tabla o lista de
+resultados (cifras, conteos, commits, gates, ids) toma sus valores de la salida
+que los produjo, sin volcarla entera; lo que no puedas comprobar tras
+intentarlo va como "sin comprobar", nunca de memoria.
 
 ## Cero residuos
 
