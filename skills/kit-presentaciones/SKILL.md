@@ -35,6 +35,11 @@ final, no al principio.
 Este es el orden. Los dos primeros pasos son los que más se saltan y los que
 deciden si el resto sirve.
 
+Si las cifras del material todavía hay que calcularlas, cruzarlas o cuadrarlas
+entre fuentes, carga `kit-analisis-datos` (o `kit-finanzas` si es dinero) y
+resuelve los números antes del paso 1: la lámina comunica un análisis ya hecho,
+no lo hace.
+
 1. Audiencia y objetivo. Antes de nada, define para quién es y qué decisión o
    reacción buscas provocar (aprobar un presupuesto, adoptar una herramienta,
    entender un riesgo). Escríbelo en una frase. Sin esto no se escribe ni una
