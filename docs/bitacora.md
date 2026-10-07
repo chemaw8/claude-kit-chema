@@ -423,3 +423,13 @@ corrida real (1 de 2 contra el umbral de retiro) y entran la propuesta en `kit-c
 
 «Frentes abiertos»:
 | Ronda pstack (v1.28.1) | v1.28 en main; primera corrida real del comando: pasa; guía de uso en COMO-PEDIR | segunda corrida en otro proyecto; limpiar rayas y prefijos del texto del kit | ninguno |
+
+## 2026-10-07 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+**Estado al 2026-10-06:** v1.31 en main (PR #75) e instalada en Claude Code y en pi: arena y cegado en
+`kit-orquestacion` con `scripts/cegar.sh` (council aprobada con cambios, aplicados; `docs/pruebas/council-v1.31.md`).
+pi-harness ya nombra `trabajo-<n>` los worktrees de la arena (`56d1c3f`). `/crear-verificacion` lleva 1 de 2 corridas reales.
+
+«Siguiente paso»:
+- [ ] `cegar.sh`: anotar sus 3 próximos usos reales en `docs/pruebas/council-v1.31.md` (umbral de retiro: ninguna fuga real en 3 usos).
