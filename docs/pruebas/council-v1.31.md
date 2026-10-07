@@ -95,3 +95,4 @@ de cegado y el script vuelven a revisión. Una fuga real basta para que se quede
 
 | Fecha | Corrida | Qué marcó | ¿Fuga real? |
 |---|---|---|---|
+| 2026-10-06 | Arena de la Cabina de claude-entorno (spec 006 B, uc-202610062330-cab) | Encargo limpio; en la carpeta `trabajo-1`, la ruta `memory/proyecto-evals-entregables.md` («evals») | No: nombre legítimo del repo (falso positivo). Cuenta como uso 1 de 3 sin fuga real |
