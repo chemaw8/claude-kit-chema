@@ -1,14 +1,15 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-06  ·  rama main (v1.31 fusionada, PR #75)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-07  ·  commit e42a17b (rama cierre/2026-10-07)  ·  cierre limpio: sí
 > Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
 > README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
 
 ## Dónde vamos
-**Estado al 2026-10-06:** v1.31 en main (PR #75) e instalada en Claude Code y en pi: arena y cegado en
-`kit-orquestacion` con `scripts/cegar.sh` (council aprobada con cambios, aplicados; `docs/pruebas/council-v1.31.md`).
-pi-harness ya nombra `trabajo-<n>` los worktrees de la arena (`56d1c3f`). `/crear-verificacion` lleva 1 de 2 corridas reales.
+**Estado al 2026-10-07:** v1.31 en main e instalada en Claude Code y en pi: arena y cegado en `kit-orquestacion` con
+`scripts/cegar.sh` (council aprobada con cambios; `docs/pruebas/council-v1.31.md`, con su criterio de retiro y su costo).
+`cegar.sh` lleva 1 de 3 usos reales (un falso positivo). `/crear-verificacion` lleva 1 de 2 corridas reales. El remoto
+solo tiene `main`; las ramas viejas se borraron (hashes en `~/.local/state/pi-harness/ramas-borradas-kit-2026-10-06.txt`).
 
 ## Siguiente paso
-- [ ] `cegar.sh`: anotar sus 3 próximos usos reales en `docs/pruebas/council-v1.31.md` (umbral de retiro: ninguna fuga real en 3 usos).
+- [ ] `cegar.sh`: anotar sus 2 usos reales que faltan en la tabla de `docs/pruebas/council-v1.31.md` (va 1 de 3; umbral de retiro: ninguna fuga real en 3 usos).
 - [ ] Arenas desde Claude Code: anotar las 2 primeras y si superaron al mejor intento (criterio en el mismo acta).
 - [ ] `/por-que`: anotar en el acta v1.30 los primeros 5 usos reales (umbral de retiro).
 - [ ] Próximo council: archivar los reportes crudos para medir la clasificación de hallazgos (resíntesis v1.11).
