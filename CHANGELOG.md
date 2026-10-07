@@ -673,7 +673,8 @@ Sin skill nueva → sin gate de disparo, sin costo permanente de listado. Núcle
 
 ## v1.11 — 2026-08-23
 Primera versión que añade **mecanismo** en vez de afinar prosa. Sale de la
-investigación `investigacion/2026-08-22-context-engineering-attention-rag.md`,
+investigación `investigacion/2026-08-22-context-engineering-attention-rag.md` (nunca entró a `main`: describe el
+entorno personal; desde 2026-10-06 vive en el repo privado del entorno, `docs/investigacion/`),
 que contrasta el estado del arte 2026 (Anthropic, Chroma, arXiv 2608.11888,
 Microsoft SkillOpt) contra la medición real del setup: 35,692 tokens de arranque
 por sesión y, sobre 1,487 transcripts de seis semanas, 444 delegaciones al agente
