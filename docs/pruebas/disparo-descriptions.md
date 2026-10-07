@@ -144,5 +144,6 @@ continuidad y versión; no cambian las descriptions medidas.
 ## 2026-10-07 — PR «regla v1.32» (el estado en la primera frase)
 
 `python3 docs/pruebas/disparo.py --paralelo 6 --modelo sonnet` sobre la rama `regla/si-o-no-primero`, con el texto final
-del núcleo (tras el council) → **núcleo 21/21, confusiones de frontera no benignas 0, rc=0**; 30 de 30 filas
+del núcleo (tras el council), en el árbol de trabajo justo antes del commit 1d135cc: `nucleo/` y las descriptions
+medidos son idénticos a los de 1d135cc; lo que se escribió después (acta, CHANGELOG, versión) el runner no lo lee → **núcleo 21/21, confusiones de frontera no benignas 0, rc=0**; 30 de 30 filas
 coincidieron con la skill esperada. El PR no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4).
