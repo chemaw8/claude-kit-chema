@@ -1,5 +1,15 @@
 # Changelog — Kit Chema
 
+## v1.32.2 — 2026-10-08
+Segundo arreglo del helper `rotar-continuar.sh`, sin cambiar reglas ni núcleo.
+- **La ruta por fecha de `reconciliar` no respetaba `.gitignore`.** Cuando el encabezado no trae ancla de commit,
+  `reconciliar` compara fechas de modificación; un log que el propio proyecto escribe al correr, ignorado por git,
+  marcaba rancio un cierre fresco. Ahora, dentro de un repo, lo que git ignora no cuenta (`git check-ignore`); lo
+  rastreado sí, aunque case con un patrón. Fuera de un repo todo lo nuevo sigue contando.
+- El mensaje de esa ruta decía «sin git» aunque el proyecto fuera un repo; ahora dice «sin ancla de commit».
+- Autotest: casos de archivo ignorado (fresco), rastreado que casa con `.gitignore` (rancio), nuevo sin ignorar
+  (rancio) y sin repo (rancio). Con el código anterior falla la primera aserción.
+
 ## v1.32.1 — 2026-10-08
 Arreglo del helper `rotar-continuar.sh`, sin cambiar reglas ni núcleo.
 - **`reconciliar` y `anclar` miraban el repo entero, no la carpeta del proyecto.** Un proyecto que vive en una

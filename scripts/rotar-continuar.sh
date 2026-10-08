@@ -105,6 +105,19 @@ limpio_de() {
   [ -n "$s" ] && echo "no" || echo "sí"
 }
 
+# Lee rutas separadas por NUL (relativas al directorio actual) e imprime, una por
+# línea, las que git NO ignora. Fuera de un repo las deja pasar todas. Con
+# --non-matching --verbose -z git emite 4 campos por ruta (origen, línea, patrón,
+# ruta) y el origen vacío significa «no ignorada».
+sin_ignorados() {
+  if git rev-parse --git-dir >/dev/null 2>&1; then
+    git check-ignore -z --stdin --non-matching --verbose 2>/dev/null \
+      | awk 'BEGIN { RS = "\0" } { c = (NR - 1) % 4; if (c == 0) src = $0; else if (c == 3 && src == "") print }'
+  else
+    tr '\0' '\n'
+  fi
+}
+
 # ── anclar ────────────────────────────────────────────────────────────────
 cmd_anclar() {
   local dir="${1:-.}"
@@ -138,16 +151,20 @@ cmd_reconciliar() {
     # Se excluyen los mismos archivos de papeleo que la ruta con git (línea ~99):
     # el propio /cierre puede tocar la ficha, DECISIONES o settings DESPUÉS de
     # escribir CONTINUAR, y eso no es trabajo real sin cerrar.
-    mas_nuevo="$(find "$dir" -type f -newer "$f" \
+    # Si el proyecto es un repo, lo que git ignora no es trabajo: un log que el
+    # propio proyecto escribe al correr (registro-envios.jsonl) marcaba rancio un
+    # cierre fresco (medido el 2026-10-08). Los archivos RASTREADOS cuentan aunque
+    # casen con un patrón de .gitignore: check-ignore no los reporta como ignorados.
+    mas_nuevo="$(cd "$dir" && find . -type f -newer CONTINUAR.md \
       -not -path '*/.git/*' -not -path '*/node_modules/*' \
       -not -name 'CONTINUAR.md' -not -name 'CLAUDE.md' -not -name 'DECISIONES.md' \
       -not -path '*/docs/bitacora.md' -not -path '*/.claude/settings.json' -not -name '.gitignore' \
-      -print -quit 2>/dev/null)"
+      -print0 2>/dev/null | sin_ignorados | head -1)"
     if [ -n "$mas_nuevo" ]; then
-      err "hay archivos modificados DESPUÉS del cierre del $fecha_cierre (p. ej. ${mas_nuevo#$dir/}) — el estado puede estar rancio"
+      err "hay archivos modificados DESPUÉS del cierre del $fecha_cierre (p. ej. ${mas_nuevo#./}) — el estado puede estar rancio"
       return 1
     fi
-    ok "estado fresco (sin git; nada se tocó después del cierre del $fecha_cierre)"
+    ok "estado fresco (sin ancla de commit; nada se tocó después del cierre del $fecha_cierre)"
     return 0
   fi
 
@@ -835,6 +852,33 @@ EOF
   ( cd "$pa" && git add -A && git commit -qm "trabajo del proyecto" )
   cmd_reconciliar "$pa/proyecto" >/dev/null 2>&1; rca=$?
   [ "$rca" -eq 1 ] || { err "autotest: un commit en la carpeta del proyecto debía dar 1 (rancio), dio $rca"; f=1; }
+
+  # Sin ancla de commit (ruta por fecha) dentro de un repo: lo que git ignora no es
+  # trabajo; lo rastreado o nuevo sin ignorar, sí. Un archivo RASTREADO que casa con
+  # un patrón de .gitignore también cuenta.
+  local pg="$t/ignorados" rcg; mkdir -p "$pg/logs"
+  ( cd "$pg" && git init -q && git config user.email t@t && git config user.name t )
+  printf 'registro.jsonl\nlogs/\n' > "$pg/.gitignore"; : > "$pg/app.py"; : > "$pg/forzado.jsonl"
+  ( cd "$pg" && git add -A && git add -f forzado.jsonl && git commit -qm base )
+  printf '# CONTINUAR — ignorados  ·  cierre 2026-10-08  ·  trabajo cerrado sin ancla\n' > "$pg/CONTINUAR.md"
+  touch -d '2026-01-01' "$pg/CONTINUAR.md"
+  touch -d '2025-12-01' "$pg/app.py" "$pg/forzado.jsonl" "$pg/.gitignore"
+  : > "$pg/registro.jsonl"; : > "$pg/logs/hoy.log"
+  cmd_reconciliar "$pg" >/dev/null 2>&1 \
+    || { err "autotest: lo que git ignora no debe marcar rancio en la ruta por fecha"; f=1; }
+  printf 'x' >> "$pg/forzado.jsonl"
+  cmd_reconciliar "$pg" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 1 ] || { err "autotest: un archivo rastreado que casa con .gitignore sí es trabajo, dio $rcg"; f=1; }
+  touch -d '2025-12-01' "$pg/forzado.jsonl"; : > "$pg/nuevo.py"
+  cmd_reconciliar "$pg" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 1 ] || { err "autotest: un archivo nuevo no ignorado debe marcar rancio en la ruta por fecha, dio $rcg"; f=1; }
+  # Fuera de un repo no hay .gitignore que valga: todo lo nuevo cuenta.
+  local ps="$t/sin-git-fecha"; mkdir -p "$ps"
+  printf '# CONTINUAR — x  ·  cierre 2026-10-08\n' > "$ps/CONTINUAR.md"; touch -d '2026-01-01' "$ps/CONTINUAR.md"
+  cmd_reconciliar "$ps" >/dev/null 2>&1 || { err "autotest: sin git y sin cambios debía salir fresco"; f=1; }
+  : > "$ps/registro.jsonl"
+  cmd_reconciliar "$ps" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 1 ] || { err "autotest: sin git, un archivo nuevo debe marcar rancio, dio $rcg"; f=1; }
 
   [ "$f" -eq 0 ] && ok "autotest: rotación sin pérdida, contrato y reconciliación funcionan"
   return $f
