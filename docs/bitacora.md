@@ -523,3 +523,40 @@ por decisión del dueño; se mide otra vez cuando el tripwire detecte la instala
 «Detalle vivo»:
 - El repo es público: no copiar casos, ids privados de clientes, recibos de modelos ni cifras de negocio.
 - El falso positivo de `muletillas.sh` junto a código y sus falsos negativos están documentados, no corregidos aquí.
+
+## 2026-10-08 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+Estado al 2026-10-08: v1.31.1 fusionada por PR #83 e instalada en Claude Code y pi. Limpieza ortográfica terminada,
+YAML corregido y pruebas completas. Informes originales y contraste de clasificación en `docs/pruebas/council-v1.31.1.md`.
+El tripwire detectó la instalación y pidió medir entregables y disparo real. Ese seguimiento pertenece a
+evals-entregables: su CONTINUAR y sus archivos de estado son la fuente del resultado, no se duplica aquí.
+
+«Siguiente paso»:
+- [ ] PR #82 (v1.32): conserva su aprobación pendiente; después del parche GitHub lo marca con conflictos.
+      Actualizar su base y resolver metadatos antes de cualquier fusión, sin reintroducir el YAML inválido.
+- [ ] Vigía de v1.25 y revisión programada del 2026-10-28: conservan sus criterios, fuera de esta limpieza.
+
+«Cómo retomar»:
+- Abrir: `docs/pruebas/council-v1.31.1.md`, `DECISIONES.md` y el estado real de los PR.
+- Correr: `bash verificar.sh` → código 0 y sin FALLA.
+- Disparo: `python3 docs/pruebas/disparo.py --modelo sonnet --paralelo 3` → banco completo, sin errores de ejecución,
+  con proporcional y fronteras aprobados. Salida final: `docs/pruebas/council-v1.31.1-crudos/gate-disparo.txt`.
+- Comprobar instalación: comparar el núcleo entre marcadores y las copias del kit, no solo la versión de la cabecera.
+
+«Bloqueadores / esperas»:
+- Ninguno para v1.31.1. La autenticación Anthropic respondió OK tras renovar acceso el 2026-10-08.
+- El PR #82 es otra decisión y no está incluido en este cierre.
+
+«Frentes abiertos»:
+| Limpieza v1.31.1 | fusionada e instalada | cerrado | ninguno |
+| Clasificación del council | informes archivados; 5/6 clases de acciones coinciden, mismo veredicto | cerrado como sonda, no prueba de superioridad | ninguno |
+| Evals | siguen con skills y banco firmado de 13 | seguimiento en evals-entregables | tripwire |
+
+«Última decisión relevante»:
+- 2026-10-08: limpieza publicada e instalada; no se incorporan reglas ni el PR #82.
+- 2026-10-07: la línea base sigue con skills y el PR #81 se cierra sin fusionar (evals-entregables/DECISIONES.md).
+
+«Detalle vivo»:
+- Repo público: no copiar casos, ids privados de clientes, recibos de modelos ni cifras de negocio.
+- Fusionar con `gh api -X PUT …/pulls/<n>/merge`, no `gh pr merge`.
