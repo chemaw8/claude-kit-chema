@@ -1,5 +1,14 @@
 # Changelog — Kit Chema
 
+## v1.32.1 — 2026-10-08
+Arreglo del helper `rotar-continuar.sh`, sin cambiar reglas ni núcleo.
+- **`reconciliar` y `anclar` miraban el repo entero, no la carpeta del proyecto.** Un proyecto que vive en una
+  subcarpeta de un repo compartido (las presentaciones) heredaba lo sin rastrear y los commits de sus carpetas
+  hermanas: el 2026-10-08 dos presentaciones salían rancias por archivos de `~/Trabajo/00-inbox/`, y una de ellas
+  se había cerrado con `cierre limpio: no` por lo mismo. `git status`, `git diff` y el conteo entre ramas llevan
+  ahora `-- .`. Autotest: caso nuevo de repo compartido (carpeta hermana sucia o commiteada → fresco; la propia →
+  rancio); con el código anterior falla en 3 aserciones.
+
 ## v1.32 — 2026-10-08
 Una regla sustituida; núcleo 139 → 140 líneas (tope 150). Council de tres familias (Anthropic Opus 5.5, OpenAI Astra,
 Kimi K3): 3 × aprobada con cambios, síntesis del agente `sintetizador`; acta en `docs/pruebas/council-v1.32.md`.
