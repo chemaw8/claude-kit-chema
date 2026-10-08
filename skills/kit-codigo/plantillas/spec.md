@@ -1,4 +1,4 @@
-# Spec NNN — <nombre de la feature>
+# Spec NNN: <nombre de la feature>
 
 ## Contexto
 <!-- Qué duele hoy y a quién. 2-4 frases. Si no puedes decir quién sufre el
@@ -10,7 +10,7 @@
 ## Requisitos funcionales
 <!-- Numerados y VERIFICABLES: una comprobación concreta debe poder decidir si
      se cumple. "El sistema es rápido" no es RF; "responde en <2s con la BD de
-     90 tablas" sí. Para condiciones, la forma CUANDO X, DEBE Y ayuda — pero es
+     90 tablas" sí. Para condiciones, la forma CUANDO X, DEBE Y ayuda, pero es
      opcional (el estándar no obliga EARS). -->
 
 - **RF-1** ...

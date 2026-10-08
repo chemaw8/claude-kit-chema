@@ -129,3 +129,15 @@ cambios del council) no toca `nucleo/` ni ninguna description, así que el resul
 `python3 docs/pruebas/disparo.py --paralelo 6 --modelo sonnet` sobre la rama `reglas/descargas-y-cierres`, dos veces:
 en 37d753f (primer texto) y en **ed0923d (texto final, tras el council)** → **núcleo 21/21, confusiones de frontera no
 benignas 0, rc=0** en ambas. El PR no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4).
+
+## 2026-10-08: limpieza ortográfica v1.31.1
+
+`python3 docs/pruebas/disparo.py --modelo sonnet --paralelo 3` en la rama `texto/rayas-y-prefijos`, descriptions
+finales de `a8bd68d`: **núcleo 21/21, 30/30 peticiones acertadas, cero errores del ejecutor y cero confusiones de
+frontera, rc=0**. Salida íntegra: `council-v1.31.1-crudos/gate-disparo.txt`.
+
+Se habían descartado tres intentos finales con `TimeoutExpired`; uno imprimió PASA porque el error cayó fuera de
+las fronteras y el umbral del núcleo lo toleró. Ese intento no prueba cobertura completa y no avala el PR.
+El script mide las descriptions de skills, no valida YAML ni mide por sí solo todo el comportamiento del núcleo.
+La validación del parser se documenta aparte en `council-v1.31.1.md`. Después de esta corrida solo cambian actas,
+continuidad y versión; no cambian las descriptions medidas.

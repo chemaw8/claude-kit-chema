@@ -1,10 +1,10 @@
 ---
 name: kit-automatizacion
 license: MIT
-description: Estándar Kit Chema para automatizar procesos — tareas recurrentes, integraciones, cron jobs, flujos que corren solos, bots, scripts programados. Úsala al pedir "automatiza", "que se haga solo", "cada semana genera", "conecta X con Y", "un proceso que corra". Obliga a definir disparador, entradas y salidas antes de construir, manejar errores explícitamente y probar en real antes de entregar.
+description: 'Estándar Kit Chema para automatizar procesos: tareas recurrentes, integraciones, cron jobs, flujos que corren solos, bots, scripts programados. Úsala al pedir "automatiza", "que se haga solo", "cada semana genera", "conecta X con Y", "un proceso que corra". Obliga a definir disparador, entradas y salidas antes de construir, manejar errores explícitamente y probar en real antes de entregar.'
 ---
 
-# Automatización — estándar Kit Chema
+# Automatización: estándar Kit Chema
 
 Playbook para automatizar procesos: tareas recurrentes, integraciones, cron
 jobs y flujos que corren solos. La regla que sostiene todo lo demás es definir
@@ -21,9 +21,9 @@ no tienes claro a mano no lo arregla: lo multiplica a velocidad de máquina.
   humano; no se traga en silencio para que "siga corriendo". Una falla que nadie
   ve es peor que una visible: produce resultados mal durante días sin que nadie
   lo note.
-- Correrla dos veces no duplica efectos (idempotencia). Re-ejecutarla con la
+- Correrla dos veces no duplica efectos (idempotencia). Reejecutarla con la
   misma entrada no manda el correo dos veces, no cobra dos veces ni inserta filas
-  repetidas. Si no es idempotente, cualquier reintento o re-lanzamiento es un
+  repetidas. Si no es idempotente, cualquier reintento o relanzamiento es un
   riesgo.
 - Existe una forma documentada de apagarla. Está escrito cómo detenerla y dónde
   se controla, para que quien no la construyó pueda pararla el día que haga falta.
@@ -76,7 +76,7 @@ Antes de entregar, con la automatización corriendo delante:
 - Tragarse los errores con un try/except vacío. Atrapar la excepción y seguir
   como si nada convierte la falla en silencio: el proceso "termina bien" mientras
   produce basura.
-- Efectos duplicados al re-ejecutar. Un reintento o un doble disparo que manda el
+- Efectos duplicados al reejecutar. Un reintento o un doble disparo que manda el
   correo, cobra o inserta dos veces porque el proceso no se diseñó idempotente.
 - Automatización huérfana. Un flujo que corre solo desde hace meses, que nadie
   documentó y que nadie sabe cómo apagar cuando empieza a estorbar.

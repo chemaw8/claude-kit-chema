@@ -1,5 +1,5 @@
 ---
-description: Crea la ficha de este proyecto — un CLAUDE.md corto y estable (qué es, stack, cómo correr, trampas, confidencialidad) más .claude/settings.json con permisos, y deja CONTINUAR.md en formato de reanudación. Úsalo una vez por proyecto, al entrar a uno que todavía no tiene ficha.
+description: 'Crea la ficha de este proyecto: un CLAUDE.md corto y estable (qué es, stack, cómo correr, trampas, confidencialidad) más .claude/settings.json con permisos, y deja CONTINUAR.md en formato de reanudación. Úsalo una vez por proyecto, al entrar a uno que todavía no tiene ficha.'
 ---
 
 Le das a este proyecto su ficha: lo que Claude necesita saber siempre, para no
@@ -12,7 +12,7 @@ El helper `rotar-continuar.sh` está en
 
 Antes de arrancar, dimensiona: si el proyecto es muy chico (un script de un
 uso, una exploración puntual), **pregunta al usuario** si quiere la estructura
-completa o la mínima (ficha + CONTINUAR) — nunca lo decidas en silencio. La
+completa o la mínima (ficha + CONTINUAR); nunca lo decidas en silencio. La
 estructura completa y la capa `specs/NNN-nombre/` por feature están en
 `estandar-proyectos.md` de la skill kit-codigo, con sus plantillas al lado.
 
@@ -27,9 +27,9 @@ dependencias (`package.json`, `pyproject.toml`, `requirements.txt`, `go.mod`…)
 `git status --short --ignored`).
 
 Revisa también si hay una nota de memoria o del vault sobre este proyecto: suele
-tener destiladas las trampas y lo confidencial, que es lo más caro de re-deducir.
+tener destiladas las trampas y lo confidencial, que es lo más caro de rededucir.
 
-## 2. Evalúa si el proyecto es sensible — antes de ejecutar nada
+## 2. Evalúa si el proyecto es sensible, antes de ejecutar nada
 
 Un proyecto es sensible si aparece cualquiera de estas señales:
 
@@ -45,7 +45,7 @@ mover datos reales.
 
 En un proyecto normal, **sí ejecuta** los comandos de instalar, probar y correr:
 la ficha solo debe contener comandos verificados. Si uno falla, repórtalo en vez de
-escribirlo — un comando inventado en la ficha es peor que ninguno.
+escribirlo: un comando inventado en la ficha es peor que ninguno.
 
 ## 3. Redacta la ficha propuesta
 
@@ -69,14 +69,14 @@ En una app con interfaz o servicio, la línea «Probar de verdad» (la genera /c
 <de dónde salen, dónde viven, qué NO se versiona>
 
 ## Trampas conocidas
-<lo que rompe si no se sabe — cada una costó una sesión aprenderla>
+<lo que rompe si no se sabe; cada una costó una sesión aprenderla>
 
 ## Confidencialidad
 <qué no sale de aquí; verificado contra git, no contra lo que se recuerde>
 
 ## Convenciones
 <lo propio de este proyecto que no se deduce del código; si tendrá features
-multi-sesión, recuerda aquí la capa specs/NNN del estándar de kit-codigo>
+multisesión, recuerda aquí la capa specs/NNN del estándar de kit-codigo>
 ```
 
 Tres reglas de contenido:
@@ -122,12 +122,12 @@ Tras la aprobación:
 2. Deja `CONTINUAR.md` en formato de reanudación. Genera el encabezado del
    borrador con `bash "$ROTAR" anclar <proyecto>`. Si **ya existía** un
    `CONTINUAR.md`, **siempre** aplícalo con `bash "$ROTAR" rotar <proyecto>
-   <borrador>` — nunca lo reescribas directo, sin importar su tamaño: el helper
+   <borrador>`; nunca lo reescribas directo, sin importar su tamaño: el helper
    archiva lo desplazado y verifica cero pérdida, y si nada se desplaza no-opea
    limpio. (El umbral de 60 líneas del paso 5 decide cuánto resumir, no si se usa
    el helper.)
 3. Comprueba con `bash "$ROTAR" contrato <proyecto>`.
-4. Revisa que `.gitignore` no excluya `CLAUDE.md` — algunos frameworks lo generan
+4. Revisa que `.gitignore` no excluya `CLAUDE.md`: algunos frameworks lo generan
    y lo ignoran, y entonces la ficha no se versiona ni viaja.
 5. Commitea. Si el proyecto no tiene remoto y debería tenerlo, dilo.
 

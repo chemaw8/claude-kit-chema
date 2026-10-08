@@ -1,10 +1,10 @@
 ---
 name: kit-analisis-datos
 license: MIT
-description: Estándar Kit Chema para analizar o explorar datos — ventas, métricas, encuestas, archivos CSV/Excel, bases de datos, dashboards. Úsala antes de abrir los datos, al pedir "analiza estos datos", "qué dicen estas ventas", "explora este archivo", "hazme un dashboard o gráfica". Obliga a evaluar la calidad del dato antes de sacar conclusiones y a entregar hallazgos con evidencia, magnitud e implicación accionable.
+description: 'Estándar Kit Chema para analizar o explorar datos: ventas, métricas, encuestas, archivos CSV/Excel, bases de datos, dashboards. Úsala antes de abrir los datos, al pedir "analiza estos datos", "qué dicen estas ventas", "explora este archivo", "hazme un dashboard o gráfica". Obliga a evaluar la calidad del dato antes de sacar conclusiones y a entregar hallazgos con evidencia, magnitud e implicación accionable.'
 ---
 
-# Análisis de datos — estándar Kit Chema
+# Análisis de datos: estándar Kit Chema
 
 Playbook para analizar o explorar datos y presentar lo que dicen. La regla que
 sostiene todo lo demás es entender el dato antes de analizarlo: una conclusión
@@ -54,7 +54,7 @@ resto sirve.
    por gráficas sin saber qué buscas ni cuándo terminaste.
 3. Análisis con scripts guardados. Haz los cálculos en un script que quede
    guardado, no en operaciones al vuelo irrepetibles. Si un número entró al
-   informe, el código que lo produjo tiene que existir y poder re-ejecutarse.
+   informe, el código que lo produjo tiene que existir y poder reejecutarse.
 4. Hallazgos rankeados por impacto. Ordena lo que encontraste de mayor a menor
    relevancia para quien decide. Lo que cambia una decisión va arriba; la
    curiosidad estadística sin consecuencia, al final o fuera.
@@ -72,7 +72,7 @@ Antes de entregar, con los datos y el análisis delante:
 - ¿Separé el hecho de la hipótesis, marcados como cosas distintas?
 - Si encontré algo que no cuadra, ¿el titular sale de la lectura corregida (o
   marca la discrepancia) y no de la literal con la anomalía en una nota?
-- ¿Los scripts están guardados y se pueden re-ejecutar para llegar al mismo
+- ¿Los scripts están guardados y se pueden reejecutar para llegar al mismo
   resultado?
 - ¿Las gráficas van sin trucos visuales (ejes desde cero, periodo completo)?
 - En un dashboard, ¿cada panel responde una pregunta operativa que alguien

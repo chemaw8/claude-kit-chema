@@ -1,5 +1,5 @@
 ---
-description: Cierra la sesión de trabajo en este proyecto — deja CONTINUAR.md con el estado mínimo para reanudar (dónde vamos, siguiente paso, cómo retomar, bloqueadores), archiva el detalle viejo en docs/bitacora.md sin perder nada, actualiza la ficha si cambió algo, anota decisiones caras y borra los temporales. Úsalo al terminar o pausar el trabajo en un proyecto.
+description: 'Cierra la sesión de trabajo en este proyecto: deja CONTINUAR.md con el estado mínimo para reanudar (dónde vamos, siguiente paso, cómo retomar, bloqueadores), archiva el detalle viejo en docs/bitacora.md sin perder nada, actualiza la ficha si cambió algo, anota decisiones caras y borra los temporales. Úsalo al terminar o pausar el trabajo en un proyecto.'
 ---
 
 Cierras el trabajo en este proyecto dejándolo listo para reanudar en frío: dentro
@@ -23,7 +23,7 @@ bash "$ROTAR" reconciliar <proyecto>
 ```
 
 Al abrir `/cierre`, `reconciliar` casi siempre dirá "hubo trabajo después del
-cierre": es **normal y esperado** — ese trabajo es el de esta sesión, que es justo
+cierre": es **normal y esperado**: ese trabajo es el de esta sesión, que es justo
 lo que vas a capturar. **No lo leas como que el estado anterior mentía.** Solo es
 alarma en dos casos: si el encabezado dice `cierre limpio: no` (una sesión murió
 sin cerrar), o si los archivos que lista son cambios que nadie de esta sesión hizo.
@@ -37,7 +37,7 @@ ancla y no los juzga. Míralos tú: si son trabajo tuyo sin cerrar, ciérralo aq
 encabezado nuevo queda anclado en esta rama y desde ahí el veredicto vuelve a ser
 fiable.
 
-## 2. Decide qué cambió de verdad — y no preguntes por lo demás
+## 2. Decide qué cambió de verdad, y no preguntes por lo demás
 
 Este comando es **silencioso en lo que no cambió**. Recorre esta lista y actúa
 solo donde haya algo:
@@ -55,7 +55,7 @@ Redáctalo completo en un archivo temporal **fuera del proyecto** (`/tmp/…`; n
 edites `CONTINUAR.md` directo, que el helper lo reemplaza de forma segura en el
 paso 4). Fuera del proyecto porque un borrador dentro del árbol es un archivo sin
 commitear como cualquier otro, y haría que `anclar` estampe `cierre limpio: no` en
-todo cierre. Usa exactamente esta forma — arriba de la línea `---` va lo blindado,
+todo cierre. Usa exactamente esta forma: arriba de la línea `---` va lo blindado,
 abajo lo recortable:
 
 ```markdown
@@ -92,7 +92,7 @@ abajo lo recortable:
 El campo `cierre limpio` **no se escribe a mano ni se asume**: lo calcula `anclar`
 mirando si queda trabajo real sin commitear (el papeleo del propio cierre no
 cuenta). Si sale `no`, no lo edites para que diga `sí`: o commiteas lo que falta,
-o lo dejas escrito como frente abierto — es justo el aviso que la próxima sesión
+o lo dejas escrito como frente abierto: es justo el aviso que la próxima sesión
 necesita. Puede salir también `sin-git` (el proyecto no es un repo) o
 `no-se-pudo-saber` (git no respondió): ninguno de los dos es un `sí`, y el segundo
 pide mirar qué pasa con el repo antes de fiarse del estado.
@@ -103,7 +103,7 @@ ancla de git sean reales, no inventadas.
 **Orden de commit (importante para que la próxima reanudación salga limpia).** El
 ancla que estampa `anclar` es el `HEAD` de este momento, así que:
 
-1. **Commitea primero el trabajo real de la sesión** (código, datos, scripts) —
+1. **Commitea primero el trabajo real de la sesión** (código, datos, scripts);
    así el ancla lo captura. Si no lo commiteas, no pasa nada grave: al reanudar,
    `reconciliar` marcará esos archivos como "trabajo sin cerrar", que es honesto.
 2. Luego genera el encabezado con `anclar` y rota (paso 4).
@@ -122,7 +122,7 @@ esa rama y `reconciliar` lo dirá en vez de inventar un rancio.
 Cuatro reglas al redactar:
 
 - **No repitas hechos estables.** Repo, remoto, stack y "qué es el proyecto" van en
-  `CLAUDE.md`. Si los copias aquí, envejecerán aquí — es exactamente cómo una ficha
+  `CLAUDE.md`. Si los copias aquí, envejecerán aquí: es exactamente cómo una ficha
   terminó diciendo "sin remoto" cuando ya tenía remoto.
 - **El siguiente paso tiene que ser ejecutable.** Prueba: ¿alguien que llega en
   frío sabría exactamente qué abrir o qué teclear? "Continuar el análisis" no pasa;
@@ -144,7 +144,7 @@ bash "$ROTAR" rotar <proyecto> <borrador>        # añade --dry-run para ver ant
 
 El helper mueve a `docs/bitacora.md` todo lo que estaba en el `CONTINUAR.md` viejo
 y no está en el nuevo, y **verifica línea por línea** que nada se perdió. Si algo
-se perdería, aborta sin tocar nada — no lo fuerces: revisa qué quedó fuera.
+se perdería, aborta sin tocar nada; no lo fuerces: revisa qué quedó fuera.
 
 Criterio de qué se archiva: **¿hace falta para el siguiente paso?** Lo que sigue
 pendiente se arrastra hacia adelante; solo se archiva lo ya cerrado. Nunca archives
@@ -169,5 +169,5 @@ borraste. Si algo temporal debe sobrevivir, no es temporal: dale lugar y nómbra
 ## 7. Cierra reportando
 
 En tres o cuatro líneas: qué quedó hecho, qué sigue, qué se archivó y qué quedó
-fuera. Si algo falló o no pudiste verificar, dilo — un "listo" falso cuesta más
+fuera. Si algo falló o no pudiste verificar, dilo: un "listo" falso cuesta más
 que un "me faltó esto".

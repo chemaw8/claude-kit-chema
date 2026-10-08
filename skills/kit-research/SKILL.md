@@ -1,10 +1,10 @@
 ---
 name: kit-research
 license: MIT
-description: Estándar Kit Chema para investigar con fuentes — comparativas de proveedores o herramientas, estado del arte, normativas, mercado, "qué hay sobre X". Úsala al pedir "investiga", "busca información sobre", "compárame opciones de", "qué dice la industria de". Obliga a usar varias fuentes independientes, verificar afirmaciones clave contra la fuente original y citar con URL y fecha.
+description: 'Estándar Kit Chema para investigar con fuentes: comparativas de proveedores o herramientas, estado del arte, normativas, mercado, "qué hay sobre X". Úsala al pedir "investiga", "busca información sobre", "compárame opciones de", "qué dice la industria de". Obliga a usar varias fuentes independientes, verificar afirmaciones clave contra la fuente original y citar con URL y fecha.'
 ---
 
-# Investigación con fuentes — estándar Kit Chema
+# Investigación con fuentes: estándar Kit Chema
 
 Playbook para investigar un tema y entregar lo que se sabe con respaldo. La regla
 que sostiene todo lo demás es que ninguna afirmación clave descansa en una sola

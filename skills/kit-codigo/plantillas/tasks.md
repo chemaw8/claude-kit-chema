@@ -1,4 +1,4 @@
-# Tareas — Spec NNN
+# Tareas: Spec NNN
 
 <!-- Reglas: tareas de ~30 min, ordenadas por dependencia, cada una declara
      sus RF y cierra con "Hecho cuando:" verificable. Se implementa UNA tarea
