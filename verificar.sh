@@ -33,6 +33,14 @@ if [ "$total_desc" -gt 6000 ]; then
   echo "AVISO la suma rebasa 6000 chars: considera adelgazar antes de añadir más (no bloquea)"
 fi
 
+# 2d. description sin comillas que trae «: » no es YAML válido: pi la parsea estricto y descarta el archivo
+# (pi-harness/docs/validacion-001.md; council v1.31.1). Claude Code la tolera, por eso nadie lo ve en uso.
+for f in skills/*/SKILL.md agents/*.md commands/*.md; do
+  [ -e "$f" ] || continue
+  awk 'NR==1&&$0!="---"{exit} NR>1&&$0=="---"{exit} /^description: [^"'"'"']/&&/: .*: /{bad=1} END{exit bad}' "$f"
+  chk "$f description sin «: » fuera de comillas (YAML estricto)" $?
+done
+
 # 2c. license: declarada en el frontmatter de cada skill (estándar agentskills.io)
 for f in skills/*/SKILL.md; do
   [ -e "$f" ] || continue

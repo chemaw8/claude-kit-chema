@@ -1,6 +1,6 @@
 # Estándar de estructura de proyecto
 
-Cómo se organiza un proyecto para que ninguna sesión re-deduzca su alcance.
+Cómo se organiza un proyecto para que ninguna sesión rededuzca su alcance.
 Extiende las piezas que el kit ya instala (ficha, CONTINUAR, DECISIONES,
 /proyecto-init, /cierre) con la capa que faltaba: **specs por feature**.
 Adopción parcial de Spec-Driven Development (origen: curso hello-sdd de
@@ -11,7 +11,7 @@ MoureDev, 2026-08; se descartaron EARS obligatorio y spec-as-source).
 ```
 proyecto/
 ├── CLAUDE.md              ficha ≤40 líneas (la genera /proyecto-init)
-├── CONTINUAR.md           estado de reanudación — pasa `contrato` del helper
+├── CONTINUAR.md           estado de reanudación; pasa `contrato` del helper
 ├── DECISIONES.md          decisiones fechadas con alternativas descartadas
 ├── README.md              qué es y cómo correr
 ├── .gitignore             desde el primer commit (secretos y datos fuera)
@@ -35,16 +35,16 @@ CONTINUAR). Nunca lo decidas en silencio.
 
 ## El flujo por feature
 
-1. **Spec** — requisitos numerados (RF-n) y verificables: una comprobación
+1. **Spec**: requisitos numerados (RF-n) y verificables: una comprobación
    concreta puede decidir si cada uno se cumple. Plantilla: `plantillas/spec.md`.
-2. **Clarificación** — releer la spec como QA: ambigüedades, contradicciones,
+2. **Clarificación**: releer la spec como QA: ambigüedades, contradicciones,
    casos límite ausentes. Solo detectar, no resolver.
-3. **Plan** — módulos, datos, y cada decisión con su alternativa descartada.
-4. **Tareas** — de ~30 min, con sus RF y "Hecho cuando:" con comando + condición
+3. **Plan**: módulos, datos, y cada decisión con su alternativa descartada.
+4. **Tareas**: de ~30 min, con sus RF y "Hecho cuando:" con comando + condición
    de éxito verificable.
-5. **Implementación** — una tarea a la vez; TDD según kit-codigo.
-6. **Validación** — recorrer la spec RF por RF: qué comprobación cubre cada uno.
-7. **Cambio** — nuevo requisito → primero el diff de la spec, luego el código.
+5. **Implementación**: una tarea a la vez; TDD según kit-codigo.
+6. **Validación**: recorrer la spec RF por RF: qué comprobación cubre cada uno.
+7. **Cambio**: nuevo requisito → primero el diff de la spec, luego el código.
 
 En fichas, CONTINUAR y specs, cada gate lleva comando + condición de éxito, no
 un total fijo de pruebas. Para una suite: ejecución completa del alcance previsto,

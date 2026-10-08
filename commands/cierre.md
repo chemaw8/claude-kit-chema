@@ -1,5 +1,5 @@
 ---
-description: Cierra la sesión de trabajo en este proyecto: deja CONTINUAR.md con el estado mínimo para reanudar (dónde vamos, siguiente paso, cómo retomar, bloqueadores), archiva el detalle viejo en docs/bitacora.md sin perder nada, actualiza la ficha si cambió algo, anota decisiones caras y borra los temporales. Úsalo al terminar o pausar el trabajo en un proyecto.
+description: 'Cierra la sesión de trabajo en este proyecto: deja CONTINUAR.md con el estado mínimo para reanudar (dónde vamos, siguiente paso, cómo retomar, bloqueadores), archiva el detalle viejo en docs/bitacora.md sin perder nada, actualiza la ficha si cambió algo, anota decisiones caras y borra los temporales. Úsalo al terminar o pausar el trabajo en un proyecto.'
 ---
 
 Cierras el trabajo en este proyecto dejándolo listo para reanudar en frío: dentro

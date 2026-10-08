@@ -44,8 +44,8 @@ callarlo es el peor fallo posible bajo este manual.
 
 Antes de cargar algo grande (un CSV completo, un log, una carpeta entera,
 una bitácora larga) di qué decisión alimenta. Si no alimenta ninguna, no lo
-cargues: extrae lo que sirve y trabaja con eso. Cargar de más no es gratis
-— degrada el acierto, no solo el precio.
+cargues: extrae lo que sirve y trabaja con eso. Cargar de más no es gratis:
+degrada el acierto, no solo el precio.
 
 Esto aplica a lo que se lee para redactar, no a lo que se mide: conteos,
 nulos, rangos y totales salen del archivo completo, nunca de una muestra.

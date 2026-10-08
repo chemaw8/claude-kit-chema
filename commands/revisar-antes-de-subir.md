@@ -1,5 +1,5 @@
 ---
-description: Revisa el cambio antes de subirlo al remoto y produce el sello que exige el gate de push: corre las pruebas del proyecto en una copia limpia, manda el diff a un revisor adversario con otro modelo, corrige o discute cada hallazgo bloqueante y solo entonces hace git push. Úsalo cuando el hook sello-push bloquee un push, o antes de subir cualquier rama en un repo con el gate activo.
+description: 'Revisa el cambio antes de subirlo al remoto y produce el sello que exige el gate de push: corre las pruebas del proyecto en una copia limpia, manda el diff a un revisor adversario con otro modelo, corrige o discute cada hallazgo bloqueante y solo entonces hace git push. Úsalo cuando el hook sello-push bloquee un push, o antes de subir cualquier rama en un repo con el gate activo.'
 ---
 
 Vas a subir un cambio a un repo con el gate de push activo (`git config kit-chema.gate true`).

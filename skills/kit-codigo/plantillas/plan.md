@@ -1,4 +1,4 @@
-# Plan NNN — <nombre de la feature>
+# Plan NNN: <nombre de la feature>
 
 <!-- Se escribe DESPUÉS de la spec y de la clarificación, ANTES del código.
      Sin código aquí: módulos, datos, decisiones. -->
