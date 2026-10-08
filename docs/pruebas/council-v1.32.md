@@ -17,7 +17,7 @@ regla de forma se cumplirá mejor que la anterior, porque el problema parece de 
 | # | Hallazgo | Quién | Estado |
 |---|---|---|---|
 | 1 | La condición de retiro de la v1.23 **no** se cumplió: del tema cierre hay 1 de 4 (la cuarta, verificada por el hilo principal: «¿con esta puedo acceder al restic…? ya me perdí», es de explicación) | las tres | aplicado: CHANGELOG lo cuenta como ajuste por recurrencia y ensayo reversible |
-| 2 | La clasificación la hizo el agente que propone | Anthropic, Kimi | **pendiente: la confirma el dueño antes de fusionar** |
+| 2 | La clasificación la hizo el agente que propone | Anthropic, Kimi | aplicado: **el dueño la confirmó el 2026-10-08** (1 de 4 es de cierre) |
 | 3 | «sí, no o a medias» sin «sin comprobar» sugiere más certeza que la evidencia | Astra | aplicado en el texto |
 | 4 | Vigilancia: ≥2 correcciones del tipo «¿quedó o no?» confirmadas a mano por el dueño, clasificando todas; las de explicación aparte | Anthropic, Kimi | aplicado en el CHANGELOG; la entrada de `reglas-vigiladas.json` se escribe al fusionar |
 | 5 | Falta el gate de disparo | Kimi | aplicado: 21/21, sin confusiones de frontera (`disparo-descriptions.md`) |
@@ -27,7 +27,7 @@ regla de forma se cumplirá mejor que la anterior, porque el problema parece de 
 vigilancia, que solo sirve si la clasifica el dueño. Y la propuesta traía una afirmación falsa («condición de retiro
 cumplida») que la postura inicial no vio y los tres evaluadores sí.
 
-## Las 4 correcciones, para que el dueño confirme la clasificación
+## Las 4 correcciones (clasificación confirmada por el dueño el 2026-10-08)
 
 | Fecha | Frase (recortada) | Clasificación propuesta |
 |---|---|---|

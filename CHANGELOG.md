@@ -1,6 +1,6 @@
 # Changelog — Kit Chema
 
-## v1.32 — 2026-10-07
+## v1.32 — 2026-10-08
 Una regla sustituida; núcleo 139 → 140 líneas (tope 150). Council de tres familias (Anthropic Opus 5.5, OpenAI Astra,
 Kimi K3): 3 × aprobada con cambios, síntesis del agente `sintetizador`; acta en `docs/pruebas/council-v1.32.md`.
 - **Núcleo, «Terminado significa verificado»:** al cerrar una tarea, o si preguntan si algo quedó, **la primera frase
@@ -17,7 +17,8 @@ Kimi K3): 3 × aprobada con cambios, síntesis del agente `sintetizador`; acta e
   de 10). Gate de disparo: 21/21, sin confusiones de frontera. **Vigilancia:** hasta el 2026-11-07 en
   `~/.claude/kit-chema/reglas-vigiladas.json`; se retira si hay ≥2 correcciones del tipo «¿quedó o no?» **confirmadas a
   mano por el dueño**, clasificando todas las que agrupe el juez; las de explicación de términos se anotan aparte.
-  **Antes de fusionar:** el dueño confirma la clasificación 1 de 4.
+  El dueño confirmó la clasificación 1 de 4 el 2026-10-08.
+
 ## v1.31.1 — 2026-10-08
 Limpieza ortográfica del núcleo, skills, agentes, comandos y plantillas, sin cambiar reglas ni frases gatillo.
 - Rayas espaciadas sustituidas por puntuación española y prefijos unidos; se conservan nombres de archivos y
