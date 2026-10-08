@@ -81,7 +81,7 @@ PAPELEO='(^|/)(CONTINUAR|CLAUDE|DECISIONES)\.md$|(^|/)docs/bitacora\.md$|(^|/)\.
 # `-- .`: el proyecto puede ser una SUBCARPETA de un repo compartido (las
 # presentaciones viven todas en un solo repo). Sin el pathspec, lo sin rastrear en
 # una carpeta hermana —un inbox— marcaba rancio a todos los proyectos del repo
-# (medido el 2026-10-08: dos presentaciones salían rancias por ~/Trabajo/00-inbox).
+# (medido el 2026-10-08: dos presentaciones salían rancias por un inbox hermano).
 sucios_de() {
   local salida rc lista
   salida="$(git -C "$1" status --porcelain --untracked-files=all -- . 2>/dev/null)"; rc=$?
