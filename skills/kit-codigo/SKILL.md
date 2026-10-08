@@ -1,13 +1,13 @@
 ---
 name: kit-codigo
 license: MIT
-description: Estándar Kit Chema para escribir, modificar o revisar código, scripts y proyectos de desarrollo. Úsala siempre antes de tocar código — al crear una función o proyecto, arreglar un bug, hacer un script, refactorizar o revisar un PR. Frases gatillo típicas "haz un script que", "arregla este error", "crea el proyecto", "revisa este código", "automatiza con código". Incluye la higiene anti-contaminación (reutilizar antes de crear, cero residuos, dependencias justificadas) y el flujo entender→plan→TDD→implementar→verificar de verdad.
+description: Estándar Kit Chema para escribir, modificar o revisar código, scripts y proyectos de desarrollo. Úsala siempre antes de tocar código: al crear una función o proyecto, arreglar un bug, hacer un script, refactorizar o revisar un PR. Frases gatillo típicas "haz un script que", "arregla este error", "crea el proyecto", "revisa este código", "automatiza con código". Incluye la higiene anticontaminación (reutilizar antes de crear, cero residuos, dependencias justificadas) y el flujo entender→plan→TDD→implementar→verificar de verdad.
 ---
 
-# Código — estándar Kit Chema
+# Código: estándar Kit Chema
 
 Playbook para escribir, modificar o revisar código. La sección más importante
-es la higiene anti-contaminación: es lo que evita que el código generado se
+es la higiene anticontaminación: es lo que evita que el código generado se
 convierta en basura acumulada.
 
 ## Bien hecho significa
@@ -55,7 +55,7 @@ Este es el orden; el primer paso es el que más se salta y el que más cuesta.
 5. Limpieza del diff. Antes de cerrar, repasa el diff completo (`git diff`) y
    quita todo lo que no aporta a la tarea.
 
-## Higiene anti-contaminación
+## Higiene anticontaminación
 
 La regla que sostiene todo lo demás. Cada punto es verificable.
 
@@ -146,8 +146,8 @@ evitan que se contradigan:
   sesiones y toca lógica de negocio o un entregable con audiencia, antes del
   código se abre `specs/NNN-nombre/` (spec → plan → tasks; ver
   `estandar-proyectos.md` y `plantillas/` junto a esta skill). La precedencia:
-  specs/ gobierna el alcance de una feature multi-sesión; writing-plans, el
-  plan de implementación grande dentro de una sesión — y `specs/NNN/plan.md`
+  specs/ gobierna el alcance de una feature multisesión; writing-plans, el
+  plan de implementación grande dentro de una sesión, y `specs/NNN/plan.md`
   puede ser ese artefacto. Un fix, un ajuste o un script de un solo uso siguen
   con plan corto aunque el proyecto sea grande. Proyecto entero muy chico →
   pregunta al usuario si estructura completa o mínima; nunca en silencio.

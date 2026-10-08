@@ -1,10 +1,10 @@
 ---
 name: kit-orquestacion
 license: MIT
-description: 'Estándar Kit Chema para repartir un trabajo entre varios agentes en paralelo — barridos amplios ("revisa los 24 proyectos", "todos los archivos de"), auditorías, migraciones, verificación de un entregable desde varios lentes, y material que no cabe en una ventana. Úsala ANTES de lanzar un workflow, un fan-out de subagentes o una corrida "ultracode", y también para decidir si NO conviene repartir. Frases gatillo "ultracode", "en paralelo", "reparte esto", "lanza varios agentes", "audita todo", "barre el repo", "revisa cada uno de", "compara estas 5 opciones", "es mucho material", "desde varios ángulos". Define la topología (quién lee y quién escribe), cuántos agentes, el contrato de cada uno y la verificación; el núcleo decide CUÁNDO delegar y con qué modelo. No sustituye a la skill del dominio: va junto con kit-research si es investigación con fuentes, y con kit-propuestas si se pidió council o evaluar una decisión — esas ponen el estándar del entregable, esta solo el reparto.'
+description: 'Estándar Kit Chema para repartir un trabajo entre varios agentes en paralelo: barridos amplios ("revisa los 24 proyectos", "todos los archivos de"), auditorías, migraciones, verificación de un entregable desde varios lentes, y material que no cabe en una ventana. Úsala ANTES de lanzar un workflow, un fan-out de subagentes o una corrida "ultracode", y también para decidir si NO conviene repartir. Frases gatillo "ultracode", "en paralelo", "reparte esto", "lanza varios agentes", "audita todo", "barre el repo", "revisa cada uno de", "compara estas 5 opciones", "es mucho material", "desde varios ángulos". Define la topología (quién lee y quién escribe), cuántos agentes, el contrato de cada uno y la verificación; el núcleo decide CUÁNDO delegar y con qué modelo. No sustituye a la skill del dominio: va junto con kit-research si es investigación con fuentes, y con kit-propuestas si se pidió council o evaluar una decisión; esas ponen el estándar del entregable, esta solo el reparto.'
 ---
 
-# Orquestación multi-agente — estándar Kit Chema
+# Orquestación multiagente: estándar Kit Chema
 
 Playbook para repartir un trabajo entre varios agentes. El núcleo ya dice cuándo
 vale delegar y con qué modelo; aquí se decide la forma de la corrida. La regla que
@@ -65,7 +65,7 @@ arma las copias por letra y deja el mapa aparte. (De `arena` de pstack, Lauren T
 Antes de repartir, considera la alternativa barata: **subir de esfuerzo o de modelo
 en un solo hilo, y en ese orden** (esfuerzo primero: Fable cuesta 2.5 veces lo que Opus 5.5
 por token de entrada y de salida, y solo compensa cuando Opus a mayor esfuerzo se queda corto, o
-cuando manda la latencia en un paso de síntesis o juicio — su alcance — porque ahí sale más
+cuando manda la latencia en un paso de síntesis o juicio —su alcance—, porque ahí sale más
 rápido, medido frente a Opus 5). En cadenas
 donde cada paso depende del anterior sobre el mismo material y todo cabe en contexto,
 un hilo con más esfuerzo gana; el fan-out ahí paga el sobrecosto sin cobrar nada.
@@ -80,12 +80,12 @@ escalera sirve para dimensionar, no para frenar el gasto.
 ## Antes de lanzar
 
 Tres preguntas. Cubren de dónde vienen casi todas las fallas medidas de estos
-sistemas — que no son del modelo, sino del reparto:
+sistemas, que no son del modelo, sino del reparto:
 
 1. **¿Cada agente tiene objetivo inequívoco y formato de salida declarado?** Cuando
    el resultado cruza de una etapa a otra, va con estructura, no en prosa libre.
 2. **¿Qué contexto tengo yo que el agente no tiene y le hará falta?** Arranca en
-   blanco: lo que no le pases, lo inventa o lo re-deduce mal.
+   blanco: lo que no le pases, lo inventa o lo rededuce mal.
 3. **¿Quién verifica?** Si nadie, la corrida entrega una conclusión sin respaldo.
 
 ## Cómo se verifica
@@ -95,7 +95,7 @@ sistemas — que no son del modelo, sino del reparto:
 - **Lentes distintos, no copias.** Si algo puede fallar de varias formas, dale a cada
   verificador un ángulo propio (cifras, fuentes, lógica, formato). Tres verificadores
   idénticos solo repiten el mismo punto ciego.
-- **Verificación adversarial donde hay verdad comprobable** — código que corre,
+- **Verificación adversarial donde hay verdad comprobable**: código que corre,
   cifras recalculables, fuentes que se abren. Para juicio subjetivo, un lector fresco
   vale más que un panel: no hay nada que refutar objetivamente.
 - **Verifica los hallazgos antes de heredarlos.** Que venga de un agente no lo hace
@@ -111,7 +111,7 @@ sistemas — que no son del modelo, sino del reparto:
 
 - **Rondas de debate entre agentes.** Suena a más rigor y no lo compra: la evidencia
   de que mejore el acierto es mixta, mientras que el costo de las réplicas es cierto
-  (del doble al triple) y el conformismo está documentado — los agentes se alinean
+  (del doble al triple) y el conformismo está documentado: los agentes se alinean
   entre sí en vez de sostener su lectura. Cada evaluador opina por separado y la
   agregación se hace fuera, contando.
 - **Volcar datos crudos al contexto.** Un agente que consulta una base, una carpeta
@@ -151,7 +151,7 @@ sistemas — que no son del modelo, sino del reparto:
 
 - **Repartir lo secuencial.** Si cada paso necesita el resultado del anterior sobre
   el mismo material, no se paraleliza: se le sube el esfuerzo. Distinto es tener N
-  piezas independientes que pasan por las mismas etapas — eso sí se encadena por
+  piezas independientes que pasan por las mismas etapas; eso sí se encadena por
   pieza.
 - **Fan-out sin verificación.** Muchos hallazgos rápidos y ninguno comprobado es
   peor que pocos y firmes: la conclusión llega con apariencia de respaldo.

@@ -1,10 +1,10 @@
 ---
 name: kit-propuestas
 license: MIT
-description: 'Estándar Kit Chema para redactar o evaluar propuestas y decisiones — propuestas de desarrollo, de inversión, de arquitectura, cotizaciones, o cualquier "¿hacemos X o Y?" con consecuencias reales (caro o difícil de revertir); una elección ligera o "ayúdame a elegir" sin consecuencia mayor la resuelve el núcleo con opciones, no esta skill. También todo mensaje o correo que pide aprobar, autorizar o decidir algo (aunque vaya a dirección). Úsala al escribir una propuesta, al evaluar una idea del usuario con consecuencias reales, al pedir aprobación de algo, y siempre que se pida "council". Frases gatillo "hazme la propuesta", "¿te parece bien esta idea?", "evalúa esta decisión", "que aprueben/autoricen X", "council". También el acercamiento a un contacto concreto de otra empresa ("escríbele a fulano de X"): confirma quién es antes de personalizar. Incluye el protocolo Council: panel de evaluadores independientes con veredicto aprobada / con cambios / rechazada.'
+description: 'Estándar Kit Chema para redactar o evaluar propuestas y decisiones: propuestas de desarrollo, de inversión, de arquitectura, cotizaciones, o cualquier "¿hacemos X o Y?" con consecuencias reales (caro o difícil de revertir); una elección ligera o "ayúdame a elegir" sin consecuencia mayor la resuelve el núcleo con opciones, no esta skill. También todo mensaje o correo que pide aprobar, autorizar o decidir algo (aunque vaya a dirección). Úsala al escribir una propuesta, al evaluar una idea del usuario con consecuencias reales, al pedir aprobación de algo, y siempre que se pida "council". Frases gatillo "hazme la propuesta", "¿te parece bien esta idea?", "evalúa esta decisión", "que aprueben/autoricen X", "council". También el acercamiento a un contacto concreto de otra empresa ("escríbele a fulano de X"): confirma quién es antes de personalizar. Incluye el protocolo Council: panel de evaluadores independientes con veredicto aprobada / con cambios / rechazada.'
 ---
 
-# Propuestas y decisiones — estándar Kit Chema
+# Propuestas y decisiones: estándar Kit Chema
 
 Playbook para redactar una propuesta y para juzgar una decisión con
 consecuencias. El corazón es el Council: un panel de evaluadores independientes
@@ -79,7 +79,7 @@ Este texto se pasa literal a cada evaluador, sin cambiarlo:
 evidencia concreta. Pondera cada hallazgo contra el tamaño, costo y
 reversibilidad de la propuesta: una mejora deseable no es una condición, y
 exigir controles de nivel corporativo a una solución pequeña es
-sobre-ingeniería, no rigor. 'Sin hallazgos relevantes' es una respuesta válida
+sobreingeniería, no rigor. 'Sin hallazgos relevantes' es una respuesta válida
 y esperada. No rellenes por cumplir."
 
 La razón es concreta: a un revisor al que se le pide "encuentra fallos" los
@@ -87,7 +87,7 @@ inventa para justificar su presencia. "Sin hallazgos relevantes" es un
 resultado plenamente válido y esperado, no un fracaso del evaluador. A cada
 evaluador se le entrega solo la propuesta y su mandato, nunca el hilo completo
 de la conversación: pasar el historial contamina el juicio independiente y anula
-el anti-anclaje. Un panel que siempre encuentra algo no es riguroso, es
+el antianclaje. Un panel que siempre encuentra algo no es riguroso, es
 teatral. La proporcionalidad es la misma disciplina aplicada a la escala: un
 hallazgo real sobre una propuesta pequeña no justifica exigirle el estándar de
 una infraestructura crítica.

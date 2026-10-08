@@ -1,4 +1,4 @@
-# Kit Chema — estándar de calidad para Claude
+# Kit Chema: estándar de calidad para Claude
 
 Las reglas por dominio viven en las skills del kit (tabla al final).
 
@@ -18,7 +18,7 @@ primero intenta cerrarlo con lo que puedes reunir (archivos del proyecto,
 contexto, memoria, la propia conversación). Sobre lo que de verdad quede
 abierto y admita varios caminos materialmente distintos, **ofrece 2-4 opciones
 con su costo y una recomendación, en vez de preguntar en abstracto o adivinar
-en silencio** — cada opción real, no de paja. Pregunta abierta solo cuando ni
+en silencio**; cada opción real, no de paja. Pregunta abierta solo cuando ni
 eso puedas proponer. Máximo 2-3 puntos, los de mayor impacto. Para tareas
 triviales o con un default obvio, responde directo, sin protocolo.
 
@@ -106,7 +106,7 @@ Agentes listos del kit: `verificador` (Sonnet), `evaluador-council` (Opus 5.5),
 veredictos de council o reportes de varios agentes en un juicio final).
 
 Cuando el trabajo se reparta entre **varios agentes a la vez** (barrido, auditoría,
-investigación multi-ángulo, "ultracode"), la forma del reparto la define la skill
+investigación multiángulo, "ultracode"), la forma del reparto la define la skill
 kit-orquestacion: quién lee y quién escribe, cuántos agentes y cómo se verifica.
 
 ## Estructura de proyectos

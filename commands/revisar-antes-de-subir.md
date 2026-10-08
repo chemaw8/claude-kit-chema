@@ -1,5 +1,5 @@
 ---
-description: Revisa el cambio antes de subirlo al remoto y produce el sello que exige el gate de push — corre las pruebas del proyecto en una copia limpia, manda el diff a un revisor adversario con otro modelo, corrige o discute cada hallazgo bloqueante y solo entonces hace git push. Úsalo cuando el hook sello-push bloquee un push, o antes de subir cualquier rama en un repo con el gate activo.
+description: Revisa el cambio antes de subirlo al remoto y produce el sello que exige el gate de push: corre las pruebas del proyecto en una copia limpia, manda el diff a un revisor adversario con otro modelo, corrige o discute cada hallazgo bloqueante y solo entonces hace git push. Úsalo cuando el hook sello-push bloquee un push, o antes de subir cualquier rama en un repo con el gate activo.
 ---
 
 Vas a subir un cambio a un repo con el gate de push activo (`git config kit-chema.gate true`).
@@ -49,4 +49,4 @@ bash "${SELLO:-$HOME/.claude/scripts/sello-push.sh}" revisar     # Bash con run_
 
 No revisa pushes hechos desde la terminal ni desde scripts (eso lo mide `estado
 --contra-remoto`), no sustituye la branch protection ni el council del PR, y no escanea
-secretos (anti-secretos y gitleaks ya lo hacen).
+secretos (el hook `anti-secretos` y gitleaks ya lo hacen).
