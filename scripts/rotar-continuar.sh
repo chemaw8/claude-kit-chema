@@ -105,6 +105,37 @@ limpio_de() {
   [ -n "$s" ] && echo "no" || echo "sí"
 }
 
+# Lee rutas separadas por NUL (relativas al directorio actual) e imprime la PRIMERA
+# que git no ignora (basta una para el veredicto, y no imprimir el resto evita un
+# EPIPE). Fuera de un repo vale cualquiera. Con --non-matching --verbose -z git emite
+# 4 campos por ruta (origen, línea, patrón, ruta); está ignorada si el origen viene
+# lleno y el patrón NO es una negación («!patrón» la vuelve a incluir). Todo fallo
+# —git que no responde (symlink, submódulo, index roto), Python ausente o que
+# truena— cierra hacia «rancio»: se devuelve la primera ruta sin filtrar, nunca
+# nada. En Python y no en awk porque RS="\0" no es portable (mawk, BSD).
+sin_ignorados() {
+  if ! command -v python3 >/dev/null 2>&1; then
+    tr '\0' '\n' | sed -n 1p; return
+  fi
+  python3 -c '
+import subprocess, sys
+rutas = [r for r in sys.stdin.buffer.read().split(b"\0") if r]
+fuera = rutas
+try:
+    if rutas and subprocess.run(["git", "rev-parse", "--git-dir"], capture_output=True).returncode == 0:
+        p = subprocess.run(["git", "check-ignore", "-z", "--stdin", "--non-matching", "--verbose"],
+                           input=b"\0".join(rutas) + b"\0", capture_output=True)
+        campos = p.stdout.split(b"\0")
+        if p.returncode in (0, 1) and len(campos) >= 4 * len(rutas):
+            fuera = [campos[i + 3] for i in range(0, 4 * len(rutas), 4)
+                     if campos[i] == b"" or campos[i + 2].startswith(b"!")]
+except Exception:
+    fuera = rutas
+if fuera:
+    sys.stdout.buffer.write(fuera[0] + b"\n")
+' || echo "?"   # Python que truena: algo hay que reportar, y «?» no es un veredicto fresco
+}
+
 # ── anclar ────────────────────────────────────────────────────────────────
 cmd_anclar() {
   local dir="${1:-.}"
@@ -138,16 +169,20 @@ cmd_reconciliar() {
     # Se excluyen los mismos archivos de papeleo que la ruta con git (línea ~99):
     # el propio /cierre puede tocar la ficha, DECISIONES o settings DESPUÉS de
     # escribir CONTINUAR, y eso no es trabajo real sin cerrar.
-    mas_nuevo="$(find "$dir" -type f -newer "$f" \
+    # Si el proyecto es un repo, lo que git ignora no es trabajo: un log que el
+    # propio proyecto escribe al correr (registro-envios.jsonl) marcaba rancio un
+    # cierre fresco (medido el 2026-10-08). Los archivos RASTREADOS cuentan aunque
+    # casen con un patrón de .gitignore: check-ignore no los reporta como ignorados.
+    mas_nuevo="$(cd "$dir" && find . -type f -newer CONTINUAR.md \
       -not -path '*/.git/*' -not -path '*/node_modules/*' \
       -not -name 'CONTINUAR.md' -not -name 'CLAUDE.md' -not -name 'DECISIONES.md' \
       -not -path '*/docs/bitacora.md' -not -path '*/.claude/settings.json' -not -name '.gitignore' \
-      -print -quit 2>/dev/null)"
+      -print0 2>/dev/null | sin_ignorados)"
     if [ -n "$mas_nuevo" ]; then
-      err "hay archivos modificados DESPUÉS del cierre del $fecha_cierre (p. ej. ${mas_nuevo#$dir/}) — el estado puede estar rancio"
+      err "hay archivos modificados DESPUÉS del cierre del $fecha_cierre (p. ej. ${mas_nuevo#./}) — el estado puede estar rancio"
       return 1
     fi
-    ok "estado fresco (sin git; nada se tocó después del cierre del $fecha_cierre)"
+    ok "estado fresco (sin ancla de commit; nada se tocó después del cierre del $fecha_cierre)"
     return 0
   fi
 
@@ -835,6 +870,54 @@ EOF
   ( cd "$pa" && git add -A && git commit -qm "trabajo del proyecto" )
   cmd_reconciliar "$pa/proyecto" >/dev/null 2>&1; rca=$?
   [ "$rca" -eq 1 ] || { err "autotest: un commit en la carpeta del proyecto debía dar 1 (rancio), dio $rca"; f=1; }
+
+  # Sin ancla de commit (ruta por fecha) dentro de un repo: lo que git ignora no es
+  # trabajo; lo rastreado o nuevo sin ignorar, sí. Un archivo RASTREADO que casa con
+  # un patrón de .gitignore también cuenta.
+  local pg="$t/ignorados" rcg; mkdir -p "$pg/logs"
+  ( cd "$pg" && git init -q && git config user.email t@t && git config user.name t )
+  printf 'registro.jsonl\nlogs/\n' > "$pg/.gitignore"; : > "$pg/app.py"; : > "$pg/forzado.jsonl"
+  ( cd "$pg" && git add -A && git add -f forzado.jsonl && git commit -qm base )
+  printf '# CONTINUAR — ignorados  ·  cierre 2026-10-08  ·  trabajo cerrado sin ancla\n' > "$pg/CONTINUAR.md"
+  touch -t 202601010000 "$pg/CONTINUAR.md"
+  touch -t 202512010000 "$pg/app.py" "$pg/forzado.jsonl" "$pg/.gitignore"
+  : > "$pg/registro.jsonl"; : > "$pg/logs/hoy.log"
+  cmd_reconciliar "$pg" >/dev/null 2>&1 \
+    || { err "autotest: lo que git ignora no debe marcar rancio en la ruta por fecha"; f=1; }
+  printf 'x' >> "$pg/forzado.jsonl"
+  cmd_reconciliar "$pg" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 1 ] || { err "autotest: un archivo rastreado que casa con .gitignore sí es trabajo, dio $rcg"; f=1; }
+  touch -t 202512010000 "$pg/forzado.jsonl"; : > "$pg/nuevo.py"
+  cmd_reconciliar "$pg" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 1 ] || { err "autotest: un archivo nuevo no ignorado debe marcar rancio en la ruta por fecha, dio $rcg"; f=1; }
+  # Si check-ignore FALLA, el filtro no puede abrir hacia «fresco»: con solo lo
+  # ignorado como novedad, el veredicto tiene que ser rancio (aviso 2 del sello 5a4ec66).
+  rm -f "$pg/nuevo.py"
+  cmd_reconciliar "$pg" >/dev/null 2>&1 || { err "autotest: la base del caso de git roto debe salir fresca"; f=1; }
+  local gitreal falso="$t/bin-falso"; gitreal="$(command -v git)"; mkdir -p "$falso"
+  printf '#!/bin/sh\n[ "$1" = check-ignore ] && exit 128\nexec "%s" "$@"\n' "$gitreal" > "$falso/git"; chmod +x "$falso/git"
+  PATH="$falso:$PATH" cmd_reconciliar "$pg" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 1 ] || { err "autotest: si check-ignore falla, lo nuevo debe contar (rancio), dio $rcg"; f=1; }
+  # Un Python que truena tampoco abre hacia «fresco» (aviso 2 del sello a8c3426).
+  printf '#!/bin/sh\nexit 1\n' > "$falso/python3"; chmod +x "$falso/python3"
+  printf 'x' >> "$pg/registro.jsonl"; : > "$pg/nuevo.py"
+  PATH="$falso:$PATH" cmd_reconciliar "$pg" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 1 ] || { err "autotest: si el filtro truena, lo nuevo debe contar (rancio), dio $rcg"; f=1; }
+  rm -f "$pg/nuevo.py"
+  # Un «!patrón» vuelve a incluir el archivo: no está ignorado y sí cuenta (aviso 1).
+  printf '*.log\n!importante.log\n' >> "$pg/.gitignore"; touch -t 202512010000 "$pg/.gitignore"
+  : > "$pg/ruido.log"
+  cmd_reconciliar "$pg" >/dev/null 2>&1 || { err "autotest: un *.log ignorado no debe marcar rancio"; f=1; }
+  : > "$pg/importante.log"
+  cmd_reconciliar "$pg" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 1 ] || { err "autotest: un archivo re-incluido con !patrón sí es trabajo, dio $rcg"; f=1; }
+  # Fuera de un repo no hay .gitignore que valga: todo lo nuevo cuenta.
+  local ps="$t/sin-git-fecha"; mkdir -p "$ps"
+  printf '# CONTINUAR — x  ·  cierre 2026-10-08\n' > "$ps/CONTINUAR.md"; touch -t 202601010000 "$ps/CONTINUAR.md"
+  cmd_reconciliar "$ps" >/dev/null 2>&1 || { err "autotest: sin git y sin cambios debía salir fresco"; f=1; }
+  : > "$ps/registro.jsonl"
+  cmd_reconciliar "$ps" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 1 ] || { err "autotest: sin git, un archivo nuevo debe marcar rancio, dio $rcg"; f=1; }
 
   [ "$f" -eq 0 ] && ok "autotest: rotación sin pérdida, contrato y reconciliación funcionan"
   return $f

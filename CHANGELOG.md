@@ -1,5 +1,20 @@
 # Changelog — Kit Chema
 
+## v1.32.2 — 2026-10-08
+Segundo arreglo del helper `rotar-continuar.sh`, sin cambiar reglas ni núcleo.
+- **La ruta por fecha de `reconciliar` no respetaba `.gitignore`.** Cuando el encabezado no trae ancla de commit,
+  `reconciliar` compara fechas de modificación; un log que el propio proyecto escribe al correr, ignorado por git,
+  marcaba rancio un cierre fresco. Ahora, dentro de un repo, lo que git ignora no cuenta (`git check-ignore`); lo
+  rastreado sí, aunque case con un patrón. Fuera de un repo todo lo nuevo sigue contando.
+  Un archivo re-incluido con `!patrón` sí cuenta. Todo fallo del filtro (git que no responde, Python ausente o
+  que truena) cierra hacia «rancio», nunca hacia «fresco». El filtro va en Python y no en awk (`RS="\0"` no es
+  portable a mawk ni a BSD) y devuelve solo la primera ruta, sin EPIPE con miles de archivos (avisos de los sellos
+  5a4ec66 y a8c3426).
+- El mensaje de esa ruta decía «sin git» aunque el proyecto fuera un repo; ahora dice «sin ancla de commit».
+- Autotest: casos de archivo ignorado (fresco), rastreado que casa con `.gitignore` (rancio), nuevo sin ignorar
+  (rancio), `check-ignore` que falla (rancio), filtro que truena (rancio), `!patrón` (rancio) y sin repo (rancio),
+  con `touch -t` (POSIX). Cada caso nuevo se comprobó en rojo contra la versión que corrige.
+
 ## v1.32.1 — 2026-10-08
 Arreglo del helper `rotar-continuar.sh`, sin cambiar reglas ni núcleo.
 - **`reconciliar` y `anclar` miraban el repo entero, no la carpeta del proyecto.** Un proyecto que vive en una
