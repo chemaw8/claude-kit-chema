@@ -12,7 +12,8 @@ Solo forma, sin cambiar reglas. En el núcleo, las 9 skills, los 4 agentes y los
 - **19 prefijos con guion** (F12) se escriben juntos: `multiagente`, `reejecutar`, `anticontaminación`,
   `sobreingeniería`, `antianclaje`, `multisesión`, `multiángulo`, `rededucir`, `relanzamiento`. `anti-secretos`, que es
   el nombre de un hook, pasa a código.
-- Tocan **16 descriptions** (9 skills, 4 agentes, 3 comandos): en todas, solo la raya. Ninguna palabra gatillo cambia.
+- Tocan **16 descriptions** (9 skills, 4 agentes, 3 comandos): cambia la raya y, en `kit-codigo` y `sintetizador`, también un prefijo (`anticontaminación`, `multiagente`).
+  Ninguna frase gatillo cambia.
 
 Conteo con `scripts/muletillas.sh revisar` sobre `nucleo/*.md skills/*/SKILL.md skills/*/references/*.md agents/*.md
 commands/*.md`: F9 55 → 1 y F12 19 → 0; 18,564 → 18,512 palabras. La F9 que queda es un falso positivo del script
@@ -22,7 +23,7 @@ conjunto más chico de archivos.
 ## Evidencia
 
 - **Por qué vale la pena** (acta v1.27): en el A/B de la raya, «con kit» dio 2 de 10 textos con raya espaciada y «kit
-  sin rayas» 1 de 10; sin kit, 0 de 10. Provisional (n=10, Fisher p ≈ 0.47) y el kit no es la mayor fuente (las notas
+  sin rayas» 1 de 10; sin kit, 0 de 10. Provisional: n=10 por brazo, y ni siquiera «con kit» contra «sin kit» es significativo (Fisher p ≈ 0.47) y el kit no es la mayor fuente (las notas
   del vault tienen más). Los prefijos con guion: 0 en texto humano, 15 en el kit, 16 en entregables reales.
 - **Gate de disparo:** `python3 docs/pruebas/disparo.py --modelo sonnet --paralelo 6` sobre e480497 → núcleo 21/21,
   confusiones de frontera no benignas 0, rc=0.
