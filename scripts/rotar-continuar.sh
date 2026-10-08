@@ -108,14 +108,24 @@ limpio_de() {
 # Lee rutas separadas por NUL (relativas al directorio actual) e imprime, una por
 # línea, las que git NO ignora. Fuera de un repo las deja pasar todas. Con
 # --non-matching --verbose -z git emite 4 campos por ruta (origen, línea, patrón,
-# ruta) y el origen vacío significa «no ignorada».
+# ruta) y el origen vacío significa «no ignorada». Si git falla (código distinto de
+# 0 o 1: un symlink, un submódulo, un index roto) se devuelven TODAS: el fallo cierra
+# hacia «rancio», nunca hacia «fresco». En Python y no en awk porque RS="\0" no es
+# portable (en mawk y en el awk de BSD activa el modo párrafo y no imprime nada).
 sin_ignorados() {
-  if git rev-parse --git-dir >/dev/null 2>&1; then
-    git check-ignore -z --stdin --non-matching --verbose 2>/dev/null \
-      | awk 'BEGIN { RS = "\0" } { c = (NR - 1) % 4; if (c == 0) src = $0; else if (c == 3 && src == "") print }'
-  else
-    tr '\0' '\n'
-  fi
+  python3 -c '
+import subprocess, sys
+rutas = [r for r in sys.stdin.buffer.read().split(b"\0") if r]
+fuera = rutas
+if rutas and subprocess.run(["git", "rev-parse", "--git-dir"], capture_output=True).returncode == 0:
+    p = subprocess.run(["git", "check-ignore", "-z", "--stdin", "--non-matching", "--verbose"],
+                       input=b"\0".join(rutas) + b"\0", capture_output=True)
+    campos = p.stdout.split(b"\0")
+    if p.returncode in (0, 1) and len(campos) >= 4 * len(rutas):
+        fuera = [campos[i + 3] for i in range(0, 4 * len(rutas), 4) if campos[i] == b""]
+for r in fuera:
+    sys.stdout.buffer.write(r + b"\n")
+'
 }
 
 # ── anclar ────────────────────────────────────────────────────────────────
@@ -872,6 +882,14 @@ EOF
   touch -d '2025-12-01' "$pg/forzado.jsonl"; : > "$pg/nuevo.py"
   cmd_reconciliar "$pg" >/dev/null 2>&1; rcg=$?
   [ "$rcg" -eq 1 ] || { err "autotest: un archivo nuevo no ignorado debe marcar rancio en la ruta por fecha, dio $rcg"; f=1; }
+  # Si check-ignore FALLA, el filtro no puede abrir hacia «fresco»: con solo lo
+  # ignorado como novedad, el veredicto tiene que ser rancio (aviso 2 del sello 5a4ec66).
+  rm -f "$pg/nuevo.py"
+  cmd_reconciliar "$pg" >/dev/null 2>&1 || { err "autotest: la base del caso de git roto debe salir fresca"; f=1; }
+  local gitreal falso="$t/bin-falso"; gitreal="$(command -v git)"; mkdir -p "$falso"
+  printf '#!/bin/sh\n[ "$1" = check-ignore ] && exit 128\nexec "%s" "$@"\n' "$gitreal" > "$falso/git"; chmod +x "$falso/git"
+  PATH="$falso:$PATH" cmd_reconciliar "$pg" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 1 ] || { err "autotest: si check-ignore falla, lo nuevo debe contar (rancio), dio $rcg"; f=1; }
   # Fuera de un repo no hay .gitignore que valga: todo lo nuevo cuenta.
   local ps="$t/sin-git-fecha"; mkdir -p "$ps"
   printf '# CONTINUAR — x  ·  cierre 2026-10-08\n' > "$ps/CONTINUAR.md"; touch -d '2026-01-01' "$ps/CONTINUAR.md"
