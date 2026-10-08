@@ -14,7 +14,7 @@ Kimi K3): 3 × aprobada con cambios, síntesis del agente `sintetizador`; acta e
   council (un sí/no sin evidencia sugiere más certeza de la que hay). Lo de definir términos **no** entra al núcleo (el
   council de la v1.23 ya vio que choca con «al equipo técnico se le puede hablar en detalle»); sigue en el contexto
   personal del dueño. **Qué paga la línea:** el margen (11 → 10 líneas al tope; GOBERNANZA exige remoción solo a menos
-  de 10). Gate de disparo: 21/21, sin confusiones de frontera. **Vigilancia:** hasta el 2026-11-07 en
+  de 10). Gate de disparo: núcleo 21/21 y 0 confusiones de frontera no benignas, también tras rebasar sobre la v1.31.1. **Vigilancia:** hasta el 2026-11-07 en
   `~/.claude/kit-chema/reglas-vigiladas.json`; se retira si hay ≥2 correcciones del tipo «¿quedó o no?» **confirmadas a
   mano por el dueño**, clasificando todas las que agrupe el juez; las de explicación de términos se anotan aparte.
   El dueño confirmó la clasificación 1 de 4 el 2026-10-08.
