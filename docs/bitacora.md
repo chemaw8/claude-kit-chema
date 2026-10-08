@@ -560,3 +560,19 @@ evals-entregables: su CONTINUAR y sus archivos de estado son la fuente del resul
 «Detalle vivo»:
 - Repo público: no copiar casos, ids privados de clientes, recibos de modelos ni cifras de negocio.
 - Fusionar con `gh api -X PUT …/pulls/<n>/merge`, no `gh pr merge`.
+
+## 2026-10-08 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+Estado al 2026-10-08: v1.32.1 en main (PR #85) e instalada en Claude Code y pi. La v1.32 (estado en la primera
+`reconciliar` y `anclar` miran la carpeta del proyecto (`-- .`), no el repo entero. Sin PR abiertos.
+
+«Siguiente paso»:
+- [ ] Posible mejora de `reconciliar` (sin decidir): en la ruta sin ancla de commit compara fechas de modificación
+      y no respeta `.gitignore` (un log ignorado marcó rancio a otro proyecto el 2026-10-08).
+
+«Cómo retomar»:
+- Abrir: `CHANGELOG.md` (v1.32 y v1.32.1), `DECISIONES.md` y el estado real de los PR (`gh pr list`).
+
+«Última decisión relevante»:
+- 2026-10-08: v1.32.1 como arreglo de script por el flujo normal (PR + CI + sello), sin council: no toca reglas.
