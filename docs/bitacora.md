@@ -486,3 +486,40 @@ solo tiene `main`; las ramas viejas se borraron (hashes en `~/.local/state/pi-ha
   descritos sin cifras ni ids; el detalle, en el repo privado. En v1.25 casi se cuelan en el acta; se detectó antes del push.
 - La auditoría completa vive en `claude-entorno/docs/auditorias/2026-09-28-prompt-audit-kit.md` (privada: cita el
   entorno). No entraron a propósito: nombres de versión del núcleo (council 2026-09-27) y la poda de `kit-propuestas`.
+
+## 2026-10-08 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+Estado al 2026-10-08: v1.31.1 preparada para publicar, con limpieza ortográfica, YAML corregido y pruebas completas.
+Council aprobada con cambios, aplicados; informes originales y contraste de dos síntesis en `docs/pruebas/council-v1.31.1.md`.
+El PR #82 (v1.32) queda separado y no se aprueba con este trabajo. La línea base de entregables sigue con `skills`
+por decisión del dueño; se mide otra vez cuando el tripwire detecte la instalación de este parche.
+
+«Siguiente paso»:
+- [ ] Publicar v1.31.1 por PR con sello y CI; instalar y comprobar copias de Claude Code y traducciones de pi.
+- [ ] Tras instalar, ejecutar el tripwire y la línea base en evals-entregables si avisa; registrar resultado allí.
+- [ ] `/por-que`: anotar los usos reales en el acta v1.30; el anuncio de José no cuenta como uso verificado.
+- [ ] Arenas desde Claude Code: documentar las primeras dos, sin inventar corridas para cumplir el conteo.
+- [ ] Revisar el PR #82 por su propia decisión; no fusionarlo por arrastre.
+
+«Cómo retomar»:
+- Abrir: `docs/pruebas/council-v1.31.1.md`, `DECISIONES.md`, `git status` y el estado de los PR.
+> bajo: - Disparo: `python3 docs/pruebas/disparo.py --modelo sonnet --paralelo 3` → banco completo, sin errores de ejecución,
+  con proporcional y fronteras aprobados. La corrida final íntegra está en `docs/pruebas/council-v1.31.1-crudos/gate-disparo.txt`.
+
+«Bloqueadores / esperas»:
+- Ningún bloqueo de autenticación pendiente: pi/Anthropic respondió OK tras renovar acceso el 2026-10-08.
+- Publicación e instalación todavía deben comprobarse; no basta que el código esté commiteado.
+
+«Frentes abiertos»:
+| Limpieza v1.31.1 | terminada y verificada en rama | publicar e instalar | sello y CI |
+| Clasificación del council | informes archivados; clases coinciden en 5/6 acciones, mismo veredicto | cerrado como sonda, no prueba de superioridad | ninguno |
+| Piezas de pstack | solo falta evidencia de uso real | tabla de siguientes pasos | trabajo real apropiado |
+| Evals | con skills; mejoras experimentales cerradas por sus criterios | vigilar regresiones, no perseguir 13/13 | tripwire |
+
+«Última decisión relevante»:
+- 2026-10-08: limpieza de forma sin nuevas reglas; la sintaxis YAML también se verifica contra el consumidor.
+
+«Detalle vivo»:
+- El repo es público: no copiar casos, ids privados de clientes, recibos de modelos ni cifras de negocio.
+- El falso positivo de `muletillas.sh` junto a código y sus falsos negativos están documentados, no corregidos aquí.
