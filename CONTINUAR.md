@@ -1,53 +1,46 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-07  ·  commit e42a17b (rama cierre/2026-10-07)  ·  cierre limpio: sí
-> Estado vivo de sesión. Los hechos estables (qué es, cómo instalar, gobernanza) viven en
-> README.md, GOBERNANZA.md y CLAUDE.md, no aquí.
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-08  ·  commit 772f794 (rama texto/rayas-y-prefijos)  ·  cierre limpio: sí
+> Estado vivo de sesión. Hechos estables en README.md, GOBERNANZA.md y CLAUDE.md; registro histórico en docs/bitacora.md.
 
 ## Dónde vamos
-**Estado al 2026-10-07:** v1.31 en main e instalada en Claude Code y en pi: arena y cegado en `kit-orquestacion` con
-`scripts/cegar.sh` (council aprobada con cambios; `docs/pruebas/council-v1.31.md`, con su criterio de retiro y su costo).
-`cegar.sh` lleva 1 de 3 usos reales (un falso positivo). `/crear-verificacion` lleva 1 de 2 corridas reales. El remoto
-solo tiene `main`; las ramas viejas se borraron (hashes en `~/.local/state/pi-harness/ramas-borradas-kit-2026-10-06.txt`).
+Estado al 2026-10-08: v1.31.1 preparada para publicar, con limpieza ortográfica, YAML corregido y pruebas completas.
+Council aprobada con cambios, aplicados; informes originales y contraste de dos síntesis en `docs/pruebas/council-v1.31.1.md`.
+El PR #82 (v1.32) queda separado y no se aprueba con este trabajo. La línea base de entregables sigue con `skills`
+por decisión del dueño; se mide otra vez cuando el tripwire detecte la instalación de este parche.
 
 ## Siguiente paso
-- [ ] `cegar.sh`: anotar sus 2 usos reales que faltan en la tabla de `docs/pruebas/council-v1.31.md` (va 1 de 3; umbral de retiro: ninguna fuga real en 3 usos).
-- [ ] Arenas desde Claude Code: anotar las 2 primeras y si superaron al mejor intento (criterio en el mismo acta).
-- [ ] `/por-que`: anotar en el acta v1.30 los primeros 5 usos reales (umbral de retiro).
-- [ ] Próximo council: archivar los reportes crudos para medir la clasificación de hallazgos (resíntesis v1.11).
-- [ ] Segunda corrida real de `/crear-verificacion`, en otro proyecto (umbral de retiro: 2 corridas).
-- [ ] Limpiar el texto del kit: 39 rayas espaciadas y 15 prefijos con guion (toca descriptions: gate de disparo).
-- [ ] Vigía de v1.25 (umbral de retiro en `docs/pruebas/council-v1.25.md`).
-- [ ] 2026-10-28: revisar la vigilancia de «cierre en palabras llanas» (`~/.claude/kit-chema/reglas-vigiladas.json`).
+- [ ] Publicar v1.31.1 por PR con sello y CI; instalar y comprobar copias de Claude Code y traducciones de pi.
+- [ ] Tras instalar, ejecutar el tripwire y la línea base en evals-entregables si avisa; registrar resultado allí.
+- [ ] `cegar.sh`: falta un uso real (2 de 3; ambos falsos positivos). Mantener el criterio de retiro de v1.31.
+- [ ] `/por-que`: anotar los usos reales en el acta v1.30; el anuncio de José no cuenta como uso verificado.
+- [ ] Arenas desde Claude Code: documentar las primeras dos, sin inventar corridas para cumplir el conteo.
+- [ ] Segunda corrida real de `/crear-verificacion`, en otro proyecto con interfaz.
+- [ ] Revisar el PR #82 por su propia decisión; no fusionarlo por arrastre.
+- [ ] Vigía de v1.25 y revisión programada del 2026-10-28: conservan sus criterios, fuera de esta limpieza.
 
 ## Cómo retomar
-- Abrir:    `investigacion/2026-09-30-pstack-y-mercado.md` (secciones 3 y 4) · `git log --oneline -5`
-- Correr:   `bash verificar.sh` → código 0 y ninguna línea `FALLA`
-- Verificar: `bash scripts/muletillas.sh autotest` → «todo en verde»
+- Abrir: `docs/pruebas/council-v1.31.1.md`, `DECISIONES.md`, `git status` y el estado de los PR.
+- Correr: `bash verificar.sh` → código 0 y sin FALLA.
+- Disparo: `python3 docs/pruebas/disparo.py --modelo sonnet --paralelo 3` → banco completo, sin errores de ejecución,
+  con proporcional y fronteras aprobados. La corrida final íntegra está en `docs/pruebas/council-v1.31.1-crudos/gate-disparo.txt`.
 
 ## Bloqueadores / esperas
-- Ninguno.
+- Ningún bloqueo de autenticación pendiente: pi/Anthropic respondió OK tras renovar acceso el 2026-10-08.
+- Publicación e instalación todavía deben comprobarse; no basta que el código esté commiteado.
 
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |
 |---|---|---|---|
-| Ronda pstack 3 (v1.31) | en main e instalada | 3 usos reales de `cegar.sh` (umbral de retiro) | ninguno |
-| Ronda pstack 2 (v1.30) | en main e instalada | 5 usos reales de `/por-que` (umbral de retiro) | ninguno |
-| Entorno portable (v1.29) | asistente de un comando en main y en el CI | probar el asistente en Fedora | ninguno |
-| Debilidades de la línea base | «dato literal» atacado en v1.25 | siguiente patrón: «se cubre en vez de afirmar» (reclasificación, onepager 0/3) | José elige |
-| Auditoría prompt-audit | mecánicos hechos (v1.22.4) | topes de extensión de agentes y comandos: probar con el banco antes de quitar | ninguno |
-| `omitClaudeMd` en `lector-fresco` | sin tocar | A/B con 5 entregables; el lector dejaría de cargar la confidencialidad | medir primero |
-| Pendientes v1.19.2 | sin revisar desde 2026-09-08 | ver `docs/pruebas/medicion-esfuerzo-v1.19.2.md` (a, b, c) | ninguno |
+| Limpieza v1.31.1 | terminada y verificada en rama | publicar e instalar | sello y CI |
+| Clasificación del council | informes archivados; clases coinciden en 5/6 acciones, mismo veredicto | cerrado como sonda, no prueba de superioridad | ninguno |
+| Piezas de pstack | solo falta evidencia de uso real | tabla de siguientes pasos | trabajo real apropiado |
+| Evals | con skills; mejoras experimentales cerradas por sus criterios | vigilar regresiones, no perseguir 13/13 | tripwire |
 
 ## Última decisión relevante
-- 2026-10-06  v1.31 (fusionada, PR #75): arena y cegado entran, el 6 y el 7 ya están cubiertos; base A de la arena, contra el juez → `DECISIONES.md`
-- 2026-10-01  v1.30: `/por-que` entra con criterio de retiro tras la prueba de uso real → `docs/pruebas/council-v1.30.md`
-- 2026-09-29  v1.25: la regla va en las skills, medida por A/B con inyección (no en el núcleo) → `docs/pruebas/council-v1.25.md`
-- 2026-09-29  v1.24: el dinero carga kit-finanzas; la regla va en el núcleo, no en la description → `docs/pruebas/council-v1.24.md`
-- 2026-09-29  `plugin eval` complementa al gate de disparo, no lo sustituye → `docs/pruebas/piloto-plugin-eval.md`
+- 2026-10-08: limpieza de forma sin nuevas reglas; la sintaxis YAML también se verifica contra el consumidor.
+- 2026-10-07: la línea base sigue con skills y el PR #81 se cierra sin fusionar (evals-entregables/DECISIONES.md).
 
 ---
 ## Detalle vivo
-- Fusionar SIEMPRE por `gh api -X PUT …/pulls/<n>/merge` (trampa en la ficha): `gh pr merge` cerró #52 y #54 sin fusionar.
-- El repo es PÚBLICO: los casos de evals-entregables son `privado-local` (cifras de contratos reales). En el kit van
-  descritos sin cifras ni ids; el detalle, en el repo privado. En v1.25 casi se cuelan en el acta; se detectó antes del push.
-- La auditoría completa vive en `claude-entorno/docs/auditorias/2026-09-28-prompt-audit-kit.md` (privada: cita el
-  entorno). No entraron a propósito: nombres de versión del núcleo (council 2026-09-27) y la poda de `kit-propuestas`.
+- El repo es público: no copiar casos, ids privados de clientes, recibos de modelos ni cifras de negocio.
+- El falso positivo de `muletillas.sh` junto a código y sus falsos negativos están documentados, no corregidos aquí.
+- Fusionar con `gh api -X PUT …/pulls/<n>/merge`, no `gh pr merge`.
