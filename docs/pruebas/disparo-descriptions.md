@@ -141,3 +141,13 @@ las fronteras y el umbral del núcleo lo toleró. Ese intento no prueba cobertur
 El script mide las descriptions de skills, no valida YAML ni mide por sí solo todo el comportamiento del núcleo.
 La validación del parser se documenta aparte en `council-v1.31.1.md`. Después de esta corrida solo cambian actas,
 continuidad y versión; no cambian las descriptions medidas.
+## 2026-10-07 — PR «regla v1.32» (el estado en la primera frase)
+
+`python3 docs/pruebas/disparo.py --paralelo 6 --modelo sonnet` sobre la rama `regla/si-o-no-primero`, con el texto final
+del núcleo (tras el council), en el árbol de trabajo justo antes del commit 1d135cc (previo al rebase; hoy es db64278): `nucleo/` y las descriptions
+medidos son idénticos a los de 1d135cc; lo que se escribió después (acta, CHANGELOG, versión) el runner no lo lee → **núcleo 21/21, confusiones de frontera no benignas 0, rc=0**; 30 de 30 filas
+coincidieron con la skill esperada. El PR no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4).
+**Tras rebasar sobre la v1.31.1 (2026-10-08):** la rama se rebasó sobre `ab0338f` (v1.31.1, limpieza ortográfica que tocó
+el núcleo y 16 descriptions). Se volvió a medir sobre el árbol combinado (HEAD c5a8076) → **núcleo 21/21, confusiones de
+frontera no benignas 0, rc=0**. Repetido el mismo día sobre 3b209bc con la salida completa revisada: **30 de 30 filas coinciden con la skill esperada
+(30 ✓, 0 ✗), sin errores ni tiempos agotados del ejecutor**, rc=0. `verificar.sh` con las comprobaciones nuevas de la v1.31.1: código 0, sin FALLA.

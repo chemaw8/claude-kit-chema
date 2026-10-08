@@ -1,5 +1,24 @@
 # Changelog — Kit Chema
 
+## v1.32 — 2026-10-08
+Una regla sustituida; núcleo 139 → 140 líneas (tope 150). Council de tres familias (Anthropic Opus 5.5, OpenAI Astra,
+Kimi K3): 3 × aprobada con cambios, síntesis del agente `sintetizador`; acta en `docs/pruebas/council-v1.32.md`.
+- **Núcleo, «Terminado significa verificado»:** al cerrar una tarea, o si preguntan si algo quedó, **la primera frase
+  da el estado (sí, no, a medias o sin comprobar)**; luego, en palabras llanas, lo hecho, lo que falló o quedó fuera y,
+  si la hay, la decisión que le toca al usuario. Sustituye la frase de la v1.23, no se apila. **Evidencia, contada como
+  es:** la regla de la v1.23 **no** cumplió su condición de retiro (≥2 correcciones del tema en la ventana): de las 4
+  correcciones que el juez semanal agrupó entre el 2026-09-29 y el 10-01, solo 1 es de cierre («no entendí lo que
+  dijiste, ¿quedó bien o no?»); las otras 3 son explicaciones confusas de un término. El cambio es un **ajuste por
+  recurrencia** de la misma queja (09-21 «dime cómo quedó y qué falta» → 09-29 «¿quedó bien o no?») y un ensayo
+  reversible. Lo único nuevo y comprobable es el estado en la primera frase; «sin comprobar» entra por pedido del
+  council (un sí/no sin evidencia sugiere más certeza de la que hay). Lo de definir términos **no** entra al núcleo (el
+  council de la v1.23 ya vio que choca con «al equipo técnico se le puede hablar en detalle»); sigue en el contexto
+  personal del dueño. **Qué paga la línea:** el margen (11 → 10 líneas al tope; GOBERNANZA exige remoción solo a menos
+  de 10). Gate de disparo: núcleo 21/21 y 0 confusiones de frontera no benignas, también tras rebasar sobre la v1.31.1. **Vigilancia:** hasta el 2026-11-07 en
+  `~/.claude/kit-chema/reglas-vigiladas.json`; se retira si hay ≥2 correcciones del tipo «¿quedó o no?» **confirmadas a
+  mano por el dueño**, clasificando todas las que agrupe el juez; las de explicación de términos se anotan aparte.
+  El dueño confirmó la clasificación 1 de 4 el 2026-10-08.
+
 ## v1.31.1 — 2026-10-08
 Limpieza ortográfica del núcleo, skills, agentes, comandos y plantillas, sin cambiar reglas ni frases gatillo.
 - Rayas espaciadas sustituidas por puntuación española y prefijos unidos; se conservan nombres de archivos y
