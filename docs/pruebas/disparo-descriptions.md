@@ -149,4 +149,5 @@ medidos son idénticos a los de 1d135cc; lo que se escribió después (acta, CHA
 coincidieron con la skill esperada. El PR no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4).
 **Tras rebasar sobre la v1.31.1 (2026-10-08):** la rama se rebasó sobre `ab0338f` (v1.31.1, limpieza ortográfica que tocó
 el núcleo y 16 descriptions). Se volvió a medir sobre el árbol combinado (HEAD c5a8076) → **núcleo 21/21, confusiones de
-frontera no benignas 0, rc=0**. `verificar.sh` con las comprobaciones nuevas de la v1.31.1: código 0, sin FALLA.
+frontera no benignas 0, rc=0**. Repetido el mismo día sobre 3b209bc con la salida completa revisada: **30 de 30 filas coinciden con la skill esperada
+(30 ✓, 0 ✗), sin errores ni tiempos agotados del ejecutor**, rc=0. `verificar.sh` con las comprobaciones nuevas de la v1.31.1: código 0, sin FALLA.
