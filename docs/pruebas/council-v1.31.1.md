@@ -40,3 +40,60 @@ conjunto más chico de archivos.
 
 Aprobada: es forma, el gate pasa y es reversible con un revert. Mi única duda es si alguna sustitución cambió el
 sentido de una frase.
+
+## 2026-10-08: acta y correcciones verificadas
+
+**Veredicto: aprobada con cambios; aplicados en `a8bd68d`.** OpenAI Astra (viabilidad técnica) y Anthropic Opus 5.5
+(abogado del diablo) coincidieron en el bloqueo: cambiar raya por dos puntos rompía el YAML de varias descriptions.
+Kimi K3 (riesgos) aprobó, sin detectar ese problema. Su primer intento agotó el tiempo y no se contó como voto;
+se repitió con `revisor-kimi`, mismo modelo, mandato y contexto independiente, sin mostrarle los otros informes.
+Los tres reportes completos están en `council-v1.31.1-crudos/`.
+
+La postura inicial cambia: no bastaba que los tests y el gate estuvieran verdes. Se reprodujo el error con el
+parser `yaml` del pi instalado: fallaban 11 frontmatters. Tras entrecomillarlos, los 20 frontmatters de skills,
+agentes y comandos parsean y traen description de texto. La comprobación nueva de `verificar.sh` detecta esta
+clase concreta de error (`: ` en description sin comillas); no se presenta como un validador YAML completo.
+
+| Hallazgo | Clase final | Procedencia | Resolución |
+|---|---|---|---|
+| YAML inválido en descriptions | actuar | OpenAI y Anthropic | 11 descriptions entrecomilladas; parser real sin fallos |
+| Rayas que el revisor léxico no veía dentro del conjunto | actuar | Anthropic | Corregidas en núcleo, sintetizador y proyecto-init |
+| Gate sin registro en su acta específica | actuar | Anthropic | Corrida final íntegra y registro en `disparo-descriptions.md` |
+| Chequeo para que no vuelva el mismo error YAML | considerar | Anthropic | Adoptado: guardia pequeña, sin dependencias nuevas |
+| Rayas y prefijos en estándar y plantillas | considerar | Anthropic | Incluidos en la misma limpieza; no se alteraron contratos de CONTINUAR |
+| Puntos ciegos de `muletillas.sh` | considerar | Anthropic y Kimi | No se cambia el script aquí; queda documentado como mejora opcional |
+| Frases gatillo y significado conservados | anotado | Las tres familias | Ningún cambio semántico demostrado; gate final íntegro |
+| Afirmación general «máquinas sin riesgo» | descartado | Kimi | No cubría el consumidor YAML; no se hereda esa garantía |
+
+**Mapa de acuerdos.** El bloqueo YAML tiene evidencia coincidente de OpenAI y Anthropic, no una mayoría de votos.
+La limpieza incompleta y el registro del gate los señaló solo Anthropic. Kimi corroboró mecánicamente los conteos
+iniciales y el merge limpio con #82; su aprobación no invalida el fallo del parser. La evidencia de beneficio
+estético sigue siendo débil: este cierre no afirma mejora de entregables ni del 7/13.
+
+### Clasificación de hallazgos: comprobación de repetibilidad
+
+Dos `sintetizador` Fable 5.1 corrieron en paralelo con los mismos tres informes y la misma postura inicial, sin
+verse entre sí. Ambos dieron **aprobada con cambios**. Sus tablas finales se conservan como extractos literales
+(`sintesis-1-tabla.md`, `sintesis-2-tabla.md`); no se afirma que esos archivos sean las síntesis completas.
+
+Se emparejaron manualmente los seis hallazgos que proponían una acción. La correspondencia y los números de fila
+están en `clasificacion.tsv`: coinciden **5 de 6 clases**. La diferencia es el registro del gate, `actuar` en una
+síntesis y `considerar` en la otra; ambas listas de cambios pedían hacerlo. Se resolvió como `actuar` por el RUNBOOK.
+Los enunciados anotados no se puntúan: una síntesis los agrupó y la otra los separó.
+
+Es una sonda de estabilidad del formato, no una prueba de que clasificar mejore las decisiones: mismo modelo,
+un council y emparejamiento posterior. Queda cerrado el pendiente de conservar los informes originales y contrastar
+la clasificación; no se añade otra regla ni se exige una nueva ronda por este resultado.
+
+### Pruebas finales
+
+- `bash verificar.sh`: código 0, sin FALLA (103 comprobaciones en esta corrida).
+- Parser YAML real de pi: 20 frontmatters válidos. Antes de corregir, 11 fallaban.
+- Gate de disparo sobre las descriptions finales de `a8bd68d`: 30/30 peticiones, núcleo 21/21,
+  cero errores del ejecutor y cero confusiones de frontera; código 0. Salida íntegra en
+  `council-v1.31.1-crudos/gate-disparo.txt`.
+- Las corridas previas con `TimeoutExpired` no se aceptaron como validación completa, incluso una que imprimió
+  PASA. La recuperación OAuth de Anthropic se verificó aparte; no demuestra la causa de todos esos timeouts.
+- El conteo inicial F9/F12 de arriba corresponde al árbol revisado por el panel, no al alcance ampliado final.
+  Queda el falso positivo conocido de `commands/cierre.md`; los marcadores de la plantilla CONTINUAR se conservan
+  porque son un contrato del helper, no prosa libre. No se reescribieron actas históricas.

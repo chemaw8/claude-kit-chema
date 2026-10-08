@@ -250,3 +250,18 @@ sin medición (C); cambiar el núcleo por el candidato 7 sin una sonda. Detalle:
 dejaba el mapa dentro con el destino `x/.` y revisaba el contenido de las carpetas (codex, anthropic). El párrafo de la
 arena pasó a «dos o tres», con su procedencia (anthropic, kimi). Las carpetas `arena-<n>` de pi-harness pasaron a
 `trabajo-<n>` (pi-harness `56d1c3f`). Acta: `docs/pruebas/council-v1.31.md`.
+
+## 2026-10-08: limpieza ortográfica y cierre de la sonda de clasificación (v1.31.1)
+
+**Qué.** A pedido del dueño, se limpia la prosa activa del kit, sin añadir reglas. Se conservan contratos de
+CONTINUAR y actas históricas. La versión es un parche de v1.31; no incluye ni aprueba el PR #82, que sigue aparte.
+**Por qué.** El kit aconsejaba revisar señales que su propio texto contenía. No se afirma que la corrección suba
+la calidad de entregables: el A/B previo no es concluyente. Cambios pequeños y reversibles, con gate completo.
+**Council.** Dos familias detectaron YAML inválido causado por la puntuación; se corrigieron las descriptions y
+se añadió la guardia mínima a `verificar.sh`. Validación con el parser consumidor, no solo con el gate de disparo.
+Acta e informes originales en `docs/pruebas/council-v1.31.1.md` y su carpeta `-crudos`.
+**Clasificación.** Dos síntesis del mismo modelo, independientes entre sí, coincidieron en el veredicto y en 5/6
+clases emparejadas. La discrepancia (registrar el gate) se resuelve por el RUNBOOK. Eso cierra el pendiente de
+archivar y contrastar; no prueba superioridad frente a una síntesis sin clasificación.
+**Descartado.** Tocar las actas antiguas, incluir la regla del PR #82 o ampliar esta ronda a reparar todos los puntos
+ciegos de `muletillas.sh`. `/por-que` no se da por usado solo porque el dueño anunció que iba a usarlo.

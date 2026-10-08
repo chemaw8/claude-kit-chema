@@ -1,5 +1,18 @@
 # Changelog — Kit Chema
 
+## v1.31.1 — 2026-10-08
+Limpieza ortográfica del núcleo, skills, agentes, comandos y plantillas, sin cambiar reglas ni frases gatillo.
+- Rayas espaciadas sustituidas por puntuación española y prefijos unidos; se conservan nombres de archivos y
+  contratos del helper. Las actas históricas no se reescriben.
+- El council detectó un efecto no cosmético: `: ` dentro de descriptions sin comillas rompía YAML estricto.
+  Se entrecomillaron 11 descriptions y `verificar.sh` vigila esa clase de error sin dependencias nuevas.
+  Validación con el parser de pi: 20 frontmatters válidos. Gate final completo: 30/30 peticiones, sin errores.
+- Informes originales del council archivados; dos síntesis independientes coinciden en 5 de 6 clases de hallazgos
+  accionables y en el veredicto. Es evidencia de trazabilidad y una sonda de estabilidad, no de mejores decisiones.
+  Acta: `docs/pruebas/council-v1.31.1.md`.
+- `cegar.sh`: segundo uso real documentado; marcó una ruta interna que el productor no veía, no una fuga efectiva.
+  No cambia el umbral de retiro ni se atribuye beneficio que no se midió.
+
 ## v1.31 — 2026-10-06
 Ronda pstack 3 (corrida ultracode uc-202610061430-aogq): los candidatos 5 a 8 de la lista de pstack
 (`cursor/plugins/pstack`, commit df58112, MIT © Lauren Tan), cada uno con veredicto medido sin modelos. Núcleo y

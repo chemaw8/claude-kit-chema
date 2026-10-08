@@ -1,0 +1,7 @@
+hallazgo	fila_sintesis_1	clase_1	fila_sintesis_2	clase_2
+YAML invalido	1	actuar	1	actuar
+Rayas no detectadas dentro del conjunto	2	actuar	2	actuar
+Registro del gate	3	actuar	6	considerar
+Chequeo de description en verificar.sh	4	considerar	3	considerar
+Puntos ciegos de muletillas.sh	5	considerar	5	considerar
+Estandar y plantillas fuera del conjunto	6	considerar	4	considerar
