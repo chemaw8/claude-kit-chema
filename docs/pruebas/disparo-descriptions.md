@@ -147,3 +147,6 @@ continuidad y versión; no cambian las descriptions medidas.
 del núcleo (tras el council), en el árbol de trabajo justo antes del commit 1d135cc: `nucleo/` y las descriptions
 medidos son idénticos a los de 1d135cc; lo que se escribió después (acta, CHANGELOG, versión) el runner no lo lee → **núcleo 21/21, confusiones de frontera no benignas 0, rc=0**; 30 de 30 filas
 coincidieron con la skill esperada. El PR no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4).
+**Tras rebasar sobre la v1.31.1 (2026-10-08):** la rama se rebasó sobre `ab0338f` (v1.31.1, limpieza ortográfica que tocó
+el núcleo y 16 descriptions). Se volvió a medir sobre el árbol combinado (HEAD c5a8076) → **núcleo 21/21, confusiones de
+frontera no benignas 0, rc=0**. `verificar.sh` con las comprobaciones nuevas de la v1.31.1: código 0, sin FALLA.
