@@ -78,9 +78,13 @@ PAPELEO='(^|/)(CONTINUAR|CLAUDE|DECISIONES)\.md$|(^|/)docs/bitacora\.md$|(^|/)\.
 # El fallo se señala por CÓDIGO DE SALIDA (3), nunca por un centinela de texto: una
 # ruta puede ser cualquier cosa, incluido un archivo llamado "?", y un centinela que
 # también puede ser un dato válido no distingue nada.
+# `-- .`: el proyecto puede ser una SUBCARPETA de un repo compartido (las
+# presentaciones viven todas en un solo repo). Sin el pathspec, lo sin rastrear en
+# una carpeta hermana —un inbox— marcaba rancio a todos los proyectos del repo
+# (medido el 2026-10-08: dos presentaciones salían rancias por un inbox hermano).
 sucios_de() {
   local salida rc lista
-  salida="$(git -C "$1" status --porcelain --untracked-files=all 2>/dev/null)"; rc=$?
+  salida="$(git -C "$1" status --porcelain --untracked-files=all -- . 2>/dev/null)"; rc=$?
   [ "$rc" -ne 0 ] && return 3
   lista="$(printf '%s\n' "$salida" | awk '
       { ruta = substr($0, 4); i = index(ruta, " -> ")
@@ -196,7 +200,7 @@ cmd_reconciliar() {
   rama_esc="$(printf '%s' "$cab" | grep -oE '\(rama [^ )]+\)' | head -1 | sed -E 's/^\(rama //; s/\)$//')"
   rama_real="$(git -C "$dir" rev-parse --abbrev-ref HEAD 2>/dev/null)"
   if [ -n "$rama_esc" ] && [ "$rama_esc" != "$rama_real" ]; then
-    local ncom; ncom="$(git -C "$dir" rev-list --count "$commit_esc..HEAD" 2>/dev/null || echo '?')"
+    local ncom; ncom="$(git -C "$dir" rev-list --count "$commit_esc..HEAD" -- . 2>/dev/null || echo '?')"
     err "el cierre se ancló en la rama '$rama_esc' y estás en '${rama_real:-?}' — no se puede reconciliar entre ramas ($ncom commit(s) desde el ancla, sin juzgar)"
     echo "  → si es aquí donde trabajas, cierra aquí (/cierre): el encabezado nuevo queda anclado en esta rama" >&2
     return 3
@@ -205,7 +209,9 @@ cmd_reconciliar() {
   # Llegados aquí el ancla NO es HEAD (eso ya se decidió arriba), pero puede no estar
   # en el historial: si el diff falla, el ancla se reescribió y no hay nada que comparar.
   local cambiados otros
-  cambiados="$(git -C "$dir" diff --name-only --no-renames "$commit_esc..HEAD" 2>/dev/null)" || {
+  # `-- .` por lo mismo que en sucios_de: en un repo compartido, los commits de otras
+  # carpetas no son trabajo de ESTE proyecto.
+  cambiados="$(git -C "$dir" diff --name-only --no-renames "$commit_esc..HEAD" -- . 2>/dev/null)" || {
     err "el ancla $commit_esc no está en el historial — no se puede reconciliar; revisa a mano"
     return 3; }
   # grep devuelve 1 si no queda nada tras filtrar el papeleo: es el caso fresco,
@@ -806,6 +812,29 @@ EOF
   ( cd "$p8" && git mv codigo.py CLAUDE.md && git add -A && git commit -qm "se va un archivo real" )
   cmd_reconciliar "$p8" >/dev/null 2>&1; rc8=$?
   [ "$rc8" -eq 1 ] || { err "autotest: un renombre COMMITEADO de archivo real a papeleo debía dar 1 (rancio), dio $rc8"; f=1; }
+
+  # Proyecto en SUBCARPETA de un repo compartido: lo de las carpetas hermanas (sin
+  # rastrear o commiteado) no es de este proyecto; lo de su propia carpeta, sí.
+  local pa="$t/repo-compartido" rca; mkdir -p "$pa/proyecto" "$pa/inbox"
+  ( cd "$pa" && git init -q && git config user.email t@t && git config user.name t )
+  : > "$pa/proyecto/deck.html"; ( cd "$pa" && git add -A && git commit -qm base )
+  printf "$PLANTILLA" "$(cd "$pa" && git rev-parse --short HEAD)" \
+                      "$(cd "$pa" && git rev-parse --abbrev-ref HEAD)" > "$pa/proyecto/CONTINUAR.md"
+  ( cd "$pa" && git add -A && git commit -qm "cierre: papeleo" )
+  : > "$pa/inbox/suelto.xlsx"
+  cmd_reconciliar "$pa/proyecto" >/dev/null 2>&1 \
+    || { err "autotest: lo sin rastrear en una carpeta hermana no debe marcar rancio"; f=1; }
+  cmd_anclar "$pa/proyecto" | grep -qE 'cierre limpio: sí$' \
+    || { err "autotest: lo sucio en una carpeta hermana no debe anclar 'cierre limpio: no'"; f=1; }
+  ( cd "$pa" && git add -A && git commit -qm "trabajo en otra carpeta" )
+  cmd_reconciliar "$pa/proyecto" >/dev/null 2>&1 \
+    || { err "autotest: un commit en una carpeta hermana no debe marcar rancio"; f=1; }
+  : > "$pa/proyecto/nuevo.js"
+  cmd_reconciliar "$pa/proyecto" >/dev/null 2>&1; rca=$?
+  [ "$rca" -eq 1 ] || { err "autotest: lo sin commitear en la carpeta del proyecto debía dar 1 (rancio), dio $rca"; f=1; }
+  ( cd "$pa" && git add -A && git commit -qm "trabajo del proyecto" )
+  cmd_reconciliar "$pa/proyecto" >/dev/null 2>&1; rca=$?
+  [ "$rca" -eq 1 ] || { err "autotest: un commit en la carpeta del proyecto debía dar 1 (rancio), dio $rca"; f=1; }
 
   [ "$f" -eq 0 ] && ok "autotest: rotación sin pérdida, contrato y reconciliación funcionan"
   return $f
