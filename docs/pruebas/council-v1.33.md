@@ -1,4 +1,4 @@
-# Council v1.33 (borrador) — «buscar lo que ya se hizo antes de dar un dato por inexistente» (2026-10-09)
+# Council v1.33 — «buscar lo que ya se hizo antes de dar un dato por inexistente» (2026-10-09)
 
 **Estado (2026-10-09): re-medición cumplida (5 de 5 condiciones); listo para que el dueño fusione.** Historia: La v4 del texto no cumplió su prerregistro; el dueño abrió el PR como excepción
 para que el council pesara beneficio contra falla. El council aprobó con cambios **condicionado a re-medir** el texto
@@ -43,8 +43,8 @@ confidencialidad y alcance, que la postura inicial no contemplaba.
 | 1 | El texto empujaba a reincorporar («insumo», «es un hallazgo»): solo completar lo faltante; lo perdido se reporta y se pregunta | las tres | actuar (aplicado) |
 | 2 | Alcance: de cerca a lejos y parar al encontrar; solo lectura; Descargas filtrada al proyecto; buscar ≠ cargar; mismo entregable o su familia; nunca otro cliente ni carpetas personales | las tres | actuar (aplicado) |
 | 3 | «Lo que de verdad no existe» → «no localizado en las fuentes revisadas», con cuáles | Astra | actuar (aplicado) |
-| 4 | La excepción solo vale como cumplimiento diferido: re-medir el texto definitivo; la v4 queda como ensayo fallido | Kimi, Astra, Opus | actuar (pendiente: condición de fusión) |
-| 5 | Reportar tokens y tiempo A vs B | Opus | actuar (en la re-medición) |
+| 4 | La excepción solo vale como cumplimiento diferido: re-medir el texto definitivo; la v4 queda como ensayo fallido | Kimi, Astra, Opus | actuar (cumplido el 2026-10-09, ver «Re-medición») |
+| 5 | Reportar tokens y tiempo A vs B | Opus | actuar: cumplido a medias (tiempo y USD sí; tokens no, el runner no los guarda) |
 | 6 | Caso de «retiro decidido después» | Astra | considerar |
 | 7 | Pedir permiso antes de salir del alcance; tope de 10 min | Astra | considerar: contradice el pedido del dueño; el riesgo lo cubre #2 |
 | 8 | Piso documentado para futuras excepciones al prerregistro | Kimi | considerar (gobernanza, fuera de este PR) |
@@ -65,8 +65,11 @@ fuera de alcance, tiempo por tarea.
 - **Revisión:** tiempo mediano +30 % sin hallazgos; 90 días sin activación útil; cambio del modelo productor (re-correr).
 
 ## Re-medición del texto definitivo (2026-10-09) — condición de fusión cumplida
-Prerregistrada antes de correr, n=6 por brazo, criterio original. Brazos A de las trampas: los de la v4 (mismos casos y
-skills instaladas). Completa, sin INFRA ni errores del juez.
+Prerregistrada antes de correr, n=6 por brazo, criterio original. Completa, sin INFRA ni errores del juez.
+**Desviación declarada:** el council pidió re-correr el frente completo; los brazos A (sin regla) de las dos trampas
+se reutilizaron de la v4 en vez de correrse de nuevo. Se declaró así en el prerregistro, porque el brazo A no depende
+del texto: mismos casos byte a byte, mismas skills instaladas, mismo modelo e instrumento, del mismo día. Los controles
+sí tienen brazo A completo (3 del piloto + 3 nuevas).
 
 | Caso | Sin regla | Con v1.33 | ¿Cumple? |
 |---|---|---|---|
@@ -77,4 +80,5 @@ skills instaladas). Completa, sin INFRA ni errores del juez.
 | Sección temporal retirada | 6/6 | 6/6 | sí |
 
 Costo de buscar (pedido del council): tiempo mediano +21 % a +36 % y costo por corrida +16 % a +29 % solo en los casos
-donde faltaba un dato; en los que no, sin cambio. Los tokens no se registraron (el runner no los guarda).
+donde faltaba un dato; en los que no, sin cambio. **Los tokens no se registraron** (el runner no los guarda): esa parte de la condición queda incumplida y se
+sustituye por tiempo y costo por corrida, que sí miden lo mismo de forma indirecta.
