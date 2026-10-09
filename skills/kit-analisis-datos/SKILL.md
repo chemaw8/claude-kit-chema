@@ -49,24 +49,29 @@ resto sirve.
    un cliente, un día?); agregar o cruzar tablas sin saberlo es la causa típica
    de sumas dobles. Reporta lo que encuentres:
    la calidad del dato es parte del entregable, no un paso escondido.
-   Si a la fuente nueva le falta un periodo o una serie, o si rehaces algo que
-   ya se entregó (un reporte recurrente, un análisis que se vuelve a correr),
-   antes de dar un dato por inexistente búscalo en lo que ya se hizo: salidas y
-   versiones entregadas del proyecto, descargas, otros proyectos, bases de datos
-   y notas de trabajo (áreas de trabajo, no carpetas personales), en cualquier
-   formato: CSV, Excel, PDF, bases, imágenes. Esas versiones son insumo, no solo
-   referencia de formato. Si el dato solo existe dibujado en una gráfica,
-   extráelo (texto del PDF, OCR o midiendo las barras contra el eje) y declara
-   la precisión. Úsalo con su origen a la vista («leído de la gráfica del
-   reporte de julio, aproximado») después de comprobar que cuadra con la fuente
-   nueva en los periodos que comparten; si no cuadra, no lo uses y muestra la
-   diferencia. Una serie parecida que mide otra cosa (otra métrica, otra unidad)
-   no sirve. Si no aparece, dilo y márcalo; no lo estimes como si fuera dato. Y
-   si la última versión entregada perdió algo que una anterior sí traía, es un
-   hallazgo: di qué se perdió, desde cuándo y cuánto movía las cifras ya
-   presentadas. No es pérdida lo que la propia versión anterior declara único,
-   temporal o con condición de retiro que ya se cumplió: eso no se reincorpora
-   ni se reporta como omisión.
+   Si a la fuente nueva le falta un periodo o una serie, o rehaces algo ya
+   entregado, antes de dar un dato por inexistente búscalo en lo que ya se hizo,
+   de cerca a lejos y parando al encontrarlo: versiones entregadas del proyecto;
+   luego Descargas (solo archivos que por nombre o contenido correspondan al
+   proyecto); luego otros proyectos, bases y notas de trabajo del grupo, nunca
+   carpetas personales. Solo lectura, carga solo el archivo que trae el dato y
+   nada sale a servicios externos. Vale cualquier formato (CSV, Excel, PDF,
+   bases, imágenes), pero solo del mismo entregable o su familia: datos de otro
+   cliente no entran aunque cuadren, ni una serie parecida que mide otra cosa.
+   Si el dato solo existe dibujado en una gráfica, extráelo (texto del PDF, OCR
+   o midiendo barras contra el eje) y declara la precisión. Lo recuperado entra
+   solo para completar el periodo o la serie faltante, con su origen a la vista
+   («leído de la gráfica del reporte de julio, aproximado») y tras comprobar que
+   cuadra con la fuente nueva en los periodos que comparten; si no cuadra, no lo
+   uses y muestra la diferencia. No cambia filas, secciones ni cortes que la
+   fuente nueva define. Si no aparece, di «no localizado en las fuentes
+   revisadas» y cuáles; no lo estimes. Si la última entrega perdió algo que una
+   anterior traía, es candidato a revisión, no prueba de omisión: contrástalo
+   con el encargo y las decisiones de alcance, incluidas posteriores; reporta
+   qué, desde cuándo y cuánto movía las cifras, y pregunta; no lo reincorpores
+   por tu cuenta. Lo declarado único, temporal o retirado a propósito no es
+   pérdida; si la intención no está clara, márcalo «cambio de alcance por
+   confirmar».
 2. Preguntas que el análisis debe responder. Escribe las preguntas concretas
    antes de sumergirte en los números. Sin preguntas, "explorar" se vuelve pasear
    por gráficas sin saber qué buscas ni cuándo terminaste.
@@ -90,10 +95,12 @@ Antes de entregar, con los datos y el análisis delante:
 - ¿Separé el hecho de la hipótesis, marcados como cosas distintas?
 - Si encontré algo que no cuadra, ¿el titular sale de la lectura corregida (o
   marca la discrepancia) y no de la literal con la anomalía en una nota?
-- Si faltaba un periodo o esto rehace algo ya entregado, ¿buscaste en lo que ya
-  se había hecho (en cualquier formato, gráficas incluidas), usaste lo encontrado
-  con su origen y solo si cuadra, marcaste lo que de verdad no existe, y dijiste
-  si la última entrega había perdido algo (sin contar lo retirado a propósito)?
+- Si faltaba un periodo o esto rehace algo ya entregado, ¿buscaste de cerca a
+  lejos en lo ya hecho (solo lectura, áreas del grupo, gráficas incluidas),
+  usaste solo lo del mismo entregable y solo si cuadra, con su origen; marcaste
+  «no localizado en las fuentes revisadas» y cuáles; y lo que la última entrega
+  perdió lo reportaste y preguntaste sin reincorporarlo (lo retirado a propósito
+  no cuenta)?
 - ¿Los scripts están guardados y se pueden reejecutar para llegar al mismo
   resultado?
 - ¿Las gráficas van sin trucos visuales (ejes desde cero, periodo completo)?
