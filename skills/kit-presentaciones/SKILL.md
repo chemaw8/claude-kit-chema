@@ -73,6 +73,12 @@ Antes de dar por terminado, con el archivo abierto delante:
   empresa?
 - ¿Abriste el archivo generado y lo revisaste lámina por lámina, no solo la
   primera?
+- Si al material le falta un periodo o rehace uno ya entregado, ¿buscaste en lo
+  que ya se había hecho (versiones anteriores, descargas, otros proyectos, bases,
+  gráficas incluidas), usaste lo que traían con su origen si cuadra, y dijiste si
+  la última entrega había perdido alguna lámina, entidad o fuente? Lo que la
+  versión anterior declaraba único, temporal o retirado a propósito no es
+  pérdida: no se reincorpora.
 - Si el encargo produce varios documentos para la misma decisión (deck + resumen
   + correo, deck + one-pager), ¿las cifras clave coinciden entre todos, no solo
   cada una con su fuente?
