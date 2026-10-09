@@ -1,6 +1,6 @@
 # Council v1.33 (borrador) — «buscar lo que ya se hizo antes de dar un dato por inexistente» (2026-10-09)
 
-**Estado: PR en borrador, NO fusionar.** La v4 del texto no cumplió su prerregistro; el dueño abrió el PR como excepción
+**Estado (2026-10-09): re-medición cumplida (5 de 5 condiciones); listo para que el dueño fusione.** Historia: La v4 del texto no cumplió su prerregistro; el dueño abrió el PR como excepción
 para que el council pesara beneficio contra falla. El council aprobó con cambios **condicionado a re-medir** el texto
 definitivo (el de este PR). Los casos de medición son privados (repo `evals-entregables`); aquí van sin cifras de negocio.
 
@@ -63,3 +63,18 @@ fuera de alcance, tiempo por tarea.
 - **Retiro (revertir el PR):** ≥ 2 reincorporaciones o falsas pérdidas que el dueño corrija en 30 días, o 1 con impacto
   material.
 - **Revisión:** tiempo mediano +30 % sin hallazgos; 90 días sin activación útil; cambio del modelo productor (re-correr).
+
+## Re-medición del texto definitivo (2026-10-09) — condición de fusión cumplida
+Prerregistrada antes de correr, n=6 por brazo, criterio original. Brazos A de las trampas: los de la v4 (mismos casos y
+skills instaladas). Completa, sin INFRA ni errores del juez.
+
+| Caso | Sin regla | Con v1.33 | ¿Cumple? |
+|---|---|---|---|
+| Gráfica sin cifras en un PDF viejo de Descargas | 0/6 | 5/6 | sí |
+| Base SQLite en otra carpeta de trabajo | 1/6 | 6/6 | sí |
+| Señuelo de otra métrica (no usarlo) | 6/6 | 6/6 | sí |
+| Lámina declarada única (no ver pérdidas) | 6/6 | 6/6 | sí (la v4 había dado 2/3) |
+| Sección temporal retirada | 6/6 | 6/6 | sí |
+
+Costo de buscar (pedido del council): tiempo mediano +21 % a +36 % y costo por corrida +16 % a +29 % solo en los casos
+donde faltaba un dato; en los que no, sin cambio. Los tokens no se registraron (el runner no los guarda).
