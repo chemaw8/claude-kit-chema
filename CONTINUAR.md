@@ -11,7 +11,7 @@ hasta el 2026-11-07. Sin PR abiertos.
 ## Siguiente paso
 - [ ] Vigilancia v1.33 hasta el 2027-01-07 (`reglas-vigiladas.json`, id `kit-v1.33-buscar-lo-hecho`): suspensión con 1
       lectura fuera de las áreas de trabajo o 1 uso de datos de otro cliente; retiro con ≥2 reincorporaciones o falsas
-      pérdidas que José corrija en 30 días. Re-medir las trampas si cambia el modelo productor.
+      pérdidas que el dueño corrija en 30 días. Re-medir las trampas si cambia el modelo productor.
 - [ ] Vigilancia v1.32 hasta el 2026-11-07 (`~/.claude/kit-chema/reglas-vigiladas.json`): clasificar a mano las
       correcciones «¿quedó o no?» que agrupe el juez; se retira con ≥2 confirmadas por el dueño.
 - [ ] `cegar.sh`: falta un uso real (2 de 3; ambos falsos positivos). Mantener el criterio de retiro de v1.31.
@@ -21,7 +21,7 @@ hasta el 2026-11-07. Sin PR abiertos.
 - [ ] Vigía de v1.25 y revisión programada del 2026-10-28: conservan sus criterios.
 
 ## Cómo retomar
-- Abrir: `CHANGELOG.md` (v1.32, v1.32.1 y v1.32.2), `DECISIONES.md` y el estado real de los PR (`gh pr list`).
+- Abrir: `CHANGELOG.md` (v1.33 y v1.32.x), `DECISIONES.md` y el estado real de los PR (`gh pr list`).
 - Correr: `bash verificar.sh` → código 0 y sin FALLA (incluye el autotest de `scripts/rotar-continuar.sh`).
 - Comprobar instalación: comparar el núcleo entre marcadores y las copias del kit, no solo la versión de la cabecera;
   los scripts de `scripts/` deben ser idénticos a sus copias instaladas en `~/.claude/scripts/` (`diff -q`).
