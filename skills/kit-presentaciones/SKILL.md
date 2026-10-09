@@ -73,6 +73,14 @@ Antes de dar por terminado, con el archivo abierto delante:
   empresa?
 - ¿Abriste el archivo generado y lo revisaste lámina por lámina, no solo la
   primera?
+- Si al material le falta un periodo o rehace uno ya entregado, ¿buscaste de
+  cerca a lejos en lo ya hecho (versiones anteriores, Descargas, otros proyectos
+  y bases del grupo; solo lectura, nunca carpetas personales ni datos de otro
+  cliente), usaste lo recuperado solo para completar lo que falta, del mismo
+  entregable y si cuadra, con su origen; marcaste «no localizado en las fuentes
+  revisadas» y cuáles; y reportaste y preguntaste, sin reincorporar, si la
+  última entrega perdió una lámina, entidad o fuente? Lo declarado único,
+  temporal o retirado a propósito no es pérdida.
 - Si el encargo produce varios documentos para la misma decisión (deck + resumen
   + correo, deck + one-pager), ¿las cifras clave coinciden entre todos, no solo
   cada una con su fuente?

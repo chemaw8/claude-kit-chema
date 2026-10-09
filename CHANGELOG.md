@@ -1,5 +1,21 @@
 # Changelog — Kit Chema
 
+## v1.33 — 2026-10-09
+Una regla nueva en el cuerpo de `kit-analisis-datos` (párrafo al final del
+paso 1 de «Proceso» y una pregunta del checklist) y de `kit-presentaciones` (una pregunta del checklist). Núcleo y
+descriptions intactos: el gate de disparo no aplica. Acta: `docs/pruebas/council-v1.33.md`.
+- **Buscar lo que ya se hizo antes de dar un dato por inexistente**, de cerca a lejos y en cualquier formato (gráficas
+  incluidas: extraerlas y declarar la precisión), solo lectura y solo del mismo entregable; usar lo recuperado solo para
+  completar lo faltante y si cuadra; «no localizado en las fuentes revisadas» si no aparece; lo que la última entrega
+  perdió se reporta y se pregunta, sin reincorporarlo.
+- **Evidencia, contada como es:** la v4 del texto no cumplió su prerregistro (4 de 5 condiciones: trampas 0/6 → 5/6 y
+  1/6 → 6/6; un control 3/3 → 2/3). El dueño abrió el PR como excepción; council de tres familias: aprobada con cambios,
+  condicionada a re-medir este texto con el criterio original. **Re-medición cumplida** (5 de 5, n=6 por brazo): trampas
+  0/6 → 5/6 y 1/6 → 6/6; controles 6/6 en ambos brazos (la lámina única, que la v4 había bajado a 2/3, queda 6/6).
+  Buscar cuesta +21–36 % de tiempo solo cuando falta un dato. Desviaciones declaradas en el acta: los brazos sin regla
+  de las trampas se reutilizaron de la v4 (no dependen del texto) y los tokens no se midieron (el runner no los guarda).
+  Vigilancia de 90 días y umbrales de retiro en el acta.
+
 ## v1.32.2 — 2026-10-08
 Segundo arreglo del helper `rotar-continuar.sh`, sin cambiar reglas ni núcleo.
 - **La ruta por fecha de `reconciliar` no respetaba `.gitignore`.** Cuando el encabezado no trae ancla de commit,
