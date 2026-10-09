@@ -1,13 +1,17 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-08  ·  commit 6791080 (rama main)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-09  ·  commit 02cc1d9 (rama main)  ·  cierre limpio: sí
 > Estado vivo de sesión. Hechos estables en README.md, GOBERNANZA.md y CLAUDE.md; registro histórico en docs/bitacora.md.
 
 ## Dónde vamos
-Estado al 2026-10-08: v1.32.2 en main (PR #87) e instalada en Claude Code y pi. La v1.32 (estado en la primera
-frase al cerrar) entró por PR #82 y está en vigilancia hasta el 2026-11-07. La v1.32.1 arregla `rotar-continuar.sh`:
-`reconciliar` y `anclar` miran la carpeta del proyecto (`-- .`), no el repo entero; la v1.32.2 hace que la ruta
-por fecha respete `.gitignore` y cierre hacia «rancio» si el filtro falla. Sin PR abiertos.
+Estado al 2026-10-09: v1.33 en main (PR #89) e instalada en Claude Code y pi. Regla nueva en el cuerpo de
+`kit-analisis-datos` y `kit-presentaciones`: buscar lo que ya se hizo antes de dar un dato por inexistente. Entró tras
+cinco intentos prerregistrados, council de tres familias (aprobada con cambios, condicionada a re-medir) y re-medición
+cumplida 5/5 (acta `docs/pruebas/council-v1.33.md`). En vigilancia hasta el 2027-01-07. La v1.32 sigue en vigilancia
+hasta el 2026-11-07. Sin PR abiertos.
 
 ## Siguiente paso
+- [ ] Vigilancia v1.33 hasta el 2027-01-07 (`reglas-vigiladas.json`, id `kit-v1.33-buscar-lo-hecho`): suspensión con 1
+      lectura fuera de las áreas de trabajo o 1 uso de datos de otro cliente; retiro con ≥2 reincorporaciones o falsas
+      pérdidas que José corrija en 30 días. Re-medir las trampas si cambia el modelo productor.
 - [ ] Vigilancia v1.32 hasta el 2026-11-07 (`~/.claude/kit-chema/reglas-vigiladas.json`): clasificar a mano las
       correcciones «¿quedó o no?» que agrupe el juez; se retira con ≥2 confirmadas por el dueño.
 - [ ] `cegar.sh`: falta un uso real (2 de 3; ambos falsos positivos). Mantener el criterio de retiro de v1.31.
