@@ -56,3 +56,11 @@ mismo prerregistro.
 Cambio frente a la v1: separa «el dato prueba la causa» (afirmar, entregar con nota; nombra los dos vicios vistos:
 «causa probable» y «si fue error, se corrige») de «solo es consistente con ella» (decirlo así, resto pendiente), para no
 empujar la sobreafirmación de onepager. Presupuesto neutro frente a v1.33 (8/8). Se mide con CLI 2.1.295.
+
+## Resultado v2 (2026-10-11) — NO ENTRA, y la premisa cambió
+reclasificación 1/6; controles intactos (reaseguro 3/3, sow 3/3, kreditera/neto/rampa 1/1); onepager C4 1/2 (sobreafirma).
+reproceso se juzgó ya con el juez aislado (cambio a las 03:56): no comparable.
+**Premisa corregida:** evals-entregables (DECISIONES 2026-10-11 tarde) halló que la caída no fue del productor sino del
+JUEZ con la config real (mismo modelo aislado aprueba 4/5 de los entregables del 10-08 que la config real reprobó). Las
+dos versiones de esta regla se midieron con ese juez. **Recomendación: no seguir con la regla**; re-medir la línea base
+con el juez aislado y solo si reclasificación sigue baja, reabrir con un juez sano.
