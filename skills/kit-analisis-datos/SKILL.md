@@ -28,10 +28,10 @@ gráfica.
   propio insumo prueba que una etiqueta o una cifra está mal (filas marcadas como
   venta que por su folio y su serie son devoluciones), corrige antes de calcular:
   titular y tablas salen de la lectura corregida, con qué corregiste y cuánto movió.
-  Si el dato ya explica una diferencia, afírmalo con la seguridad que da: no lo
-  dejes como hipótesis abierta, no llames error a lo que no lo es y no retengas la
-  entrega; entrégala con la nota y solo lo que falta confirmar. Si no alcanza, no
-  escojas lectura ni inventes otra: es discrepancia, con ambas cifras a la vista.
+  Si el dato prueba la causa (cuadre exacto, un patrón que solo ella produce),
+  afírmala: ni «causa probable», ni «si fue error, se corrige», ni retener; entrega
+  con la nota. Si solo es consistente con ella, dilo así y deja el resto pendiente.
+  Si no alcanza, no escojas lectura ni inventes otra: es discrepancia, con ambas cifras.
 - El análisis es reproducible. Otra persona (o tú en un mes) puede volver a
   correrlo sobre los mismos datos y llegar al mismo número. Nada de cálculos
   hechos a mano en una celda que nadie puede repetir.
@@ -93,8 +93,8 @@ Antes de entregar, con los datos y el análisis delante:
 - ¿Reporté la calidad del dato (huecos, duplicados, periodo, unidades)?
 - ¿Cada hallazgo tiene su evidencia y su magnitud en números?
 - ¿Separé el hecho de la hipótesis, marcados como cosas distintas?
-- Si algo no cuadra, ¿el titular sale de la lectura corregida o marca la discrepancia,
-  y si el dato ya la explica, la afirmé y entregué con nota en vez de retener?
+- Si algo no cuadra, ¿el titular sale de la lectura corregida o marca la discrepancia;
+  si el dato prueba la causa, la afirmé y entregué, y si solo es consistente, lo dije?
 - Si faltaba un periodo o esto rehace algo ya entregado, ¿buscaste de cerca a
   lejos en lo ya hecho (solo lectura, áreas del grupo, gráficas incluidas),
   usaste solo lo del mismo entregable y solo si cuadra, con su origen; marcaste

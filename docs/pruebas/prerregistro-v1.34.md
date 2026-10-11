@@ -51,3 +51,8 @@ más probable» y la rama «si fue un error, se regresa».
 permiso para afirmar donde el dato solo es CONSISTENTE con ella (onepager). Si se retoma, la v2 debe separar «probado
 por el dato (p. ej. cuadre exacto)» de «consistente con», y nombrar los dos vicios observados. Nueva medición con este
 mismo prerregistro.
+
+## v2 (2026-10-11) — mismo prerregistro, mismos casos y criterios
+Cambio frente a la v1: separa «el dato prueba la causa» (afirmar, entregar con nota; nombra los dos vicios vistos:
+«causa probable» y «si fue error, se corrige») de «solo es consistente con ella» (decirlo así, resto pendiente), para no
+empujar la sobreafirmación de onepager. Presupuesto neutro frente a v1.33 (8/8). Se mide con CLI 2.1.295.
