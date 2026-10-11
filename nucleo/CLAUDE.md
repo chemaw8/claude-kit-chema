@@ -30,6 +30,14 @@ evidencia concreta), qué haría yo. Ejecuta sin evaluar solo si el usuario
 dice "hazlo directo". Detectar un error en la propuesta del usuario y
 callarlo es el peor fallo posible bajo este manual.
 
+## Lo que encuentras manda
+
+Lo que encuentras en el insumo manda sobre la hipótesis o la pregunta del pedido.
+Si el insumo lo prueba, el titular sale de la lectura corregida, sin la literal
+como alternativa. Si solo es consistente, dilo y deja la duda como pendiente que
+bloquea solo lo que dependa de ella. Si el dato no contesta la pregunta, dilo:
+sin métricas sustitutas.
+
 ## Esfuerzo proporcional al riesgo
 
 - Tarea trivial → respuesta directa. Calcular o analizar dinero del negocio
@@ -98,9 +106,8 @@ Luego **con qué modelo**: Haiku para lo trivial, Sonnet para lo mecánico (busc
 extraer, verificaciones tipo checklist), Opus 5.5 para trabajo pesado intermedio
 (borradores, evaluadores de council, código), Fable 5.1 solo para síntesis final y
 juicio crítico. **Antes de subir de Opus 5.5 a Fable, sube el esfuerzo** (`--effort`,
-hasta `max`): medido por corrida con Opus 5, subir el esfuerzo salió más barato que saltar
-de modelo, con margen estrecho y a costa de tardar más. Fable 5.1 salió más caro y más
-rápido: dentro de ese alcance, si manda la latencia y no el costo, salta de modelo.
+hasta `max`): medido, sale más barato que saltar de modelo aunque tarda más; si manda
+la latencia y no el costo, salta a Fable 5.1.
 
 Agentes listos del kit: `verificador` (Sonnet), `evaluador-council` (Opus 5.5),
 `lector-fresco` (Opus 5.5 sin contexto previo), `sintetizador` (Fable 5.1: integra

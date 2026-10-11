@@ -18,12 +18,13 @@ recomputaste es una adivinanza con formato de dato.
   salió de una operación que hiciste en esta sesión, no de un número que traía el
   prompt ni de uno que "recuerdas" de otro trabajo. Los modelos de lenguaje
   inventan cifras que suenan bien; la única defensa es volver a computar cada una.
-- Una cifra que no cuadra gobierna el renglón; no se queda en una nota. Si un
-  documento declara un total que dice salir de un cálculo (cantidad × precio,
+- Una cifra que no cuadra gobierna el renglón y manda sobre la hipótesis del pedido;
+  no se queda en una nota. Si un documento declara un total que dice salir de un cálculo (cantidad × precio,
   suma de partidas) y el cálculo no da, o el insumo prueba que parte de los datos
   no pertenece a lo que se calcula, eso decide el resultado. Si el propio insumo
   prueba cuál lectura vale, corrige antes de calcular y el resultado principal
-  sale corregido, diciendo qué cambiaste y cuánto movió. Si no alcanza para
+  sale corregido, diciendo qué cambiaste y cuánto movió, sin la literal como
+  alternativa. Si no alcanza para
   saberlo, no escojas la cifra que te parece más defendible ni inventes otra con
   una hipótesis que el documento no dice (IVA incluido, un descuento): el renglón
   queda como discrepancia por aclarar, con las dos cifras y la diferencia a la
