@@ -87,3 +87,22 @@ Con la rúbrica corregida, N cumple 1, 2 y 3, pero en el borde (+3). Las dos pas
 (3) onepager C4 de N ≥ C4 de A − 1, y pnl C3 de N ≥ pnl C3 de A.
 
 Si falla, no entra y se documenta.
+
+## Resultado de la ronda 2 (2026-10-11 noche): NO ENTRA
+Reportes `evals-entregables/reportes/2026-10-12-000945-postura-r2-{A,N}-*` (hora UTC; local 2026-10-11). Suma ronda 1
+(re-juicio con C5 corregido) + ronda 2:
+
+| Criterio | A | N | Cumple |
+|---|---:|---:|---|
+| 1. Objetivo ≥ A + 5 de 30 | 2 (3 en una 2.ª pasada del juez) | 6 | **no** (+4 / +3) |
+| 1b. ≥ 2 casos objetivo arriba de A | — | onepager 3 vs 0; reclasificación 4 vs 2 | sí |
+| 2. Reproceso ≥ A − 1 | 3/6 | 6/6 | sí |
+| 3. Onepager C4 / pnl C3 | 5 / 0 | 6 / 0 | sí |
+
+Fisher de una cola: objetivo 6/30 contra 2/30, p = 0.13 (contra 3/30, p = 0.24); reproceso 6/6 contra 3/6, p = 0.09.
+
+**Lectura:** la regla en el núcleo va en la dirección correcta en todas las mediciones (onepager y reclasificación
+suben; ningún control baja; reproceso mejora), pero el efecto es chico y no alcanza el umbral fijado antes de medir.
+No mueve rcs ni pnl-sms (0 en todos los brazos): ahí el productor elige la lectura literal o contesta con una métrica
+sustituta aunque la regla le diga lo contrario. Hace falta otra intervención, no otra redacción de la misma regla.
+La regla en skills (S) no aporta, en parte porque la skill no se carga en 4 de los 6 casos.
