@@ -52,3 +52,38 @@ Información no prerregistrada que se reportará aparte: criterios por caso y sk
 ## Construcción de los brazos
 - **N:** `~/.claude/CLAUDE.md` instalado, con el bloque del núcleo reemplazado por `nucleo/CLAUDE.md` de esta rama.
 - **S:** `skills/kit-analisis-datos` y `skills/kit-finanzas` de esta rama.
+
+## Resultado de la ronda 1 (2026-10-11 noche)
+Reportes `evals-entregables/reportes/2026-10-11-222022-postura-{A,N,S}-*`: suite completa, CLI y juez iguales en los tres.
+
+| Brazo | Objetivo (15) | Casos | Reps | Onepager C4 | pnl C3 | Reproceso (control) |
+|---|---:|---:|---:|---:|---:|---:|
+| A v1.33 | 0 | 8/13 | 13/29 | 3/3 | 0/3 | 2/3 |
+| N núcleo | 4 | 9/13 | 16/29 | 3/3 | 1/3 | **1/3** |
+| S skills | 1 | 7/13 | 13/29 | 3/3 | 0/3 | 1/3 |
+
+**Según el prerregistro: no entra ninguno.** S falla el criterio 1. N cumple el 1 y el 3, pero falla el 2: reproceso
+baja de 2/3 a 1/3.
+**Desviación declarada:** las dos repeticiones de N que fallan reproceso lo hacen por C5, por una cláusula que la
+aclaración de rúbricas del mismo día agregó por error («rectificar lo ya circulado»). La rúbrica original no la pedía.
+Se corrigió la cláusula y se re-juzgaron los tres brazos completos con `rejuzgar.py`:
+
+| Brazo | Objetivo | Casos | Reps | Onepager C4 | pnl C3 | Reproceso |
+|---|---:|---:|---:|---:|---:|---:|
+| A | 0 | 7/13 | 12/29 | 3/3 | 0/3 | 1/3 |
+| N | 3 | 9/13 | 17/29 | 3/3 | 0/3 | 3/3 |
+| S | 1 | 7/13 | 13/29 | 1/3 | 0/3 | 1/3 |
+
+Con la rúbrica corregida, N cumple 1, 2 y 3, pero en el borde (+3). Las dos pasadas del juez difieren en ±1 rep por caso.
+
+## Ronda 2 de confirmación (prerregistrada ANTES de correr, 2026-10-11 noche)
+- Solo A y N; S queda descartado.
+- 3 reps nuevas de cada uno en los 5 casos objetivo y en reproceso: 18 reps por brazo, mismo CLI, juez y rúbricas
+  vigentes.
+
+**N entra si, sumando ronda 1 (re-juicio con la rúbrica corregida) y ronda 2:**
+(1) objetivo N ≥ A + 5 de 30 reps, y ≥ 2 casos objetivo con más reps que A;
+(2) reproceso N ≥ A − 1 en las 6 reps;
+(3) onepager C4 de N ≥ C4 de A − 1, y pnl C3 de N ≥ pnl C3 de A.
+
+Si falla, no entra y se documenta.
