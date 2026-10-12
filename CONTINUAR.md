@@ -9,6 +9,10 @@ cumplida 5/5 (acta `docs/pruebas/council-v1.33.md`). En vigilancia hasta el 2027
 hasta el 2026-11-07. Sin PR abiertos.
 
 ## Siguiente paso
+- [ ] v1.34 «lo que encuentras manda» (2026-10-11 noche): NO ENTRA por prerregistro (núcleo +4 de 30 reps, umbral +5,
+      p=0.13; skills sin efecto). Rama local `v1.34/postura` con prerregistro y resultados en
+      `docs/pruebas/prerregistro-v1.34-postura.md`. Sin PR. Siguiente intervención la decide José (ver evals-entregables
+      CONTINUAR): disparo de kit-analisis-datos en tareas con datos, paso de cierre «titular contra hallazgo», o más reps de N.
 - [ ] Vigilancia v1.33 hasta el 2027-01-07 (`reglas-vigiladas.json`, id `kit-v1.33-buscar-lo-hecho`): suspensión con 1
       lectura fuera de las áreas de trabajo o 1 uso de datos de otro cliente; retiro con ≥2 reincorporaciones o falsas
       pérdidas que el dueño corrija en 30 días. Re-medir las trampas si cambia el modelo productor.
