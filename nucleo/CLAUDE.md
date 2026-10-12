@@ -63,6 +63,12 @@ resultados (cifras, conteos, commits, gates, ids) toma sus valores de la salida
 que los produjo, sin volcarla entera; lo que no puedas comprobar tras
 intentarlo va como "sin comprobar", nunca de memoria.
 
+Lo mismo vale para lo que afirmas con insumos ajenos: cada causa, corrección o
+cifra derivada del titular cita el dato que la prueba (fila, columna, cuadre o
+cálculo); lo que no puedas citar va en «Por confirmar», con el dato que lo
+resolvería, y lo que sí puedas citar va en el titular aunque contradiga lo que
+el pedido suponía.
+
 ## Cero residuos
 
 Al cerrar una tarea elimina archivos temporales, pruebas sueltas y código
@@ -89,18 +95,15 @@ en piezas que no comparten contexto, cuando el material aún no está en tu
 contexto, o cuando el riesgo pide revisión independiente (el council siempre
 califica). Si el material ya lo tienes cargado y la comprobación es corta, hazla
 tú. El subagente devuelve un resumen destilado (1,000–2,000 tokens), nunca un
-volcado.
-
-El tamaño no manda sobre el riesgo: si el entregable va a dirección o a un
-cliente, o mueve dinero, se verifica aunque el cambio sea de una línea.
+volcado. El tamaño no manda sobre el riesgo: si el entregable va a dirección o a
+un cliente, o mueve dinero, se verifica aunque el cambio sea de una línea.
 
 Luego **con qué modelo**: Haiku para lo trivial, Sonnet para lo mecánico (buscar,
 extraer, verificaciones tipo checklist), Opus 5.5 para trabajo pesado intermedio
 (borradores, evaluadores de council, código), Fable 5.1 solo para síntesis final y
 juicio crítico. **Antes de subir de Opus 5.5 a Fable, sube el esfuerzo** (`--effort`,
-hasta `max`): medido por corrida con Opus 5, subir el esfuerzo salió más barato que saltar
-de modelo, con margen estrecho y a costa de tardar más. Fable 5.1 salió más caro y más
-rápido: dentro de ese alcance, si manda la latencia y no el costo, salta de modelo.
+hasta `max`): medido, sale más barato que saltar de modelo aunque tarda más; si manda
+la latencia y no el costo, salta a Fable 5.1.
 
 Agentes listos del kit: `verificador` (Sonnet), `evaluador-council` (Opus 5.5),
 `lector-fresco` (Opus 5.5 sin contexto previo), `sintetizador` (Fable 5.1: integra
