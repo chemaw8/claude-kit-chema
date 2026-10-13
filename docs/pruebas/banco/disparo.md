@@ -8,7 +8,7 @@ Dos bloques:
 
 - **Núcleo (1-21)** — 3 peticiones por dominio de las 7 skills originales; miden
   el acierto proporcional (criterio ≥ 19/21).
-- **Fronteras (22-30)** — peticiones adversarias sobre los bordes vecinos donde
+- **Fronteras (22-32)** — peticiones adversarias sobre los bordes vecinos donde
   el juez tiende a dudar; miden que no haya confusiones nuevas.
 
 La columna "frontera?" marca las peticiones que viven en un borde ambiguo entre
@@ -46,5 +46,7 @@ dos skills; el criterio de cero-confusiones se evalúa sobre ellas.
 | 28 | Escríbele un correo al director comercial de Farmacias X para proponerle nuestro servicio | kit-propuestas | sí (acercamiento a contacto ↔ correo) |
 | 29 | Mándale un mensaje al gerente de compras de la Aerolínea Z para agendar la demo del producto | kit-propuestas | sí (acercamiento a contacto ↔ correo) |
 | 30 | Escribe un correo al equipo con el estatus del proyecto de esta semana | kit-redaccion | sí (estatus interno ↔ acercamiento) |
+| 31 | Te paso el extracto de envíos y la factura del mes; arma el P&L para dirección, me dicen que facturamos menos de lo que enviamos | kit-insumos | sí (insumos ajenos ↔ finanzas) |
+| 32 | Con estas tablas del tablero y la bitácora del extractor, escribe el memo semanal para dirección | kit-insumos | sí (insumos ajenos ↔ redacción) |
 
 Historia y análisis de fallos previos en `docs/pruebas/disparo-descriptions.md`.
