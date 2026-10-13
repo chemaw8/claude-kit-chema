@@ -30,20 +30,23 @@ R1 suite completa + R2 los 5 objetivo y reproceso. **Pasa si:**
 autores Codex y Kimi, los revisó la otra familia y su juez está calibrado al 100 % con hojas pasa/falla. Huellas
 sha256 (tarea + esperado + meta, 16 caracteres), congeladas hoy:
 
-| Caso | Huella |
-|---|---|
-| dashboard-campanas-prueba | d798af8057caf8b5 |
-| dashboard-campanas-sin-evidencia | 1cf328766e5dccf0 |
-| walmart-contratos-prueba | 114a2137ad919609 |
-| walmart-contratos-sin-evidencia | 3e4725227787468d |
-| zorya-controles-sin-codigo | 1e15ec5c6485e232 |
-| zorya-controles-tautologicos | 5b50646982a7e2eb |
-| zorya-dos-definiciones | a4ab0c7edd688a31 |
-| zorya-serie-sin-remedio | efa9941df03abf4b |
+| Caso | Huella (tarea+esperado+meta) | Huella de la tarea |
+|---|---|---|
+| contratos-repetidos-prueba | fcd5dd720b5405a3 | b56bddeceb07 |
+| contratos-repetidos-sin-evidencia | fd010b913d4e0711 | 946a8bfe9393 |
+| controles-sin-codigo | 37d7eba049ab20d2 | 3cad9f52ed4d |
+| controles-tautologicos | ff739aab003e5511 | cae754d1562d |
+| dashboard-campanas-prueba | d798af8057caf8b5 | 1bb191ba4136 |
+| dashboard-campanas-sin-evidencia | 1cf328766e5dccf0 | 8a01ce5720aa |
+| series-dos-definiciones | f6a4f560286d88e9 | 9c9f9fbc3949 |
+| serie-sin-remedio | 68875af41d129976 | 4f3c96eda442 |
 
-P y P+R, 2 rondas × 3 reps = 6 reps por caso: 24 reps «con evidencia» (walmart-prueba, dashboard-prueba,
-zorya-dos-definiciones, zorya-controles-tautologicos) y 24 «sin evidencia» (walmart-sin, dashboard-sin,
-zorya-serie-sin-remedio, zorya-controles-sin-codigo). **Pasa si:**
+*Ids renombrados el 2026-10-12, antes de la corrida 2 completa, para quitar nombres de clientes; cambian el id y las
+rutas de fuente en meta/esperado, no el texto que ven el productor y el juez. Las huellas de arriba son las nuevas.*
+
+P y P+R, 2 rondas × 3 reps = 6 reps por caso: 24 reps «con evidencia» (contratos-repetidos-prueba, dashboard-prueba,
+series-dos-definiciones, controles-tautologicos) y 24 «sin evidencia» (contratos-repetidos-sin, dashboard-sin,
+serie-sin-remedio, controles-sin-codigo). **Pasa si:**
 - total P+R ≥ P + 6 de 48, con p ≤ 0.10;
 - en «sin evidencia», P+R ≥ P (no sobreafirma más).
 
@@ -54,3 +57,17 @@ zorya-serie-sin-remedio, zorya-controles-sin-codigo). **Pasa si:**
 - **Si solo pasa la 2:** decide el dueño.
 - **Aparte, decisión del dueño:** adoptar el instrumento `python` como el de los evals, por realismo, aunque no haya
   cumplido su umbral.
+
+## Resultado parcial (2026-10-12 noche): la corrida se cortó
+A mitad de la corrida expiró la sesión OAuth de Claude Code («OAuth session expired and could not be refreshed»), y
+desde ahí todas las repeticiones salieron INFRA.
+- **Banco fresco, R1 completa en los dos brazos (24 reps cada uno; 1 JUEZ_ERROR en cada brazo):**
+  - P 9/24 y P+R 9/24, idénticos caso por caso;
+  - con evidencia: 6 contra 6; sin evidencia: 3 contra 3.
+  - A nivel criterio, P+R mejora un criterio en dos casos «sin evidencia» (C4 de contratos-sin, 1 → 3; C3 de
+    controles-sin-codigo, 1 → 3), sin cambiar ningún veredicto.
+- **Banco de diseño, R1 de P+R parcial (17 de 32 válidas):** rcs 1/3, pnl 1/3 y onepager 1/3, contra 0, 0 y 1 de P.
+- **R2 de los tres flujos:** INFRA completa (sin datos).
+
+**Lectura provisional:** con la R1 en empate, la medición 2 necesitaría +6 solo en la R2. Lo más probable es que la
+regla no entre. Se completa la R2 cuando vuelva la sesión, antes de decidir.
