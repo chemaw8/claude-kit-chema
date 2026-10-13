@@ -18,7 +18,7 @@ patron='(api[_-]?key|secret|token|passw(or)?d)["'"'"']?[[:space:]]*[:=][[:space:
 # grupos como `-am`) o un `git add` del mismo comando vayan a meter todavía no está en el índice, y con
 # `git -C <ruta>` el repo no es el directorio actual. Si python3 falla: escanear de más, en el actual.
 analisis=$(printf '%s' "$cmd" | python3 -c '
-import re, shlex, sys
+import os, re, shlex, sys
 c = sys.stdin.read()
 try: toks = shlex.split(c, posix=True)
 except ValueError: toks = c.split()
@@ -29,7 +29,7 @@ while i < len(toks):
     if toks[i] != "git": i += 1; continue
     i += 1; ruta = "."
     while i < len(toks) and toks[i].startswith("-"):           # opciones globales: git -C <ruta> -c x=y …
-        if toks[i] == "-C" and i + 1 < len(toks): ruta = toks[i+1]; i += 2; continue
+        if toks[i] == "-C" and i + 1 < len(toks): ruta = os.path.expandvars(os.path.expanduser(toks[i+1])); i += 2; continue
         if toks[i] in ("-c", "--git-dir", "--work-tree", "--namespace") and i + 1 < len(toks): i += 2; continue
         i += 1
     if i >= len(toks): break
@@ -48,7 +48,11 @@ while i < len(toks):
                 if ch in "mFCct": salta = (j == len(x) - 2); break
 print(f"{amplio}\t{repo}")' 2>/dev/null || printf '1\t.')
 amplio=${analisis%%$'\t'*}; repo=${analisis#*$'\t'}
-[ -n "$repo" ] && cd -- "$repo" 2>/dev/null || true
+if [ -n "$repo" ] && ! cd -- "$repo" 2>/dev/null; then
+  # Sin ubicar el repo de `git -C` no se puede escanear: bloquear antes que revisar otro repo y dejarlo pasar.
+  echo "Kit Chema: no pude ubicar el repo de \`git -C $repo\` para revisar secretos. Corre el commit desde ese repo (cd) o con la ruta ya expandida." >&2
+  exit 2
+fi
 top=$(git rev-parse --show-toplevel 2>/dev/null) && cd -- "$top"   # ls-files --others solo ve el directorio actual hacia abajo
 # Se escanea a archivo y sin `grep -q`: con pipefail, un grep que cierra temprano deja al productor en
 # SIGPIPE (141) y el `if` sale falso justo con los diffs grandes. `-a`: un byte raro no vuelve binario
@@ -58,7 +62,7 @@ git diff --cached 2>/dev/null > "$diff"
 if [ "$amplio" != 0 ]; then
   git diff 2>/dev/null >> "$diff"
   git ls-files -z --others --exclude-standard 2>/dev/null | while IFS= read -r -d '' nuevo; do
-    [ -f "$nuevo" ] && grep -Iq . -- "$nuevo" 2>/dev/null && head -c 2000000 -- "$nuevo" | sed 's/^/+/' >> "$diff"
+    [ -f "$nuevo" ] && grep -Iq . -- "$nuevo" 2>/dev/null && sed 's/^/+/' -- "$nuevo" >> "$diff"
   done
 fi
 if grep -aE '^\+' -- "$diff" | grep -aiE "$patron" >/dev/null; then

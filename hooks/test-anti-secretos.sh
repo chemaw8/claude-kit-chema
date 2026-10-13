@@ -45,6 +45,15 @@ git -C "$t/r/sub" add -A; git -C "$t/r/sub" commit -qm base; printf 'k=%s\n' "$S
 espera 2 "git -C sub commit -am x" "git -C ruta commit -am"
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"
 espera 2 "git -c user.name=x commit -a -m x" "git -c x=y commit -a"
+# 4e. `git -C ~/…`: se expande; una ruta que no existe bloquea en vez de escanear otro repo
+mkdir -p "$t/home"; rm -rf "$t/home/r"; cp -r "$t/r" "$t/home/r"
+rc=$(cd / && printf '%s' '{"tool_input":{"command":"git -C ~/r commit -am x"}}' | HOME="$t/home" bash "$HOOK" >/dev/null 2>&1; echo $?)
+[ "$rc" = 2 ] || fallo "git -C ~/ruta commit -am con secreto (esperaba 2, dio $rc)"
+espera 2 "git -C /no/existe commit -m x" "git -C con ruta inexistente debe bloquear"
+
+# 4f. un archivo nuevo grande con el secreto al final (antes solo se leían 2 MB)
+nuevo_repo; { seq 1 600000; printf 'k=%s\n' "$SECRETO"; } > "$t/r/grande.log"
+espera 2 "git add -A && git commit -m x" "secreto al final de un archivo nuevo de más de 2 MB"
 
 # 4d. el hook corre en una subcarpeta y el archivo nuevo está en la raíz
 nuevo_repo; mkdir -p "$t/r/sub"; : > "$t/r/sub/.keep"; printf 'k=%s\n' "$SECRETO" > "$t/r/x.txt"
