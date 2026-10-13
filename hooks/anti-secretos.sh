@@ -43,6 +43,7 @@ while i < len(toks):
         x = toks[i]; i += 1
         if salta: salta = False; continue
         if x == "--all": amplio = 1; continue
+        if not x.startswith("-") or x == "--": amplio = 1; continue   # rutas: se toman del árbol de trabajo, no del índice
         if x in ("--message", "--file", "--author", "--date", "--template", "--reuse-message", "--reedit-message"): salta = True; continue
         if re.fullmatch(r"-[A-Za-z]+", x):
             for j, ch in enumerate(x[1:]):
@@ -67,10 +68,12 @@ diff=$(mktemp); trap 'rm -f "$diff"' EXIT
 git diff --cached 2>/dev/null > "$diff"
 if [ "$amplio" != 0 ]; then
   git diff 2>/dev/null >> "$diff"
-  # Archivos nuevos: un solo grep por tanda (xargs), completos y sin copiarlos; -I salta los binarios.
-  if git ls-files -z --others --exclude-standard 2>/dev/null | xargs -0 -r grep -IliE "$patron" -- 2>/dev/null | grep -q .; then
-    nuevo_con_secreto=1
-  fi
+  # Archivos nuevos: un solo grep por tanda (xargs), completos y sin copiarlos; -I salta los binarios. Se mira la
+  # SALIDA, no el código: grep da 2 con un archivo ilegible o un enlace roto aunque haya hallado algo, y xargs 123
+  # si alguna tanda no halló nada; con pipefail eso apagaba la detección.
+  hallados=$(mktemp); trap 'rm -f "$diff" "$hallados"' EXIT
+  git ls-files -z --others --exclude-standard 2>/dev/null | xargs -0 -r grep -IliE "$patron" -- > "$hallados" 2>/dev/null
+  [ -s "$hallados" ] && nuevo_con_secreto=1
 fi
 if [ "${nuevo_con_secreto:-0}" = 1 ] || grep -aE '^\+' -- "$diff" | grep -aiE "$patron" >/dev/null; then
   echo "Kit Chema: el diff del commit parece contener credenciales (clave API, token o llave privada). Revísalo y quítalas antes de commitear; si es un falso positivo, dilo y commitea con el hook desactivado." >&2

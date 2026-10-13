@@ -67,6 +67,15 @@ nuevo_repo; mkdir -p "$t/r/sub"; : > "$t/r/sub/.keep"; printf 'k=%s\n' "$SECRETO
 rc=$(cd "$t/r/sub" && printf '%s' '{"tool_input":{"command":"git add -A && git commit -m x"}}' | bash "$HOOK" >/dev/null 2>&1; echo $?)
 [ "$rc" = 2 ] || fallo "desde una subcarpeta, un archivo nuevo en la raíz con secreto (esperaba 2, dio $rc)"
 
+# 4g. un enlace roto sin rastrear no debe apagar el escaneo de los archivos nuevos (grep rc 2, xargs rc 123)
+nuevo_repo; printf 'k=%s\n' "$SECRETO" > "$t/r/nuevo.txt"; ln -s /no/existe "$t/r/roto"
+espera 2 "git add -A && git commit -m x" "un enlace roto no debe ocultar el secreto de un archivo nuevo"
+
+# 4h. commit con rutas explícitas: toma esas rutas del árbol de trabajo, no del índice
+nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"
+espera 2 "git commit a.txt -m x" "git commit <ruta> con secreto sin preparar"
+espera 2 "git commit -m x -- a.txt" "git commit -- <ruta> con secreto sin preparar"
+
 # 5. el secreto solo está sin preparar y el commit no lo incluye → no bloquea
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"; printf 'y=2\n' > "$t/r/b.txt"; git -C "$t/r" add b.txt
 espera 0 "git commit -m 'usa la bandera -a luego'" "commit sin -a no debe escanear lo no preparado"
