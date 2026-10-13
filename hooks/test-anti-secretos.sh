@@ -71,6 +71,10 @@ rc=$(cd "$t/r/sub" && printf '%s' '{"tool_input":{"command":"git add -A && git c
 nuevo_repo; printf 'k=%s\n' "$SECRETO" > "$t/r/nuevo.txt"; ln -s /no/existe "$t/r/roto"
 espera 2 "git add -A && git commit -m x" "un enlace roto no debe ocultar el secreto de un archivo nuevo"
 
+# 4g-bis. `cd <repo> && git commit -am`: el repo es el del cd, no el directorio del hook
+nuevo_repo; mkdir -p "$t/otro"; rm -rf "$t/otro/r"; cp -r "$t/r" "$t/otro/r"; printf 'k=%s\n' "$SECRETO" >> "$t/otro/r/a.txt"
+espera 2 "cd $t/otro/r && git commit -am x" "cd <repo> && git commit -am con secreto"
+
 # 4h. commit con rutas explícitas: toma esas rutas del árbol de trabajo, no del índice
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"
 espera 2 "git commit a.txt -m x" "git commit <ruta> con secreto sin preparar"
