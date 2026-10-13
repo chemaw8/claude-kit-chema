@@ -25,6 +25,9 @@ try:   # punctuation_chars separa `;`, `&&`, `|`, `(` y `)` aunque vengan pegado
 except ValueError: toks = c.split()
 SEP = {";", "&&", "||", "|", "&", "(", ")", ";;", "|&"}
 amplio, repo, dir_cd = 0, ".", "."
+# Una vez que el repo es incierto (GIT_DIR=, --git-dir, --work-tree, cd -, cd $(…)), un -C o cd absoluto posterior no
+# lo aclara: git sigue escribiendo donde diga GIT_DIR. Se queda incierto y el hook bloquea.
+opaco = any(re.match(r"GIT_(DIR|WORK_TREE)=", t) or t.startswith(("--git-dir", "--work-tree")) for t in toks)
 i = 0
 while i < len(toks):
     if toks[i] == "cd":                                         # `cd X && git commit`: el repo es X
@@ -56,6 +59,7 @@ while i < len(toks):
             for j, ch in enumerate(x[1:]):
                 if ch == "a": amplio = 1
                 if ch in "mFCct": salta = (j == len(x) - 2); break
+if opaco: repo = "?"
 print(f"{amplio}\t{repo}")' 2>/dev/null || printf '1\t.')
 amplio=${analisis%%$'\t'*}; repo=${analisis#*$'\t'}
 if [ "$repo" = "?" ]; then

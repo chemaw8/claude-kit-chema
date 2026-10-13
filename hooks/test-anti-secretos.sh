@@ -88,6 +88,9 @@ rc=$(cd "$t/p" && printf '%s' '{"tool_input":{"command":"cd r; git commit -m x"}
 printf 'k=%s\n' "$SECRETO" >> "$t/p/r/a.txt"
 espera 2 "(cd $t/p/r && git commit -am x)" "subshell (cd X && git commit -am) con secreto"
 espera 2 "GIT_DIR=/otro/.git git commit -m x" "GIT_DIR= debe bloquear"
+nuevo_repo
+espera 2 "GIT_DIR=/otro/.git git -C $t/r commit -m x" "GIT_DIR= no se borra con un -C absoluto posterior"
+espera 2 "git --git-dir=/otro/.git -C $t/r commit -m x" "--git-dir no se borra con un -C absoluto posterior"
 
 # 4h. commit con rutas explícitas: toma esas rutas del árbol de trabajo, no del índice
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"
