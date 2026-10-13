@@ -152,14 +152,30 @@ if mb == head:
 
 # ── pruebas en worktree desechable ──
 git("worktree", "prune")
+dueños = os.path.join(common, "kit-chema", "sello-wt"); os.makedirs(dueños, exist_ok=True)   # <basename>.pid: quién usa cada worktree
+def vivo(pid):
+    try: os.kill(pid, 0); return True
+    except ProcessLookupError: return False
+    except PermissionError: return True
 for bloque in (git("worktree", "list", "--porcelain") or "").split("\n\n"):        # un revisar matado a medias deja su worktree registrado
     ruta = next((l[9:] for l in bloque.splitlines() if l.startswith("worktree ")), "")
-    if os.path.basename(ruta).startswith("sello-wt-"): sh(["git", "-C", REPO, "worktree", "remove", "--force", ruta]); shutil.rmtree(ruta, ignore_errors=True)
+    nombre = os.path.basename(ruta)
+    if not nombre.startswith("sello-wt-"): continue
+    marca = os.path.join(dueños, nombre + ".pid")
+    try: pid = int(open(marca).read().strip() or 0)
+    except (OSError, ValueError): pid = 0
+    if pid and vivo(pid): continue                                               # otra revisión en curso: no se toca
+    sh(["git", "-C", REPO, "worktree", "remove", "--force", ruta]); shutil.rmtree(ruta, ignore_errors=True)
+    if os.path.exists(marca): os.remove(marca)
 pruebas_cmd = E.get("PRUEBAS_CMD") or ""
 wt = tempfile.mkdtemp(prefix="sello-wt-"); donde = "worktree"
+marca_propia = os.path.join(dueños, os.path.basename(wt) + ".pid")
+with open(marca_propia, "w") as f: f.write(str(os.getpid()))
 try:
     r = sh(["git", "-C", REPO, "worktree", "add", "--detach", wt, head])
-    if r.returncode != 0: shutil.rmtree(wt, ignore_errors=True); wt = REPO; donde = "en-arbol"
+    if r.returncode != 0:                                                        # sin copia aislada no hay sello: probar en el árbol
+        shutil.rmtree(wt, ignore_errors=True); os.remove(marca_propia)            # real acreditaría cambios locales que el commit no trae
+        print(f"✗ no se pudo crear el worktree de pruebas ({(r.stderr or '').strip()[:200]}). No se escribe sello.", file=sys.stderr); sys.exit(2)
     elif os.path.exists(os.path.join(wt, ".gitmodules")): sh(["git", "-C", wt, "submodule", "update", "--init", "--recursive"], timeout=120)
     if pruebas_cmd:
         con_timeout = bool(shutil.which("timeout")) and not E.get("SIN_TIMEOUT")
@@ -172,7 +188,8 @@ try:
     else:
         rc_p, cola, pruebas, pruebas_timeout = 0, "(sin pruebas configuradas)", "sin-pruebas", "-"
 finally:
-    if wt != REPO: sh(["git", "-C", REPO, "worktree", "remove", "--force", wt]); shutil.rmtree(wt, ignore_errors=True)
+    sh(["git", "-C", REPO, "worktree", "remove", "--force", wt]); shutil.rmtree(wt, ignore_errors=True)
+    if os.path.exists(marca_propia): os.remove(marca_propia)
 extra_pruebas = {"pruebas_donde": donde, "pruebas_timeout": pruebas_timeout}
 if rc_p != 0:
     h = [{"id": "P1", "sev": "bloquea", "archivo": "(pruebas)", "linea": None, "que": f"pruebas fallan ({pruebas}): {pruebas_cmd}",
@@ -538,6 +555,20 @@ cmd_autotest() {
   git -C "$R" worktree add -q --detach "$t/sello-wt-zombi" HEAD 2>/dev/null   # worktree del gate que quedó registrado (revisar matado a medias)
   SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" >/dev/null 2>&1
   git -C "$R" worktree list | grep -q sello-wt-zombi && fallo "el worktree zombi del gate no se limpió"
+  # 7b el worktree de otra revisión VIVA no se toca (antes se borraba todo sello-wt-*)
+  git -C "$R" worktree add -q --detach "$t/sello-wt-vivo" HEAD 2>/dev/null
+  sleep 300 & local vivo=$!; mkdir -p "$R/.git/kit-chema/sello-wt"; echo "$vivo" > "$R/.git/kit-chema/sello-wt/sello-wt-vivo.pid"
+  SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" >/dev/null 2>&1
+  git -C "$R" worktree list | grep -q sello-wt-vivo || fallo "se borró el worktree de una revisión viva"
+  kill "$vivo" 2>/dev/null; wait "$vivo" 2>/dev/null
+  SELLO_PRUEBAS='exit 0' SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" >/dev/null 2>&1
+  git -C "$R" worktree list | grep -q sello-wt-vivo && fallo "el worktree de una revisión muerta no se limpió"
+  ls "$R/.git/kit-chema/sello-wt/"*.pid >/dev/null 2>&1 && fallo "quedaron marcas de dueño de worktree"
+  # 7c sin worktree aislado no hay sello ni pruebas en el árbol real
+  rm -rf "$R/.git/worktrees"; : > "$R/.git/worktrees"; rm -f "$SELLOS/$B"   # un archivo donde git espera su carpeta: worktree add falla
+  out=$(SELLO_PRUEBAS="touch '$t/pruebas-corrieron'" SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" 2>&1); rc=$?
+  rm -f "$R/.git/worktrees"
+  [ $rc -eq 2 ] && [ ! -f "$SELLOS/$B" ] && [ ! -e "$t/pruebas-corrieron" ] || fallo "sin worktree debió dar rc 2 sin sello ni pruebas (rc=$rc)"
   out=$(SELLO_REVISOR="cat '$t/aprobado.json'" cmd_revisar "$R" --base 2>&1); rc=$?; [ $rc -eq 2 ] || fallo "revisar --base sin valor debió dar rc 2 sin correr nada (rc=$rc)"
   git -C "$R" worktree list | grep -q sello-wt && fallo "quedó un worktree temporal del gate"
   # 8 sin timeout

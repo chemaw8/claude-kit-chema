@@ -173,11 +173,17 @@ cmd_reconciliar() {
     # propio proyecto escribe al correr (registro-envios.jsonl) marcaba rancio un
     # cierre fresco (medido el 2026-10-08). Los archivos RASTREADOS cuentan aunque
     # casen con un patrón de .gitignore: check-ignore no los reporta como ignorados.
-    mas_nuevo="$(cd "$dir" && find . -type f -newer CONTINUAR.md \
+    # Un recorrido incompleto (carpeta ilegible) no prueba nada: «no se puede reconciliar», nunca «fresco».
+    local lista rc_find; lista="$(mktemp)"
+    (cd "$dir" && find . -type f -newer CONTINUAR.md \
       -not -path '*/.git/*' -not -path '*/node_modules/*' \
       -not -name 'CONTINUAR.md' -not -name 'CLAUDE.md' -not -name 'DECISIONES.md' \
       -not -path '*/docs/bitacora.md' -not -path '*/.claude/settings.json' -not -name '.gitignore' \
-      -print0 2>/dev/null | sin_ignorados)"
+      -print0 2>/dev/null) > "$lista"; rc_find=$?
+    if [ "$rc_find" -ne 0 ]; then
+      rm -f "$lista"; err "no se pudo recorrer todo el proyecto (find rc $rc_find; ¿carpetas ilegibles?) — no se puede reconciliar"; return 3
+    fi
+    mas_nuevo="$(cd "$dir" && sin_ignorados < "$lista")"; rm -f "$lista"
     if [ -n "$mas_nuevo" ]; then
       err "hay archivos modificados DESPUÉS del cierre del $fecha_cierre (p. ej. ${mas_nuevo#./}) — el estado puede estar rancio"
       return 1
@@ -358,7 +364,10 @@ cmd_rotar() {
 
   if [ ! -f "$viejo" ]; then
     [ "$DRY" -eq 1 ] && { echo "[dry-run] crearía $viejo (no había estado previo)"; return 0; }
-    mkdir -p "$dir"; cp "$nuevo" "$viejo" && rm -f "$nuevo"; ok "CONTINUAR.md creado (no había estado previo)"; return 0
+    if mkdir -p "$dir" && cp "$nuevo" "$viejo"; then
+      rm -f "$nuevo"; ok "CONTINUAR.md creado (no había estado previo)"; return 0
+    fi
+    err "no se pudo crear $viejo; el borrador sigue en $nuevo"; return 1
   fi
 
   python3 - "$viejo" "$nuevo" "$bit" "$HOY" "$DRY" <<'PY'
@@ -918,6 +927,18 @@ EOF
   : > "$ps/registro.jsonl"
   cmd_reconciliar "$ps" >/dev/null 2>&1; rcg=$?
   [ "$rcg" -eq 1 ] || { err "autotest: sin git, un archivo nuevo debe marcar rancio, dio $rcg"; f=1; }
+  rm -f "$ps/registro.jsonl"
+  # Una carpeta ilegible deja el recorrido incompleto: «no se puede reconciliar», nunca «fresco».
+  if [ "$(id -u)" -ne 0 ]; then
+    mkdir -p "$ps/cerrada"; : > "$ps/cerrada/nuevo.py"; chmod 000 "$ps/cerrada"
+    cmd_reconciliar "$ps" >/dev/null 2>&1; rcg=$?
+    chmod 755 "$ps/cerrada"
+    [ "$rcg" -eq 3 ] || { err "autotest: con una carpeta ilegible debe dar 3 (no se puede reconciliar), dio $rcg"; f=1; }
+  fi
+  # rotar no anuncia éxito si no pudo crear CONTINUAR.md (padre que es un archivo).
+  : > "$t/soy-archivo"; printf 'x\n' > "$t/nuevo-rotar.md"
+  cmd_rotar "$t/soy-archivo/hijo" "$t/nuevo-rotar.md" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -ne 0 ] && [ -f "$t/nuevo-rotar.md" ] || { err "autotest: rotar sin poder crear el destino debe fallar y conservar el borrador, dio $rcg"; f=1; }
 
   [ "$f" -eq 0 ] && ok "autotest: rotación sin pérdida, contrato y reconciliación funcionan"
   return $f

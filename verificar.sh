@@ -121,6 +121,23 @@ if [ -f entorno/test-instalar.sh ]; then
   bash entorno/test-instalar.sh >/dev/null 2>&1; chk "entorno/test-instalar.sh pasa (asistente de un comando)" $?
 fi
 
+# Reinstalar converge: un hook ya registrado con parámetros viejos (timeout) se actualiza, conserva
+# lo que el usuario le agregó (statusMessage) y no se duplica. Todo en un CLAUDE_DIR desechable.
+if command -v python3 >/dev/null 2>&1; then
+  ti="$(mktemp -d)"
+  printf '%s' '{"hooks":{"PreToolUse":[{"matcher":"Bash","hooks":[{"type":"command","command":"$HOME/.claude/hooks/sello-push.sh","timeout":5,"statusMessage":"propio"}]}]}}' > "$ti/settings.json"
+  CLAUDE_DIR="$ti" KIT_GATE=s KIT_HOOKS=n bash instalar.sh </dev/null >/dev/null 2>&1
+  CLAUDE_DIR="$ti" KIT_GATE=s KIT_HOOKS=n bash instalar.sh </dev/null >/dev/null 2>&1
+  python3 - "$ti/settings.json" <<'PYI'
+import json, sys
+s = json.load(open(sys.argv[1]))
+h = [x for e in s["hooks"]["PreToolUse"] for x in e["hooks"] if x["command"].endswith("sello-push.sh")]
+sys.exit(0 if len(h) == 1 and h[0].get("timeout") == 10 and h[0].get("statusMessage") == "propio" else 1)
+PYI
+  chk "instalar.sh actualiza un hook ya registrado (timeout), conserva lo propio y no duplica" $?
+  rm -rf "$ti"
+fi
+
 # Los hooks que traen prueba deben pasarla: hooks/test-<nombre>.sh prueba hooks/<nombre>.sh.
 for t in hooks/test-*.sh; do
   [ -e "$t" ] || continue
