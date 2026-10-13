@@ -1,5 +1,27 @@
 # Changelog — Kit Chema
 
+## v1.33.1 — 2026-10-13
+Arreglos de protecciones que fallaban en silencio, sin cambiar reglas ni núcleo (flujo de script: PR + CI + sello, sin
+council, como la v1.32.1). Salen de una auditoría de solo lectura con verificación cruzada entre familias de modelos;
+cada caso nuevo se comprobó en rojo contra el código que corrige.
+- **`anti-secretos.sh` dejaba pasar secretos en diffs grandes.** Con `pipefail`, `grep -q` cerraba la tubería al primer
+  hallazgo, el productor moría por SIGPIPE (141) y el `if` salía falso: con 25 000 líneas el hook devolvía 0. Ahora el
+  diff va a un archivo y se busca sin `-q`. Además escanea lo que el commit va a incluir y aún no está en el índice:
+  `-a`/`--all` (también en grupos como `-am`) y `git add … && git commit` (cambios sin preparar y archivos nuevos no
+  ignorados). Un `-m a` no cuenta como `-a`. Prueba nueva `hooks/test-anti-secretos.sh` (9 casos, secretos sintéticos).
+- **`sello-push.sh revisar` borraba el worktree de otra revisión en curso** (todo `sello-wt-*`) y, si no lograba crear
+  el suyo, corría las pruebas en el árbol real, acreditando cambios locales que el commit no trae. Ahora cada worktree
+  lleva un dueño (`.git/kit-chema/sello-wt/<nombre>.pid`) y solo se limpian los de procesos muertos o sin dueño; sin
+  worktree aislado sale con código 2 y sin sello. Autotest: revisión viva intacta, muerta limpiada, sin worktree → rc 2.
+- **`rotar-continuar.sh` anunciaba éxito tras fallar.** `rotar` decía «CONTINUAR.md creado» aunque `mkdir`/`cp`
+  fallaran (ahora rc 1 y conserva el borrador), y `reconciliar` sin ancla decía «fresco» con una carpeta ilegible
+  (ahora rc 3, «no se puede reconciliar»).
+- **`instalar.sh` no actualizaba hooks ya registrados:** un cambio del fragmento (el `timeout` del sello, 5 → 10) nunca
+  llegaba a una instalación existente. Ahora actualiza los campos que administra el kit y conserva los que agregó el
+  usuario (`statusMessage`). `verificar.sh` lo prueba reinstalando dos veces en un directorio desechable.
+- **CI:** gitleaks escanea también los commits del PR (`gitleaks git` sobre base..head, con historial completo), no solo
+  el árbol final: un secreto agregado y borrado dentro del PR ya no pasa.
+
 ## v1.33 — 2026-10-09
 Una regla nueva en el cuerpo de `kit-analisis-datos` (párrafo al final del
 paso 1 de «Proceso» y una pregunta del checklist) y de `kit-presentaciones` (una pregunta del checklist). Núcleo y
