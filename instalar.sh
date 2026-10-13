@@ -119,6 +119,14 @@ for evento, entradas in f["hooks"].items():
         if solo_cmd and not any(solo_cmd in c for c in cmds(e)):
             continue
         if cmds(e) in presentes:
+            # Ya registrado: se actualizan los campos que el kit administra (matcher, timeout, type)
+            # y se conserva lo que el usuario le agregó (statusMessage u otros); si no, un cambio
+            # del fragmento (timeout 5 → 10) nunca llega a una instalación existente.
+            x = next(a for a in actuales if cmds(a) == cmds(e))
+            if "matcher" in e: x["matcher"] = e["matcher"]
+            for h in e.get("hooks", []):
+                for xh in x.get("hooks", []):
+                    if xh.get("command") == h.get("command"): xh.update(h)
             continue
         actuales.append(e); presentes.add(cmds(e))
 json.dump(s, open(destino, "w"), indent=2, ensure_ascii=False)
