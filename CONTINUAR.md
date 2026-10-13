@@ -23,6 +23,7 @@ entre familias (2026-10-13). Reglas en vigilancia: v1.33 hasta 2027-01-07, v1.32
 - [ ] `cegar.sh`: falta un uso real (2 de 3; ambos falsos positivos). Mantener el criterio de retiro de v1.31.
 - [ ] `/por-que`: anotar los usos reales en el acta v1.30; anunciar un uso no acredita su resultado.
 - [ ] Arenas desde Claude Code y segunda corrida real de `/crear-verificacion`: cuando haya trabajo adecuado.
+- [ ] Vigía de v1.25 y revisión programada del 2026-10-28: conservan sus criterios.
 
 ## Cómo retomar
 - Abrir: `CHANGELOG.md` (v1.33.1), `DECISIONES.md` y el estado real de los PR (`gh pr list`).
@@ -37,6 +38,7 @@ entre familias (2026-10-13). Reglas en vigilancia: v1.33 hasta 2027-01-07, v1.32
 | Frente | Estado | Siguiente | Bloqueo |
 |---|---|---|---|
 | Reglas v1.22 / v1.32 / v1.33 | en vigilancia | decidir v1.22 el 2026-10-24 | — |
+| Piezas de pstack | esperan evidencia de uso real | tabla de siguientes pasos | trabajo real apropiado |
 | Agregar al kit | 4 palancas de texto no generalizaron | capacidades (pi-harness: esperar-imagen, verificar-cierre) | medir en uso real |
 | Evals | línea base 2026-10-13: 14 casos con Python, 9/14 y 100/132 (no comparable con 7/13 en skills) | medir lo próximo contra esta | — |
 
