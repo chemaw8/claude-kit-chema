@@ -24,12 +24,14 @@ try:   # punctuation_chars separa `;`, `&&`, `|`, `(` y `)` aunque vengan pegado
     lx = shlex.shlex(c, posix=True, punctuation_chars=True); lx.whitespace_split = True; toks = list(lx)
 except ValueError: toks = c.split()
 SEP = {";", "&&", "||", "|", "&", "(", ")", ";;", "|&"}
-amplio, repo, dir_cd = 0, ".", "."
+amplio, repo, dir_cd, pila = 0, ".", ".", []
 # Una vez que el repo es incierto (GIT_DIR=, --git-dir, --work-tree, cd -, cd $(…)), un -C o cd absoluto posterior no
 # lo aclara: git sigue escribiendo donde diga GIT_DIR. Se queda incierto y el hook bloquea.
 opaco = any(re.match(r"GIT_(DIR|WORK_TREE)=", t) or t.startswith(("--git-dir", "--work-tree")) for t in toks)
 i = 0
 while i < len(toks):
+    if toks[i] == "(": pila.append(dir_cd); i += 1; continue   # el cd de una subshell no sale de ella
+    if toks[i] == ")": dir_cd = pila.pop() if pila else dir_cd; i += 1; continue
     if toks[i] == "cd":                                         # `cd X && git commit`: el repo es X
         sig = toks[i+1] if i + 1 < len(toks) else None
         if sig is None or sig in SEP: dir_cd = os.path.expanduser("~"); i += 1; continue   # `cd` solo: HOME
@@ -63,7 +65,7 @@ if opaco: repo = "?"
 print(f"{amplio}\t{repo}")' 2>/dev/null || printf '1\t.')
 amplio=${analisis%%$'\t'*}; repo=${analisis#*$'\t'}
 if [ "$repo" = "?" ]; then
-  echo "Kit Chema: no puedo saber qué repo revisar en busca de secretos (--git-dir, --work-tree, GIT_DIR=, cd - o cd $(…)). Haz el commit desde el repo, con cd a una ruta o git -C." >&2
+  echo "Kit Chema: no puedo saber qué repo revisar en busca de secretos (--git-dir, --work-tree, GIT_DIR=, cd - o cd \$(…)). Haz el commit desde el repo, con cd a una ruta o git -C." >&2
   exit 2
 fi
 if [ -n "$repo" ] && ! cd -- "$repo" 2>/dev/null; then

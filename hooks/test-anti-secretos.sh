@@ -92,6 +92,13 @@ nuevo_repo
 espera 2 "GIT_DIR=/otro/.git git -C $t/r commit -m x" "GIT_DIR= no se borra con un -C absoluto posterior"
 espera 2 "git --git-dir=/otro/.git -C $t/r commit -m x" "--git-dir no se borra con un -C absoluto posterior"
 
+# 4g-quinto. el cd de una subshell no sale de ella; el mensaje de bloqueo no ejecuta nada
+nuevo_repo; mkdir -p "$t/limpio"; git -C "$t/limpio" init -q; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"; git -C "$t/r" add a.txt
+espera 2 "(cd $t/limpio && true) && git commit -m x" "(cd otro && …) && git commit: el commit es en el actual"
+msg=$(cd "$t/r" && printf '%s' '{"tool_input":{"command":"cd - && git commit -m x"}}' | bash "$HOOK" 2>&1 >/dev/null)
+case "$msg" in *"command not found"*|*"orden no encontrada"*) fallo "el mensaje de bloqueo ejecutó una sustitución de comando";; esac
+case "$msg" in *'cd $(…)'*) ;; *) fallo "el mensaje de bloqueo debe mostrar «cd \$(…)» literal";; esac
+
 # 4h. commit con rutas explícitas: toma esas rutas del árbol de trabajo, no del índice
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"
 espera 2 "git commit a.txt -m x" "git commit <ruta> con secreto sin preparar"
