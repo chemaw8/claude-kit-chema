@@ -41,7 +41,10 @@ while i < len(toks):
     if toks[i] != "git": i += 1; continue
     i += 1; ruta = dir_cd
     while i < len(toks) and toks[i].startswith("-"):           # opciones globales: git -C <ruta> -c x=y …
-        if toks[i] == "-C" and i + 1 < len(toks): ruta = os.path.join(ruta, os.path.expandvars(os.path.expanduser(toks[i+1]))); i += 2; continue
+        if toks[i] == "-C" and i + 1 < len(toks):
+            v = toks[i+1]
+            if v in ("$", "`") or v.startswith(("$(", "`")): opaco = True; i += 2; continue   # `-C $(…)` sin comillas
+            ruta = os.path.join(ruta, os.path.expandvars(os.path.expanduser(v))); i += 2; continue
         if toks[i].startswith(("--git-dir", "--work-tree")):                                 # sin traducir a un repo: se bloquea
             ruta = "?"; i += 1 if "=" in toks[i] else 2; continue
         if toks[i] in ("-c", "--namespace") and i + 1 < len(toks): i += 2; continue
