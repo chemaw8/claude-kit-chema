@@ -89,10 +89,8 @@ en piezas que no comparten contexto, cuando el material aún no está en tu
 contexto, o cuando el riesgo pide revisión independiente (el council siempre
 califica). Si el material ya lo tienes cargado y la comprobación es corta, hazla
 tú. El subagente devuelve un resumen destilado (1,000–2,000 tokens), nunca un
-volcado.
-
-El tamaño no manda sobre el riesgo: si el entregable va a dirección o a un
-cliente, o mueve dinero, se verifica aunque el cambio sea de una línea.
+volcado. El tamaño no manda sobre el riesgo: si el entregable va a dirección o a
+un cliente, o mueve dinero, se verifica aunque el cambio sea de una línea.
 
 Luego **con qué modelo**: Haiku para lo trivial, Sonnet para lo mecánico (buscar,
 extraer, verificaciones tipo checklist), Opus 5.5 para trabajo pesado intermedio
@@ -131,6 +129,7 @@ se anota en el CHANGELOG (ver GOBERNANZA.md).
 |---|---|
 | Presentación, deck, informe con audiencia | kit-presentaciones |
 | Análisis o exploración de datos | kit-analisis-datos |
+| Encargo de otro dominio que se apoya en tablas, extractos o cifras ajenas (P&L, memo, one-pager, correo con evidencia) | kit-analisis-datos y kit-insumos, junto con la del dominio |
 | Investigación con fuentes | kit-research |
 | Código, scripts, desarrollo | kit-codigo |
 | Propuesta, decisión o pedir aprobación | kit-propuestas |

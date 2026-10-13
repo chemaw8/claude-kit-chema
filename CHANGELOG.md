@@ -1,5 +1,25 @@
 # Changelog — Kit Chema
 
+## v1.34 — 2026-10-11 · NO PUBLICADA
+**Estado:** borrador de registro. Fallaron los gates de disparo y de generalización (ver el prerregistro); no se
+fusiona ni se instala.
+Skill nueva y transversal `kit-insumos` (la décima) y una fila en la tabla de playbooks del núcleo que la carga,
+junto con kit-analisis-datos, en los encargos de otro dominio que se apoyan en cifras ajenas. Acta del council y
+gates: `docs/pruebas/prerregistro-v1.34-kit-insumos.md`.
+- **Qué dice el entregable cuando el insumo no cuadra**, no solo detectarlo. Lleva una receta (titular con la lectura
+  que el insumo sostiene, evidencia, cifras corregidas, la literal descartada en una línea y pendientes que dicen si
+  bloquean) y cuatro condiciones observables: el insumo prueba la lectura; no alcanza, y entonces va la discrepancia
+  con las dos cifras; la causa solo compatible va a pendientes; y si el dato no contesta la pregunta, se dice así. Trae
+  también una tabla de racionalizaciones y señales de alto. Método adaptado de `obra/superpowers` (`writing-skills`,
+  MIT): ajustar la forma de la instrucción al tipo de falla.
+- **Evidencia, prerregistrada** (`docs/pruebas/prerregistro-v1.34-kit-insumos.md`): el texto de este PR, con los
+  cambios del council, dio 3/30 → 9/30 en los casos objetivo (Fisher de una cola p = 0.052), sin controles caídos.
+  El texto previo al council había dado 3/30 → 14/30 (p = 0.0017) y 7/14 → 10/14 casos. Antes se midió y descartó una
+  regla de una línea en el núcleo (+4/30, p = 0.13). Siguen sin resolver dos trampas (pnl, cortes). **Gate de disparo
+  pendiente**: `disparo.sh` exige el núcleo instalado; el control de `main` del mismo día dio 83/90.
+- **Presupuesto:** núcleo 140 → 139 líneas (la fila nueva se paga fundiendo «El tamaño no manda sobre el riesgo» con
+  el párrafo anterior); descriptions 5,959/6,000.
+
 ## v1.33 — 2026-10-09
 Una regla nueva en el cuerpo de `kit-analisis-datos` (párrafo al final del
 paso 1 de «Proceso» y una pregunta del checklist) y de `kit-presentaciones` (una pregunta del checklist). Núcleo y
