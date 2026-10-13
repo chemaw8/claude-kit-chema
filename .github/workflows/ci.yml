@@ -31,6 +31,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Historial completo: el escaneo de commits del PR necesita la base y cada commit,
+          # no solo el árbol final (un secreto agregado y borrado dentro del PR sigue en git).
+          fetch-depth: 0
       - name: gitleaks
         # Elegimos bajar el binario de gitleaks por versión fija en vez de usar
         # la action `gitleaks/gitleaks-action@v2`. Justificación: (1) evita meter
@@ -52,3 +56,11 @@ jobs:
           # ruleset por defecto y allowlista solo las claves-señuelo de la doc
           # (sin cegar ninguna ruta).
           ./gitleaks dir . -c .gitleaks.toml --redact --no-banner --exit-code 1
+          # `git` escanea cada commit del PR (base..head): lo que `dir` no ve porque ya se borró.
+          # En workflow_dispatch no hay base: se escanea la historia completa de la rama.
+          if [ -n "${{ github.event.pull_request.base.sha }}" ]; then
+            rango="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+          else
+            rango="HEAD"
+          fi
+          ./gitleaks git . -c .gitleaks.toml --redact --no-banner --exit-code 1 --log-opts="$rango"
