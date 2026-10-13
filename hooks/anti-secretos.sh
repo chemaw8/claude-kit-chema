@@ -49,6 +49,7 @@ while i < len(toks):
 print(f"{amplio}\t{repo}")' 2>/dev/null || printf '1\t.')
 amplio=${analisis%%$'\t'*}; repo=${analisis#*$'\t'}
 [ -n "$repo" ] && cd -- "$repo" 2>/dev/null || true
+top=$(git rev-parse --show-toplevel 2>/dev/null) && cd -- "$top"   # ls-files --others solo ve el directorio actual hacia abajo
 # Se escanea a archivo y sin `grep -q`: con pipefail, un grep que cierra temprano deja al productor en
 # SIGPIPE (141) y el `if` sale falso justo con los diffs grandes. `-a`: un byte raro no vuelve binario
 # todo el temporal; los archivos nuevos binarios ni se copian (grep -I los descarta).

@@ -46,6 +46,11 @@ espera 2 "git -C sub commit -am x" "git -C ruta commit -am"
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"
 espera 2 "git -c user.name=x commit -a -m x" "git -c x=y commit -a"
 
+# 4d. el hook corre en una subcarpeta y el archivo nuevo está en la raíz
+nuevo_repo; mkdir -p "$t/r/sub"; : > "$t/r/sub/.keep"; printf 'k=%s\n' "$SECRETO" > "$t/r/x.txt"
+rc=$(cd "$t/r/sub" && printf '%s' '{"tool_input":{"command":"git add -A && git commit -m x"}}' | bash "$HOOK" >/dev/null 2>&1; echo $?)
+[ "$rc" = 2 ] || fallo "desde una subcarpeta, un archivo nuevo en la raíz con secreto (esperaba 2, dio $rc)"
+
 # 5. el secreto solo está sin preparar y el commit no lo incluye → no bloquea
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"; printf 'y=2\n' > "$t/r/b.txt"; git -C "$t/r" add b.txt
 espera 0 "git commit -m 'usa la bandera -a luego'" "commit sin -a no debe escanear lo no preparado"
