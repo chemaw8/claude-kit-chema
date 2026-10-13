@@ -188,7 +188,7 @@ try:
     else:
         rc_p, cola, pruebas, pruebas_timeout = 0, "(sin pruebas configuradas)", "sin-pruebas", "-"
 finally:
-    if wt != REPO: sh(["git", "-C", REPO, "worktree", "remove", "--force", wt]); shutil.rmtree(wt, ignore_errors=True)
+    sh(["git", "-C", REPO, "worktree", "remove", "--force", wt]); shutil.rmtree(wt, ignore_errors=True)
     if os.path.exists(marca_propia): os.remove(marca_propia)
 extra_pruebas = {"pruebas_donde": donde, "pruebas_timeout": pruebas_timeout}
 if rc_p != 0:

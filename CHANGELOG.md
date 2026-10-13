@@ -8,7 +8,9 @@ cada caso nuevo se comprobó en rojo contra el código que corrige.
   hallazgo, el productor moría por SIGPIPE (141) y el `if` salía falso: con 25 000 líneas el hook devolvía 0. Ahora el
   diff va a un archivo y se busca sin `-q`. Además escanea lo que el commit va a incluir y aún no está en el índice:
   `-a`/`--all` (también en grupos como `-am`) y `git add … && git commit` (cambios sin preparar y archivos nuevos no
-  ignorados). Un `-m a` no cuenta como `-a`. Prueba nueva `hooks/test-anti-secretos.sh` (9 casos, secretos sintéticos).
+  ignorados, saltando los binarios para que no cieguen el resto), en el repo de `git -C <ruta>` si lo hay y también
+  con opciones globales (`git -c x=y commit -a`). Un `-m a` no cuenta como `-a`. Prueba nueva
+  `hooks/test-anti-secretos.sh` (secretos sintéticos).
 - **`sello-push.sh revisar` borraba el worktree de otra revisión en curso** (todo `sello-wt-*`) y, si no lograba crear
   el suyo, corría las pruebas en el árbol real, acreditando cambios locales que el commit no trae. Ahora cada worktree
   lleva un dueño (`.git/kit-chema/sello-wt/<nombre>.pid`) y solo se limpian los de procesos muertos o sin dueño; sin
