@@ -35,6 +35,17 @@ espera 2 "git commit -a -m x" "commit -a -m con secreto sin preparar"
 nuevo_repo; printf 'k=%s\n' "$SECRETO" > "$t/r/nuevo.txt"
 espera 2 "git add -A && git commit -m x" "git add && commit con secreto en archivo nuevo"
 
+# 4b. un archivo binario nuevo no debe cegar el escaneo del resto
+nuevo_repo; printf 'k=%s\n' "$SECRETO" > "$t/r/nuevo.txt"; printf 'a\0b\0c' > "$t/r/img.bin"
+espera 2 "git add -A && git commit -m x" "un binario sin rastrear no debe ocultar el secreto de otro archivo"
+
+# 4c. `git -C <ruta> commit -a` y `git -c x=y commit -a`: el repo es el de -C, no el directorio actual
+nuevo_repo; mkdir -p "$t/r/sub"; git -C "$t/r/sub" init -q; printf 'x=1\n' > "$t/r/sub/a.txt"
+git -C "$t/r/sub" add -A; git -C "$t/r/sub" commit -qm base; printf 'k=%s\n' "$SECRETO" >> "$t/r/sub/a.txt"
+espera 2 "git -C sub commit -am x" "git -C ruta commit -am"
+nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"
+espera 2 "git -c user.name=x commit -a -m x" "git -c x=y commit -a"
+
 # 5. el secreto solo está sin preparar y el commit no lo incluye → no bloquea
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"; printf 'y=2\n' > "$t/r/b.txt"; git -C "$t/r" add b.txt
 espera 0 "git commit -m 'usa la bandera -a luego'" "commit sin -a no debe escanear lo no preparado"
