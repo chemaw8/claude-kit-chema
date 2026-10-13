@@ -10,8 +10,9 @@ cada caso nuevo se comprobó en rojo contra el código que corrige.
   `-a`/`--all` (también en grupos como `-am`), `git add … && git commit` y `git commit <ruta>`/`-- <ruta>` (cambios sin
   preparar y archivos nuevos no ignorados, completos, saltando binarios, juzgados por la salida de grep y no por su
   código, que un enlace roto volvía 2). Lo revisa en el repo correcto: el de `cd X &&`, el de `git -C <ruta>` (con `~` y
-  `$VAR` expandidos) y desde su raíz aunque el hook corra en una subcarpeta. **Bloquea** cuando no puede saber qué
-  revisar: `git -C` a una ruta inexistente y cualquier `--git-dir`/`--work-tree`. Un `-m a` no cuenta como `-a`.
+  `$VAR` expandidos), también con separadores pegados o en subshell (`cd r;`, `(cd x && …)`), y desde su raíz aunque
+  el hook corra en una subcarpeta. **Bloquea** cuando no puede saber qué revisar: `git -C` o `cd` a una ruta que no
+  existe, `cd -`, `cd $(…)`, `--git-dir`/`--work-tree` y `GIT_DIR=`/`GIT_WORK_TREE=`. Un `-m a` no cuenta como `-a`.
   Prueba nueva `hooks/test-anti-secretos.sh` (secretos sintéticos).
 - **`sello-push.sh revisar` borraba el worktree de otra revisión en curso** (todo `sello-wt-*`) y, si no lograba crear
   el suyo, corría las pruebas en el árbol real, acreditando cambios locales que el commit no trae. Ahora cada worktree

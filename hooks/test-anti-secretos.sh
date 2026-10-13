@@ -81,6 +81,14 @@ rc=$(cd "$t/r" && printf '%s' '{"tool_input":{"command":"cd && git commit -m x"}
 [ "$rc" = 0 ] || fallo "cd sin argumento a un HOME limpio debe pasar (dio $rc)"
 rm -rf "$t/home/.git"
 
+# 4g-cuater. separadores pegados, subshell y GIT_DIR=
+nuevo_repo; mkdir -p "$t/p"; rm -rf "$t/p/r"; cp -r "$t/r" "$t/p/r"
+rc=$(cd "$t/p" && printf '%s' '{"tool_input":{"command":"cd r; git commit -m x"}}' | bash "$HOOK" >/dev/null 2>&1; echo $?)
+[ "$rc" = 0 ] || fallo "cd r; git commit (separador pegado) a un repo limpio debe pasar (dio $rc)"
+printf 'k=%s\n' "$SECRETO" >> "$t/p/r/a.txt"
+espera 2 "(cd $t/p/r && git commit -am x)" "subshell (cd X && git commit -am) con secreto"
+espera 2 "GIT_DIR=/otro/.git git commit -m x" "GIT_DIR= debe bloquear"
+
 # 4h. commit con rutas explícitas: toma esas rutas del árbol de trabajo, no del índice
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"
 espera 2 "git commit a.txt -m x" "git commit <ruta> con secreto sin preparar"
