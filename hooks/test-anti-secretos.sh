@@ -49,6 +49,9 @@ espera 2 "git -c user.name=x commit -a -m x" "git -c x=y commit -a"
 mkdir -p "$t/home"; rm -rf "$t/home/r"; cp -r "$t/r" "$t/home/r"
 rc=$(cd / && printf '%s' '{"tool_input":{"command":"git -C ~/r commit -am x"}}' | HOME="$t/home" bash "$HOOK" >/dev/null 2>&1; echo $?)
 [ "$rc" = 2 ] || fallo "git -C ~/ruta commit -am con secreto (esperaba 2, dio $rc)"
+git -C "$t/home/r" checkout -q -- . 2>/dev/null   # el mismo repo limpio: si ~ se expande, el hook lo encuentra y deja pasar
+rc=$(cd / && printf '%s' '{"tool_input":{"command":"git -C ~/r commit -am x"}}' | HOME="$t/home" bash "$HOOK" >/dev/null 2>&1; echo $?)
+[ "$rc" = 0 ] || fallo "git -C ~/ruta limpio debe pasar: ~ se expande al repo (dio $rc)"
 espera 2 "git -C /no/existe commit -m x" "git -C con ruta inexistente debe bloquear"
 
 # 4e-bis. --git-dir / --work-tree: no se sabe qué repo revisar → bloquea
