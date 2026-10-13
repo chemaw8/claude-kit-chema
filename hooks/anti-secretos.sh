@@ -24,7 +24,7 @@ try:   # punctuation_chars separa `;`, `&&`, `|`, `(` y `)` aunque vengan pegado
     lx = shlex.shlex(c, posix=True, punctuation_chars=True); lx.whitespace_split = True; toks = list(lx)
 except ValueError: toks = c.split()
 SEP = {";", "&&", "||", "|", "&", "(", ")", ";;", "|&"}
-amplio, repo, dir_cd, pila = 0, ".", ".", []
+amplio, repo, dir_cd, pila, hay_commit = 0, ".", ".", [], False
 # Una vez que el repo es incierto (GIT_DIR=, --git-dir, --work-tree, cd -, cd $(…)), un -C o cd absoluto posterior no
 # lo aclara: git sigue escribiendo donde diga GIT_DIR. Se queda incierto y el hook bloquea.
 opaco = any(re.match(r"GIT_(DIR|WORK_TREE)=", t) or t.startswith(("--git-dir", "--work-tree")) for t in toks)
@@ -32,7 +32,7 @@ i = 0
 while i < len(toks):
     if toks[i] == "(": pila.append(dir_cd); i += 1; continue   # el cd de una subshell no sale de ella
     if toks[i] == ")": dir_cd = pila.pop() if pila else dir_cd; i += 1; continue
-    if toks[i] == "cd":                                         # `cd X && git commit`: el repo es X
+    if toks[i] in ("cd", "pushd"):                              # `cd X && git commit`: el repo es X
         sig = toks[i+1] if i + 1 < len(toks) else None
         if sig is None or sig in SEP: dir_cd = os.path.expanduser("~"); i += 1; continue   # `cd` solo: HOME
         if sig == "-" or "$(" in sig or "`" in sig: dir_cd = "?"; i += 2; continue        # `cd -`, `cd $(…)`: no se sabe a dónde
@@ -43,7 +43,17 @@ while i < len(toks):
     while i < len(toks) and toks[i].startswith("-"):           # opciones globales: git -C <ruta> -c x=y …
         if toks[i] == "-C" and i + 1 < len(toks):
             v = toks[i+1]
-            if v in ("$", "`") or v.startswith(("$(", "`")): opaco = True; i += 2; continue   # `-C $(…)` sin comillas
+            if v in ("$", "`") or v.startswith(("$(", "`")):     # `-C $(…)` sin comillas: incierto, y se salta entera
+                opaco = True; i += 2
+                if v == "$" and i < len(toks) and toks[i] == "(":
+                    hondo = 0
+                    while i < len(toks):
+                        hondo += (toks[i] == "(") - (toks[i] == ")"); i += 1
+                        if hondo == 0: break
+                elif v == "`":
+                    while i < len(toks) and toks[i] != "`": i += 1
+                    i += 1
+                continue
             ruta = os.path.join(ruta, os.path.expandvars(os.path.expanduser(v))); i += 2; continue
         if toks[i].startswith(("--git-dir", "--work-tree")):                                 # sin traducir a un repo: se bloquea
             ruta = "?"; i += 1 if "=" in toks[i] else 2; continue
@@ -53,7 +63,7 @@ while i < len(toks):
     sub = toks[i]; i += 1
     if sub == "add": amplio = 1; repo = ruta; continue
     if sub != "commit": continue
-    repo = ruta; salta = False
+    hay_commit = True; repo = ruta; salta = False
     while i < len(toks) and toks[i] not in SEP:
         x = toks[i]; i += 1
         if salta: salta = False; continue
@@ -64,7 +74,7 @@ while i < len(toks):
             for j, ch in enumerate(x[1:]):
                 if ch == "a": amplio = 1
                 if ch in "mFCct": salta = (j == len(x) - 2); break
-if opaco: repo = "?"
+if opaco and hay_commit: repo = "?"     # sin git commit no hay nada que bloquear
 print(f"{amplio}\t{repo}")' 2>/dev/null || printf '1\t.')
 amplio=${analisis%%$'\t'*}; repo=${analisis#*$'\t'}
 if [ "$repo" = "?" ]; then

@@ -107,6 +107,11 @@ mensaje largo
 EOF
 )\"" "mensaje con heredoc entre comillas en un repo limpio debe pasar"
 
+# 4g-séptimo. pushd como cd; --git-dir sin commit no bloquea
+nuevo_repo; rm -rf "$t/pp"; cp -r "$t/r" "$t/pp"; printf 'k=%s\n' "$SECRETO" >> "$t/pp/a.txt"
+espera 2 "pushd $t/pp && git commit -am x" "pushd X && git commit -am con secreto"
+espera 0 "git --git-dir=/x/.git cat-file commit HEAD" "--git-dir sin git commit no debe bloquear"
+
 # 4h. commit con rutas explícitas: toma esas rutas del árbol de trabajo, no del índice
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"
 espera 2 "git commit a.txt -m x" "git commit <ruta> con secreto sin preparar"
