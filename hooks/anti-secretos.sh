@@ -26,8 +26,11 @@ SEP = {";", "&&", "||", "|", "&"}
 amplio, repo, dir_cd = 0, ".", "."
 i = 0
 while i < len(toks):
-    if toks[i] == "cd" and i + 1 < len(toks):                  # `cd X && git commit`: el repo es X
-        dir_cd = os.path.join(dir_cd, os.path.expandvars(os.path.expanduser(toks[i+1]))); i += 2; continue
+    if toks[i] == "cd":                                         # `cd X && git commit`: el repo es X
+        sig = toks[i+1] if i + 1 < len(toks) else None
+        if sig is None or sig in SEP: dir_cd = os.path.expanduser("~"); i += 1; continue   # `cd` solo: HOME
+        if sig == "-": dir_cd = "?"; i += 2; continue                                     # `cd -`: no se sabe a dónde
+        dir_cd = os.path.join(dir_cd, os.path.expandvars(os.path.expanduser(sig))); i += 2; continue
     if toks[i] != "git": i += 1; continue
     i += 1; ruta = dir_cd
     while i < len(toks) and toks[i].startswith("-"):           # opciones globales: git -C <ruta> -c x=y …
@@ -54,12 +57,12 @@ while i < len(toks):
 print(f"{amplio}\t{repo}")' 2>/dev/null || printf '1\t.')
 amplio=${analisis%%$'\t'*}; repo=${analisis#*$'\t'}
 if [ "$repo" = "?" ]; then
-  echo "Kit Chema: con --git-dir/--work-tree no puedo saber qué repo revisar en busca de secretos. Haz el commit desde el repo (cd o git -C)." >&2
+  echo "Kit Chema: no puedo saber qué repo revisar en busca de secretos (--git-dir, --work-tree o cd -). Haz el commit desde el repo, con cd a una ruta o git -C." >&2
   exit 2
 fi
 if [ -n "$repo" ] && ! cd -- "$repo" 2>/dev/null; then
   # Sin ubicar el repo de `git -C` no se puede escanear: bloquear antes que revisar otro repo y dejarlo pasar.
-  echo "Kit Chema: no pude ubicar el repo de \`git -C $repo\` para revisar secretos. Corre el commit desde ese repo (cd) o con la ruta ya expandida." >&2
+  echo "Kit Chema: no pude ubicar el repo $repo (de cd o git -C) para revisar secretos. Corre el commit desde ese repo o con la ruta ya expandida." >&2
   exit 2
 fi
 top=$(git rev-parse --show-toplevel 2>/dev/null) && cd -- "$top"   # ls-files --others solo ve el directorio actual hacia abajo

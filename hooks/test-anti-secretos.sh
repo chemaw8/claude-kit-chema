@@ -75,6 +75,12 @@ espera 2 "git add -A && git commit -m x" "un enlace roto no debe ocultar el secr
 nuevo_repo; mkdir -p "$t/otro"; rm -rf "$t/otro/r"; cp -r "$t/r" "$t/otro/r"; printf 'k=%s\n' "$SECRETO" >> "$t/otro/r/a.txt"
 espera 2 "cd $t/otro/r && git commit -am x" "cd <repo> && git commit -am con secreto"
 
+# 4g-ter. `cd` sin argumento va a HOME (no toma «&&» como carpeta); un HOME limpio deja pasar
+nuevo_repo; mkdir -p "$t/home"; rm -rf "$t/home/.git"; git -C "$t/home" init -q
+rc=$(cd "$t/r" && printf '%s' '{"tool_input":{"command":"cd && git commit -m x"}}' | HOME="$t/home" bash "$HOOK" >/dev/null 2>&1; echo $?)
+[ "$rc" = 0 ] || fallo "cd sin argumento a un HOME limpio debe pasar (dio $rc)"
+rm -rf "$t/home/.git"
+
 # 4h. commit con rutas explícitas: toma esas rutas del árbol de trabajo, no del índice
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"
 espera 2 "git commit a.txt -m x" "git commit <ruta> con secreto sin preparar"
