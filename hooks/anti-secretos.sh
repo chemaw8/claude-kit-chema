@@ -30,7 +30,9 @@ while i < len(toks):
     i += 1; ruta = "."
     while i < len(toks) and toks[i].startswith("-"):           # opciones globales: git -C <ruta> -c x=y …
         if toks[i] == "-C" and i + 1 < len(toks): ruta = os.path.expandvars(os.path.expanduser(toks[i+1])); i += 2; continue
-        if toks[i] in ("-c", "--git-dir", "--work-tree", "--namespace") and i + 1 < len(toks): i += 2; continue
+        if toks[i].startswith(("--git-dir", "--work-tree")):                                 # sin traducir a un repo: se bloquea
+            ruta = "?"; i += 1 if "=" in toks[i] else 2; continue
+        if toks[i] in ("-c", "--namespace") and i + 1 < len(toks): i += 2; continue
         i += 1
     if i >= len(toks): break
     sub = toks[i]; i += 1
@@ -48,6 +50,10 @@ while i < len(toks):
                 if ch in "mFCct": salta = (j == len(x) - 2); break
 print(f"{amplio}\t{repo}")' 2>/dev/null || printf '1\t.')
 amplio=${analisis%%$'\t'*}; repo=${analisis#*$'\t'}
+if [ "$repo" = "?" ]; then
+  echo "Kit Chema: con --git-dir/--work-tree no puedo saber qué repo revisar en busca de secretos. Haz el commit desde el repo (cd o git -C)." >&2
+  exit 2
+fi
 if [ -n "$repo" ] && ! cd -- "$repo" 2>/dev/null; then
   # Sin ubicar el repo de `git -C` no se puede escanear: bloquear antes que revisar otro repo y dejarlo pasar.
   echo "Kit Chema: no pude ubicar el repo de \`git -C $repo\` para revisar secretos. Corre el commit desde ese repo (cd) o con la ruta ya expandida." >&2
@@ -61,11 +67,12 @@ diff=$(mktemp); trap 'rm -f "$diff"' EXIT
 git diff --cached 2>/dev/null > "$diff"
 if [ "$amplio" != 0 ]; then
   git diff 2>/dev/null >> "$diff"
-  git ls-files -z --others --exclude-standard 2>/dev/null | while IFS= read -r -d '' nuevo; do
-    [ -f "$nuevo" ] && grep -Iq . -- "$nuevo" 2>/dev/null && sed 's/^/+/' -- "$nuevo" >> "$diff"
-  done
+  # Archivos nuevos: un solo grep por tanda (xargs), completos y sin copiarlos; -I salta los binarios.
+  if git ls-files -z --others --exclude-standard 2>/dev/null | xargs -0 -r grep -IliE "$patron" -- 2>/dev/null | grep -q .; then
+    nuevo_con_secreto=1
+  fi
 fi
-if grep -aE '^\+' -- "$diff" | grep -aiE "$patron" >/dev/null; then
+if [ "${nuevo_con_secreto:-0}" = 1 ] || grep -aE '^\+' -- "$diff" | grep -aiE "$patron" >/dev/null; then
   echo "Kit Chema: el diff del commit parece contener credenciales (clave API, token o llave privada). Revísalo y quítalas antes de commitear; si es un falso positivo, dilo y commitea con el hook desactivado." >&2
   exit 2
 fi

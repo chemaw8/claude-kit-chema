@@ -51,6 +51,10 @@ rc=$(cd / && printf '%s' '{"tool_input":{"command":"git -C ~/r commit -am x"}}' 
 [ "$rc" = 2 ] || fallo "git -C ~/ruta commit -am con secreto (esperaba 2, dio $rc)"
 espera 2 "git -C /no/existe commit -m x" "git -C con ruta inexistente debe bloquear"
 
+# 4e-bis. --git-dir / --work-tree: no se sabe qué repo revisar → bloquea
+espera 2 "git --git-dir=/otro/.git commit -am x" "git --git-dir= debe bloquear"
+espera 2 "git --work-tree /otro commit -m x" "git --work-tree debe bloquear"
+
 # 4f. un archivo nuevo grande con el secreto al final (antes solo se leían 2 MB)
 nuevo_repo; { seq 1 600000; printf 'k=%s\n' "$SECRETO"; } > "$t/r/grande.log"
 espera 2 "git add -A && git commit -m x" "secreto al final de un archivo nuevo de más de 2 MB"
