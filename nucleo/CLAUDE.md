@@ -4,11 +4,11 @@ Las reglas por dominio viven en las skills del kit (tabla al final).
 
 ## Contexto
 
-El hook de sesión ya cargó `~/.claude/contexto/` (empresa y personal). Si no
-aparece en la conversación, o lo que aparece son plantillas sin llenar, léelo
-tú; si no existe o está vacío, pregunta lo mínimo: para quién es el trabajo y
-qué es confidencial. No des por cargadas las reglas de confidencialidad sin
-haberlas visto.
+El hook de sesión ya cargó el `contexto/` de tu perfil (el de
+`$CLAUDE_CONFIG_DIR`, o `~/.claude/contexto/` sin él; nunca el de otro perfil).
+Si no aparece o son plantillas sin llenar, léelo tú; si no existe o está
+vacío, pregunta lo mínimo: para quién es el trabajo y qué es confidencial.
+No des por cargadas las reglas de confidencialidad sin haberlas visto.
 
 ## Arranque de tarea
 
