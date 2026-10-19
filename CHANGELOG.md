@@ -1,5 +1,19 @@
 # Changelog — Kit Chema
 
+## v1.34 — 2026-10-19
+Se retira una regla del núcleo por su propio criterio de retiro; núcleo 140 → 137 líneas. Nada se agrega.
+- **Retirada la v1.22** («Toda tabla o lista de resultados […] toma sus valores de la salida que los produjo, sin
+  volcarla entera; lo que no puedas comprobar tras intentarlo va como "sin comprobar", nunca de memoria»). Al entrar
+  (PR #47) fijó su criterio: «si en 30 días no baja ese patrón en los juicios del advisor, se retira». **Evidencia,
+  contada como es:** familia de alertas de la métrica de `reglas-vigiladas.json`, 25 días antes contra 25 después,
+  juzgada por el panel de tres familias el 2026-10-19. Antes: 12 alertas, 5 juzgables, **0 fallos confirmados** (las 5,
+  falsos positivos); 7 sin juicio posible (su sesión ya no existe). Después: 19 alertas, 19 juzgadas, **12 fallos
+  confirmados**. El volumen cambió (590 → 2,072 alertas del advisor, por el paso a pi y los evals): solo en el peor
+  caso para esta conclusión —las 7 sin juicio todas fallos reales— la tasa habría bajado. Ningún dato indica efecto.
+- Lo que la regla buscaba sigue cubierto donde sí se midió efecto: el resto de «Terminado significa verificado»
+  (cifras recalculadas, «sin comprobar» en la primera frase desde la v1.32) y, como capacidad, la extensión
+  `verificar-cierre` de pi-harness (en prueba hasta el 2026-10-26).
+
 ## v1.33.1 — 2026-10-13
 Arreglos de protecciones que fallaban en silencio, sin cambiar reglas ni núcleo (flujo de script: PR + CI + sello, sin
 council, como la v1.32.1). Salen de una auditoría de solo lectura con verificación cruzada entre familias de modelos;
