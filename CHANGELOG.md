@@ -11,7 +11,7 @@ Se retira una regla del núcleo por su propio criterio de retiro; núcleo 140 �
     ya no existe); después 19 alertas, 19 juzgadas, 12 fallos confirmados;
   - el regex no capturaba casos que motivaron la regla (el de «probado a 5 anchos» quedó fuera). Con un filtro más
     amplio sobre todos los juicios: antes 7 fallos confirmados de 81 juzgados; después 41 de 163 (33 en pi; 7 en
-    Claude Code, casi todos de evals);
+    Claude Code, casi todos de evals; 1 sin arnés registrado);
   - no se separaron los dos modos que pidió el council de la v1.22 (fabricar un valor contra leer mal una salida).
   Con ningún recuento ni denominador baja el patrón: no hay señal de efecto atribuible. Se midió al día 25 de 30:
   cinco días no voltean esos conteos, y esperar dejaba la regla sin veredicto en su fecha.

@@ -9,8 +9,8 @@ registrados y la CI escanea los commits del PR con gitleaks. Salió de una audit
 entre familias (2026-10-13). Reglas en vigilancia: v1.33 hasta 2027-01-07, v1.32 hasta 2026-11-07; la v1.22 se retira en la v1.34 (2026-10-19).
 
 ## Siguiente paso
-- [ ] **v1.34 (PR en borrador): retiro de la v1.22.** Council 3 × aprobada con cambios (aplicados). Falta: gate de
-      disparo en el CHANGELOG, salir de borrador y fusionar; al fusionar, marcar `kit-v1.22-resultados-literales` como
+- [ ] **v1.34 (PR en borrador): retiro de la v1.22.** Council 3 × aprobada con cambios (aplicados); gate de disparo 83/90 sin
+      regresiones. Falta: salir de borrador y fusionar (decide José); al fusionar, marcar `kit-v1.22-resultados-literales` como
       «retirada» en `~/.claude/kit-chema/reglas-vigiladas.json` e instalar (`instalar.sh`, también llega a pi).
 - [ ] Vigilancia v1.33 hasta el 2027-01-07 (`reglas-vigiladas.json`, id `kit-v1.33-buscar-lo-hecho`): suspensión con 1
       lectura fuera de las áreas de trabajo o 1 uso de datos de otro cliente; retiro con ≥2 reincorporaciones o falsas
@@ -37,7 +37,7 @@ entre familias (2026-10-13). Reglas en vigilancia: v1.33 hasta 2027-01-07, v1.32
 ## Frentes abiertos
 | Frente | Estado | Siguiente | Bloqueo |
 |---|---|---|---|
-| Reglas v1.32 / v1.33 | en vigilancia; v1.22 se retira (v1.34) | fusionar v1.34 | gate de disparo |
+| Reglas v1.32 / v1.33 | en vigilancia; v1.22 se retira (v1.34) | fusionar v1.34 | José |
 | Piezas de pstack | esperan evidencia de uso real | tabla de siguientes pasos | trabajo real apropiado |
 | Agregar al kit | 4 palancas de texto no generalizaron | capacidades (pi-harness: esperar-imagen, verificar-cierre) | medir en uso real |
 | Evals | línea base 2026-10-13: 14 casos con Python, 9/14 y 100/132 (no comparable con 7/13 en skills) | medir lo próximo contra esta | — |

@@ -22,7 +22,7 @@ del advisor, se retira». Rama `regla/v1.34-retiro-v1.22`, commit evaluado `d448
 | 2 | La frase «solo en el peor caso la tasa habría bajado» dependía de un denominador que el propio texto descalificaba | Anthropic | Sustituida por «con ningún recuento ni denominador baja el patrón» |
 | 3 | La ventana «después» incluye evals | Anthropic | Declarado en el CHANGELOG (7 de 41 en Claude Code, casi todos de evals) |
 | 4 | Se aplica al día 25 de 30 | Anthropic | Declarado con su razón |
-| 5 | La métrica tenía poco alcance; no reusarla sin validarla contra casos conocidos | Anthropic | Anotado en `reglas-vigiladas.json` al retirar y en DECISIONES |
+| 5 | La métrica tenía poco alcance; no reusarla sin validarla contra casos conocidos | Anthropic | Anotado en DECISIONES; en `reglas-vigiladas.json` (fuera del repo) se anota al fusionar |
 | 6 | La cobertura que queda es parcial, no equivalente | OpenAI | CHANGELOG reescrito con lo que se pierde |
 | 7 | Gate de disparo, acta, DECISIONES, CONTINUAR, `reglas-vigiladas.json` | Kimi | Gate corrido sobre el núcleo de la rama; acta, DECISIONES y CONTINUAR en el PR; `reglas-vigiladas.json` (fuera del repo) se marca al fusionar |
 | 8 | No se separaron los dos modos (fabricar contra leer mal) | Kimi | Declarado como límite en el CHANGELOG |
