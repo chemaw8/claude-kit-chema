@@ -1,18 +1,26 @@
 # Changelog — Kit Chema
 
 ## v1.34 — 2026-10-19
-Se retira una regla del núcleo por su propio criterio de retiro; núcleo 140 → 137 líneas. Nada se agrega.
+Se retira una regla del núcleo por su propio criterio de retiro; núcleo 140 → 137 líneas. Nada se agrega. Acta:
+`docs/pruebas/council-v1.34.md`.
 - **Retirada la v1.22** («Toda tabla o lista de resultados […] toma sus valores de la salida que los produjo, sin
   volcarla entera; lo que no puedas comprobar tras intentarlo va como "sin comprobar", nunca de memoria»). Al entrar
   (PR #47) fijó su criterio: «si en 30 días no baja ese patrón en los juicios del advisor, se retira». **Evidencia,
-  contada como es:** familia de alertas de la métrica de `reglas-vigiladas.json`, 25 días antes contra 25 después,
-  juzgada por el panel de tres familias el 2026-10-19. Antes: 12 alertas, 5 juzgables, **0 fallos confirmados** (las 5,
-  falsos positivos); 7 sin juicio posible (su sesión ya no existe). Después: 19 alertas, 19 juzgadas, **12 fallos
-  confirmados**. El volumen cambió (590 → 2,072 alertas del advisor, por el paso a pi y los evals): solo en el peor
-  caso para esta conclusión —las 7 sin juicio todas fallos reales— la tasa habría bajado. Ningún dato indica efecto.
-- Lo que la regla buscaba sigue cubierto donde sí se midió efecto: el resto de «Terminado significa verificado»
-  (cifras recalculadas, «sin comprobar» en la primera frase desde la v1.32) y, como capacidad, la extensión
-  `verificar-cierre` de pi-harness (en prueba hasta el 2026-10-26).
+  contada como es** (panel de tres familias, 2026-10-19, ventanas de 25 días antes y después):
+  - con el regex de la métrica: antes 12 alertas, 5 juzgables, 0 fallos confirmados (7 sin juicio posible: su sesión
+    ya no existe); después 19 alertas, 19 juzgadas, 12 fallos confirmados;
+  - el regex no capturaba casos que motivaron la regla (el de «probado a 5 anchos» quedó fuera). Con un filtro más
+    amplio sobre todos los juicios: antes 7 fallos confirmados de 81 juzgados; después 41 de 163 (33 en pi; 7 en
+    Claude Code, casi todos de evals);
+  - no se separaron los dos modos que pidió el council de la v1.22 (fabricar un valor contra leer mal una salida).
+  Con ningún recuento ni denominador baja el patrón: no hay señal de efecto atribuible. Se midió al día 25 de 30:
+  cinco días no voltean esos conteos, y esperar dejaba la regla sin veredicto en su fecha.
+- **Qué se pierde, dicho como es:** permanece la obligación general de verificar antes de declarar listo y de dar el
+  estado al cierre (con «sin comprobar», v1.32), y el presupuesto de contexto («nunca un volcado»). Se retira la
+  instrucción transversal de tomar cada valor de su salida y marcar individualmente lo no comprobable tras intentarlo;
+  las reglas por dominio (kit-analisis-datos, kit-finanzas, kit-research, agente `verificador`) permanecen. Como
+  capacidad, `verificar-cierre` de pi-harness compara afirmaciones de «subido/terminó» contra datos (en prueba).
+- Council (Anthropic, OpenAI, Kimi): 3 × aprobada con cambios, aplicados. Gate de disparo con el núcleo de la rama: 83/90, sin regresiones (`main` del 2026-10-08: 84/90; una sola baja de 1 corrida).
 
 ## v1.33.1 — 2026-10-13
 Arreglos de protecciones que fallaban en silencio, sin cambiar reglas ni núcleo (flujo de script: PR + CI + sello, sin
