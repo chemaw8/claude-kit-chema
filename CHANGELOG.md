@@ -1,5 +1,27 @@
 # Changelog — Kit Chema
 
+## v1.34 — 2026-10-19
+Se retira una regla del núcleo por su propio criterio de retiro; núcleo 140 → 137 líneas. Nada se agrega. Acta:
+`docs/pruebas/council-v1.34.md`.
+- **Retirada la v1.22** («Toda tabla o lista de resultados […] toma sus valores de la salida que los produjo, sin
+  volcarla entera; lo que no puedas comprobar tras intentarlo va como "sin comprobar", nunca de memoria»). Al entrar
+  (PR #47) fijó su criterio: «si en 30 días no baja ese patrón en los juicios del advisor, se retira». **Evidencia,
+  contada como es** (panel de tres familias, 2026-10-19, ventanas de 25 días antes y después):
+  - con el regex de la métrica: antes 12 alertas, 5 juzgables, 0 fallos confirmados (7 sin juicio posible: su sesión
+    ya no existe); después 19 alertas, 19 juzgadas, 12 fallos confirmados;
+  - el regex no capturaba casos que motivaron la regla (el de «probado a 5 anchos» quedó fuera). Con un filtro más
+    amplio sobre todos los juicios: antes 7 fallos confirmados de 81 juzgados; después 41 de 163 (33 en pi; 7 en
+    Claude Code, casi todos de evals; 1 sin arnés registrado);
+  - no se separaron los dos modos que pidió el council de la v1.22 (fabricar un valor contra leer mal una salida).
+  Con ningún recuento ni denominador baja el patrón: no hay señal de efecto atribuible. Se midió al día 25 de 30:
+  cinco días no voltean esos conteos, y esperar dejaba la regla sin veredicto en su fecha.
+- **Qué se pierde, dicho como es:** permanece la obligación general de verificar antes de declarar listo y de dar el
+  estado al cierre (con «sin comprobar», v1.32), y el presupuesto de contexto («nunca un volcado»). Se retira la
+  instrucción transversal de tomar cada valor de su salida y marcar individualmente lo no comprobable tras intentarlo;
+  las reglas por dominio (kit-analisis-datos, kit-finanzas, kit-research, agente `verificador`) permanecen. Como
+  capacidad, `verificar-cierre` de pi-harness compara afirmaciones de «subido/terminó» contra datos (en prueba).
+- Council (Anthropic, OpenAI, Kimi): 3 × aprobada con cambios, aplicados. Gate de disparo con el núcleo de la rama: 83/90, sin regresiones (`main` del 2026-10-08: 84/90; una sola baja de 1 corrida).
+
 ## v1.33.1 — 2026-10-13
 Arreglos de protecciones que fallaban en silencio, sin cambiar reglas ni núcleo (flujo de script: PR + CI + sello, sin
 council, como la v1.32.1). Salen de una auditoría de solo lectura con verificación cruzada entre familias de modelos;

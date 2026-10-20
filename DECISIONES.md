@@ -265,3 +265,12 @@ clases emparejadas. La discrepancia (registrar el gate) se resuelve por el RUNBO
 archivar y contrastar; no prueba superioridad frente a una síntesis sin clasificación.
 **Descartado.** Tocar las actas antiguas, incluir la regla del PR #82 o ampliar esta ronda a reparar todos los puntos
 ciegos de `muletillas.sh`. `/por-que` no se da por usado solo porque el dueño anunció que iba a usarlo.
+
+## 2026-10-19 — Se retira la v1.22 por su propio criterio
+**Qué.** La oración de la v1.22 sale del núcleo (v1.34, acta `docs/pruebas/council-v1.34.md`). **Por qué.** Fijó al
+entrar «si en 30 días no baja ese patrón, se retira» y no bajó con ningún recuento: con el regex de la métrica 0 → 12
+fallos confirmados; con un filtro amplio sobre todos los juicios 7/81 → 41/163. **Lección para la próxima regla
+vigilada:** la métrica era un regex sobre la razón del advisor que no capturaba el caso que motivó la regla; antes de
+vigilar una regla, validar su métrica contra casos conocidos (positivos y negativos). **Descartado.** Vigilar 30 días
+más con otra métrica (mover la vara tras ver datos); conservar un fragmento (el resto del núcleo y las skills por
+dominio cubren lo esencial, y el texto no mostró efecto).
