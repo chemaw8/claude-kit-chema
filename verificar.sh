@@ -125,14 +125,16 @@ fi
 # lo que el usuario le agregó (statusMessage) y no se duplica. Todo en un CLAUDE_DIR desechable.
 if command -v python3 >/dev/null 2>&1; then
   ti="$(mktemp -d)"
-  printf '%s' '{"hooks":{"PreToolUse":[{"matcher":"Bash","hooks":[{"type":"command","command":"$HOME/.claude/hooks/sello-push.sh","timeout":5,"statusMessage":"propio"}]}]}}' > "$ti/settings.json"
-  CLAUDE_DIR="$ti" KIT_GATE=s KIT_HOOKS=n bash instalar.sh </dev/null >/dev/null 2>&1
-  CLAUDE_DIR="$ti" KIT_GATE=s KIT_HOOKS=n bash instalar.sh </dev/null >/dev/null 2>&1
+  printf '%s' '{"hooks":{"PreToolUse":[{"matcher":"Bash","hooks":[{"type":"command","command":"$HOME/.claude/hooks/sello-push.sh","timeout":5,"statusMessage":"propio"}]},{"matcher":"Bash","hooks":[{"type":"command","command":"$HOME/.claude/hooks/anti-secretos.sh"}]}]}}' > "$ti/settings.json"
+  CLAUDE_DIR="$ti" KIT_GATE=s KIT_HOOKS=s bash instalar.sh </dev/null >/dev/null 2>&1
+  CLAUDE_DIR="$ti" KIT_GATE=s KIT_HOOKS=s bash instalar.sh </dev/null >/dev/null 2>&1
   python3 - "$ti/settings.json" <<'PYI'
 import json, sys
 s = json.load(open(sys.argv[1]))
 h = [x for e in s["hooks"]["PreToolUse"] for x in e["hooks"] if x["command"].endswith("sello-push.sh")]
-sys.exit(0 if len(h) == 1 and h[0].get("timeout") == 10 and h[0].get("statusMessage") == "propio" else 1)
+a = [x for e in s["hooks"]["PreToolUse"] for x in e["hooks"] if x["command"].endswith("anti-secretos.sh")]
+sys.exit(0 if len(h) == 1 and h[0].get("timeout") == 10 and h[0].get("statusMessage") == "propio"
+         and len(a) == 1 and a[0].get("onFailure") == "block" else 1)
 PYI
   chk "instalar.sh actualiza un hook ya registrado (timeout), conserva lo propio y no duplica" $?
   rm -rf "$ti"
@@ -158,6 +160,29 @@ def hooks(p):
 sys.exit(0 if hooks("hooks/hooks.json") == hooks("hooks/settings-fragment.json") else 1)
 PYH
   chk "hooks/hooks.json y hooks/settings-fragment.json declaran los mismos hooks" $?
+fi
+
+# Los hooks de seguridad fallan CERRADOS: en Claude Code un hook que no arranca, vence o sale con un código
+# inesperado deja pasar la acción salvo `onFailure: "block"` (2.1.295; comprobado el 2026-10-19 con un hook que
+# sale 1: sin la opción el comando corrió, con ella se bloqueó). pi ya bloquea en esos casos (adaptador-hooks).
+if command -v python3 >/dev/null 2>&1; then
+  python3 - <<'PYF'
+import json, os, sys
+CERRADOS = {"anti-secretos.sh"}
+ok = True
+for p in ("hooks/hooks.json", "hooks/settings-fragment.json"):
+    vistos = set()
+    for ev, es in json.load(open(p))["hooks"].items():
+        for e in es:
+            for h in e["hooks"]:
+                n = os.path.basename(h["command"].strip('"'))
+                if n in CERRADOS:
+                    vistos.add(n)
+                    ok &= h.get("onFailure") == "block" and isinstance(h.get("timeout"), int)
+    ok &= vistos == CERRADOS          # que falte en un manifiesto también es falla
+sys.exit(0 if ok else 1)
+PYF
+  chk "los hooks de seguridad fallan cerrados (onFailure: block y timeout declarado)" $?
 fi
 
 # El manifiesto del plugin es lo que GitHub y /plugin muestran: se quedó en 1.15.0 durante siete
