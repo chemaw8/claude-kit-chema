@@ -1,5 +1,14 @@
 # Changelog — Kit Chema
 
+## v1.34.1 — 2026-10-19
+El hook anti-secretos falla cerrado en Claude Code; sin cambiar reglas ni núcleo (flujo de script: PR + CI + sello).
+- **Si `anti-secretos.sh` truena o se pasa de tiempo, el commit ya no entra.** Claude Code deja pasar la acción cuando
+  un hook no arranca, vence o sale con un código inesperado, salvo `onFailure: "block"` (Claude Code 2.1.295).
+  Comprobado el 2026-10-19 con Claude Code 2.1.296 y un hook que sale 1: sin la opción el comando corrió; con ella se
+  bloqueó. pi ya bloqueaba en esos casos. Se declara también `timeout: 30` (no tenía).
+- `sello-push` no cambia: falla abierto a propósito ante errores de entorno y lo anota (está documentado en el hook).
+- `verificar.sh` exige `onFailure: "block"` y timeout en los hooks de seguridad de los dos manifiestos.
+
 ## v1.34 — 2026-10-19
 Se retira una regla del núcleo por su propio criterio de retiro; núcleo 140 → 137 líneas. Nada se agrega. Acta:
 `docs/pruebas/council-v1.34.md`.

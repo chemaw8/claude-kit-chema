@@ -160,6 +160,25 @@ PYH
   chk "hooks/hooks.json y hooks/settings-fragment.json declaran los mismos hooks" $?
 fi
 
+# Los hooks de seguridad fallan CERRADOS: en Claude Code un hook que no arranca, vence o sale con un código
+# inesperado deja pasar la acción salvo `onFailure: "block"` (2.1.295; comprobado el 2026-10-19 con un hook que
+# sale 1: sin la opción el comando corrió, con ella se bloqueó). pi ya bloquea en esos casos (adaptador-hooks).
+if command -v python3 >/dev/null 2>&1; then
+  python3 - <<'PYF'
+import json, os, sys
+CERRADOS = {"anti-secretos.sh"}
+ok = True
+for p in ("hooks/hooks.json", "hooks/settings-fragment.json"):
+    for ev, es in json.load(open(p))["hooks"].items():
+        for e in es:
+            for h in e["hooks"]:
+                if os.path.basename(h["command"].strip('"')) in CERRADOS:
+                    ok &= h.get("onFailure") == "block" and isinstance(h.get("timeout"), int)
+sys.exit(0 if ok else 1)
+PYF
+  chk "los hooks de seguridad fallan cerrados (onFailure: block y timeout declarado)" $?
+fi
+
 # El manifiesto del plugin es lo que GitHub y /plugin muestran: se quedó en 1.15.0 durante siete
 # versiones (hallado 2026-09-27). Su versión sigue al CHANGELOG y su descripción nombra cada
 # subagente y comando del repo, para que añadir uno sin tocar el manifiesto salga en rojo.

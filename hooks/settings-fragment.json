@@ -6,7 +6,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/hooks/anti-secretos.sh"
+            "command": "$HOME/.claude/hooks/anti-secretos.sh",
+            "timeout": 30,
+            "onFailure": "block"
           }
         ]
       },
