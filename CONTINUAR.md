@@ -20,6 +20,8 @@ entre familias (2026-10-13). Reglas en vigilancia: v1.33 hasta 2027-01-07, v1.32
 - [ ] Avisos abiertos del sello de la v1.33.1 (no bloquean; ver PR #92): `*git*commit*` puede bloquear `git log --grep
       commit` con un secreto ya preparado; un mensaje con `GIT_DIR=` bloquea; una marca `.pid` del sello puede quedar
       huérfana. Atender solo si estorban en uso real.
+- [ ] Sobrebloqueo conocido de anti-secretos (2026-10-19): analiza también el texto de un heredoc; un script escrito
+      con `cat <<EOF` que contiene `cd $VAR … git commit` se bloquea por «no pude ubicar el repo». Atender si estorba.
 - [ ] `cegar.sh`: falta un uso real (2 de 3; ambos falsos positivos). Mantener el criterio de retiro de v1.31.
 - [ ] `/por-que`: anotar los usos reales en el acta v1.30; anunciar un uso no acredita su resultado.
 - [ ] Arenas desde Claude Code y segunda corrida real de `/crear-verificacion`: cuando haya trabajo adecuado.
