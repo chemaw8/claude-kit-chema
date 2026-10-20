@@ -616,3 +616,31 @@ hasta el 2026-11-07. Sin PR abiertos.
 - Los puntos ciegos de muletillas quedan documentados como mejora opcional; no se añadió una ronda nueva.
 - Fusionar con `gh api -X PUT …/pulls/<n>/merge`, no `gh pr merge` (trampa en CLAUDE.md). El PR #85 se fusionó con
   `gh pr merge` por error el 2026-10-08; salió bien, pero no cambia la regla.
+
+## 2026-10-20 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+Estado al 2026-10-13: v1.33.1 en main (PR #92) e instalada en Claude Code (pi comparte `~/.claude/hooks` y skills).
+Solo scripts y hooks: anti-secretos ya no falla abierto (diffs grandes, `-a`, `git add &&`, repo de `cd`/`-C`), el sello
+no borra revisiones vivas ni sella sin worktree, rotar-continuar no anuncia éxito tras fallar, instalar actualiza hooks
+registrados y la CI escanea los commits del PR con gitleaks. Salió de una auditoría de solo lectura con verificación
+entre familias (2026-10-13). Reglas en vigilancia: v1.33 hasta 2027-01-07, v1.32 hasta 2026-11-07; la v1.22 se retira en la v1.34 (2026-10-19).
+
+«Siguiente paso»:
+- [ ] **v1.34 (PR en borrador): retiro de la v1.22.** Council 3 × aprobada con cambios (aplicados); gate de disparo 83/90 sin
+      regresiones. Falta: salir de borrador y fusionar (decide José); al fusionar, marcar `kit-v1.22-resultados-literales` como
+      «retirada» en `~/.claude/kit-chema/reglas-vigiladas.json` e instalar (`instalar.sh`, también llega a pi).
+
+«Cómo retomar»:
+- Abrir: `CHANGELOG.md` (v1.33.1), `DECISIONES.md` y el estado real de los PR (`gh pr list`).
+
+«Frentes abiertos»:
+| Reglas v1.32 / v1.33 | en vigilancia; v1.22 se retira (v1.34) | fusionar v1.34 | José |
+| Evals | línea base 2026-10-13: 14 casos con Python, 9/14 y 100/132 (no comparable con 7/13 en skills) | medir lo próximo contra esta | — |
+
+«Última decisión relevante»:
+- 2026-10-13: v1.33.1 por el flujo de script (PR + CI + sello, sin council): no toca reglas.
+
+«Detalle vivo»:
+> bajo: - **`sello-push.sh revisar` en un paso aparte del commit, nunca en el mismo bloque de llamadas paralelas**: el
+  2026-10-13 pasó cuatro veces (el sello leyó el HEAD anterior). Comprobar en la salida que el sha sellado es el HEAD.
