@@ -274,3 +274,19 @@ vigilada:** la métrica era un regex sobre la razón del advisor que no capturab
 vigilar una regla, validar su métrica contra casos conocidos (positivos y negativos). **Descartado.** Vigilar 30 días
 más con otra métrica (mover la vara tras ver datos); conservar un fragmento (el resto del núcleo y las skills por
 dominio cubren lo esencial, y el texto no mostró efecto).
+
+## 2026-10-19 — La skill de verificar antes del commit NO entra: sin efecto medible
+**Qué.** Se probó una skill `kit-verificar` (correr el gate del proyecto antes de cada commit) para aprovechar la
+guía de commit de Claude Code 2.1.286 (corre una skill llamada `verify` antes de commitear). **Medido** con Claude Code
+2.1.296 y el kit instalado, 3 brazos (sin skill, `kit-verificar`, el mismo texto como `verify`), 3 corridas por brazo
+y por trampa:
+- trampa 1 (el cambio pedido rompe una prueba visible): 0 commits con pruebas rotas en los 3 brazos; en todos el
+  agente se detuvo y preguntó;
+- trampa 2 (las pruebas pasan, pero el gate del proyecto exige algo más): 9 de 9 commits con el gate en verde, en los
+  3 brazos; el agente encontró el gate en `CONTINUAR.md` / `verificar.sh` sin la skill. La skill se invocó 1 de 6
+  veces (la `verify`; `kit-verificar` nunca, el modelo cargó kit-codigo).
+**Por qué no entra.** El comportamiento ya sale bien sin ella (techo); agregarla gasta presupuesto de descriptions
+(ya arriba del orientativo de 16 k) y arriesga quitarle disparo a kit-codigo, sin beneficio medido. **Límite:** las
+trampas son repos chicos y tareas cortas; la falla real («dice que pasan sin correrlas») aparece en sesiones largas, y
+ahí la palanca que se está midiendo es `verificar-cierre` (pi-harness, re-medición el 2026-10-26).
+**Descartado.** Nombrarla `verify` por la función de Claude Code: tampoco mostró efecto.
