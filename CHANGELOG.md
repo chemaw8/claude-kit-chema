@@ -1,5 +1,15 @@
 # Changelog — Kit Chema
 
+## v1.34.2 — 2026-10-26
+Una regla nueva en kit-codigo por corrección repetida del usuario (flujo de mejora por corrección: PR en borrador + council).
+- **Antes de declarar algo listo o de pedirle al usuario que lo pruebe, el agente lo recorre en su entorno** (con acceso y
+  permiso), por el mismo camino que usará él: servicio, atajo o comando. Confirma que llega a la instancia que él usa y
+  mira el resultado visible. Si no puede, dice qué se lo impide, qué verificó y qué falta, y pide la comprobación sin
+  darlo por listo. Lo que solo pasó en aislado (offscreen, VM, compositor virtual, mocks) se reporta como «verificado en
+  aislado».
+- Origen: dos correcciones del mismo fallo (2026-10-20 y 2026-10-26). Council: codex y kimi, ambos «aprobada con
+  cambios»; los cambios están integrados. Solo cambia el cuerpo de la skill (sin gate de disparo).
+
 ## v1.34.1 — 2026-10-19
 El hook anti-secretos falla cerrado en Claude Code; sin cambiar reglas ni núcleo (flujo de script: PR + CI + sello).
 - **Si `anti-secretos.sh` truena o se pasa de tiempo, el commit ya no entra.** Claude Code deja pasar la acción cuando
