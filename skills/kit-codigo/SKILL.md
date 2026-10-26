@@ -52,6 +52,14 @@ Este es el orden; el primer paso es el que más se salta y el que más cuesta.
    completa, código de salida 0 y sin fallos ni errores), no un total fijo de tests.
    Conserva el código de salida real; un conteo solo es evidencia fechada, nunca
    criterio de aceptación. Si falla, repórtalo: no cambies el criterio para pasarlo.
+   Antes de declararlo listo o de pedirle al usuario que lo pruebe, recórrelo tú
+   en su entorno, si tienes acceso y permiso, por el mismo camino que usará él
+   (servicio, atajo o comando): confirma que llega a la instancia que él usa y
+   observa el resultado visible, paso por paso de lo que le entregas. Si no
+   puedes, di qué te lo impide, qué verificaste y qué queda pendiente, y pídele
+   esa comprobación con el resultado esperado, sin darlo por listo. Una prueba
+   aislada (offscreen, VM, compositor virtual, mocks) no sustituye ese recorrido:
+   repórtala como «verificado en aislado».
 5. Limpieza del diff. Antes de cerrar, repasa el diff completo (`git diff`) y
    quita todo lo que no aporta a la tarea.
 
