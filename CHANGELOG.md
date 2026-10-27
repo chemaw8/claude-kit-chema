@@ -5,7 +5,8 @@ El asistente público de un comando (`entorno/instalar.sh`) deja una sola copia 
 - **pi 1.1.0** (antes 0.87.0), en una sola variable `PI_VERSION` igual a la del manifiesto privado.
 - **Perfil completo:** ya no ofrece pi (lo instala el entorno privado) y retira el pi que este mismo asistente haya
   dejado en `~/.local`, porque tapaba al del entorno en el PATH (máquina nueva, 2026-10-27: configurar-pi.sh se negó).
-  Un pi ajeno no se toca; si no puede retirarlo, falla cerrado antes de delegar.
+  Un pi ajeno no se toca, pero el plan lo avisa y el semáforo lo deja en rojo; si no puede retirar el propio, falla
+  cerrado antes de delegar.
 - **Perfil colega:** el pi propio se lleva a 1.1.0 y no se reinstala si ya está; uno ajeno no se duplica, y si no
   responde a `--version` queda en rojo.
 - **Node ≥ 22.19.0** cuando habrá pi 1.1.0 (colega con pi y completo), comparando la versión completa.

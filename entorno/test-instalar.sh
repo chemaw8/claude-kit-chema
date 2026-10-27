@@ -470,6 +470,8 @@ class Instalador(unittest.TestCase):
         self.corre("--si", "--perfil", "completo", "--entorno", "ejemplo/repo")
         self.assertFalse(any(a[:1] == ["rm"] for a in self.llamadas("npm")))
         self.assertTrue(ajeno.exists())
+        self.assertIn("hay un pi ajeno en ~/.local/bin", self.salida)          # el plan lo avisa
+        self.assertIn("✗ | Sin un pi en ~/.local/bin que tape", self.salida)  # y el semáforo lo deja en rojo
 
     def test_12g_colega_pi_ajeno_en_local_bin_no_se_pisa(self):
         """Un pi en ~/.local/bin que no enlaza al node_modules del asistente es ajeno también en colega: no se pisa."""

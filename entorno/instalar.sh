@@ -110,6 +110,8 @@ plan() {
       printf 'Se retirará el pi que este asistente dejó en ~/.local (versión %s): taparía al de tu entorno.\n' \
         "$("$HOME/.local/bin/pi" --version 2>/dev/null || echo ilegible)"
       printf '  %s\n' "$(comando npm rm -g --prefix "$HOME/.local" @earendil-works/pi-coding-agent)"
+    elif [ -e "$HOME/.local/bin/pi" ]; then   # ajeno: no se toca, pero taparía al del entorno
+      printf 'Aviso: hay un pi ajeno en ~/.local/bin; no lo toco, pero quedará primero en el PATH y tapará al de tu entorno.\n'
     fi
   else
     printf 'pi opcional: omitido. Sin --si puedes elegir instalarlo.\n'
@@ -337,7 +339,10 @@ main() {
     fi
     # Falla cerrado antes de delegar: con el pi propio todavía ahí, el del entorno quedaría tapado otra vez.
     pi_local_propio && error 'No pude retirar el pi de ~/.local que tapa al de tu entorno (ver su arreglo en el semáforo).'
-    hechos[pilocal]=1
+    if [ -e "$HOME/.local/bin/pi" ]; then   # ajeno: queda en rojo con su arreglo, sin borrar nada que no sea nuestro
+      nombres[pilocal]="Sin un pi en ~/.local/bin que tape al de tu entorno (hay uno ajeno)"
+      arreglos[pilocal]="revisa ~/.local/bin/pi y quítalo si no lo usas"
+    else hechos[pilocal]=1; fi
   fi
   if [ "${hechos[claude]}" -eq 1 ] && ! claude_autenticado && [ "$si" -eq 0 ]; then
     if aceptar '¿Abrir el login de Claude Code en esta terminal?'; then
