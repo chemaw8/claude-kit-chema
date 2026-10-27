@@ -107,6 +107,7 @@ elif nombre == "npm":
     if a == ["--version"]: print("10.0.0")
     elif "@anthropic-ai/claude-code" in a: instalar("claude")
     elif a[:1] == ["rm"] and "@earendil-works/pi-coding-agent" in a:
+        if fallo == "npm-rm": sys.exit(1)
         (home / ".local/bin/pi").unlink(missing_ok=True)
     elif "@earendil-works/pi-coding-agent@1.1.0" in a:
         if "--ignore-scripts" not in a: sys.exit(87)
@@ -397,8 +398,8 @@ class Instalador(unittest.TestCase):
         self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
         self.assertFalse((self.home / ".local/bin/pi").exists())
 
-    def test_12c_pi_presente_roto_no_aborta(self):
-        """Un pi presente que no responde --version no tumba el asistente ni se duplica; el plan lo dice."""
+    def test_12c_pi_presente_roto_falla_cerrado(self):
+        """Un pi ajeno que no responde --version no se duplica, queda en rojo y el asistente falla cerrado."""
         (self.bin / "pi").symlink_to(self.bin / "modelo")
         self.env["TEST_PI_ROTO"] = "1"
         salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")], rc=1)   # falla cerrado
@@ -441,9 +442,24 @@ class Instalador(unittest.TestCase):
         self.corre("--si", "--perfil", "completo", "--entorno", "ejemplo/repo")
         self.assertIn("Se retirará el pi que este asistente dejó en ~/.local (versión 0.87.0)", self.salida)
         self.assertTrue(any(a[:1] == ["rm"] for a in self.llamadas("npm")))
-        self.assertIn("✓ | Sin un pi viejo de este asistente en ~/.local", self.salida)
+        self.assertIn("✓ | Sin un pi de este asistente en ~/.local", self.salida)
         self.assertFalse((self.home / ".local/bin/pi").exists())
         self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
+
+    def test_14d_completo_retira_pi_propio_aunque_este_al_dia(self):
+        """En completo el pi propio sobra aunque esté en PI_VERSION: el del entorno no debe depender de esa coincidencia."""
+        self.pi_propio()
+        self.corre("--si", "--perfil", "completo", "--entorno", "ejemplo/repo")
+        self.assertTrue(any(a[:1] == ["rm"] for a in self.llamadas("npm")))
+        self.assertFalse((self.home / ".local/bin/pi").exists())
+
+    def test_14e_completo_falla_cerrado_si_no_puede_retirar(self):
+        """Si npm rm no quita el pi propio, no delega: el del entorno quedaría tapado."""
+        self.pi_propio()
+        self.env["TEST_FALLO"] = "npm-rm"
+        self.corre("--si", "--perfil", "completo", "--entorno", "ejemplo/repo", rc=1)
+        self.assertIn("No pude retirar el pi", self.salida)
+        self.assertFalse((self.home / "delegado-args").exists())
 
     def test_14c_completo_no_toca_pi_ajeno(self):
         """Un pi en ~/.local/bin que NO es el de este asistente (no enlaza a su node_modules) no se retira."""

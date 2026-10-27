@@ -106,7 +106,7 @@ plan() {
     printf '  %s   (solo si falta o no es la %s)\n' "$(comando npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE")" "$PI_VERSION"
   elif [ "$perfil" = completo ]; then
     printf 'pi: lo instala el asistente de tu entorno, en la versión de su manifiesto.\n'
-    if pi_local_viejo; then
+    if pi_local_propio; then   # en completo cualquier pi propio sobra: el entorno trae el suyo (no depende de versiones)
       printf 'Se retirará el pi que este asistente dejó en ~/.local (versión %s): taparía al de tu entorno.\n' \
         "$("$HOME/.local/bin/pi" --version 2>/dev/null || echo ilegible)"
       printf '  %s\n' "$(comando npm rm -g --prefix "$HOME/.local" @earendil-works/pi-coding-agent)"
@@ -133,7 +133,6 @@ pi_local_propio() {   # ~/.local/bin/pi existe y enlaza al node_modules de este 
   dir="$(readlink -f "$PI_LOCAL_DIR" 2>/dev/null || printf '%s' "$PI_LOCAL_DIR")"
   case "$(readlink -f "$HOME/.local/bin/pi" 2>/dev/null)" in "$dir"/*) return 0 ;; *) return 1 ;; esac
 }
-pi_local_viejo() { pi_local_propio && [ "$("$HOME/.local/bin/pi" --version 2>/dev/null || true)" != "$PI_VERSION" ]; }
 version_minima() { [ "$(printf '%s\n' "$1" "$2" | sort -V | head -1)" = "$1" ]; }   # $2 >= $1
 
 declare -a pasos=()
@@ -231,7 +230,7 @@ main() {
   registrar comandos 'Comandos del kit instalados' "$(comando bash "$kit/instalar.sh")"
   registrar autotest 'muletillas.sh autotest' "$(comando bash "$kit/instalar.sh") && $(comando bash "$HOME/.claude/scripts/muletillas.sh" autotest)"
   [ "$con_pi" -eq 0 ] || registrar pi "pi $PI_VERSION en PATH" "$reintento"
-  [ "$perfil" != completo ] || registrar pilocal 'Sin un pi viejo de este asistente en ~/.local' \
+  [ "$perfil" != completo ] || registrar pilocal 'Sin un pi de este asistente en ~/.local' \
     "$(comando npm rm -g --prefix "$HOME/.local" @earendil-works/pi-coding-agent)"
   registrar login 'Login de Claude Code' 'claude auth login'
   if [ "$perfil" = completo ]; then
@@ -333,10 +332,12 @@ main() {
     fi
   fi
   if [ "$perfil" = completo ]; then
-    if pi_local_viejo; then
+    if pi_local_propio; then
       ejecutar npm rm -g --prefix "$HOME/.local" @earendil-works/pi-coding-agent || true
     fi
-    pi_local_viejo || hechos[pilocal]=1
+    # Falla cerrado antes de delegar: con el pi propio todavía ahí, el del entorno quedaría tapado otra vez.
+    pi_local_propio && error 'No pude retirar el pi de ~/.local que tapa al de tu entorno (ver su arreglo en el semáforo).'
+    hechos[pilocal]=1
   fi
   if [ "${hechos[claude]}" -eq 1 ] && ! claude_autenticado && [ "$si" -eq 0 ]; then
     if aceptar '¿Abrir el login de Claude Code en esta terminal?'; then
