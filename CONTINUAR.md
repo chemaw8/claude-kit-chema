@@ -10,8 +10,9 @@ una sola copia de pi, v1.34.3). Vigilancia: v1.33 hasta 2027-01-07, v1.32 hasta 
 - [ ] Aviso cosmético abierto del PR #100 (sello 8444812/c192294): en colega, con un pi ajeno solo en `~/.local/bin` y esa
       carpeta aún fuera del PATH, el plan dice «versión ilegible» (`pi --version` por PATH en `plan()`). Terminado = el
       plan lee `~/.local/bin/pi --version` cuando existe, con su prueba en `entorno/test-instalar.sh`.
-- [ ] **2026-10-26: decidir si se amplía `verificar-cierre`** (pi-harness) a «borré X» / «las pruebas pasan», según su
-      re-medición de esa fecha (si ≥ 2 de 3 intervenciones son ciertas). Es la palanca que propone la auditoría.
+- [ ] **Decidir si se amplía `verificar-cierre`** (pi-harness) a «borré X» / «las pruebas pasan»: tocaba el 2026-10-26
+      y no se tomó (vencida; nadie corrió la re-medición). Primero correrla (criterio: ≥ 2 de 3 intervenciones ciertas),
+      luego decidir. Es la palanca que propone la auditoría.
 - [ ] Medir «Evaluación crítica» (la única sección sin control ni medición): 3-4 casos-trampa en evals-entregables
       (idea del usuario con un error comprobable; pasa si el agente lo señala antes de ejecutar).
 - [ ] Revisar lo de evals del 2026-10-20 cuando la otra sesión lo commitee: línea base 8/14 con v1.34.1 (baja
