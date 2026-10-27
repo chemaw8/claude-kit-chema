@@ -644,3 +644,12 @@ entre familias (2026-10-13). Reglas en vigilancia: v1.33 hasta 2027-01-07, v1.32
 «Detalle vivo»:
 > bajo: - **`sello-push.sh revisar` en un paso aparte del commit, nunca en el mismo bloque de llamadas paralelas**: el
   2026-10-13 pasó cuatro veces (el sello leyó el HEAD anterior). Comprobar en la salida que el sha sellado es el HEAD.
+
+## 2026-10-27 — rotado desde CONTINUAR.md
+
+«Dónde vamos»:
+Estado al 2026-10-20: v1.34.1 en main (PR #95, #96, #97) e instalada en Claude Code y pi. La v1.34 retiró la v1.22
+del núcleo (137 líneas); la v1.34.1 hace que anti-secretos falle cerrado (`onFailure: block`). Auditoría del núcleo en
+`docs/auditoria-nucleo-2026-10-19.md`: sin poda grande; lo que falla en la práctica es afirmar sin respaldo. La skill
+de verificar antes del commit se midió y no entra (DECISIONES 2026-10-19). Vigilancia: v1.33 hasta 2027-01-07, v1.32
+hasta 2026-11-07.
