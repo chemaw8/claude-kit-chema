@@ -1,14 +1,15 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-20  ·  commit 6b48fce (rama cierre/2026-10-20)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-27  ·  commit 2e4303a (rama cierre/2026-10-27)  ·  cierre limpio: sí
 > Estado vivo de sesión. Hechos estables en README.md, GOBERNANZA.md y CLAUDE.md; registro histórico en docs/bitacora.md.
 
 ## Dónde vamos
-Estado al 2026-10-20: v1.34.1 en main (PR #95, #96, #97) e instalada en Claude Code y pi. La v1.34 retiró la v1.22
-del núcleo (137 líneas); la v1.34.1 hace que anti-secretos falle cerrado (`onFailure: block`). Auditoría del núcleo en
-`docs/auditoria-nucleo-2026-10-19.md`: sin poda grande; lo que falla en la práctica es afirmar sin respaldo. La skill
-de verificar antes del commit se midió y no entra (DECISIONES 2026-10-19). Vigilancia: v1.33 hasta 2027-01-07, v1.32
-hasta 2026-11-07.
+Estado al 2026-10-27: v1.34.3 en main (PR #99 regla «recorrer el camino del usuario», v1.34.2; PR #100 asistente con
+una sola copia de pi, v1.34.3). Vigilancia: v1.33 hasta 2027-01-07, v1.32 hasta 2026-11-07. La auditoría del núcleo
+(`docs/auditoria-nucleo-2026-10-19.md`) sigue vigente: lo que falla en la práctica es afirmar sin respaldo.
 
 ## Siguiente paso
+- [ ] Aviso cosmético abierto del PR #100 (sello 8444812/c192294): en colega, con un pi ajeno solo en `~/.local/bin` y esa
+      carpeta aún fuera del PATH, el plan dice «versión ilegible» (`pi --version` por PATH en `plan()`). Terminado = el
+      plan lee `~/.local/bin/pi --version` cuando existe, con su prueba en `entorno/test-instalar.sh`.
 - [ ] **2026-10-26: decidir si se amplía `verificar-cierre`** (pi-harness) a «borré X» / «las pruebas pasan», según su
       re-medición de esa fecha (si ≥ 2 de 3 intervenciones son ciertas). Es la palanca que propone la auditoría.
 - [ ] Medir «Evaluación crítica» (la única sección sin control ni medición): 3-4 casos-trampa en evals-entregables
