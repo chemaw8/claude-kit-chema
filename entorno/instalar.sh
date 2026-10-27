@@ -5,7 +5,8 @@ set -euo pipefail
 URL_KIT=https://github.com/chemaw8/claude-kit-chema.git
 URL_ASISTENTE=https://raw.githubusercontent.com/chemaw8/claude-kit-chema/main/entorno/instalar.sh
 URL_UV=https://astral.sh/uv/install.sh
-PI_PAQUETE=@earendil-works/pi-coding-agent@0.87.0
+PI_VERSION=1.1.0   # la misma que fija manifest/ del entorno privado (claude-entorno)
+PI_PAQUETE=@earendil-works/pi-coding-agent@$PI_VERSION
 perfil= entorno= si=0 dry=0 con_pi=0 con_proyectos=0
 flags=("$@")
 kit="$HOME/Trabajo/proyectos/claude-kit-chema"
@@ -69,7 +70,9 @@ configurar() {
   elif [ -n "$entorno" ] || [ "$con_proyectos" -eq 1 ]; then
     error '--entorno y --con-proyectos requieren --perfil completo.' 2
   fi
-  if [ "$si" -eq 0 ] && aceptar '¿Instalar pi opcional (versión 0.87.0)?'; then con_pi=1; fi
+  # Solo en colega: en completo el asistente privado instala el pi de su manifiesto, y ofrecerlo aquí dejaba dos
+  # copias; la de ~/.local tapaba a la buena (2026-10-27: 0.87.0 encima de 1.1.0, configurar-pi.sh se negó).
+  if [ "$perfil" = colega ] && [ "$si" -eq 0 ] && aceptar "¿Instalar pi opcional (versión $PI_VERSION)?"; then con_pi=1; fi
 
   if command -v pacman >/dev/null 2>&1; then
     gestor=pacman; paquetes=(git curl ca-certificates python nodejs npm github-cli jq)
@@ -97,8 +100,19 @@ plan() {
   printf 'Si faltan, se descargarán y ejecutarán el instalador oficial de uv y el paquete de Claude Code:\n'
   printf '  %s (UV_INSTALL_DIR=~/.local/bin, UV_NO_MODIFY_PATH=1)\n' "$URL_UV"
   printf '  %s\n' "$(comando npm i -g --prefix "$HOME/.local" --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code)"
-  if [ "$con_pi" -eq 1 ]; then
-    printf '  %s\n' "$(comando npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE")"
+  if [ "$con_pi" -eq 1 ] && ! pi_local_propio && { [ -e "$HOME/.local/bin/pi" ] || command -v pi >/dev/null 2>&1; }; then
+    printf 'pi: ya hay uno en el PATH (%s); no se instala otra copia.\n' "$(pi --version 2>/dev/null || echo 'versión ilegible')"
+  elif [ "$con_pi" -eq 1 ]; then
+    printf '  %s   (solo si falta o no es la %s)\n' "$(comando npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE")" "$PI_VERSION"
+  elif [ "$perfil" = completo ]; then
+    printf 'pi: lo instala el asistente de tu entorno, en la versión de su manifiesto.\n'
+    if pi_local_propio; then   # en completo cualquier pi propio sobra: el entorno trae el suyo (no depende de versiones)
+      printf 'Se retirará el pi que este asistente dejó en ~/.local (versión %s): taparía al de tu entorno.\n' \
+        "$("$HOME/.local/bin/pi" --version 2>/dev/null || echo ilegible)"
+      printf '  %s\n' "$(comando npm rm -g --prefix "$HOME/.local" @earendil-works/pi-coding-agent)"
+    elif [ -e "$HOME/.local/bin/pi" ]; then   # ajeno: no se toca, pero taparía al del entorno
+      printf 'Aviso: hay un pi ajeno en ~/.local/bin; no lo toco, pero quedará primero en el PATH y tapará al de tu entorno.\n'
+    fi
   else
     printf 'pi opcional: omitido. Sin --si puedes elegir instalarlo.\n'
   fi
@@ -111,6 +125,17 @@ plan() {
       "$(comando bash "$privado/asistente.sh" "${flags[@]}")"
   fi
 }
+
+# ¿Hay en ~/.local un pi que puso este asistente (enlace a su propio node_modules), de cualquier versión? En el perfil
+# completo ese pi tapa al del entorno privado (2026-10-27: 0.87.0 encima de 1.1.0). Un pi ajeno nunca cuenta.
+PI_LOCAL_DIR="$HOME/.local/lib/node_modules/@earendil-works/pi-coding-agent"
+pi_local_propio() {   # ~/.local/bin/pi existe y enlaza al node_modules de este asistente (ambos lados resueltos)
+  local dir
+  [ -e "$HOME/.local/bin/pi" ] || return 1
+  dir="$(readlink -f "$PI_LOCAL_DIR" 2>/dev/null || printf '%s' "$PI_LOCAL_DIR")"
+  case "$(readlink -f "$HOME/.local/bin/pi" 2>/dev/null)" in "$dir"/*) return 0 ;; *) return 1 ;; esac
+}
+version_minima() { [ "$(printf '%s\n' "$1" "$2" | sort -V | head -1)" = "$1" ]; }   # $2 >= $1
 
 declare -a pasos=()
 declare -A nombres=() hechos=() arreglos=()
@@ -206,7 +231,9 @@ main() {
   registrar kit 'Kit instalado y versión' "$reintento"
   registrar comandos 'Comandos del kit instalados' "$(comando bash "$kit/instalar.sh")"
   registrar autotest 'muletillas.sh autotest' "$(comando bash "$kit/instalar.sh") && $(comando bash "$HOME/.claude/scripts/muletillas.sh" autotest)"
-  [ "$con_pi" -eq 0 ] || registrar pi 'pi 0.87.0 en PATH' "$(comando npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE")"
+  [ "$con_pi" -eq 0 ] || registrar pi "pi $PI_VERSION en PATH" "$reintento"
+  [ "$perfil" != completo ] || registrar pilocal 'Sin un pi de este asistente en ~/.local' \
+    "$(comando npm rm -g --prefix "$HOME/.local" @earendil-works/pi-coding-agent)"
   registrar login 'Login de Claude Code' 'claude auth login'
   if [ "$perfil" = completo ]; then
     registrar github 'Login de GitHub' 'gh auth login --hostname github.com --git-protocol https --web'
@@ -233,13 +260,15 @@ main() {
     ejecutar "${privilegio[@]}" "${sistema[@]}" || error 'Falló la instalación de paquetes (con --si, sudo debe estar autorizado sin preguntas).'
   fi
   export PATH="$HOME/.local/bin:$PATH"
-  local herramienta mayor minimo=18
+  local herramienta version_node minimo=18
   for herramienta in git curl python3 node npm gh; do
     command -v "$herramienta" >/dev/null 2>&1 || error "No quedó disponible el comando $herramienta."
   done
-  [ "$con_pi" -eq 0 ] || minimo=20
-  mayor=$(node -p 'Number(process.versions.node.split(".")[0])') || error 'Node.js no funciona.'
-  if ! [[ "$mayor" =~ ^[0-9]+$ ]] || [ "$mayor" -lt "$minimo" ]; then
+  # pi 1.1.0 declara engines.node >=22.19.0 (el piso viejo de 20 lo dejaba pasar a medias); en completo lo instala el
+  # entorno privado, igual lo necesita.
+  { [ "$con_pi" -eq 0 ] && [ "$perfil" != completo ]; } || minimo=22.19.0
+  version_node=$(node -p 'process.versions.node') || error 'Node.js no funciona.'
+  if ! [[ "$version_node" =~ ^[0-9]+(\.[0-9]+)*$ ]] || ! version_minima "$minimo" "$version_node"; then
     arreglos[sistema]="$(comando npm i -g --prefix "$HOME/.local" node@22) && $reintento"
     error "Se necesita Node.js $minimo o posterior."
   fi
@@ -285,11 +314,35 @@ main() {
   hechos[autotest]=1
   [ "${hechos[claude]}" -eq 1 ] || error 'El kit quedó instalado, pero Claude Code no funciona: arréglalo y vuelve a correr el asistente.'
   if [ "$con_pi" -eq 1 ]; then
-    if ! command -v pi >/dev/null 2>&1 || [ "$(pi --version 2>/dev/null)" != 0.87.0 ]; then
-      ejecutar npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE" || error 'Falló la instalación de pi.'
+    # Un pi AJENO ya presente (otro prefijo, de cualquier versión) se respeta: una copia en ~/.local lo taparía en el
+    # PATH. El de ~/.local/bin es el que pone este asistente: ese sí se lleva a PI_VERSION (npm reemplaza la misma copia).
+    local pi_ajeno="" pi_v
+    if ! pi_local_propio && command -v pi >/dev/null 2>&1; then pi_ajeno="$(command -v pi)"; fi
+    if [ -n "$pi_ajeno" ]; then
+      pi_v="$(pi --version 2>/dev/null || true)"
+      if [ -n "$pi_v" ]; then nombres[pi]="pi $pi_v ya presente (no instalo otra copia)"; hechos[pi]=1
+      else   # presente pero no responde: no se duplica, pero tampoco se da por bueno
+        nombres[pi]="pi presente en $pi_ajeno, pero no responde a --version"
+        arreglos[pi]="revisa o desinstala $pi_ajeno y vuelve a correr el asistente"
+      fi
+    else
+      if [ "$(pi --version 2>/dev/null || true)" != "$PI_VERSION" ]; then
+        ejecutar npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE" || error 'Falló la instalación de pi.'
+      fi
+      [ "$(pi --version 2>/dev/null || true)" = "$PI_VERSION" ] || error "pi en PATH no corresponde a la versión $PI_VERSION."
+      hechos[pi]=1
     fi
-    [ "$(pi --version 2>/dev/null)" = 0.87.0 ] || error 'pi en PATH no corresponde a la versión 0.87.0.'
-    hechos[pi]=1
+  fi
+  if [ "$perfil" = completo ]; then
+    if pi_local_propio; then
+      ejecutar npm rm -g --prefix "$HOME/.local" @earendil-works/pi-coding-agent || true
+    fi
+    # Falla cerrado antes de delegar: con el pi propio todavía ahí, el del entorno quedaría tapado otra vez.
+    pi_local_propio && error 'No pude retirar el pi de ~/.local que tapa al de tu entorno (ver su arreglo en el semáforo).'
+    if [ -e "$HOME/.local/bin/pi" ]; then   # ajeno: queda en rojo con su arreglo, sin borrar nada que no sea nuestro
+      nombres[pilocal]="Sin un pi en ~/.local/bin que tape al de tu entorno (hay uno ajeno)"
+      arreglos[pilocal]="revisa ~/.local/bin/pi y quítalo si no lo usas"
+    else hechos[pilocal]=1; fi
   fi
   if [ "${hechos[claude]}" -eq 1 ] && ! claude_autenticado && [ "$si" -eq 0 ]; then
     if aceptar '¿Abrir el login de Claude Code en esta terminal?'; then
@@ -299,6 +352,7 @@ main() {
   if [ "${hechos[claude]}" -eq 1 ] && claude_autenticado; then hechos[login]=1; fi
   if [ "$perfil" = colega ]; then
     [ "${hechos[login]}" -eq 1 ] || error 'Quedó pendiente el login de Claude Code.'
+    [ "$con_pi" -eq 0 ] || [ "${hechos[pi]}" -eq 1 ] || error 'pi quedó pendiente (ver su arreglo en el semáforo).'
     return
   fi
 
