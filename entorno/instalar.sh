@@ -5,7 +5,8 @@ set -euo pipefail
 URL_KIT=https://github.com/chemaw8/claude-kit-chema.git
 URL_ASISTENTE=https://raw.githubusercontent.com/chemaw8/claude-kit-chema/main/entorno/instalar.sh
 URL_UV=https://astral.sh/uv/install.sh
-PI_PAQUETE=@earendil-works/pi-coding-agent@0.87.0
+PI_VERSION=1.1.0   # la misma que fija manifest/ del entorno privado (claude-entorno)
+PI_PAQUETE=@earendil-works/pi-coding-agent@$PI_VERSION
 perfil= entorno= si=0 dry=0 con_pi=0 con_proyectos=0
 flags=("$@")
 kit="$HOME/Trabajo/proyectos/claude-kit-chema"
@@ -69,7 +70,9 @@ configurar() {
   elif [ -n "$entorno" ] || [ "$con_proyectos" -eq 1 ]; then
     error '--entorno y --con-proyectos requieren --perfil completo.' 2
   fi
-  if [ "$si" -eq 0 ] && aceptar '¿Instalar pi opcional (versión 0.87.0)?'; then con_pi=1; fi
+  # Solo en colega: en completo el asistente privado instala el pi de su manifiesto, y ofrecerlo aquí dejaba dos
+  # copias; la de ~/.local tapaba a la buena (2026-10-27: 0.87.0 encima de 1.1.0, configurar-pi.sh se negó).
+  if [ "$perfil" = colega ] && [ "$si" -eq 0 ] && aceptar "¿Instalar pi opcional (versión $PI_VERSION)?"; then con_pi=1; fi
 
   if command -v pacman >/dev/null 2>&1; then
     gestor=pacman; paquetes=(git curl ca-certificates python nodejs npm github-cli jq)
@@ -99,6 +102,8 @@ plan() {
   printf '  %s\n' "$(comando npm i -g --prefix "$HOME/.local" --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code)"
   if [ "$con_pi" -eq 1 ]; then
     printf '  %s\n' "$(comando npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE")"
+  elif [ "$perfil" = completo ]; then
+    printf 'pi: lo instala el asistente de tu entorno, en la versión de su manifiesto.\n'
   else
     printf 'pi opcional: omitido. Sin --si puedes elegir instalarlo.\n'
   fi
@@ -206,7 +211,7 @@ main() {
   registrar kit 'Kit instalado y versión' "$reintento"
   registrar comandos 'Comandos del kit instalados' "$(comando bash "$kit/instalar.sh")"
   registrar autotest 'muletillas.sh autotest' "$(comando bash "$kit/instalar.sh") && $(comando bash "$HOME/.claude/scripts/muletillas.sh" autotest)"
-  [ "$con_pi" -eq 0 ] || registrar pi 'pi 0.87.0 en PATH' "$(comando npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE")"
+  [ "$con_pi" -eq 0 ] || registrar pi "pi $PI_VERSION en PATH" "$(comando npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE")"
   registrar login 'Login de Claude Code' 'claude auth login'
   if [ "$perfil" = completo ]; then
     registrar github 'Login de GitHub' 'gh auth login --hostname github.com --git-protocol https --web'
@@ -285,10 +290,13 @@ main() {
   hechos[autotest]=1
   [ "${hechos[claude]}" -eq 1 ] || error 'El kit quedó instalado, pero Claude Code no funciona: arréglalo y vuelve a correr el asistente.'
   if [ "$con_pi" -eq 1 ]; then
-    if ! command -v pi >/dev/null 2>&1 || [ "$(pi --version 2>/dev/null)" != 0.87.0 ]; then
+    # Un pi ya presente (de cualquier versión) se respeta: una segunda copia en ~/.local lo taparía en el PATH.
+    if command -v pi >/dev/null 2>&1; then
+      nombres[pi]="pi $(pi --version 2>/dev/null) ya presente (no instalo otra copia)"
+    else
       ejecutar npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE" || error 'Falló la instalación de pi.'
+      [ "$(pi --version 2>/dev/null)" = "$PI_VERSION" ] || error "pi en PATH no corresponde a la versión $PI_VERSION."
     fi
-    [ "$(pi --version 2>/dev/null)" = 0.87.0 ] || error 'pi en PATH no corresponde a la versión 0.87.0.'
     hechos[pi]=1
   fi
   if [ "${hechos[claude]}" -eq 1 ] && ! claude_autenticado && [ "$si" -eq 0 ]; then

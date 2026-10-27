@@ -106,14 +106,14 @@ elif nombre == "node":
 elif nombre == "npm":
     if a == ["--version"]: print("10.0.0")
     elif "@anthropic-ai/claude-code" in a: instalar("claude")
-    elif "@earendil-works/pi-coding-agent@0.87.0" in a:
+    elif "@earendil-works/pi-coding-agent@1.1.0" in a:
         if "--ignore-scripts" not in a: sys.exit(87)
         instalar("pi")
     else: sys.exit(86)
 elif nombre == "uv":
     print("uv 0.8.0")
 elif nombre == "pi":
-    print("0.87.0")
+    print(os.environ.get("TEST_PI_VERSION", "1.1.0"))
 elif nombre == "claude":
     if a == ["--version"]: print("2.0.0 (Claude Code)")
     elif a[:2] == ["auth", "status"]:
@@ -375,6 +375,16 @@ class Instalador(unittest.TestCase):
         self.assertTrue((self.home / ".local/bin/pi").is_file())
         self.assertTrue(any("--ignore-scripts" in a for a in self.llamadas("npm")))
 
+    def test_12b_pi_presente_no_se_duplica(self):
+        """Con un pi ya en el PATH (otra versión) no instala una segunda copia que lo tape."""
+        (self.bin / "pi").symlink_to(self.bin / "modelo")
+        self.env["TEST_PI_VERSION"] = "1.0.9"
+        salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")])
+        self.assertNotIn("✗", salida)
+        self.assertIn("ya presente", salida)
+        self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
+        self.assertFalse((self.home / ".local/bin/pi").exists())
+
     def test_13_cancelacion(self):
         """Cancelar desde el TTY no deja archivos ni llama instaladores."""
         salida = self.corre_tty([("Perfil", ""), ("pi opcional", "n"), ("Continuar", "n")])
@@ -386,9 +396,11 @@ class Instalador(unittest.TestCase):
         """Guía ambos logins por TTY y transmite el repo respondido."""
         self.env.update(TEST_CLAUDE_AUTH="no", TEST_GH_AUTH="no")
         salida = self.corre_tty([("Perfil", "completo"), ("Repositorio", "ejemplo/.entorno"),
-                                ("pi opcional", "n"), ("Continuar", "s"),
+                                ("Continuar", "s"),
                                 ("¿Abrir el login de Claude", "s"), ("¿Abrir el login de GitHub", "s")])
         self.assertNotIn("✗", salida)
+        self.assertNotIn("Instalar pi opcional", salida)  # completo: el pi lo pone el asistente privado
+        self.assertIn("pi: lo instala el asistente de tu entorno", salida)
         recibidos = (self.home / "delegado-args").read_bytes().decode().split("\0")[:-1]
         self.assertEqual(recibidos, ["--perfil", "completo", "--entorno", "ejemplo/.entorno"])
         self.assertTrue((self.home / ".claude-login").is_file())
