@@ -113,6 +113,7 @@ elif nombre == "npm":
 elif nombre == "uv":
     print("uv 0.8.0")
 elif nombre == "pi":
+    if os.environ.get("TEST_PI_ROTO"): sys.exit(1)
     print(os.environ.get("TEST_PI_VERSION", "1.1.0"))
 elif nombre == "claude":
     if a == ["--version"]: print("2.0.0 (Claude Code)")
@@ -384,6 +385,15 @@ class Instalador(unittest.TestCase):
         self.assertIn("ya presente", salida)
         self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
         self.assertFalse((self.home / ".local/bin/pi").exists())
+
+    def test_12c_pi_presente_roto_no_aborta(self):
+        """Un pi presente que no responde --version no tumba el asistente ni se duplica; el plan lo dice."""
+        (self.bin / "pi").symlink_to(self.bin / "modelo")
+        self.env["TEST_PI_ROTO"] = "1"
+        salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")])
+        self.assertIn("no se instala otra copia", salida)
+        self.assertIn("ya presente", salida)
+        self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
 
     def test_13_cancelacion(self):
         """Cancelar desde el TTY no deja archivos ni llama instaladores."""
