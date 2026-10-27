@@ -85,7 +85,7 @@ curl -fsSL https://raw.githubusercontent.com/chemaw8/claude-kit-chema/main/entor
 ```
 
 El perfil `colega` prepara paquetes base, uv, Claude Code y el kit en
-`~/Trabajo/proyectos/claude-kit-chema`; ofrece pi 1.1.0 como opción (solo en el perfil colega). El perfil
+`~/Trabajo/proyectos/claude-kit-chema`; ofrece pi 1.1.0 como opción (solo en el perfil colega; pide Node ≥ 22.19.0, igual que el perfil completo, cuyo entorno instala pi). El perfil
 `completo` además pide tu repositorio `dueño/repo`, guía el login de GitHub y
 entrega el control a su `asistente.sh` en `~/Trabajo/proyectos/claude-entorno`.
 No incluye una lista pública de repos privados.

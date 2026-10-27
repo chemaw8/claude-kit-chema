@@ -335,6 +335,14 @@ class Instalador(unittest.TestCase):
         self.assertIn("Arreglo", self.salida)
         self.assertFalse((self.home / "delegado-args").exists())
 
+    def pi_propio(self):
+        """Siembra el pi que deja este asistente: ~/.local/bin/pi → su node_modules en ~/.local/lib."""
+        destino = self.home / ".local/lib/node_modules/@earendil-works/pi-coding-agent/dist/cli.js"
+        destino.parent.mkdir(parents=True)
+        shutil.copyfile(self.bin / "modelo", destino); destino.chmod(0o755)
+        (self.home / ".local/bin").mkdir(parents=True, exist_ok=True)
+        (self.home / ".local/bin/pi").symlink_to(destino)
+
     def corre_tty(self, respuestas, *args, rc=0):
         pid, fd = pty.fork()
         if pid == 0:
@@ -393,7 +401,7 @@ class Instalador(unittest.TestCase):
         """Un pi presente que no responde --version no tumba el asistente ni se duplica; el plan lo dice."""
         (self.bin / "pi").symlink_to(self.bin / "modelo")
         self.env["TEST_PI_ROTO"] = "1"
-        salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")])
+        salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")], rc=1)   # falla cerrado
         self.assertIn("no se instala otra copia", salida)
         self.assertIn("✗ | pi presente en", salida)   # no responde: no se duplica, pero tampoco queda en verde
         self.assertIn("no responde a --version", salida)
@@ -401,9 +409,7 @@ class Instalador(unittest.TestCase):
 
     def test_12d_pi_propio_viejo_se_actualiza(self):
         """El pi que este asistente dejó en ~/.local (versión vieja) sí se lleva a la versión fijada."""
-        propio = self.home / ".local/bin/pi"
-        propio.parent.mkdir(parents=True)
-        shutil.copyfile(self.bin / "modelo", propio); propio.chmod(0o755)
+        self.pi_propio()
         self.env["PATH"] = f"{self.home / '.local/bin'}:{self.bin}"
         self.env["TEST_PI_VERSION"] = "0.87.0"
         salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")])
@@ -412,9 +418,7 @@ class Instalador(unittest.TestCase):
 
     def test_12e_pi_propio_al_dia_no_se_reinstala(self):
         """Un pi propio ya en la versión fijada no se reinstala (un npm caído no tumba una máquina sana)."""
-        propio = self.home / ".local/bin/pi"
-        propio.parent.mkdir(parents=True)
-        shutil.copyfile(self.bin / "modelo", propio); propio.chmod(0o755)
+        self.pi_propio()
         self.env["PATH"] = f"{self.home / '.local/bin'}:{self.bin}"
         self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")])
         self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
@@ -450,6 +454,16 @@ class Instalador(unittest.TestCase):
         self.corre("--si", "--perfil", "completo", "--entorno", "ejemplo/repo")
         self.assertFalse(any(a[:1] == ["rm"] for a in self.llamadas("npm")))
         self.assertTrue(ajeno.exists())
+
+    def test_12g_colega_pi_ajeno_en_local_bin_no_se_pisa(self):
+        """Un pi en ~/.local/bin que no enlaza al node_modules del asistente es ajeno también en colega: no se pisa."""
+        ajeno = self.home / ".local/bin/pi"
+        ajeno.parent.mkdir(parents=True)
+        shutil.copyfile(self.bin / "modelo", ajeno); ajeno.chmod(0o755)
+        self.env["TEST_PI_VERSION"] = "1.0.9"
+        salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")])
+        self.assertIn("no se instala otra copia", salida)
+        self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
 
     def test_13_cancelacion(self):
         """Cancelar desde el TTY no deja archivos ni llama instaladores."""

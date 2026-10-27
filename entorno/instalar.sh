@@ -100,7 +100,7 @@ plan() {
   printf 'Si faltan, se descargarán y ejecutarán el instalador oficial de uv y el paquete de Claude Code:\n'
   printf '  %s (UV_INSTALL_DIR=~/.local/bin, UV_NO_MODIFY_PATH=1)\n' "$URL_UV"
   printf '  %s\n' "$(comando npm i -g --prefix "$HOME/.local" --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code)"
-  if [ "$con_pi" -eq 1 ] && [ ! -x "$HOME/.local/bin/pi" ] && command -v pi >/dev/null 2>&1; then
+  if [ "$con_pi" -eq 1 ] && ! pi_local_propio && { [ -e "$HOME/.local/bin/pi" ] || command -v pi >/dev/null 2>&1; }; then
     printf 'pi: ya hay uno en el PATH (%s); no se instala otra copia.\n' "$(pi --version 2>/dev/null || echo 'versión ilegible')"
   elif [ "$con_pi" -eq 1 ]; then
     printf '  %s   (solo si falta o no es la %s)\n' "$(comando npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE")" "$PI_VERSION"
@@ -127,11 +127,13 @@ plan() {
 # ¿Hay en ~/.local un pi que puso este asistente (enlace a su propio node_modules) en otra versión? En el perfil
 # completo ese pi tapa al del entorno privado (2026-10-27: 0.87.0 encima de 1.1.0). Un pi ajeno nunca cuenta.
 PI_LOCAL_DIR="$HOME/.local/lib/node_modules/@earendil-works/pi-coding-agent"
-pi_local_viejo() {
+pi_local_propio() {   # ~/.local/bin/pi existe y enlaza al node_modules de este asistente (ambos lados resueltos)
+  local dir
   [ -e "$HOME/.local/bin/pi" ] || return 1
-  case "$(readlink -f "$HOME/.local/bin/pi" 2>/dev/null)" in "$PI_LOCAL_DIR"/*) ;; *) return 1 ;; esac
-  [ "$("$HOME/.local/bin/pi" --version 2>/dev/null || true)" != "$PI_VERSION" ]
+  dir="$(readlink -f "$PI_LOCAL_DIR" 2>/dev/null || printf '%s' "$PI_LOCAL_DIR")"
+  case "$(readlink -f "$HOME/.local/bin/pi" 2>/dev/null)" in "$dir"/*) return 0 ;; *) return 1 ;; esac
 }
+pi_local_viejo() { pi_local_propio && [ "$("$HOME/.local/bin/pi" --version 2>/dev/null || true)" != "$PI_VERSION" ]; }
 version_minima() { [ "$(printf '%s\n' "$1" "$2" | sort -V | head -1)" = "$1" ]; }   # $2 >= $1
 
 declare -a pasos=()
@@ -314,7 +316,7 @@ main() {
     # Un pi AJENO ya presente (otro prefijo, de cualquier versión) se respeta: una copia en ~/.local lo taparía en el
     # PATH. El de ~/.local/bin es el que pone este asistente: ese sí se lleva a PI_VERSION (npm reemplaza la misma copia).
     local pi_ajeno="" pi_v
-    if command -v pi >/dev/null 2>&1 && [ "$(command -v pi)" != "$HOME/.local/bin/pi" ]; then pi_ajeno="$(command -v pi)"; fi
+    if ! pi_local_propio && command -v pi >/dev/null 2>&1; then pi_ajeno="$(command -v pi)"; fi
     if [ -n "$pi_ajeno" ]; then
       pi_v="$(pi --version 2>/dev/null || true)"
       if [ -n "$pi_v" ]; then nombres[pi]="pi $pi_v ya presente (no instalo otra copia)"; hechos[pi]=1
@@ -344,6 +346,7 @@ main() {
   if [ "${hechos[claude]}" -eq 1 ] && claude_autenticado; then hechos[login]=1; fi
   if [ "$perfil" = colega ]; then
     [ "${hechos[login]}" -eq 1 ] || error 'Quedó pendiente el login de Claude Code.'
+    [ "$con_pi" -eq 0 ] || [ "${hechos[pi]}" -eq 1 ] || error 'pi quedó pendiente (ver su arreglo en el semáforo).'
     return
   fi
 
