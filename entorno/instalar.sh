@@ -100,7 +100,7 @@ plan() {
   printf 'Si faltan, se descargarán y ejecutarán el instalador oficial de uv y el paquete de Claude Code:\n'
   printf '  %s (UV_INSTALL_DIR=~/.local/bin, UV_NO_MODIFY_PATH=1)\n' "$URL_UV"
   printf '  %s\n' "$(comando npm i -g --prefix "$HOME/.local" --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code)"
-  if [ "$con_pi" -eq 1 ] && command -v pi >/dev/null 2>&1; then
+  if [ "$con_pi" -eq 1 ] && command -v pi >/dev/null 2>&1 && [ "$(command -v pi)" != "$HOME/.local/bin/pi" ]; then
     printf 'pi: ya hay uno en el PATH (%s); no se instala otra copia.\n' "$(pi --version 2>/dev/null || echo 'versión ilegible')"
   elif [ "$con_pi" -eq 1 ]; then
     printf '  %s\n' "$(comando npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE")"
@@ -292,8 +292,9 @@ main() {
   hechos[autotest]=1
   [ "${hechos[claude]}" -eq 1 ] || error 'El kit quedó instalado, pero Claude Code no funciona: arréglalo y vuelve a correr el asistente.'
   if [ "$con_pi" -eq 1 ]; then
-    # Un pi ya presente (de cualquier versión) se respeta: una segunda copia en ~/.local lo taparía en el PATH.
-    if command -v pi >/dev/null 2>&1; then
+    # Un pi AJENO ya presente (otro prefijo, de cualquier versión) se respeta: una copia en ~/.local lo taparía en el
+    # PATH. El de ~/.local/bin es el que pone este asistente: ese sí se lleva a PI_VERSION (npm reemplaza la misma copia).
+    if command -v pi >/dev/null 2>&1 && [ "$(command -v pi)" != "$HOME/.local/bin/pi" ]; then
       nombres[pi]="pi $(pi --version 2>/dev/null || echo '(versión ilegible)') ya presente (no instalo otra copia)"
     else
       ejecutar npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE" || error 'Falló la instalación de pi.'

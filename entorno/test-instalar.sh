@@ -109,12 +109,13 @@ elif nombre == "npm":
     elif "@earendil-works/pi-coding-agent@1.1.0" in a:
         if "--ignore-scripts" not in a: sys.exit(87)
         instalar("pi")
+        (home / ".pi-instalado-1.1.0").touch()
     else: sys.exit(86)
 elif nombre == "uv":
     print("uv 0.8.0")
 elif nombre == "pi":
     if os.environ.get("TEST_PI_ROTO"): sys.exit(1)
-    print(os.environ.get("TEST_PI_VERSION", "1.1.0"))
+    print("1.1.0" if (home / ".pi-instalado-1.1.0").exists() else os.environ.get("TEST_PI_VERSION", "1.1.0"))
 elif nombre == "claude":
     if a == ["--version"]: print("2.0.0 (Claude Code)")
     elif a[:2] == ["auth", "status"]:
@@ -394,6 +395,17 @@ class Instalador(unittest.TestCase):
         self.assertIn("no se instala otra copia", salida)
         self.assertIn("ya presente", salida)
         self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
+
+    def test_12d_pi_propio_viejo_se_actualiza(self):
+        """El pi que este asistente dejó en ~/.local (versión vieja) sí se lleva a la versión fijada."""
+        propio = self.home / ".local/bin/pi"
+        propio.parent.mkdir(parents=True)
+        shutil.copyfile(self.bin / "modelo", propio); propio.chmod(0o755)
+        self.env["PATH"] = f"{self.home / '.local/bin'}:{self.bin}"
+        self.env["TEST_PI_VERSION"] = "0.87.0"
+        salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")])
+        self.assertTrue(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
+        self.assertNotIn("ya presente", salida)
 
     def test_13_cancelacion(self):
         """Cancelar desde el TTY no deja archivos ni llama instaladores."""
