@@ -124,7 +124,7 @@ plan() {
   fi
 }
 
-# ¿Hay en ~/.local un pi que puso este asistente (enlace a su propio node_modules) en otra versión? En el perfil
+# ¿Hay en ~/.local un pi que puso este asistente (enlace a su propio node_modules), de cualquier versión? En el perfil
 # completo ese pi tapa al del entorno privado (2026-10-27: 0.87.0 encima de 1.1.0). Un pi ajeno nunca cuenta.
 PI_LOCAL_DIR="$HOME/.local/lib/node_modules/@earendil-works/pi-coding-agent"
 pi_local_propio() {   # ~/.local/bin/pi existe y enlaza al node_modules de este asistente (ambos lados resueltos)
