@@ -1,5 +1,17 @@
 # Changelog — Kit Chema
 
+## v1.34.3 — 2026-10-27
+El asistente público de un comando (`entorno/instalar.sh`) deja una sola copia de pi (flujo de script: PR + council + sello).
+- **pi 1.1.0** (antes 0.87.0), en una sola variable `PI_VERSION` igual a la del manifiesto privado.
+- **Perfil completo:** ya no ofrece pi (lo instala el entorno privado) y retira el pi que este mismo asistente haya
+  dejado en `~/.local`, porque tapaba al del entorno en el PATH (máquina nueva, 2026-10-27: configurar-pi.sh se negó).
+  Un pi ajeno no se toca; si no puede retirarlo, falla cerrado antes de delegar.
+- **Perfil colega:** el pi propio se lleva a 1.1.0 y no se reinstala si ya está; uno ajeno no se duplica, y si no
+  responde a `--version` queda en rojo.
+- **Node ≥ 22.19.0** cuando habrá pi 1.1.0 (colega con pi y completo), comparando la versión completa.
+- Council: anthropic, codex y kimi, los tres «aprobada con cambios»; cambios integrados salvo la prueba cruzada de
+  versiones con el repo privado (pendiente). Sello aprobado sin bloqueantes.
+
 ## v1.34.2 — 2026-10-26
 Una regla nueva en kit-codigo por corrección repetida del usuario (flujo de mejora por corrección: PR en borrador + council).
 - **Antes de declarar algo listo o de pedirle al usuario que lo pruebe, el agente lo recorre en su entorno** (con acceso y
