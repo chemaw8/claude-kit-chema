@@ -101,7 +101,12 @@ plan() {
   printf '  %s (UV_INSTALL_DIR=~/.local/bin, UV_NO_MODIFY_PATH=1)\n' "$URL_UV"
   printf '  %s\n' "$(comando npm i -g --prefix "$HOME/.local" --allow-scripts=@anthropic-ai/claude-code @anthropic-ai/claude-code)"
   if [ "$con_pi" -eq 1 ] && ! pi_local_propio && { [ -e "$HOME/.local/bin/pi" ] || command -v pi >/dev/null 2>&1; }; then
-    printf 'pi: ya hay uno en el PATH (%s); no se instala otra copia.\n' "$(pi --version 2>/dev/null || echo 'versión ilegible')"
+    # El de ~/.local/bin es el que quedará primero en el PATH, aunque esta sesión aún no lo tenga: se lee por su ruta
+    # (por el PATH salía «versión ilegible»; aviso del PR #100).
+    local pi_ruta="$HOME/.local/bin/pi"
+    [ -e "$pi_ruta" ] || pi_ruta="$(command -v pi)"
+    printf 'pi: ya hay uno (%s, versión %s); no se instala otra copia.\n' "${pi_ruta/#"$HOME"/\~}" \
+      "$("$pi_ruta" --version 2>/dev/null || echo ilegible)"
   elif [ "$con_pi" -eq 1 ]; then
     printf '  %s   (solo si falta o no es la %s)\n' "$(comando npm i -g --prefix "$HOME/.local" --ignore-scripts "$PI_PAQUETE")" "$PI_VERSION"
   elif [ "$perfil" = completo ]; then
