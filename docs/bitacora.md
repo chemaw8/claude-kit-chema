@@ -653,3 +653,13 @@ del núcleo (137 líneas); la v1.34.1 hace que anti-secretos falle cerrado (`onF
 `docs/auditoria-nucleo-2026-10-19.md`: sin poda grande; lo que falla en la práctica es afirmar sin respaldo. La skill
 de verificar antes del commit se midió y no entra (DECISIONES 2026-10-19). Vigilancia: v1.33 hasta 2027-01-07, v1.32
 hasta 2026-11-07.
+
+## 2026-10-29 — rotado desde CONTINUAR.md
+
+«Siguiente paso»:
+- [ ] **Decidir si se amplía `verificar-cierre`** (pi-harness) a «borré X» / «las pruebas pasan»: tocaba el 2026-10-26
+      y no se tomó (vencida; nadie corrió la re-medición). Primero correrla (criterio: ≥ 2 de 3 intervenciones ciertas),
+      luego decidir. Es la palanca que propone la auditoría.
+- [ ] Revisar lo de evals del 2026-10-20 cuando la otra sesión lo commitee: línea base 8/14 con v1.34.1 (baja
+      reproceso, criterio 3) y disparo 81/90 (caso 13 en 0/3); su DECISIONES propone repetir esos dos casos ×5 antes de
+      tocar el kit.
