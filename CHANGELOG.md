@@ -1,5 +1,11 @@
 # Changelog — Kit Chema
 
+## v1.34.4 — 2026-10-30
+Aviso cosmético del PR #100 en el asistente público, sin cambiar reglas ni núcleo (flujo de script: PR + CI + sello).
+- **El plan ya no dice «versión ilegible»** cuando hay un pi ajeno solo en `~/.local/bin` y esa carpeta aún no está en el
+  PATH de la sesión: lo lee por su ruta, que es el que quedará primero en el PATH, y muestra ruta y versión. Prueba en
+  `entorno/test-instalar.sh` (`test_12g`), roja antes del arreglo.
+
 ## v1.34.3 — 2026-10-27
 El asistente público de un comando (`entorno/instalar.sh`) deja una sola copia de pi (flujo de script: PR + council + sello).
 - **pi 1.1.0** (antes 0.87.0), en una sola variable `PI_VERSION` igual a la del manifiesto privado.

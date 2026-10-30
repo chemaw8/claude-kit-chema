@@ -481,6 +481,9 @@ class Instalador(unittest.TestCase):
         self.env["TEST_PI_VERSION"] = "1.0.9"
         salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")])
         self.assertIn("no se instala otra copia", salida)
+        # ~/.local/bin aún fuera del PATH: el plan lee ese pi por su ruta, no por el PATH (aviso del PR #100)
+        self.assertIn("pi: ya hay uno (~/.local/bin/pi, versión 1.0.9)", salida)
+        self.assertNotIn("ilegible", salida)
         self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
 
     def test_13_cancelacion(self):

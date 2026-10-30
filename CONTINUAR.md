@@ -7,9 +7,8 @@ una sola copia de pi, v1.34.3). Vigilancia: v1.33 hasta 2027-01-07, v1.32 hasta 
 (`docs/auditoria-nucleo-2026-10-19.md`) sigue vigente: lo que falla en la práctica es afirmar sin respaldo.
 
 ## Siguiente paso
-- [ ] Aviso cosmético abierto del PR #100 (sello 8444812/c192294): en colega, con un pi ajeno solo en `~/.local/bin` y esa
-      carpeta aún fuera del PATH, el plan dice «versión ilegible» (`pi --version` por PATH en `plan()`). Terminado = el
-      plan lee `~/.local/bin/pi --version` cuando existe, con su prueba en `entorno/test-instalar.sh`.
+- [x] Aviso cosmético del PR #100: resuelto en v1.34.4 (2026-10-30); el plan lee `~/.local/bin/pi` por su ruta
+      (`test_12g`).
 - [x] **`verificar-cierre` NO se amplía (2026-10-29):** re-medida en pi-harness, 0 de 4 avisos ciertos tras su arreglo
       y, sobre 1,429 cierres reales, atrapa 1 de 4 «subido» falsos con ~13 falsas alarmas por acierto: quedó APAGADA
       (pi-harness DECISIONES 2026-10-29, `herramientas/medir-verificar-cierre.py`). La palanca de la auditoría
