@@ -1,4 +1,4 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-27  ·  commit 2e4303a (rama cierre/2026-10-27)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-29  ·  commit 56e1e5c (rama cierre/2026-10-29)  ·  cierre limpio: sí
 > Estado vivo de sesión. Hechos estables en README.md, GOBERNANZA.md y CLAUDE.md; registro histórico en docs/bitacora.md.
 
 ## Dónde vamos
@@ -10,14 +10,17 @@ una sola copia de pi, v1.34.3). Vigilancia: v1.33 hasta 2027-01-07, v1.32 hasta 
 - [ ] Aviso cosmético abierto del PR #100 (sello 8444812/c192294): en colega, con un pi ajeno solo en `~/.local/bin` y esa
       carpeta aún fuera del PATH, el plan dice «versión ilegible» (`pi --version` por PATH en `plan()`). Terminado = el
       plan lee `~/.local/bin/pi --version` cuando existe, con su prueba en `entorno/test-instalar.sh`.
-- [ ] **Decidir si se amplía `verificar-cierre`** (pi-harness) a «borré X» / «las pruebas pasan»: tocaba el 2026-10-26
-      y no se tomó (vencida; nadie corrió la re-medición). Primero correrla (criterio: ≥ 2 de 3 intervenciones ciertas),
-      luego decidir. Es la palanca que propone la auditoría.
+- [x] **`verificar-cierre` NO se amplía (2026-10-29):** re-medida en pi-harness, 0 de 4 avisos ciertos tras su arreglo
+      y, sobre 1,429 cierres reales, atrapa 1 de 4 «subido» falsos con ~13 falsas alarmas por acierto: quedó APAGADA
+      (pi-harness DECISIONES 2026-10-29, `herramientas/medir-verificar-cierre.py`). La palanca de la auditoría
+      («afirmar sin respaldo») queda en el advisor.
 - [ ] Medir «Evaluación crítica» (la única sección sin control ni medición): 3-4 casos-trampa en evals-entregables
       (idea del usuario con un error comprobable; pasa si el agente lo señala antes de ejecutar).
-- [ ] Revisar lo de evals del 2026-10-20 cuando la otra sesión lo commitee: línea base 8/14 con v1.34.1 (baja
-      reproceso, criterio 3) y disparo 81/90 (caso 13 en 0/3); su DECISIONES propone repetir esos dos casos ×5 antes de
-      tocar el kit.
+- [ ] Evals del 2026-10-20 (línea base 8/14 con v1.34.1; disparo 81/90, caso 13 en 0/3): su DECISIONES propone repetir
+      esos dos casos ×5 antes de tocar el kit. Ya hay línea base con v1.34.3: 10/14, 106/132, sin regresión (evals
+      2026-10-27); el disparo del caso 13 sigue sin repetir.
+- [ ] `KIT_SELLO=omitir` ya no se anota en `~/.claude/kit-chema/gate.jsonl` (visto el 2026-10-27): revisar
+      `sello-push.sh`/el hook del gate; un salto sin registro no se puede auditar.
 - [ ] Vigilancia v1.33 hasta el 2027-01-07 (`reglas-vigiladas.json`, id `kit-v1.33-buscar-lo-hecho`): suspensión con 1
       lectura fuera de las áreas de trabajo o 1 uso de datos de otro cliente; retiro con ≥2 reincorporaciones o falsas
       pérdidas que el dueño corrija en 30 días. Re-medir las trampas si cambia el modelo productor.
