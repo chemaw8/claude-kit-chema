@@ -27,7 +27,7 @@ una sola copia de pi, v1.34.3). Vigilancia: v1.33 hasta 2027-01-07, v1.32 hasta 
       o un comando largo `sello …; git push`), sube sin sello. Pasó una vez (commit de papeleo, sellado después).
       Opciones: (a) disciplina, nunca commit en paralelo con un push; (b) segunda capa en el momento real del push
       que exija sello del sha empujado (la «esclusa» con `pre-receive` de la spec 002, que no obedece `--no-verify`).
-      Decide José; (b) entra por PR + council.
+      Decide el dueño; (b) entra por PR + council.
 - [ ] Vigilancia v1.33 hasta el 2027-01-07 (`reglas-vigiladas.json`, id `kit-v1.33-buscar-lo-hecho`): suspensión con 1
       lectura fuera de las áreas de trabajo o 1 uso de datos de otro cliente; retiro con ≥2 reincorporaciones o falsas
       pérdidas que el dueño corrija en 30 días. Re-medir las trampas si cambia el modelo productor.
