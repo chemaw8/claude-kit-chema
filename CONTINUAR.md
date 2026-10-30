@@ -19,7 +19,7 @@ una sola copia de pi, v1.34.3). Vigilancia: v1.33 hasta 2027-01-07, v1.32 hasta 
 - [ ] Evals del 2026-10-20 (línea base 8/14 con v1.34.1; disparo 81/90, caso 13 en 0/3): su DECISIONES propone repetir
       esos dos casos ×5 antes de tocar el kit. Ya hay línea base con v1.34.3: 10/14, 106/132, sin regresión (evals
       2026-10-27); el disparo del caso 13 sigue sin repetir.
-- [ ] `KIT_SELLO=omitir` ya no se anota en `~/.claude/kit-chema/gate.jsonl` (visto en chemarchy, 2026-10-27): revisar
+- [ ] `KIT_SELLO=omitir` ya no se anota en `~/.claude/kit-chema/gate.jsonl` (visto el 2026-10-27): revisar
       `sello-push.sh`/el hook del gate; un salto sin registro no se puede auditar.
 - [ ] Vigilancia v1.33 hasta el 2027-01-07 (`reglas-vigiladas.json`, id `kit-v1.33-buscar-lo-hecho`): suspensión con 1
       lectura fuera de las áreas de trabajo o 1 uso de datos de otro cliente; retiro con ≥2 reincorporaciones o falsas
