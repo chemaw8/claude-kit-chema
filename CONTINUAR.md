@@ -1,4 +1,4 @@
-# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-29  ·  commit 56e1e5c (rama cierre/2026-10-29)  ·  cierre limpio: sí
+# CONTINUAR — claude-kit-chema  ·  cierre 2026-10-30  ·  commit 4c8bcc2 (rama cierre/2026-10-30)  ·  cierre limpio: sí
 > Estado vivo de sesión. Hechos estables en README.md, GOBERNANZA.md y CLAUDE.md; registro histórico en docs/bitacora.md.
 
 ## Dónde vamos
@@ -19,8 +19,15 @@ una sola copia de pi, v1.34.3). Vigilancia: v1.33 hasta 2027-01-07, v1.32 hasta 
 - [ ] Evals del 2026-10-20 (línea base 8/14 con v1.34.1; disparo 81/90, caso 13 en 0/3): su DECISIONES propone repetir
       esos dos casos ×5 antes de tocar el kit. Ya hay línea base con v1.34.3: 10/14, 106/132, sin regresión (evals
       2026-10-27); el disparo del caso 13 sigue sin repetir.
-- [ ] `KIT_SELLO=omitir` ya no se anota en `~/.claude/kit-chema/gate.jsonl` (visto el 2026-10-27): revisar
-      `sello-push.sh`/el hook del gate; un salto sin registro no se puede auditar.
+- [x] `KIT_SELLO=omitir` sin registro (2026-10-30): no era el hook. En ese clon el gate no tenía llave
+      (`kit-chema.gate`), y el hook solo anota `omitido` en repos con llave; la config del gate no viaja con el clon.
+      Reproducido con el comando original: con llave, `omitido` se anota.
+- [ ] **Hueco del gate por momento de evaluación (2026-10-30):** el PreToolUse revisa el push cuando se LANZA el
+      comando; si entra un commit entre eso y el push real (llamadas en paralelo: pi prepara todas antes de ejecutar;
+      o un comando largo `sello …; git push`), sube sin sello. Pasó una vez (commit de papeleo, sellado después).
+      Opciones: (a) disciplina, nunca commit en paralelo con un push; (b) segunda capa en el momento real del push
+      que exija sello del sha empujado (la «esclusa» con `pre-receive` de la spec 002, que no obedece `--no-verify`).
+      Decide José; (b) entra por PR + council.
 - [ ] Vigilancia v1.33 hasta el 2027-01-07 (`reglas-vigiladas.json`, id `kit-v1.33-buscar-lo-hecho`): suspensión con 1
       lectura fuera de las áreas de trabajo o 1 uso de datos de otro cliente; retiro con ≥2 reincorporaciones o falsas
       pérdidas que el dueño corrija en 30 días. Re-medir las trampas si cambia el modelo productor.

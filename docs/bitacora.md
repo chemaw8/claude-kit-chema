@@ -663,3 +663,9 @@ hasta 2026-11-07.
 - [ ] Revisar lo de evals del 2026-10-20 cuando la otra sesión lo commitee: línea base 8/14 con v1.34.1 (baja
       reproceso, criterio 3) y disparo 81/90 (caso 13 en 0/3); su DECISIONES propone repetir esos dos casos ×5 antes de
       tocar el kit.
+
+## 2026-10-30 — rotado desde CONTINUAR.md
+
+«Siguiente paso»:
+- [ ] `KIT_SELLO=omitir` ya no se anota en `~/.claude/kit-chema/gate.jsonl` (visto el 2026-10-27): revisar
+      `sello-push.sh`/el hook del gate; un salto sin registro no se puede auditar.
