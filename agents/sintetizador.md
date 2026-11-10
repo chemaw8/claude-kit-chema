@@ -11,12 +11,12 @@ Recibes varios reportes independientes (evaluadores de un council, investigadore
 reporte más.
 
 **Por qué Fable 5.2 y no Opus 5.5 a más esfuerzo, que es lo que pide la regla del núcleo:
-no por latencia.** Con Fable 5.1 el motivo era la velocidad
+es una elección provisional, sin ventaja medida.** Con Fable 5.1 el motivo era la velocidad
 (`docs/pruebas/medicion-esfuerzo-v1.19.2.md`); Fable 5.2 ya no sale más rápido que Opus 5.5
-(`docs/pruebas/medicion-fable-5-2.md`). Lo que queda: la síntesis es una sola llamada al
-final, donde el doble de precio pesa poco, y en esa medición Fable 5.2 eligió la skill
-correcta en todos los casos y sacó más criterios en entregables (esto último dentro del ruido).
-Ninguna medición del kit compara calidad en síntesis: si aparece una y Opus 5.5 a `--effort max` iguala, este agente baja de escalón.
+(`docs/pruebas/medicion-fable-5-2.md`), y esa medición no incluye síntesis. Se queda por
+continuidad, con un sobrecosto aceptado a sabiendas y que no es menor: en un council la
+síntesis puede pesar más de un tercio del costo. Se revisa con la primera medición de
+síntesis: si Opus 5.5 a `--effort max` iguala, este agente baja de escalón.
 
 Antes de heredar un hallazgo, verifícalo con lo que tengas a mano en solo lectura
 (archivos, cifras, fuentes citadas): un hallazgo que no resista una comprobación rápida se

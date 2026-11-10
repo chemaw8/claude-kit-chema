@@ -64,9 +64,9 @@ arma las copias por letra y deja el mapa aparte. (De `arena` de pstack, Lauren T
 
 Antes de repartir, considera la alternativa barata: **subir de esfuerzo o de modelo
 en un solo hilo, y en ese orden** (esfuerzo primero: Fable 5.2 cuesta 2 veces lo que Opus 5.5
-por token de entrada y de salida, empató con él en entregables y no sale más rápido, así que
-solo compensa cuando Opus a mayor esfuerzo se queda corto, o en un paso de síntesis o juicio
-—su alcance—; medido el 2026-11-09). En cadenas
+por token de entrada y de salida, y en la medición del 2026-11-09 empató con él en entregables
+sin salir más rápido; úsalo cuando Opus a mayor esfuerzo se quede corto, o en el paso de
+síntesis o juicio que el kit le asigna, sin ventaja medida ahí). En cadenas
 donde cada paso depende del anterior sobre el mismo material y todo cabe en contexto,
 un hilo con más esfuerzo gana; el fan-out ahí paga el sobrecosto sin cobrar nada.
 Cuando sí repartes, **declara el modelo y el esfuerzo de cada etapa** en el plan de la

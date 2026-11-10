@@ -8,6 +8,9 @@ Escalera de modelos al día con Fable 5.2, medida antes de mover nada (flujo de 
   no 2.5×. La regla «esfuerzo antes que modelo» no cambia.
 - Evidencia en `docs/pruebas/medicion-fable-5-2.md`. En entregables empata con Opus 5.5 (10/14 contra 10/14, con criterios
   +4 a +6 pp dentro del ruido). En disparo saca 90/90 contra 81/90. Los productores se quedan en Opus 5.5.
+- El sintetizador se queda en Fable 5.2 como **continuidad provisional, sin ventaja medida en síntesis**; se revisa con la
+  primera medición de síntesis. Council: anthropic, codex y kimi, los tres «aprobada con cambios»; los cuatro cambios están
+  integrados (`docs/pruebas/council-v1.35.md`). Precio confirmado en la página oficial el 2026-11-09.
 
 ## v1.34.4 — 2026-10-30
 Aviso cosmético del PR #100 en el asistente público, sin cambiar reglas ni núcleo (flujo de script: PR + CI + sello).
