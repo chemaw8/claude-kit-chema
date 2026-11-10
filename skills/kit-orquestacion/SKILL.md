@@ -63,10 +63,10 @@ mejor intento. `cegar.sh etiquetar` (en `${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/sc
 arma las copias por letra y deja el mapa aparte. (De `arena` de pstack, Lauren Tan, MIT.)
 
 Antes de repartir, considera la alternativa barata: **subir de esfuerzo o de modelo
-en un solo hilo, y en ese orden** (esfuerzo primero: Fable cuesta 2.5 veces lo que Opus 5.5
-por token de entrada y de salida, y solo compensa cuando Opus a mayor esfuerzo se queda corto, o
-cuando manda la latencia en un paso de síntesis o juicio —su alcance—, porque ahí sale más
-rápido, medido frente a Opus 5). En cadenas
+en un solo hilo, y en ese orden** (esfuerzo primero: Fable 5.2 cuesta 2 veces lo que Opus 5.5
+por token de entrada y de salida, y en la medición del 2026-11-09 empató con él en entregables
+sin salir más rápido; úsalo cuando Opus a mayor esfuerzo se quede corto, o en el paso de
+síntesis o juicio que el kit le asigna, sin ventaja medida ahí). En cadenas
 donde cada paso depende del anterior sobre el mismo material y todo cabe en contexto,
 un hilo con más esfuerzo gana; el fan-out ahí paga el sobrecosto sin cobrar nada.
 Cuando sí repartes, **declara el modelo y el esfuerzo de cada etapa** en el plan de la
