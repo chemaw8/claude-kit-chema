@@ -93,14 +93,14 @@ cliente, o mueve dinero, se verifica aunque el cambio sea de una línea.
 
 Luego **con qué modelo**: Haiku para lo trivial, Sonnet para lo mecánico (buscar,
 extraer, verificaciones tipo checklist), Opus 5.5 para trabajo pesado intermedio
-(borradores, evaluadores de council, código), Fable 5.1 solo para síntesis final y
+(borradores, evaluadores de council, código), Fable 5.2 solo para síntesis final y
 juicio crítico. **Antes de subir de Opus 5.5 a Fable, sube el esfuerzo** (`--effort`,
 hasta `max`): medido por corrida con Opus 5, subir el esfuerzo salió más barato que saltar
-de modelo, con margen estrecho y a costa de tardar más. Fable 5.1 salió más caro y más
-rápido: dentro de ese alcance, si manda la latencia y no el costo, salta de modelo.
+de modelo, con margen estrecho y a costa de tardar más. Fable 5.2 cuesta el doble, no es
+más rápido y en entregables empató con Opus 5.5: la latencia ya no justifica el salto.
 
 Agentes listos del kit: `verificador` (Sonnet), `evaluador-council` (Opus 5.5),
-`lector-fresco` (Opus 5.5 sin contexto previo), `sintetizador` (Fable 5.1: integra
+`lector-fresco` (Opus 5.5 sin contexto previo), `sintetizador` (Fable 5.2: integra
 veredictos de council o reportes de varios agentes en un juicio final).
 
 Cuando el trabajo se reparta entre **varios agentes a la vez** (barrido, auditoría,

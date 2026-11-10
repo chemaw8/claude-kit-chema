@@ -290,3 +290,13 @@ y por trampa:
 trampas son repos chicos y tareas cortas; la falla real («dice que pasan sin correrlas») aparece en sesiones largas, y
 ahí la palanca que se está midiendo es `verificar-cierre` (pi-harness, re-medición el 2026-10-26).
 **Descartado.** Nombrarla `verify` por la función de Claude Code: tampoco mostró efecto.
+
+## 2026-11-09 — Fable 5.2 entra en el escalón de síntesis; los productores siguen en Opus 5.5
+**Decisión:** Fable 5.2 reemplaza a 5.1 solo donde ya había Fable (`sintetizador`). Opus 5.5 se queda en borradores,
+evaluadores y código. La latencia sale de las razones para saltar de modelo. **Razones:** medición del 2026-11-09
+(`docs/pruebas/medicion-fable-5-2.md`). Empate en entregables con los dos instrumentos, a 2× el precio. En disparo,
+90/90 contra 81/90, pero eso lo decide el modelo del hilo principal, que es configuración del usuario y no del kit. Y 5.2
+ya no es más rápido: sin esa razón, el sintetizador se queda en Fable porque es una sola llamada al final. **Descartado:**
+(a) pasar a Fable 5.2 todo lo que corre con Opus 5.5, como pidió el usuario: la medición no encontró dónde gane el
+trabajo; (b) devolver el sintetizador a Opus 5.5: no hay medición de síntesis, y su propia regla dice que baja solo si
+una medición muestra que Opus iguala.
