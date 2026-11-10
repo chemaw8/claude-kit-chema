@@ -301,3 +301,15 @@ medida en síntesis y con un sobrecosto aceptado a sabiendas (council v1.35). **
 (a) pasar a Fable 5.2 todo lo que corre con Opus 5.5, como pidió el usuario: la medición no encontró dónde gane el
 trabajo; (b) devolver el sintetizador a Opus 5.5: no hay medición de síntesis, y su propia regla dice que baja solo si
 una medición muestra que Opus iguala.
+
+## 2026-11-10 — Se revierte v1.35.2 (aporte externo del PR #94)
+- **Qué se decidió:** quitar del kit el cambio del PR #94 (párrafo «Contexto» del núcleo y el comentario del hook de
+  contexto) que v1.35.2 había integrado. El núcleo y el hook quedan como en v1.35.1.
+- **Razones:** el dueño no autorizó integrar aportes de terceros. El agente interpretó «fusiónalos si es necesario» (dicho
+  sobre PRs abiertos) como permiso y lo integró tras council y gate; el council revisa calidad, no autoriza quién cambia
+  el kit. Regla operativa desde hoy: un PR de alguien que no es el dueño no se fusiona ni se integra sin su «sí» expreso
+  a ese PR en particular.
+- **Pendiente con el dueño:** el PR #48 (v1.22.1, 2026-09-29), del mismo autor externo, sí está en el kit desde entonces;
+  se le pregunta si se queda. Mientras decide, se acepta un desfase conocido: el núcleo vuelve a nombrar
+  `~/.claude/contexto/` y el hook (código de #48) lee el `contexto/` del perfil activo. Sin `CLAUDE_CONFIG_DIR`, que es
+  el caso de las máquinas del dueño, los dos apuntan a la misma carpeta.
