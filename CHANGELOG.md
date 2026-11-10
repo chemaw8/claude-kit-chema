@@ -1,5 +1,18 @@
 # Changelog — Kit Chema
 
+## v1.35.1 — 2026-11-10
+El hook anti-secretos deja de bloquear HTML con imágenes o fuentes incrustadas (flujo de hook: PR en borrador + council).
+- **Los formatos de llave distinguen mayúsculas.** `AKIA…`, `sk-…`, `ghp_…` y `BEGIN … PRIVATE KEY` se buscaban con `grep -i`.
+  Cualquier base64 grande traía por azar «aKia» + 16 alfanuméricos y el commit se bloqueaba (2026-11-10: los 7 HTML de una
+  propuesta, 34 aciertos, todos dentro de imágenes y de una fuente). Las palabras clave (`Password=`, `API_KEY:`) siguen
+  sin distinguir mayúsculas. Prueba en `hooks/test-anti-secretos.sh` (4i), roja antes del arreglo.
+- **El mensaje de bloqueo dice qué hacer con un falso positivo:** que el usuario lo revise y haga él ese commit en su
+  terminal, sin que el agente rodee el hook. Antes decía «commitea con el hook desactivado», sin forma de hacerlo.
+- **Falla cerrado si no puede revisar:** sin temporales o si `git diff` falla, bloquea en vez de dejar pasar el commit.
+  Pruebas nuevas: base64 ya preparado en el índice, `sk-`/`ghp_`/PEM en su case real siguen bloqueando, y sin `TMPDIR`
+  utilizable o con un `git diff` que falla, bloquea. En una carpeta que aún no es repo (`git init && git add . && git commit`)
+  revisa los archivos de la carpeta; antes ese primer commit pasaba sin revisión. Council: anthropic y codex «aprobada con cambios» (integrados), kimi «aprobada».
+
 ## v1.35.0 — 2026-11-09
 Escalera de modelos al día con Fable 5.2, medida antes de mover nada (flujo de núcleo: PR en borrador + council + gate de disparo).
 - **Fable 5.2 reemplaza a Fable 5.1** en el escalón de síntesis y juicio (`sintetizador`, núcleo, kit-propuestas).

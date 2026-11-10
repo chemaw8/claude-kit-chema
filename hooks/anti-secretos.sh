@@ -13,7 +13,11 @@ case "$cmd" in
   *git*commit*) ;;
   *) exit 0 ;;
 esac
-patron='(api[_-]?key|secret|token|passw(or)?d)["'"'"']?[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9_/+.-]{12,}|AKIA[0-9A-Z]{16}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+# Dos patrones: las palabras clave (`Password=`, `API_KEY:`) se buscan sin distinguir mayúsculas; los formatos de llave
+# (AKIA…, sk-…, ghp_…, BEGIN … PRIVATE KEY) tienen mayúsculas fijas y se buscan tal cual. Con `-i` sobre todo, cualquier
+# base64 grande (imágenes o fuentes incrustadas en un HTML) traía «aKia» + 16 alfanuméricos y bloqueaba sin razón.
+patron_i='(api[_-]?key|secret|token|passw(or)?d)["'"'"']?[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9_/+.-]{12,}'
+patron='AKIA[0-9A-Z]{16}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
 # ¿Qué repo y qué incluye el commit? El hook corre ANTES del comando: lo que `-a`/`--all` (también en
 # grupos como `-am`) o un `git add` del mismo comando vayan a meter todavía no está en el índice, y con
 # `git -C <ruta>` el repo no es el directorio actual. Si python3 falla: escanear de más, en el actual.
@@ -90,19 +94,33 @@ top=$(git rev-parse --show-toplevel 2>/dev/null) && cd -- "$top"   # ls-files --
 # Se escanea a archivo y sin `grep -q`: con pipefail, un grep que cierra temprano deja al productor en
 # SIGPIPE (141) y el `if` sale falso justo con los diffs grandes. `-a`: un byte raro no vuelve binario
 # todo el temporal; los archivos nuevos binarios ni se copian (grep -I los descarta).
-diff=$(mktemp); trap 'rm -f "$diff"' EXIT
-git diff --cached 2>/dev/null > "$diff"
+# Sin temporales no se puede revisar: se bloquea (falla cerrado) en vez de dejar pasar el commit sin mirar.
+bloquear_es() { echo "Kit Chema: no pude revisar el commit en busca de secretos ($1); bloqueo por precaución." >&2; exit 2; }
+msg_secreto="Kit Chema: el diff del commit parece contener credenciales (clave API, token o llave privada). Revísalo y quítalas antes de commitear. Si es un falso positivo, dilo y pide al usuario que lo revise y haga él ese commit en su terminal; no intentes rodear el hook."
+if ! git rev-parse --git-dir >/dev/null 2>&1; then
+  # Aún no es repo. Con `git init` en el mismo comando, lo que entrará es lo que hay en la carpeta: se revisa directo
+  # (por salida, no por código, por lo mismo que arriba). Sin `init`, el commit fallará solo: no hay nada que revisar.
+  case "$cmd" in *git*init*) ;; *) exit 0 ;; esac
+  en_carpeta=$(grep -rIliE --exclude-dir=.git "$patron_i" . 2>/dev/null; grep -rIlE --exclude-dir=.git "$patron" . 2>/dev/null)
+  [ -z "$en_carpeta" ] || { echo "$msg_secreto" >&2; exit 2; }
+  exit 0
+fi
+diff=$(mktemp) || bloquear_es "no se pudo crear un temporal"; trap 'rm -f "$diff"' EXIT
+git diff --cached 2>/dev/null > "$diff" || bloquear_es "no se pudo leer el diff preparado"
 if [ "$amplio" != 0 ]; then
-  git diff 2>/dev/null >> "$diff"
+  git diff 2>/dev/null >> "$diff" || bloquear_es "no se pudo leer el diff sin preparar"
   # Archivos nuevos: un solo grep por tanda (xargs), completos y sin copiarlos; -I salta los binarios. Se mira la
   # SALIDA, no el código: grep da 2 con un archivo ilegible o un enlace roto aunque haya hallado algo, y xargs 123
   # si alguna tanda no halló nada; con pipefail eso apagaba la detección.
-  hallados=$(mktemp); trap 'rm -f "$diff" "$hallados"' EXIT
-  git ls-files -z --others --exclude-standard 2>/dev/null | xargs -0 -r grep -IliE "$patron" -- > "$hallados" 2>/dev/null
+  hallados=$(mktemp) || bloquear_es "no se pudo crear un temporal"; trap 'rm -f "$diff" "$hallados"' EXIT
+  git ls-files -z --others --exclude-standard 2>/dev/null | xargs -0 -r grep -IliE "$patron_i" -- > "$hallados" 2>/dev/null
+  git ls-files -z --others --exclude-standard 2>/dev/null | xargs -0 -r grep -IlE "$patron" -- >> "$hallados" 2>/dev/null
   [ -s "$hallados" ] && nuevo_con_secreto=1
 fi
-if [ "${nuevo_con_secreto:-0}" = 1 ] || grep -aE '^\+' -- "$diff" | grep -aiE "$patron" >/dev/null; then
-  echo "Kit Chema: el diff del commit parece contener credenciales (clave API, token o llave privada). Revísalo y quítalas antes de commitear; si es un falso positivo, dilo y commitea con el hook desactivado." >&2
+agregadas=$(mktemp) || bloquear_es "no se pudo crear un temporal"; trap 'rm -f "$diff" "${hallados:-}" "$agregadas"' EXIT
+grep -aE '^\+' -- "$diff" > "$agregadas"; [ $? -le 1 ] || bloquear_es "no se pudo leer el diff"   # 1 = sin líneas nuevas
+if [ "${nuevo_con_secreto:-0}" = 1 ] || grep -aiE "$patron_i" -- "$agregadas" >/dev/null || grep -aE "$patron" -- "$agregadas" >/dev/null; then
+  echo "$msg_secreto" >&2
   exit 2
 fi
 exit 0
