@@ -309,7 +309,7 @@ una medición muestra que Opus iguala.
   sobre PRs abiertos) como permiso y lo integró tras council y gate; el council revisa calidad, no autoriza quién cambia
   el kit. Regla operativa desde hoy: un PR de alguien que no es el dueño no se fusiona ni se integra sin su «sí» expreso
   a ese PR en particular.
-- **Pendiente con el dueño:** el PR #48 (v1.22.1, 2026-09-29), del mismo autor externo, sí está en el kit desde entonces;
-  se le pregunta si se queda. Mientras decide, se acepta un desfase conocido: el núcleo vuelve a nombrar
-  `~/.claude/contexto/` y el hook (código de #48) lee el `contexto/` del perfil activo. Sin `CLAUDE_CONFIG_DIR`, que es
-  el caso de las máquinas del dueño, los dos apuntan a la misma carpeta.
+- **#48 se queda (decisión del dueño, 2026-11-10):** el PR #48 (v1.22.1, 2026-09-29), del mismo autor externo, sigue en
+  el kit: evita que un perfil de Claude Code reciba el contexto de otro. Queda el desfase conocido: el núcleo nombra
+  `~/.claude/contexto/` y el hook lee el `contexto/` del perfil activo. Sin `CLAUDE_CONFIG_DIR`, que es el caso de las
+  máquinas del dueño, los dos apuntan a la misma carpeta; alinear el texto del núcleo, si se quiere, lo hace el dueño.
