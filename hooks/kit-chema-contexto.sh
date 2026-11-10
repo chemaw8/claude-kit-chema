@@ -35,9 +35,8 @@ salida=$(
   done
 )
 
-# Nada que inyectar: se sale limpio y el núcleo pedirá el contexto por su cuenta.
-# Ojo: el núcleo aún nombra ~/.claude/contexto/ como la carpeta a leer; alinearlo
-# con este hook va aparte, con gate de disparo (DECISIONES 2026-09-25).
+# Nada que inyectar: se sale limpio y el núcleo pedirá el contexto por su cuenta
+# (el del perfil activo, igual que este hook; DECISIONES 2026-09-25, PR #94).
 [ -n "$salida" ] || exit 0
 
 printf '%s' "$salida" | python3 -c 'import json, sys; texto = sys.stdin.read(); print(json.dumps({"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": texto}}, ensure_ascii=False))'

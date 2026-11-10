@@ -151,3 +151,10 @@ coincidieron con la skill esperada. El PR no toca descriptions; el gate se corri
 el núcleo y 16 descriptions). Se volvió a medir sobre el árbol combinado (HEAD c5a8076) → **núcleo 21/21, confusiones de
 frontera no benignas 0, rc=0**. Repetido el mismo día sobre 3b209bc con la salida completa revisada: **30 de 30 filas coinciden con la skill esperada
 (30 ✓, 0 ✗), sin errores ni tiempos agotados del ejecutor**, rc=0. `verificar.sh` con las comprobaciones nuevas de la v1.31.1: código 0, sin FALLA.
+
+## 2026-11-10 — PR #94 integrado (v1.35.2: contexto del perfil activo en el núcleo)
+
+`python3 docs/pruebas/disparo.py --paralelo 6 --modelo sonnet` sobre la rama de integración, rebasada sobre v1.35.1
+(HEAD e57b6c3; el núcleo y las descriptions medidos son los finales) → **núcleo 21/21, confusiones de frontera no
+benignas 0, rc=0**; 30 de 30 filas coinciden con la skill esperada. Antes, sobre v1.35.0 + el commit de #94: también
+21/21 y PASA. El PR no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4), como pidió el council.
