@@ -117,6 +117,46 @@ nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"
 espera 2 "git commit a.txt -m x" "git commit <ruta> con secreto sin preparar"
 espera 2 "git commit -m x -- a.txt" "git commit -- <ruta> con secreto sin preparar"
 
+# 4i. los formatos de llave distinguen mayúsculas: un base64 con «aKia…»/«AkIA…» (imágenes o fuentes incrustadas en
+# un HTML) no es una llave de AWS; antes `grep -i` lo bloqueaba (una propuesta en HTML, 2026-11-10)
+# (cadenas partidas, como SECRETO: el hook viejo las bloquearía en este mismo repo)
+nuevo_repo; printf '<img src="data:image/png;base64,iVBOR%sw0KGgo=">\n' "aKia""53Ay6ZnKkQ9oetZ8""AkIA""lQUI3wIjXA0xIFwc" > "$t/r/p.html"
+espera 0 "git add -A && git commit -m x" "base64 con «aKia…» en minúsculas mezcladas no es una llave"
+nuevo_repo; printf 'x = "GHP_%s"\n' "abcdefghijklmnopqrstuvwxyz0123456789" > "$t/r/b.txt"
+espera 0 "git add -A && git commit -m x" "«GHP_…» en mayúsculas no es un token de GitHub"
+nuevo_repo; printf '<img src="data:image/png;base64,iVBOR%sw0KGgo=">\n' "aKia""53Ay6ZnKkQ9oetZ8""AkIA""lQUI3wIjXA0xIFwc" > "$t/r/p.html"
+git -C "$t/r" add p.html
+espera 0 "git commit -m x" "el mismo base64 ya preparado en el índice no es una llave"
+# … y los formatos de llave en su case real siguen bloqueando
+for llave in "sk-""proj-abcdefghijklmnopqrstuvwx" "ghp_""abcdefghijklmnopqrstuvwxyz0123456789" "-----BEGIN OPENSSH ""PRIVATE KEY-----"; do
+  nuevo_repo; printf 'v = %s\n' "$llave" > "$t/r/k.txt"
+  espera 2 "git add -A && git commit -m x" "formato de llave en su case real: ${llave:0:12}…"
+done
+# un temporal que no se puede crear bloquea (falla cerrado), no deja pasar el commit sin revisar.
+# Cambio LIMPIO en el índice: el único camino al 2 es fallar cerrado (con un secreto, el 2 no probaría nada)
+nuevo_repo; printf 'y=2\n' >> "$t/r/a.txt"; git -C "$t/r" add a.txt
+rc=$(cd "$t/r" && printf '%s' '{"tool_input":{"command":"git commit -m x"}}' | TMPDIR=/no/existe bash "$HOOK" >/dev/null 2>&1; echo $?)
+[ "$rc" = 2 ] || fallo "sin poder crear temporales el hook debe bloquear (dio $rc)"
+# un `git diff` que falla también bloquea (antes dejaba el temporal vacío y el commit pasaba)
+mkdir -p "$t/gitfalso"; real_git=$(command -v git)
+printf '#!/bin/sh\n[ "$1" = diff ] && exit 128\nexec "%s" "$@"\n' "$real_git" > "$t/gitfalso/git"; chmod +x "$t/gitfalso/git"
+nuevo_repo; printf 'y=2\n' >> "$t/r/a.txt"; git -C "$t/r" add a.txt   # limpio, como arriba
+rc=$(cd "$t/r" && printf '%s' '{"tool_input":{"command":"git commit -m x"}}' | PATH="$t/gitfalso:$PATH" bash "$HOOK" >/dev/null 2>&1; echo $?)
+[ "$rc" = 2 ] || fallo "si git diff falla el hook debe bloquear (dio $rc)"
+# carpeta que aún no es repo: `git init && git add . && git commit` revisa los archivos de la carpeta
+# (antes pasaba sin revisar nada; con el fallo cerrado de `git diff` se habría bloqueado siempre)
+corre_en() { (cd "$1" && printf '%s' "$(python3 -c 'import json,sys; print(json.dumps({"tool_input":{"command":sys.argv[1]}}))' "$2")" | bash "$HOOK" >/dev/null 2>&1); echo $?; }
+rm -rf "$t/sinrepo"; mkdir -p "$t/sinrepo"; printf 'x=1\n' > "$t/sinrepo/a.txt"
+rc=$(corre_en "$t/sinrepo" "git init && git add . && git commit -m init"); [ "$rc" = 0 ] || fallo "carpeta nueva limpia con git init debe pasar (dio $rc)"
+rc=$(corre_en "$t/sinrepo" "git commit -m x"); [ "$rc" = 0 ] || fallo "git commit fuera de un repo y sin init debe pasar: falla solo (dio $rc)"
+printf 'k=%s\n' "$SECRETO" > "$t/sinrepo/llave.txt"
+rc=$(corre_en "$t/sinrepo" "git init && git add . && git commit -m init"); [ "$rc" = 2 ] || fallo "carpeta nueva con secreto y git init debe bloquear (dio $rc)"
+# … pero las palabras clave siguen sin distinguir mayúsculas
+nuevo_repo; printf 'API_KEY: "%s"\n' "abc123def456ghi789" > "$t/r/c.txt"
+espera 2 "git add -A && git commit -m x" "«API_KEY:» en mayúsculas sigue bloqueando"
+nuevo_repo; printf 'Password=%s\n' "abc123def456ghi789" >> "$t/r/a.txt"; git -C "$t/r" add a.txt
+espera 2 "git commit -m x" "«Password=» staged sigue bloqueando"
+
 # 5. el secreto solo está sin preparar y el commit no lo incluye → no bloquea
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"; printf 'y=2\n' > "$t/r/b.txt"; git -C "$t/r" add b.txt
 espera 0 "git commit -m 'usa la bandera -a luego'" "commit sin -a no debe escanear lo no preparado"
