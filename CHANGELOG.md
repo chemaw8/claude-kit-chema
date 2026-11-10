@@ -1,5 +1,11 @@
 # Changelog — Kit Chema
 
+## v1.35.3 — 2026-11-10
+Revierte v1.35.2 por decisión del dueño (flujo: PR + sello; gate de disparo por tocar el núcleo: 21/21, pasa).
+- **El núcleo y `hooks/kit-chema-contexto.sh` vuelven a como estaban en v1.35.1.** v1.35.2 integró el PR #94, un aporte
+  externo, sin autorización expresa del dueño: el agente tomó «fusiónalos si es necesario» como permiso. El kit solo
+  cambia por decisión de su dueño. Detalle en `DECISIONES.md` (2026-11-10).
+
 ## v1.35.2 — 2026-11-10
 El núcleo dice de qué perfil se lee el contexto, igual que el hook (flujo de núcleo: PR + council + gate de disparo).
 - **El párrafo «Contexto» del núcleo** decía que el hook cargó `~/.claude/contexto/`. Desde la decisión del 2026-09-25 el
