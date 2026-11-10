@@ -1,5 +1,15 @@
 # Changelog — Kit Chema
 
+## v1.35.2 — 2026-11-10
+El núcleo dice de qué perfil se lee el contexto, igual que el hook (flujo de núcleo: PR + council + gate de disparo).
+- **El párrafo «Contexto» del núcleo** decía que el hook cargó `~/.claude/contexto/`. Desde la decisión del 2026-09-25 el
+  hook lee el `contexto/` del perfil activo (`$CLAUDE_CONFIG_DIR`, o `~/.claude` sin él) y nunca cae al de otro perfil;
+  con el texto viejo, un perfil sin `contexto/` propio recibía del núcleo la orden de leer el de otro. Mismas 5 líneas: el
+  núcleo no crece. Aporte del PR #94 (su commit se conserva con su autoría), integrado en este PR.
+- Se borra el comentario de `hooks/kit-chema-contexto.sh` que dejaba esta alineación pendiente.
+- Council: anthropic, codex y kimi, los tres «aprobada con cambios» (gate de disparo, CI de Linux, el comentario del hook y
+  esta entrada); todos integrados. Gate de disparo: núcleo 21/21, cero confusiones de frontera.
+
 ## v1.35.1 — 2026-11-10
 El hook anti-secretos deja de bloquear HTML con imágenes o fuentes incrustadas (flujo de hook: PR en borrador + council).
 - **Los formatos de llave distinguen mayúsculas.** `AKIA…`, `sk-…`, `ghp_…` y `BEGIN … PRIVATE KEY` se buscaban con `grep -i`.
