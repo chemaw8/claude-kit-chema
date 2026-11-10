@@ -39,6 +39,11 @@ máquina donde se midió.
 - El 81/90 de Opus 5.5 repite exactamente el de la línea base anterior (kit v1.34.1): es estable. La
   ventaja de Fable en disparo es la única diferencia de la medición que no cabe en el ruido.
 
+## Gate de disparo de esta rama
+
+Núcleo v1.35.0 sin instalar (`DISPARO_NUCLEO`), Opus, 30 × 3, el mismo día: **80/90, sin regresiones**, contra
+81/90 de v1.34.4. La diferencia de 1 corrida cabe en el ruido: el texto nuevo no mueve el disparo.
+
 ## Qué cambia en el kit
 
 1. **Fable 5.2 reemplaza a Fable 5.1** en el escalón de síntesis y juicio (`sintetizador`). Es
