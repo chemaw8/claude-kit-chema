@@ -133,10 +133,13 @@ de_prueba = re.compile(r"(?=[a-z0-9-]{1,48}$)(?:[a-z0-9]+-)*(?:fixture|no-es-cre
 # Un comentario necesita espacio antes («'solo-fixture'#<llave>» es una sola palabra en shell), y sin comillas lo
 # que sigue tras el espacio solo puede ser comentario u otra asignación: en YAML o dotenv «solo-fixture <llave>» es
 # un solo valor (avisos del sello de 29378c1).
-# Sin comillas «//» no es comentario en YAML ni dotenv, y otra asignación detrás solo vale en shell (`A=x B=y`):
-# con «:» (YAML) «solo-fixture X=<llave>» es un solo valor (aviso del sello de 5b538fb).
-cierre_sin = {"=": re.compile(r"\s*$|\s+#|\s+[A-Za-z_][A-Za-z0-9_]*="), ":": re.compile(r"\s*$|\s+#")}
-cierre_con = re.compile(r"\s*(?:[,;)\]}]\s*)*(?:$|(?<=\s)(?:#|//)|\x22[^\x22]*\x22\s*:)")
+# Sin comillas, tras el valor solo fin o comentario con espacio («//» no es comentario en YAML ni dotenv, y
+# «solo-fixture X=<llave>» es un solo valor en INI o YAML). Con comillas, cierres y separadores y luego fin o
+# comentario; la siguiente clave de un JSON solo con «:» y una coma: tras «=», «"solo-fixture""<llave>"» es una
+# concatenación de shell (3ª ronda del council del PR #110). Separador = espacio o tabulador: \v, \f o \r no lo son.
+cierre_sin = re.compile(r"[ \t]*$|[ \t]+#")
+fin_con = r"[ \t]*(?:[,;)\]}][ \t]*)*(?:$|(?<=[ \t])(?:#|//))"
+cierre_con = {"=": re.compile(fin_con), ":": re.compile(fin_con + r"|[ \t]*(?:[)\]}][ \t]*)*,[ \t]*\x22[^\x22]*\x22[ \t]*:")}
 with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") as archivo:
     for linea in archivo.read().split("\n"):
         if not linea: continue
@@ -161,7 +164,7 @@ with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") a
                 valor = m[4]  # sin comillas, el valor es justo lo que casó: «=» y «:» lo terminan
                 despues = linea[m.end(4):]
             operador = "=" if "=" in linea[m.start():m.start(3)] else ":"
-            if not de_prueba.fullmatch(valor) or not (cierre_con if comilla else cierre_sin[operador]).match(despues): sys.exit(2)
+            if not de_prueba.fullmatch(valor) or not (cierre_con[operador] if comilla else cierre_sin).match(despues): sys.exit(2)
         if vistas == 0 and not formatos.search(linea): sys.exit(2)  # grep lo marcó y aquí no casa: no se exime
 PY
   rc=$?

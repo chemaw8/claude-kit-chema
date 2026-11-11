@@ -110,7 +110,9 @@ commit`) se revisa en ese repo; si no puede saber cuál es (`cd -`, `cd $(…)`,
 48 caracteres, con `fixture` o `no-es-credencial` como palabra (el valor `solo-fixture` de una `apiKey`, o `fixture-de-prueba`). Se
 decide por valor, no por renglón: una credencial real en el mismo renglón sigue bloqueando. Los formatos de llave
 (`AKIA…`, `sk-…`, `ghp_…`, llaves privadas) nunca se eximen, aunque digan «fixture», y tras el valor no puede venir
-más expresión (`"solo-fixture" || "<llave>"` bloquea). El evaluador de valores (python3) solo corre si grep marcó algún
+más expresión (`"solo-fixture" || "<llave>"`, `"solo-fixture""<llave>"` y `solo-fixture X=<llave>` bloquean).
+Límite conocido: un escalar YAML partido en varios renglones (el valor de prueba en uno y la llave en el siguiente,
+más indentado) no se ve, porque se revisa renglón por renglón. El evaluador de valores (python3) solo corre si grep marcó algún
 renglón, y tiene que reconocer cada uno; si falla o no lo reconoce, bloquea. Costo aceptado, igual que antes:
 una `apiKey` asignada desde `process.env.OPENAI_API_KEY` bloquea (el hook no distingue una referencia de un literal).
 
