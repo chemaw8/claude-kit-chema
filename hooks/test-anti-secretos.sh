@@ -212,6 +212,12 @@ for cola in ' || "abC123deF456ghI789"' ' + "abC123deF456ghI789"' ' && x' "abC123
 done
 probar_linea 2 "$(printf 'pass%s=solo-fixture!Q7r9V2m4' word)" "valor sin comillas con sufijo"
 probar_linea 2 "$(printf "PASS%s='solo-fixture'Q7r9V2m4" WORD)" "concatenación de shell tras el valor"
+for cola in ',Q7r9V2m4xx' '#abC123deF456ghI789' ';abC123deF456ghI789'; do
+  probar_linea 2 "$(printf 'pass%s=solo-fixture%s' word "$cola")" "sin comillas, pegado al valor: $cola"
+done
+probar_linea 2 "$(printf 'api%s = "solo-fixture") || "abC123deF456ghI789"' _key)" "cierre seguido de otra expresión"
+probar_linea 0 "$(printf '{"api%s": "solo-fixture", "model": "fx"}' Key)" "JSON en un renglón: la siguiente clave no es expresión"
+probar_linea 0 "$(printf 'export API_%s=solo-fixture OTRA=1' KEY)" "sin comillas seguido de espacio"
 for cola in ',' ';' ')' ' # comentario' ' // comentario' '}'; do
   probar_linea 0 "$(printf 'api%s = "solo-fixture"%s' Key "$cola")" "valor de prueba seguido de $cola"
 done

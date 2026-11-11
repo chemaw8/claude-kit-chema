@@ -127,7 +127,11 @@ de_prueba = re.compile(r"(?=[a-z0-9-]{1,48}$)(?:[a-z0-9]+-)*(?:fixture|no-es-cre
 # nada, se bloquea: lo que no se pudo evaluar no se exime.
 # Después del valor de prueba solo puede venir fin de renglón, separador o comentario: «"solo-fixture" || "<llave>"»,
 # «solo-fixture!<llave>» o «'solo-fixture'<llave>» (concatenación de shell) escondían una llave (council del PR #110).
-cierre = re.compile(r"\s*(?:$|[,;)\]}]|#|//)")
+# Sin comillas: el valor termina en espacio o en fin de renglón («solo-fixture,<llave>» es un solo valor en un .env).
+# Con comillas: cierres y separadores, y luego fin, comentario o la siguiente clave de un JSON; nada de operadores
+# («"solo-fixture") || "<llave>"»). Aviso del sello de 602aa10.
+cierre_sin = re.compile(r"(?:\s.*)?$", re.S)
+cierre_con = re.compile(r"\s*(?:[,;)\]}]\s*)*(?:$|(?:#|//)|\x22[^\x22]*\x22\s*:)")
 with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") as archivo:
     for linea in archivo.read().split("\n"):
         if not linea: continue
@@ -151,7 +155,7 @@ with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") a
             else:
                 valor = m[4]  # sin comillas, el valor es justo lo que casó: «=» y «:» lo terminan
                 despues = linea[m.end(4):]
-            if not de_prueba.fullmatch(valor) or not cierre.match(despues): sys.exit(2)
+            if not de_prueba.fullmatch(valor) or not (cierre_con if comilla else cierre_sin).match(despues): sys.exit(2)
         if vistas == 0 and not formatos.search(linea): sys.exit(2)  # grep lo marcó y aquí no casa: no se exime
 PY
   rc=$?
