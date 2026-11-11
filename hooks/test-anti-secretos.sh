@@ -218,7 +218,11 @@ probar_linea 2 "$(printf 'password = "%s' 'solo-fixture')" "valor sin comilla de
 probar_linea 2 "$(printf 'tok%s=fixture-api_%s=abC123deF456ghI%s' en key 789)" "fixture pegado a otra asignación no exime la llave real"
 probar_linea 0 "$(printf 'tok%s=solo-fixture-de-prueba' en)" "fixture sin comillas, solo"
 rm -rf "$t/sinrepo"; mkdir -p "$t/sinrepo"; printf 'y=2\n' > "$t/sinrepo/limpio.txt"; printf 'z\n' > "$t/sinrepo/ilegible.txt"; chmod 000 "$t/sinrepo/ilegible.txt"
-rc=$(cd "$t/sinrepo" && printf '%s' '{"tool_input":{"command":"git init && git add limpio.txt && git commit -m x"}}' | bash "$HOOK" >/dev/null 2>&1; echo $?)
+if [ -r "$t/sinrepo/ilegible.txt" ]; then
+  echo "AVISO: el archivo 000 es legible (¿root?): no se prueba la carpeta con un ilegible"; rc=0
+else
+  rc=$(cd "$t/sinrepo" && printf '%s' '{"tool_input":{"command":"git init && git add limpio.txt && git commit -m x"}}' | bash "$HOOK" >/dev/null 2>&1; echo $?)
+fi
 chmod 600 "$t/sinrepo/ilegible.txt"
 [ "$rc" = 0 ] || fallo "carpeta sin repo con un archivo ilegible y nada secreto no debe bloquear (dio $rc)"
 # Si falla el evaluador de excepciones, un diff limpio también debe bloquear (no solo los secretos).
