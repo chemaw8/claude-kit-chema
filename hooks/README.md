@@ -115,7 +115,8 @@ comillas, el valor de prueba tiene que cerrar el renglón (en INI, YAML o dotenv
 Límite conocido: un escalar YAML partido en varios renglones (el valor de prueba en uno y la llave en el siguiente,
 más indentado) no se ve, porque se revisa renglón por renglón. El evaluador de valores (python3) solo corre si grep marcó algún
 renglón, y tiene que reconocer cada uno; si falla o no lo reconoce, bloquea. python3 también interpreta el comando al
-principio: sin él, un commit local limpio pasa, pero cualquier comando con `cd`, `pushd`, `-C` o `GIT_` bloquea. Costo aceptado, igual que antes:
+principio: sin él revisa el JSON entero del evento, y cualquier «cd», «pushd», «-C» o «GIT_» en él (también en una
+ruta como `/home/x/abcd`) bloquea. Sin python3 el hook es conservador: casi todo commit pide hacerse a mano. Costo aceptado, igual que antes:
 una `apiKey` asignada desde `process.env.OPENAI_API_KEY` bloquea (el hook no distingue una referencia de un literal).
 
 ## Eventos disponibles en Claude Code
