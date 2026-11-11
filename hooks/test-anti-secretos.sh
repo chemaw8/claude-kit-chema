@@ -260,7 +260,7 @@ rc=$(cd "$t/r" && printf '%s' '{"tool_input":{"command":"git commit -m x"}}' | P
 [ "$rc" = 2 ] || fallo "sin python3, una línea sospechosa bloquea aunque sea de prueba (dio $rc)"
 # Sin python3, un commit hacia otro repo (cd / -C) no se revisa en el directorio actual: se bloquea.
 nuevo_repo; mkdir -p "$t/otro2"; git init -q "$t/otro2"; printf 'k=%s\n' "$SECRETO" > "$t/otro2/s.txt"; git -C "$t/otro2" add s.txt
-for c in "cd $t/otro2 && git commit -m x" "git -C $t/otro2 commit -m x"; do
+for c in "cd $t/otro2 && git commit -m x" "git -C $t/otro2 commit -m x" "cd\\t$t/otro2 && git commit -m x"; do
   rc=$(cd "$t/r" && printf '{"tool_input":{"command":"%s"}}' "$c" | PATH="$t/pythonfalso:$PATH" bash "$HOOK" >/dev/null 2>&1; echo $?)
   [ "$rc" = 2 ] || fallo "sin python3, «$c» debe bloquear (dio $rc)"
 done
