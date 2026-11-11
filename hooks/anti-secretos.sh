@@ -133,7 +133,7 @@ de_prueba = re.compile(r"(?=[a-z0-9-]{1,48}$)(?:[a-z0-9]+-)*(?:fixture|no-es-cre
 # Un comentario necesita espacio antes («'solo-fixture'#<llave>» es una sola palabra en shell), y sin comillas lo
 # que sigue tras el espacio solo puede ser comentario u otra asignación: en YAML o dotenv «solo-fixture <llave>» es
 # un solo valor (avisos del sello de 29378c1).
-cierre_sin = re.compile(r"\s*$|\s+(?:#|//)|\s+[A-Za-z_][A-Za-z0-9_]*=")
+cierre_sin = re.compile(r"\s*$|\s+#|\s+[A-Za-z_][A-Za-z0-9_]*=")   # sin comillas, «//» no es comentario en YAML ni dotenv
 cierre_con = re.compile(r"\s*(?:[,;)\]}]\s*)*(?:$|(?<=\s)(?:#|//)|\x22[^\x22]*\x22\s*:)")
 with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") as archivo:
     for linea in archivo.read().split("\n"):

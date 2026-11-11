@@ -194,7 +194,7 @@ for modo in indice trabajo nuevo sinrepo; do
   done
 done
 # Un valor de prueba se ve como tal entero (council del PR #110): minúsculas y guiones, con «fixture» como palabra.
-for valor in fixture solo-fixture fixture-de-prueba prefijo-fixture-sufijo valor-no-es-credencial; do
+for valor in fixture-de-x solo-fixture fixture-de-prueba prefijo-fixture-sufijo valor-no-es-credencial; do   # ≥ 12: si no, grep ni lo marca
   probar_linea 0 "$(printf "Password = '%s'" "$valor")" "valor de prueba $valor"
 done
 probar_linea 0 "$(printf 'API_KEY=%s' 'prefijo-fixture-sufijo')" "fixture sin comillas"
@@ -221,6 +221,7 @@ probar_linea 0 "$(printf 'export API_%s=solo-fixture OTRA=1' KEY)" "sin comillas
 probar_linea 0 "$(printf 'API_%s=solo-fixture  # de prueba' KEY)" "sin comillas seguido de comentario"
 probar_linea 2 "$(printf "PASS%s='solo-fixture'#abC123deF456ghI789" WORD)" "# pegado a la comilla concatena en shell"
 probar_linea 2 "$(printf 'api_%s: solo-fixture abC123deF456ghI789' key)" "YAML: el valor sigue tras el espacio"
+probar_linea 2 "$(printf 'api_%s: solo-fixture //abC123deF456ghI789' key)" "YAML: // no es comentario"
 for cola in ',' ';' ')' ' # comentario' ' // comentario' '}'; do
   probar_linea 0 "$(printf 'api%s = "solo-fixture"%s' Key "$cola")" "valor de prueba seguido de $cola"
 done
