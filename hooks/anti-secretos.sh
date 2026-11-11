@@ -99,15 +99,18 @@ bloquear_es() { echo "Kit Chema: no pude revisar el commit en busca de secretos 
 msg_secreto="Kit Chema: el diff del commit parece contener credenciales (clave API, token o llave privada). Revísalo y quítalas antes de commitear. Si es un falso positivo, dilo y pide al usuario que lo revise y haga él ese commit en su terminal; no intentes rodear el hook."
 revisar_coincidencias() { # <archivo con líneas candidatas>; nunca eximir un renglón completo
   local rc
+  # Sin nada sospechoso no hace falta python3 (council del PR #110): un commit limpio pasa aunque falte o falle.
+  grep -aiqE "$patron_i" -- "$1" 2>/dev/null || grep -aqE "$patron" -- "$1" 2>/dev/null || return 0
   python3 - "$patron_i" "$patron" "$1" 2>/dev/null <<'PY'
 import re, sys
 # Misma detección que grep; grupos 3 y 4: comilla y comienzo del valor. No cambia el umbral de 12.
 asignacion = re.compile(sys.argv[1].replace("[[:space:]]", r"\s"), re.I | re.A)
 formatos = re.compile(sys.argv[2])
-# Solo marcas explícitas (español/inglés): «test» o «demo» también pueden nombrar credenciales reales.
-marca = re.compile(r"fixture|ejemplo|example|dummy|fake|falso|placeholder|no-es-credencial|changeme", re.I)
-# $VAR, ${VAR} y os.environ[...] ya quedan fuera de patron_i; process.env sí alcanza los 12 caracteres.
-referencia = re.compile(r"process\.env\.[A-Za-z_$][A-Za-z0-9_$]*")
+# Un valor de prueba se ve como tal ENTERO (council del PR #110): solo minúsculas, dígitos y guiones, hasta 48
+# caracteres, con «fixture» o «no-es-credencial» como palabra («solo-fixture», «fixture-de-prueba»). Una subcadena
+# no basta: «…fakeL8x4…» o «Changeme123!» pueden ser credenciales reales. process.env tampoco se exime: en
+# «process.env.X || "<literal>"» escondía el literal.
+de_prueba = re.compile(r"(?=[a-z0-9-]{1,48}$)(?:[a-z0-9]+-)*(?:fixture|no-es-credencial)(?:-[a-z0-9]+)*")
 with open(sys.argv[3], encoding="utf-8", errors="surrogateescape") as archivo:
     for linea in archivo:
         if formatos.search(linea): sys.exit(2)  # formatos de llave: sin excepciones, ni siquiera «fixture»
@@ -126,7 +129,7 @@ with open(sys.argv[3], encoding="utf-8", errors="surrogateescape") as archivo:
                 valor = literal[0][:-1]
             else:
                 valor = m[4]  # sin comillas, el valor es justo lo que casó: «=» y «:» lo terminan
-            if not marca.search(valor) and not referencia.fullmatch(valor): sys.exit(2)
+            if not de_prueba.fullmatch(valor): sys.exit(2)
 PY
   rc=$?
   case "$rc" in

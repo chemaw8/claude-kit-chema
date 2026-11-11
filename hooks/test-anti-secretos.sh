@@ -177,7 +177,6 @@ probar_linea() { # <salida> <texto> <nombre> [indice|trabajo|nuevo|sinrepo]
 }
 falsa=$(printf '"apiKey": "%s",' "solo-fixture")
 real=$(printf '"apiKey": "%s",' "abC123deF456ghI789")
-referencia=$(printf 'token = %s;' 'process.env.API_KEY')
 for modo in indice trabajo nuevo sinrepo; do
   probar_linea 0 "$falsa" "fixture explícita" "$modo"
   probar_linea 2 "$real" "misma asignación sin marca de prueba" "$modo"
@@ -187,8 +186,6 @@ for modo in indice trabajo nuevo sinrepo; do
   for separador in ';' ',' '&&' '||' '('; do
     probar_linea 2 "$(printf 'api_key=%s%stoken=%s' 'abC123deF456ghI789' "$separador" 'solo-fixture')" "asignaciones sin espacios, separadas por $separador" "$modo"
   done
-  probar_linea 0 "$referencia" "referencia a process.env" "$modo"
-  probar_linea 2 "$referencia $real" "referencia no tapa una credencial" "$modo"
   probar_linea 2 "$real // fixture" "marca en comentario no exime el valor" "$modo"
   probar_linea 2 "$(printf '"fixture_apiKey": "%s"' 'abC123deF456ghI789')" "marca en nombre no exime el valor" "$modo"
   for llave in "$SECRETO" "AKIA""FIXTURE123456789" "sk-""ant-oat-fixture-no-es-credencial" \
@@ -196,18 +193,20 @@ for modo in indice trabajo nuevo sinrepo; do
     probar_linea 2 "$(printf 'token = "%s"; %s' "$llave" "$falsa")" "formato de llave no se exime por fixture" "$modo"
   done
 done
-# Lista deliberadamente corta: marcas inequívocas, no «test» ni «demo». Comillas simples y case mezclado.
-for marca in fixture ejemplo example dummy fake falso placeholder no-es-credencial changeme FiXtUrE; do
-  probar_linea 0 "$(printf "Password = '%s'" "prefijo-${marca}-sufijo")" "marca de prueba $marca"
+# Un valor de prueba se ve como tal entero (council del PR #110): minúsculas y guiones, con «fixture» como palabra.
+for valor in fixture solo-fixture fixture-de-prueba prefijo-fixture-sufijo valor-no-es-credencial; do
+  probar_linea 0 "$(printf "Password = '%s'" "$valor")" "valor de prueba $valor"
 done
 probar_linea 0 "$(printf 'API_KEY=%s' 'prefijo-fixture-sufijo')" "fixture sin comillas"
-probar_linea 0 "$(printf 'secret = "%s"' 'abcdefghijklmnop ! FALSO')" "marca dentro del valor con espacios y puntuación"
 probar_linea 0 "$falsa $falsa" "dos valores falsos en la misma línea"
-for valor in '$API_KEY' '${API_KEY}' 'process.env.API_KEY' 'os.environ["API_KEY"]' "os.environ['API_KEY']"; do
-  probar_linea 0 "$(printf 'api_key = %s' "$valor")" "referencia a variable $valor"
+# Lo que antes eximía por subcadena y podía ser una credencial real (partidas para que no casen escritas aquí).
+for valor in "q7F9v2fake""L8x4Q1wzR6n3" "Change""me123456!" "YWJfake""Nq8vR2sL5==" "abC123deF456ghI789 (exam""ple)" \
+  "FiXtUrE-abc123def456" "solofixture1234" "$(printf 'a%.0s' $(seq 45))-fixture" "prefijo-test-sufijo" "prefijo-demo-sufijo" "prefijo-ejemplo-sufijo"; do
+  probar_linea 2 "$(printf 'api_key = "%s"' "$valor")" "no es valor de prueba: $valor"
 done
-for valor in 'process.environment' 'PROCESS.ENV.API_KEY' 'process.env.API_KEY/sufijo' 'prefijo-test-sufijo' 'prefijo-demo-sufijo'; do
-  probar_linea 2 "$(printf 'api_key = "%s"' "$valor")" "no es referencia ni marca explícita: $valor"
+probar_linea 2 "$(printf 'api%s = process.env.API_KEY || "%s"' Key 'abC123deF456ghI789')" "process.env con literal de respaldo"
+for valor in '$API_KEY' '${API_KEY}' 'os.environ["API_KEY"]' "os.environ['API_KEY']"; do
+  probar_linea 0 "$(printf 'api_key = %s' "$valor")" "referencia a variable $valor (no casa con el patrón)"
 done
 probar_linea 2 "$real $(printf 'descripcion = "%s"' 'solo-fixture')" "marca en otro campo no exime el valor"
 probar_linea 2 "$(printf 'token = "%s"; descripcion = "fixture"' 'abcdefghijklmnop\\')" "comilla tras escape no absorbe otro campo"
@@ -225,11 +224,14 @@ else
 fi
 chmod 600 "$t/sinrepo/ilegible.txt"
 [ "$rc" = 0 ] || fallo "carpeta sin repo con un archivo ilegible y nada secreto no debe bloquear (dio $rc)"
-# Si falla el evaluador de excepciones, un diff limpio también debe bloquear (no solo los secretos).
+# Si falla el evaluador: un diff limpio pasa (no hace falta python3) y uno sospechoso bloquea (falla cerrado).
 mkdir -p "$t/pythonfalso"; printf '#!/bin/sh\nexit 1\n' > "$t/pythonfalso/python3"; chmod +x "$t/pythonfalso/python3"
 nuevo_repo; printf 'y=2\n' >> "$t/r/a.txt"; git -C "$t/r" add a.txt
 rc=$(cd "$t/r" && printf '%s' '{"tool_input":{"command":"git commit -m x"}}' | PATH="$t/pythonfalso:$PATH" bash "$HOOK" >/dev/null 2>&1; echo $?)
-[ "$rc" = 2 ] || fallo "si falla el evaluador el hook debe bloquear (dio $rc)"
+[ "$rc" = 0 ] || fallo "sin python3, un diff limpio debe pasar (dio $rc)"
+nuevo_repo; printf '%s\n' "$falsa" >> "$t/r/a.txt"; git -C "$t/r" add a.txt
+rc=$(cd "$t/r" && printf '%s' '{"tool_input":{"command":"git commit -m x"}}' | PATH="$t/pythonfalso:$PATH" bash "$HOOK" >/dev/null 2>&1; echo $?)
+[ "$rc" = 2 ] || fallo "sin python3, una línea sospechosa bloquea aunque sea de prueba (dio $rc)"
 
 # 5. el secreto solo está sin preparar y el commit no lo incluye → no bloquea
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"; printf 'y=2\n' > "$t/r/b.txt"; git -C "$t/r" add b.txt

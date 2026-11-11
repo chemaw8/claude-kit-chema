@@ -107,6 +107,12 @@ pasan por el hook) y solo escanea el diff staged del repo en el directorio de
 trabajo de la sesión — un `git commit` que apunte a otro repo (`cd /otro/repo
 && git commit` o `git -C /otro/repo commit`) no queda escaneado.
 
+**Valores de prueba.** Un valor que se ve entero como de prueba no bloquea: solo minúsculas, dígitos y guiones, hasta
+48 caracteres, con `fixture` o `no-es-credencial` como palabra (el valor `solo-fixture` de una `apiKey`, o `fixture-de-prueba`). Se
+decide por valor, no por renglón: una credencial real en el mismo renglón sigue bloqueando. Los formatos de llave
+(`AKIA…`, `sk-…`, `ghp_…`, llaves privadas) nunca se eximen, aunque digan «fixture». python3 solo se usa si grep ya
+encontró algo sospechoso; si entonces falla, bloquea.
+
 ## Eventos disponibles en Claude Code
 
 | Evento | Cuándo se dispara |
