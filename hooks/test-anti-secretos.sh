@@ -217,7 +217,10 @@ for cola in ',Q7r9V2m4xx' '#abC123deF456ghI789' ';abC123deF456ghI789'; do
 done
 probar_linea 2 "$(printf 'api%s = "solo-fixture") || "abC123deF456ghI789"' _key)" "cierre seguido de otra expresión"
 probar_linea 0 "$(printf '{"api%s": "solo-fixture", "model": "fx"}' Key)" "JSON en un renglón: la siguiente clave no es expresión"
-probar_linea 0 "$(printf 'export API_%s=solo-fixture OTRA=1' KEY)" "sin comillas seguido de espacio"
+probar_linea 0 "$(printf 'export API_%s=solo-fixture OTRA=1' KEY)" "sin comillas seguido de otra asignación"
+probar_linea 0 "$(printf 'API_%s=solo-fixture  # de prueba' KEY)" "sin comillas seguido de comentario"
+probar_linea 2 "$(printf "PASS%s='solo-fixture'#abC123deF456ghI789" WORD)" "# pegado a la comilla concatena en shell"
+probar_linea 2 "$(printf 'api_%s: solo-fixture abC123deF456ghI789' key)" "YAML: el valor sigue tras el espacio"
 for cola in ',' ';' ')' ' # comentario' ' // comentario' '}'; do
   probar_linea 0 "$(printf 'api%s = "solo-fixture"%s' Key "$cola")" "valor de prueba seguido de $cola"
 done
