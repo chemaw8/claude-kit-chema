@@ -222,12 +222,14 @@ probar_linea 2 "$(printf 'pass%s=solo-fixture X=Q7r9V2m4aB6c' word)" "INI: «X=�
 probar_linea 2 "$(printf 'export PASS%s="solo-fixture""abC123deF456ghI789":' WORD)" "concatenación de shell que parece clave JSON"
 probar_linea 2 "$(printf "export PASS%s='solo-fixture''abC123deF456ghI789'" WORD)" "concatenación de shell con comillas simples"
 probar_linea 2 "$(printf 'TOK%s=solo-fixture\vX=abC123deF456ghI789' EN)" "\\v no separa palabras en shell"
-probar_linea 0 "$(printf 'API_%s=solo-fixture  # de prueba' KEY)" "sin comillas seguido de comentario"
+probar_linea 2 "$(printf 'API_%s=solo-fixture  # de prueba' KEY)" "sin comillas seguido de «#»: en INI es parte del valor"
+probar_linea 2 "$(printf 'tok%s=solo-fixture #Q7r9V2m4aB6c' en)" "INI: «#» a media línea no es comentario"
+probar_linea 2 "$(printf 'pass%s: "solo-fixture", "x": "Q7r9V2m4aB6c"' word)" "clave sin comillas: no es JSON"
 probar_linea 2 "$(printf "PASS%s='solo-fixture'#abC123deF456ghI789" WORD)" "# pegado a la comilla concatena en shell"
 probar_linea 2 "$(printf 'api_%s: solo-fixture abC123deF456ghI789' key)" "YAML: el valor sigue tras el espacio"
 probar_linea 2 "$(printf 'api_%s: solo-fixture //abC123deF456ghI789' key)" "YAML: // no es comentario"
 probar_linea 2 "$(printf 'api_%s: solo-fixture X=abC123deF456ghI789' key)" "YAML: «X=» detrás sigue siendo el valor"
-probar_linea 0 "$(printf 'api_%s: solo-fixture # de prueba' key)" "YAML con comentario"
+probar_linea 2 "$(printf 'api_%s: solo-fixture # de prueba' key)" "sin comillas, ni comentario (YAML o INI: ambiguo)"
 for cola in ',' ';' ')' ' # comentario' ' // comentario' '}'; do
   probar_linea 0 "$(printf 'api%s = "solo-fixture"%s' Key "$cola")" "valor de prueba seguido de $cola"
 done

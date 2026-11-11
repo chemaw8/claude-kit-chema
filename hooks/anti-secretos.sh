@@ -139,9 +139,9 @@ de_prueba = re.compile(r"(?=[a-z0-9-]{1,48}$)(?:[a-z0-9]+-)*(?:fixture|no-es-cre
 # «solo-fixture X=<llave>» es un solo valor en INI o YAML). Con comillas, cierres y separadores y luego fin o
 # comentario; la siguiente clave de un JSON solo con «:» y una coma: tras «=», «"solo-fixture""<llave>"» es una
 # concatenación de shell (3ª ronda del council del PR #110). Separador = espacio o tabulador: \v, \f o \r no lo son.
-cierre_sin = re.compile(r"[ \t]*$|[ \t]+#")
+cierre_sin = re.compile(r"[ \t]*$")   # ni comentario: en INI «solo-fixture #<llave>» es un solo valor (confirmación del council)
 fin_con = r"[ \t]*(?:[,;)\]}][ \t]*)*(?:$|(?<=[ \t])(?:#|//))"
-cierre_con = {"=": re.compile(fin_con), ":": re.compile(fin_con + r"|[ \t]*(?:[)\]}][ \t]*)*,[ \t]*\x22[^\x22]*\x22[ \t]*:")}
+cierre_con = {"=": re.compile(fin_con), ":": re.compile(fin_con), "json": re.compile(fin_con + r"|[ \t]*(?:[)\]}][ \t]*)*,[ \t]*\x22[^\x22]*\x22[ \t]*:")}
 with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") as archivo:
     for linea in archivo.read().split("\n"):
         if not linea: continue
@@ -165,7 +165,9 @@ with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") a
             else:
                 valor = m[4]  # sin comillas, el valor es justo lo que casó: «=» y «:» lo terminan
                 despues = linea[m.end(4):]
-            operador = "=" if "=" in linea[m.start():m.start(3)] else ":"
+            entre = linea[m.start():m.start(3)]
+            # JSON solo si la clave va entre comillas («"apiKey": …»); «password: "x", "y": …» en INI es un solo valor.
+            operador = "=" if "=" in entre else ("json" if re.search(r"[\x22'][ \t]*:", entre) else ":")
             if not de_prueba.fullmatch(valor) or not (cierre_con[operador] if comilla else cierre_sin).match(despues): sys.exit(2)
         if vistas == 0 and not formatos.search(linea): sys.exit(2)  # grep lo marcó y aquí no casa: no se exime
 PY
