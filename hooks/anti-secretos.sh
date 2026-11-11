@@ -111,7 +111,11 @@ referencia = re.compile(r"process\.env\.[A-Za-z_$][A-Za-z0-9_$]*")
 with open(sys.argv[3], encoding="utf-8", errors="surrogateescape") as archivo:
     for linea in archivo:
         if formatos.search(linea): sys.exit(2)  # formatos de llave: sin excepciones, ni siquiera «fixture»
-        for m in asignacion.finditer(linea):
+        # Búsqueda solapada: el valor de una asignación puede contener la palabra clave de la siguiente
+        # («tok…=fixture-<clave>=<llave>»); finditer la saltaría (aviso del sello de a2c009b).
+        pos = 0
+        while (m := asignacion.search(linea, pos)):
+            pos = m.start() + 1
             comilla = m[3]
             resto = linea[m.start(4):]
             if comilla:
@@ -121,7 +125,7 @@ with open(sys.argv[3], encoding="utf-8", errors="surrogateescape") as archivo:
                 if literal is None: sys.exit(2)  # valor ambiguo o truncado: no eximir
                 valor = literal[0][:-1]
             else:
-                valor = re.match(r"[^\s,;#&|(){}\[\]\x22\x27]+", resto)[0]
+                valor = m[4]  # sin comillas, el valor es justo lo que casó: «=» y «:» lo terminan
             if not marca.search(valor) and not referencia.fullmatch(valor): sys.exit(2)
 PY
   rc=$?
@@ -136,10 +140,10 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
   # Sin `init`, el commit fallará solo: no hay nada que revisar.
   case "$cmd" in *git*init*) ;; *) exit 0 ;; esac
   en_carpeta=$(mktemp) || bloquear_es "no se pudo crear un temporal"; trap 'rm -f "$en_carpeta"' EXIT
+  # Por salida, no por código: grep da 2 con un archivo ilegible aunque el resto esté limpio, y ese archivo tampoco
+  # entraría al commit (git add falla igual). Como en la rama de archivos nuevos (aviso del sello de a2c009b).
   grep -rIhiE --exclude-dir=.git "$patron_i" . > "$en_carpeta" 2>/dev/null
-  [ $? -le 1 ] || bloquear_es "no se pudo revisar la carpeta"
   grep -rIhE --exclude-dir=.git "$patron" . >> "$en_carpeta" 2>/dev/null
-  [ $? -le 1 ] || bloquear_es "no se pudo revisar la carpeta"
   revisar_coincidencias "$en_carpeta"
   exit 0
 fi

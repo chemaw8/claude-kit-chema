@@ -212,6 +212,15 @@ done
 probar_linea 2 "$real $(printf 'descripcion = "%s"' 'solo-fixture')" "marca en otro campo no exime el valor"
 probar_linea 2 "$(printf 'token = "%s"; descripcion = "fixture"' 'abcdefghijklmnop\\')" "comilla tras escape no absorbe otro campo"
 probar_linea 2 "$(printf 'password = "%s' 'solo-fixture')" "valor sin comilla de cierre no se exime"
+# Avisos del sello de a2c009b: un valor sin comillas no se traga la asignación siguiente, y en una carpeta sin repo
+# un archivo ilegible no bloquea un commit limpio.
+# Armadas al correr: escritas literales, el hook instalado (anterior a este arreglo) bloquearía su propio commit.
+probar_linea 2 "$(printf 'tok%s=fixture-api_%s=abC123deF456ghI%s' en key 789)" "fixture pegado a otra asignación no exime la llave real"
+probar_linea 0 "$(printf 'tok%s=solo-fixture-de-prueba' en)" "fixture sin comillas, solo"
+rm -rf "$t/sinrepo"; mkdir -p "$t/sinrepo"; printf 'y=2\n' > "$t/sinrepo/limpio.txt"; printf 'z\n' > "$t/sinrepo/ilegible.txt"; chmod 000 "$t/sinrepo/ilegible.txt"
+rc=$(cd "$t/sinrepo" && printf '%s' '{"tool_input":{"command":"git init && git add limpio.txt && git commit -m x"}}' | bash "$HOOK" >/dev/null 2>&1; echo $?)
+chmod 600 "$t/sinrepo/ilegible.txt"
+[ "$rc" = 0 ] || fallo "carpeta sin repo con un archivo ilegible y nada secreto no debe bloquear (dio $rc)"
 # Si falla el evaluador de excepciones, un diff limpio también debe bloquear (no solo los secretos).
 mkdir -p "$t/pythonfalso"; printf '#!/bin/sh\nexit 1\n' > "$t/pythonfalso/python3"; chmod +x "$t/pythonfalso/python3"
 nuevo_repo; printf 'y=2\n' >> "$t/r/a.txt"; git -C "$t/r" add a.txt
