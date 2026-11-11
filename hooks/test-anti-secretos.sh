@@ -206,6 +206,15 @@ for valor in "q7F9v2fake""L8x4Q1wzR6n3" "Change""me123456!" "YWJfake""Nq8vR2sL5=
 done
 probar_linea 2 "$(printf 'api%s = process.env.API_KEY || "%s"' Key 'abC123deF456ghI789')" "process.env con literal de respaldo"
 probar_linea 2 "$(printf 'tok%s=\rabC123deF456ghI%s' en 789)" "un \\r suelto no parte el renglón para eximirlo"
+# Segunda ronda del council: el valor de prueba no puede seguir con más expresión.
+for cola in ' || "abC123deF456ghI789"' ' + "abC123deF456ghI789"' ' && x' "abC123deF456ghI789"; do
+  probar_linea 2 "$(printf 'api%s = "solo-fixture"%s' Key "$cola")" "valor de prueba seguido de: $cola"
+done
+probar_linea 2 "$(printf 'pass%s=solo-fixture!Q7r9V2m4' word)" "valor sin comillas con sufijo"
+probar_linea 2 "$(printf "PASS%s='solo-fixture'Q7r9V2m4" WORD)" "concatenación de shell tras el valor"
+for cola in ',' ';' ')' ' # comentario' ' // comentario' '}'; do
+  probar_linea 0 "$(printf 'api%s = "solo-fixture"%s' Key "$cola")" "valor de prueba seguido de $cola"
+done
 for valor in '$API_KEY' '${API_KEY}' 'os.environ["API_KEY"]' "os.environ['API_KEY']"; do
   probar_linea 0 "$(printf 'api_key = %s' "$valor")" "referencia a variable $valor (no casa con el patrón)"
 done
@@ -233,6 +242,12 @@ rc=$(cd "$t/r" && printf '%s' '{"tool_input":{"command":"git commit -m x"}}' | P
 nuevo_repo; printf '%s\n' "$falsa" >> "$t/r/a.txt"; git -C "$t/r" add a.txt
 rc=$(cd "$t/r" && printf '%s' '{"tool_input":{"command":"git commit -m x"}}' | PATH="$t/pythonfalso:$PATH" bash "$HOOK" >/dev/null 2>&1; echo $?)
 [ "$rc" = 2 ] || fallo "sin python3, una línea sospechosa bloquea aunque sea de prueba (dio $rc)"
+# Sin python3, un commit hacia otro repo (cd / -C) no se revisa en el directorio actual: se bloquea.
+nuevo_repo; mkdir -p "$t/otro2"; git init -q "$t/otro2"; printf 'k=%s\n' "$SECRETO" > "$t/otro2/s.txt"; git -C "$t/otro2" add s.txt
+for c in "cd $t/otro2 && git commit -m x" "git -C $t/otro2 commit -m x"; do
+  rc=$(cd "$t/r" && printf '{"tool_input":{"command":"%s"}}' "$c" | PATH="$t/pythonfalso:$PATH" bash "$HOOK" >/dev/null 2>&1; echo $?)
+  [ "$rc" = 2 ] || fallo "sin python3, «$c» debe bloquear (dio $rc)"
+done
 
 # 5. el secreto solo está sin preparar y el commit no lo incluye → no bloquea
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"; printf 'y=2\n' > "$t/r/b.txt"; git -C "$t/r" add b.txt

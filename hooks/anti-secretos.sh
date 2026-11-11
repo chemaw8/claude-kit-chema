@@ -79,7 +79,11 @@ while i < len(toks):
                 if ch == "a": amplio = 1
                 if ch in "mFCct": salta = (j == len(x) - 2); break
 if opaco and hay_commit: repo = "?"     # sin git commit no hay nada que bloquear
-print(f"{amplio}\t{repo}")' 2>/dev/null || printf '1\t.')
+print(f"{amplio}\t{repo}")' 2>/dev/null) || {
+  # Sin python3 no se sabe a qué repo apunta un `cd`/`-C`/`GIT_DIR`: revisar el actual dejaría pasar el otro (council
+  # del PR #110). Solo el commit local inequívoco se revisa aquí; lo demás se bloquea.
+  case "$cmd" in *cd\ *|*pushd*|*" -C"*|*GIT_*|*--git-dir*|*--work-tree*) analisis=$'1\t?' ;; *) analisis=$'1\t.' ;; esac
+}
 amplio=${analisis%%$'\t'*}; repo=${analisis#*$'\t'}
 if [ "$repo" = "?" ]; then
   echo "Kit Chema: no puedo saber qué repo revisar en busca de secretos (--git-dir, --work-tree, GIT_DIR=, cd - o cd \$(…)). Haz el commit desde el repo, con cd a una ruta o git -C." >&2
@@ -99,9 +103,16 @@ bloquear_es() { echo "Kit Chema: no pude revisar el commit en busca de secretos 
 msg_secreto="Kit Chema: el diff del commit parece contener credenciales (clave API, token o llave privada). Revísalo y quítalas antes de commitear. Si es un falso positivo, dilo y pide al usuario que lo revise y haga él ese commit en su terminal; no intentes rodear el hook."
 revisar_coincidencias() { # <archivo con líneas candidatas>; nunca eximir un renglón completo
   local rc
-  # Sin nada sospechoso no hace falta python3 (council del PR #110): un commit limpio pasa aunque falte o falle.
-  grep -aiqE "$patron_i" -- "$1" 2>/dev/null || grep -aqE "$patron" -- "$1" 2>/dev/null || return 0
-  python3 - "$patron_i" "$patron" "$1" 2>/dev/null <<'PY'
+  # Solo los renglones que grep marca llegan a python, y python tiene que reconocer CADA uno (si no, bloquea). Sin
+  # ninguno, no hace falta python3: un commit limpio pasa aunque falte (council del PR #110). Un error de grep (≥ 2)
+  # no es «sin coincidencias»: bloquea.
+  local cand g1 g2
+  cand=$(mktemp) || bloquear_es "no se pudo crear un temporal"
+  grep -aiE "$patron_i" -- "$1" > "$cand" 2>/dev/null; g1=$?
+  grep -aE "$patron" -- "$1" >> "$cand" 2>/dev/null; g2=$?
+  if [ "$g1" -gt 1 ] || [ "$g2" -gt 1 ]; then rm -f "$cand"; bloquear_es "grep falló al revisar el diff"; fi
+  if [ ! -s "$cand" ]; then rm -f "$cand"; return 0; fi
+  python3 - "$patron_i" "$patron" "$cand" 2>/dev/null <<'PY'
 import re, sys
 # Misma detección que grep; grupos 3 y 4: comilla y comienzo del valor. No cambia el umbral de 12.
 asignacion = re.compile(sys.argv[1].replace("[[:space:]]", r"\s"), re.I | re.A)
@@ -114,9 +125,13 @@ de_prueba = re.compile(r"(?=[a-z0-9-]{1,48}$)(?:[a-z0-9]+-)*(?:fixture|no-es-cre
 # Renglones como los ve grep (solo «\n» los separa): con los saltos universales de Python, un «\r» suelto partía
 # «token=\r<llave>» en dos y ninguno casaba (aviso del sello de 745768c). Y si grep vio algo que aquí no casa con
 # nada, se bloquea: lo que no se pudo evaluar no se exime.
-vistas = 0
+# Después del valor de prueba solo puede venir fin de renglón, separador o comentario: «"solo-fixture" || "<llave>"»,
+# «solo-fixture!<llave>» o «'solo-fixture'<llave>» (concatenación de shell) escondían una llave (council del PR #110).
+cierre = re.compile(r"\s*(?:$|[,;)\]}]|#|//)")
 with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") as archivo:
     for linea in archivo.read().split("\n"):
+        if not linea: continue
+        vistas = 0
         if formatos.search(linea): sys.exit(2)  # formatos de llave: sin excepciones, ni siquiera «fixture»
         # Búsqueda solapada: el valor de una asignación puede contener la palabra clave de la siguiente
         # («tok…=fixture-<clave>=<llave>»); finditer la saltaría (aviso del sello de a2c009b).
@@ -132,12 +147,15 @@ with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") a
                 literal = re.match(r"[^']*'" if comilla == "'" else r'(?:\\.|[^\\"])*"', resto)
                 if literal is None: sys.exit(2)  # valor ambiguo o truncado: no eximir
                 valor = literal[0][:-1]
+                despues = resto[literal.end():]
             else:
                 valor = m[4]  # sin comillas, el valor es justo lo que casó: «=» y «:» lo terminan
-            if not de_prueba.fullmatch(valor): sys.exit(2)
-if vistas == 0: sys.exit(2)
+                despues = linea[m.end(4):]
+            if not de_prueba.fullmatch(valor) or not cierre.match(despues): sys.exit(2)
+        if vistas == 0 and not formatos.search(linea): sys.exit(2)  # grep lo marcó y aquí no casa: no se exime
 PY
   rc=$?
+  rm -f "$cand"
   case "$rc" in
     0) ;;
     2) echo "$msg_secreto" >&2; exit 2 ;;
