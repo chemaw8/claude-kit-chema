@@ -205,6 +205,7 @@ for valor in "q7F9v2fake""L8x4Q1wzR6n3" "Change""me123456!" "YWJfake""Nq8vR2sL5=
   probar_linea 2 "$(printf 'api_key = "%s"' "$valor")" "no es valor de prueba: $valor"
 done
 probar_linea 2 "$(printf 'api%s = process.env.API_KEY || "%s"' Key 'abC123deF456ghI789')" "process.env con literal de respaldo"
+probar_linea 2 "$(printf 'tok%s=\rabC123deF456ghI%s' en 789)" "un \\r suelto no parte el renglón para eximirlo"
 for valor in '$API_KEY' '${API_KEY}' 'os.environ["API_KEY"]' "os.environ['API_KEY']"; do
   probar_linea 0 "$(printf 'api_key = %s' "$valor")" "referencia a variable $valor (no casa con el patrón)"
 done

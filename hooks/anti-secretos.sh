@@ -111,14 +111,19 @@ formatos = re.compile(sys.argv[2])
 # no basta: «…fakeL8x4…» o «Changeme123!» pueden ser credenciales reales. process.env tampoco se exime: en
 # «process.env.X || "<literal>"» escondía el literal.
 de_prueba = re.compile(r"(?=[a-z0-9-]{1,48}$)(?:[a-z0-9]+-)*(?:fixture|no-es-credencial)(?:-[a-z0-9]+)*")
-with open(sys.argv[3], encoding="utf-8", errors="surrogateescape") as archivo:
-    for linea in archivo:
+# Renglones como los ve grep (solo «\n» los separa): con los saltos universales de Python, un «\r» suelto partía
+# «token=\r<llave>» en dos y ninguno casaba (aviso del sello de 745768c). Y si grep vio algo que aquí no casa con
+# nada, se bloquea: lo que no se pudo evaluar no se exime.
+vistas = 0
+with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") as archivo:
+    for linea in archivo.read().split("\n"):
         if formatos.search(linea): sys.exit(2)  # formatos de llave: sin excepciones, ni siquiera «fixture»
         # Búsqueda solapada: el valor de una asignación puede contener la palabra clave de la siguiente
         # («tok…=fixture-<clave>=<llave>»); finditer la saltaría (aviso del sello de a2c009b).
         pos = 0
         while (m := asignacion.search(linea, pos)):
             pos = m.start() + 1
+            vistas += 1
             comilla = m[3]
             resto = linea[m.start(4):]
             if comilla:
@@ -130,6 +135,7 @@ with open(sys.argv[3], encoding="utf-8", errors="surrogateescape") as archivo:
             else:
                 valor = m[4]  # sin comillas, el valor es justo lo que casó: «=» y «:» lo terminan
             if not de_prueba.fullmatch(valor): sys.exit(2)
+if vistas == 0: sys.exit(2)
 PY
   rc=$?
   case "$rc" in
