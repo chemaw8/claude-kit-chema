@@ -82,8 +82,9 @@ if opaco and hay_commit: repo = "?"     # sin git commit no hay nada que bloquea
 print(f"{amplio}\t{repo}")' 2>/dev/null) || {
   # Sin python3 no se sabe a qué repo apunta un `cd`/`-C`/`GIT_DIR`: revisar el actual dejaría pasar el otro (council
   # del PR #110). Solo el commit local inequívoco se revisa aquí; lo demás se bloquea.
-  # Sin python3, `cmd` puede ser el JSON crudo: ahí un tabulador o salto tras `cd`/`-C` viene escrito como «\t» o «\n».
-  case "$cmd" in *cd[[:space:]]*|*'cd\t'*|*'cd\n'*|*pushd*|*-C[[:space:]]*|*'-C\t'*|*'-C\n'*|*GIT_*|*--git-dir*|*--work-tree*) analisis=$'1\t?' ;; *) analisis=$'1\t.' ;; esac
+  # Sin python3 no se intenta reconocer la forma (`cmd` puede ser el JSON crudo, con «cd;», «cd\t», «(cd»…): cualquier
+  # «cd», «pushd», «-C» o «GIT_» bloquea. Sobran falsos positivos, pero solo cuando falta python3 (sellos de cbb9670).
+  case "$cmd" in *cd*|*pushd*|*-C*|*GIT_*|*--git-dir*|*--work-tree*) analisis=$'1\t?' ;; *) analisis=$'1\t.' ;; esac
 }
 amplio=${analisis%%$'\t'*}; repo=${analisis#*$'\t'}
 if [ "$repo" = "?" ]; then
