@@ -157,6 +157,67 @@ espera 2 "git add -A && git commit -m x" "«API_KEY:» en mayúsculas sigue bloq
 nuevo_repo; printf 'Password=%s\n' "abc123def456ghi789" >> "$t/r/a.txt"; git -C "$t/r" add a.txt
 espera 2 "git commit -m x" "«Password=» staged sigue bloqueando"
 
+# 4j. excepciones por VALOR, nunca por línea: una fixture no tapa otra asignación ni un formato de llave.
+# Los valores sin marca también son sintéticos; se arman con printf para no alertar sobre esta prueba.
+probar_linea() { # <salida> <texto> <nombre> [indice|trabajo|nuevo|sinrepo]
+  local esperado=$1 texto=$2 nombre=$3 modo=${4:-indice} rc comando
+  if [ "$modo" = sinrepo ]; then
+    rm -rf "$t/sinrepo"; mkdir -p "$t/sinrepo"; printf '%s\n' "$texto" > "$t/sinrepo/a.txt"
+    rc=$(corre_en "$t/sinrepo" "git init && git add . && git commit -m init")
+    [ "$rc" = "$esperado" ] || fallo "$nombre ($modo: esperaba $esperado, dio $rc)"
+    return
+  fi
+  nuevo_repo
+  case "$modo" in
+    indice) printf '%s\n' "$texto" >> "$t/r/a.txt"; git -C "$t/r" add a.txt; comando="git commit -m x" ;;
+    trabajo) printf '%s\n' "$texto" >> "$t/r/a.txt"; comando="git commit -am x" ;;
+    nuevo) printf '%s\n' "$texto" > "$t/r/nuevo.txt"; comando="git add -A && git commit -m x" ;;
+  esac
+  espera "$esperado" "$comando" "$nombre ($modo)"
+}
+falsa=$(printf '"apiKey": "%s",' "solo-fixture")
+real=$(printf '"apiKey": "%s",' "abC123deF456ghI789")
+referencia=$(printf 'token = %s;' 'process.env.API_KEY')
+for modo in indice trabajo nuevo sinrepo; do
+  probar_linea 0 "$falsa" "fixture explícita" "$modo"
+  probar_linea 2 "$real" "misma asignación sin marca de prueba" "$modo"
+  probar_linea 2 "$falsa $real" "falsa seguida de real en la misma línea" "$modo"
+  probar_linea 2 "$real $falsa" "real seguida de falsa en la misma línea" "$modo"
+  probar_linea 2 "$(printf "token = '%s'; fixture_api_key = '%s'" 'abcdefghijklmnop\' 'solo-fixture')" "backslash literal en comillas simples de shell" "$modo"
+  for separador in ';' ',' '&&' '||' '('; do
+    probar_linea 2 "$(printf 'api_key=%s%stoken=%s' 'abC123deF456ghI789' "$separador" 'solo-fixture')" "asignaciones sin espacios, separadas por $separador" "$modo"
+  done
+  probar_linea 0 "$referencia" "referencia a process.env" "$modo"
+  probar_linea 2 "$referencia $real" "referencia no tapa una credencial" "$modo"
+  probar_linea 2 "$real // fixture" "marca en comentario no exime el valor" "$modo"
+  probar_linea 2 "$(printf '"fixture_apiKey": "%s"' 'abC123deF456ghI789')" "marca en nombre no exime el valor" "$modo"
+  for llave in "$SECRETO" "AKIA""FIXTURE123456789" "sk-""ant-oat-fixture-no-es-credencial" \
+    "ghp_""fixtureabcdefghijklmnopqrstuvwxyz" "-----BEGIN OPENSSH ""PRIVATE KEY-----"; do
+    probar_linea 2 "$(printf 'token = "%s"; %s' "$llave" "$falsa")" "formato de llave no se exime por fixture" "$modo"
+  done
+done
+# Lista deliberadamente corta: marcas inequívocas, no «test» ni «demo». Comillas simples y case mezclado.
+for marca in fixture ejemplo example dummy fake falso placeholder no-es-credencial changeme FiXtUrE; do
+  probar_linea 0 "$(printf "Password = '%s'" "prefijo-${marca}-sufijo")" "marca de prueba $marca"
+done
+probar_linea 0 "$(printf 'API_KEY=%s' 'prefijo-fixture-sufijo')" "fixture sin comillas"
+probar_linea 0 "$(printf 'secret = "%s"' 'abcdefghijklmnop ! FALSO')" "marca dentro del valor con espacios y puntuación"
+probar_linea 0 "$falsa $falsa" "dos valores falsos en la misma línea"
+for valor in '$API_KEY' '${API_KEY}' 'process.env.API_KEY' 'os.environ["API_KEY"]' "os.environ['API_KEY']"; do
+  probar_linea 0 "$(printf 'api_key = %s' "$valor")" "referencia a variable $valor"
+done
+for valor in 'process.environment' 'PROCESS.ENV.API_KEY' 'process.env.API_KEY/sufijo' 'prefijo-test-sufijo' 'prefijo-demo-sufijo'; do
+  probar_linea 2 "$(printf 'api_key = "%s"' "$valor")" "no es referencia ni marca explícita: $valor"
+done
+probar_linea 2 "$real $(printf 'descripcion = "%s"' 'solo-fixture')" "marca en otro campo no exime el valor"
+probar_linea 2 "$(printf 'token = "%s"; descripcion = "fixture"' 'abcdefghijklmnop\\')" "comilla tras escape no absorbe otro campo"
+probar_linea 2 "$(printf 'password = "%s' 'solo-fixture')" "valor sin comilla de cierre no se exime"
+# Si falla el evaluador de excepciones, un diff limpio también debe bloquear (no solo los secretos).
+mkdir -p "$t/pythonfalso"; printf '#!/bin/sh\nexit 1\n' > "$t/pythonfalso/python3"; chmod +x "$t/pythonfalso/python3"
+nuevo_repo; printf 'y=2\n' >> "$t/r/a.txt"; git -C "$t/r" add a.txt
+rc=$(cd "$t/r" && printf '%s' '{"tool_input":{"command":"git commit -m x"}}' | PATH="$t/pythonfalso:$PATH" bash "$HOOK" >/dev/null 2>&1; echo $?)
+[ "$rc" = 2 ] || fallo "si falla el evaluador el hook debe bloquear (dio $rc)"
+
 # 5. el secreto solo está sin preparar y el commit no lo incluye → no bloquea
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"; printf 'y=2\n' > "$t/r/b.txt"; git -C "$t/r" add b.txt
 espera 0 "git commit -m 'usa la bandera -a luego'" "commit sin -a no debe escanear lo no preparado"

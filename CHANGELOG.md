@@ -1,5 +1,8 @@
 # Changelog — Kit Chema
 
+## Sin publicar
+- **Anti-secretos:** exime marcas explícitas de prueba y referencias a variables por valor, sin ocultar otras asignaciones del renglón ni relajar los formatos de llave; pruebas en índice, árbol de trabajo, archivos nuevos y `git init`, con fallo cerrado si no puede evaluar.
+
 ## v1.35.3 — 2026-11-10
 Revierte v1.35.2 por decisión del dueño (flujo: PR + sello; gate de disparo por tocar el núcleo: 21/21, pasa).
 - **El núcleo y `hooks/kit-chema-contexto.sh` vuelven a como estaban en v1.35.1.** v1.35.2 integró el PR #94, un aporte
