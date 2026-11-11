@@ -199,6 +199,7 @@ for valor in fixture-de-x solo-fixture fixture-de-prueba prefijo-fixture-sufijo 
 done
 probar_linea 0 "$(printf 'API_KEY=%s' 'prefijo-fixture-sufijo')" "fixture sin comillas"
 probar_linea 0 "$falsa $falsa" "dos valores falsos en la misma línea"
+probar_linea 0 "$(printf '%s\r' "$falsa")" "fin de renglón CRLF"
 # Lo que antes eximía por subcadena y podía ser una credencial real (partidas para que no casen escritas aquí).
 for valor in "q7F9v2fake""L8x4Q1wzR6n3" "Change""me123456!" "YWJfake""Nq8vR2sL5==" "abC123deF456ghI789 (exam""ple)" \
   "FiXtUrE-abc123def456" "solofixture1234" "$(printf 'a%.0s' $(seq 45))-fixture" "prefijo-test-sufijo" "prefijo-demo-sufijo" "prefijo-ejemplo-sufijo"; do

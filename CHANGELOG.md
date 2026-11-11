@@ -1,7 +1,7 @@
 # Changelog — Kit Chema
 
 ## Sin publicar
-- **Anti-secretos:** un valor de prueba evidente (`solo-fixture`, `fixture-de-prueba`: minúsculas y guiones con `fixture` o `no-es-credencial` como palabra) ya no bloquea el commit; el 2026-11-10 bloqueó 2 commits de pi-harness por una `apiKey` con el valor `solo-fixture`. Se decide por valor (una llave real en el mismo renglón sigue bloqueando) y los formatos de llave nunca se eximen. python3 solo corre si grep halló algo sospechoso, así que un commit limpio ya no depende de él. Council del PR #110 (tres familias): sin subcadenas («fake», «changeme») ni `process.env`, que dejaban pasar credenciales.
+- **Anti-secretos:** un valor de prueba evidente (`solo-fixture`, `fixture-de-prueba`: minúsculas y guiones con `fixture` o `no-es-credencial` como palabra) ya no bloquea el commit; el 2026-11-10 bloqueó 2 commits de pi-harness por una `apiKey` con el valor `solo-fixture`. Se decide por valor (una llave real en el mismo renglón sigue bloqueando) y los formatos de llave nunca se eximen. El evaluador de valores solo corre si grep halló algo sospechoso: sin python3, un commit local limpio pasa (con `cd`/`-C` en el comando, bloquea). Council del PR #110 (tres familias): sin subcadenas («fake», «changeme») ni `process.env`, que dejaban pasar credenciales.
 
 ## v1.35.3 — 2026-11-10
 Revierte v1.35.2 por decisión del dueño (flujo: PR + sello; gate de disparo por tocar el núcleo: 21/21, pasa).

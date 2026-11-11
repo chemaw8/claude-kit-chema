@@ -139,8 +139,8 @@ de_prueba = re.compile(r"(?=[a-z0-9-]{1,48}$)(?:[a-z0-9]+-)*(?:fixture|no-es-cre
 # «solo-fixture X=<llave>» es un solo valor en INI o YAML). Con comillas, cierres y separadores y luego fin o
 # comentario; la siguiente clave de un JSON solo con «:» y una coma: tras «=», «"solo-fixture""<llave>"» es una
 # concatenación de shell (3ª ronda del council del PR #110). Separador = espacio o tabulador: \v, \f o \r no lo son.
-cierre_sin = re.compile(r"[ \t]*$")   # ni comentario: en INI «solo-fixture #<llave>» es un solo valor (confirmación del council)
-fin_con = r"[ \t]*(?:[,;)\]}][ \t]*)*(?:$|(?<=[ \t])(?:#|//))"
+cierre_sin = re.compile(r"[ \t]*\r?$")   # ni comentario: en INI «solo-fixture #<llave>» es un solo valor (confirmación del council)
+fin_con = r"[ \t]*(?:[,;)\]}][ \t]*)*(?:\r?$|(?<=[ \t])(?:#|//))"   # «\r» solo al final: CRLF
 cierre_con = {"=": re.compile(fin_con), ":": re.compile(fin_con), "json": re.compile(fin_con + r"|[ \t]*(?:[)\]}][ \t]*)*,[ \t]*\x22[^\x22]*\x22[ \t]*:")}
 with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") as archivo:
     for linea in archivo.read().split("\n"):
