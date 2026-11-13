@@ -16,7 +16,7 @@ esac
 # Dos patrones: las palabras clave (`Password=`, `API_KEY:`) se buscan sin distinguir mayúsculas; los formatos de llave
 # (AKIA…, sk-…, ghp_…, BEGIN … PRIVATE KEY) tienen mayúsculas fijas y se buscan tal cual. Con `-i` sobre todo, cualquier
 # base64 grande (imágenes o fuentes incrustadas en un HTML) traía «aKia» + 16 alfanuméricos y bloqueaba sin razón.
-patron_i='(api[_-]?key|secret|token|passw(or)?d)["'"'"']?[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9_/+.-]{12,}'
+patron_i='(api[_-]?key|secret|token|passw(or)?d)["'"'"']?[[:space:]]*[:=][[:space:]]*(["'"'"']?)([A-Za-z0-9_/+.-]{12,})'
 patron='AKIA[0-9A-Z]{16}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
 # ¿Qué repo y qué incluye el commit? El hook corre ANTES del comando: lo que `-a`/`--all` (también en
 # grupos como `-am`) o un `git add` del mismo comando vayan a meter todavía no está en el índice, y con
@@ -79,7 +79,13 @@ while i < len(toks):
                 if ch == "a": amplio = 1
                 if ch in "mFCct": salta = (j == len(x) - 2); break
 if opaco and hay_commit: repo = "?"     # sin git commit no hay nada que bloquear
-print(f"{amplio}\t{repo}")' 2>/dev/null || printf '1\t.')
+print(f"{amplio}\t{repo}")' 2>/dev/null) || {
+  # Sin python3 no se sabe a qué repo apunta un `cd`/`-C`/`GIT_DIR`: revisar el actual dejaría pasar el otro (council
+  # del PR #110). Solo el commit local inequívoco se revisa aquí; lo demás se bloquea.
+  # Sin python3 no se intenta reconocer la forma (`cmd` puede ser el JSON crudo, con «cd;», «cd\t», «(cd»…): cualquier
+  # «cd», «pushd», «-C» o «GIT_» bloquea. Sobran falsos positivos, pero solo cuando falta python3 (sellos de cbb9670).
+  case "$cmd" in *cd*|*pushd*|*-C*|*GIT_*|*--git-dir*|*--work-tree*) analisis=$'1\t?' ;; *) analisis=$'1\t.' ;; esac
+}
 amplio=${analisis%%$'\t'*}; repo=${analisis#*$'\t'}
 if [ "$repo" = "?" ]; then
   echo "Kit Chema: no puedo saber qué repo revisar en busca de secretos (--git-dir, --work-tree, GIT_DIR=, cd - o cd \$(…)). Haz el commit desde el repo, con cd a una ruta o git -C." >&2
@@ -97,30 +103,107 @@ top=$(git rev-parse --show-toplevel 2>/dev/null) && cd -- "$top"   # ls-files --
 # Sin temporales no se puede revisar: se bloquea (falla cerrado) en vez de dejar pasar el commit sin mirar.
 bloquear_es() { echo "Kit Chema: no pude revisar el commit en busca de secretos ($1); bloqueo por precaución." >&2; exit 2; }
 msg_secreto="Kit Chema: el diff del commit parece contener credenciales (clave API, token o llave privada). Revísalo y quítalas antes de commitear. Si es un falso positivo, dilo y pide al usuario que lo revise y haga él ese commit en su terminal; no intentes rodear el hook."
+revisar_coincidencias() { # <archivo con líneas candidatas>; nunca eximir un renglón completo
+  local rc
+  # Solo los renglones que grep marca llegan a python, y python tiene que reconocer CADA uno (si no, bloquea). Sin
+  # ninguno, no hace falta python3: un commit limpio pasa aunque falte (council del PR #110). Un error de grep (≥ 2)
+  # no es «sin coincidencias»: bloquea.
+  local cand g1 g2
+  cand=$(mktemp) || bloquear_es "no se pudo crear un temporal"
+  grep -aiE "$patron_i" -- "$1" > "$cand" 2>/dev/null; g1=$?
+  grep -aE "$patron" -- "$1" >> "$cand" 2>/dev/null; g2=$?
+  if [ "$g1" -gt 1 ] || [ "$g2" -gt 1 ]; then rm -f "$cand"; bloquear_es "grep falló al revisar el diff"; fi
+  if [ ! -s "$cand" ]; then rm -f "$cand"; return 0; fi
+  python3 - "$patron_i" "$patron" "$cand" 2>/dev/null <<'PY'
+import re, sys
+# Misma detección que grep; grupos 3 y 4: comilla y comienzo del valor. No cambia el umbral de 12.
+asignacion = re.compile(sys.argv[1].replace("[[:space:]]", r"\s"), re.I | re.A)
+formatos = re.compile(sys.argv[2])
+# Un valor de prueba se ve como tal ENTERO (council del PR #110): solo minúsculas, dígitos y guiones, hasta 48
+# caracteres, con «fixture» o «no-es-credencial» como palabra («solo-fixture», «fixture-de-prueba»). Una subcadena
+# no basta: «…fakeL8x4…» o «Changeme123!» pueden ser credenciales reales. process.env tampoco se exime: en
+# «process.env.X || "<literal>"» escondía el literal.
+de_prueba = re.compile(r"(?=[a-z0-9-]{1,48}$)(?:[a-z0-9]+-)*(?:fixture|no-es-credencial)(?:-[a-z0-9]+)*")
+# Renglones como los ve grep (solo «\n» los separa): con los saltos universales de Python, un «\r» suelto partía
+# «token=\r<llave>» en dos y ninguno casaba (aviso del sello de 745768c). Y si grep vio algo que aquí no casa con
+# nada, se bloquea: lo que no se pudo evaluar no se exime.
+# Después del valor de prueba solo puede venir fin de renglón, separador o comentario: «"solo-fixture" || "<llave>"»,
+# «solo-fixture!<llave>» o «'solo-fixture'<llave>» (concatenación de shell) escondían una llave (council del PR #110).
+# Sin comillas: el valor termina en espacio o en fin de renglón («solo-fixture,<llave>» es un solo valor en un .env).
+# Con comillas: cierres y separadores, y luego fin, comentario o la siguiente clave de un JSON; nada de operadores
+# («"solo-fixture") || "<llave>"»). Aviso del sello de 602aa10.
+# Un comentario necesita espacio antes («'solo-fixture'#<llave>» es una sola palabra en shell), y sin comillas lo
+# que sigue tras el espacio solo puede ser comentario u otra asignación: en YAML o dotenv «solo-fixture <llave>» es
+# un solo valor (avisos del sello de 29378c1).
+# Sin comillas, tras el valor solo fin o comentario con espacio («//» no es comentario en YAML ni dotenv, y
+# «solo-fixture X=<llave>» es un solo valor en INI o YAML). Con comillas, cierres y separadores y luego fin o
+# comentario; la siguiente clave de un JSON solo con «:» y una coma: tras «=», «"solo-fixture""<llave>"» es una
+# concatenación de shell (3ª ronda del council del PR #110). Separador = espacio o tabulador: \v, \f o \r no lo son.
+cierre_sin = re.compile(r"[ \t]*\r?$")   # ni comentario: en INI «solo-fixture #<llave>» es un solo valor (confirmación del council)
+fin_con = r"[ \t]*(?:[,;)\]}][ \t]*)*(?:\r?$|(?<=[ \t])(?:#|//))"   # «\r» solo al final: CRLF
+cierre_con = {"=": re.compile(fin_con), ":": re.compile(fin_con), "json": re.compile(fin_con + r"|[ \t]*(?:[)\]}][ \t]*)*,[ \t]*\x22[^\x22]*\x22[ \t]*:")}
+with open(sys.argv[3], encoding="utf-8", errors="surrogateescape", newline="") as archivo:
+    for linea in archivo.read().split("\n"):
+        if not linea: continue
+        vistas = 0
+        if formatos.search(linea): sys.exit(2)  # formatos de llave: sin excepciones, ni siquiera «fixture»
+        # Búsqueda solapada: el valor de una asignación puede contener la palabra clave de la siguiente
+        # («tok…=fixture-<clave>=<llave>»); finditer la saltaría (aviso del sello de a2c009b).
+        pos = 0
+        while (m := asignacion.search(linea, pos)):
+            pos = m.start() + 1
+            vistas += 1
+            comilla = m[3]
+            resto = linea[m.start(4):]
+            if comilla:
+                # Dobles: respetar escapes. Simples: primer cierre (en shell la barra inversa es literal).
+                # Ante esa ambigüedad entre lenguajes, no buscar una marca más allá del primer cierre simple.
+                literal = re.match(r"[^']*'" if comilla == "'" else r'(?:\\.|[^\\"])*"', resto)
+                if literal is None: sys.exit(2)  # valor ambiguo o truncado: no eximir
+                valor = literal[0][:-1]
+                despues = resto[literal.end():]
+            else:
+                valor = m[4]  # sin comillas, el valor es justo lo que casó: «=» y «:» lo terminan
+                despues = linea[m.end(4):]
+            entre = linea[m.start():m.start(3)]
+            # JSON solo si la clave va entre comillas («"apiKey": …»); «password: "x", "y": …» en INI es un solo valor.
+            operador = "=" if "=" in entre else ("json" if re.search(r"[\x22'][ \t]*:", entre) else ":")
+            if not de_prueba.fullmatch(valor) or not (cierre_con[operador] if comilla else cierre_sin).match(despues): sys.exit(2)
+        if vistas == 0 and not formatos.search(linea): sys.exit(2)  # grep lo marcó y aquí no casa: no se exime
+PY
+  rc=$?
+  rm -f "$cand"
+  case "$rc" in
+    0) ;;
+    2) echo "$msg_secreto" >&2; exit 2 ;;
+    *) bloquear_es "no se pudieron evaluar las coincidencias" ;;
+  esac
+}
 if ! git rev-parse --git-dir >/dev/null 2>&1; then
-  # Aún no es repo. Con `git init` en el mismo comando, lo que entrará es lo que hay en la carpeta: se revisa directo
-  # (por salida, no por código, por lo mismo que arriba). Sin `init`, el commit fallará solo: no hay nada que revisar.
+  # Aún no es repo. Con `git init` en el mismo comando, se revisan los archivos de la carpeta.
+  # Sin `init`, el commit fallará solo: no hay nada que revisar.
   case "$cmd" in *git*init*) ;; *) exit 0 ;; esac
-  en_carpeta=$(grep -rIliE --exclude-dir=.git "$patron_i" . 2>/dev/null; grep -rIlE --exclude-dir=.git "$patron" . 2>/dev/null)
-  [ -z "$en_carpeta" ] || { echo "$msg_secreto" >&2; exit 2; }
+  en_carpeta=$(mktemp) || bloquear_es "no se pudo crear un temporal"; trap 'rm -f "$en_carpeta"' EXIT
+  # Por salida, no por código: grep da 2 con un archivo ilegible aunque el resto esté limpio, y ese archivo tampoco
+  # entraría al commit (git add falla igual). Como en la rama de archivos nuevos (aviso del sello de a2c009b).
+  grep -rIhiE --exclude-dir=.git "$patron_i" . > "$en_carpeta" 2>/dev/null
+  grep -rIhE --exclude-dir=.git "$patron" . >> "$en_carpeta" 2>/dev/null
+  revisar_coincidencias "$en_carpeta"
   exit 0
 fi
 diff=$(mktemp) || bloquear_es "no se pudo crear un temporal"; trap 'rm -f "$diff"' EXIT
 git diff --cached 2>/dev/null > "$diff" || bloquear_es "no se pudo leer el diff preparado"
 if [ "$amplio" != 0 ]; then
   git diff 2>/dev/null >> "$diff" || bloquear_es "no se pudo leer el diff sin preparar"
-  # Archivos nuevos: un solo grep por tanda (xargs), completos y sin copiarlos; -I salta los binarios. Se mira la
-  # SALIDA, no el código: grep da 2 con un archivo ilegible o un enlace roto aunque haya hallado algo, y xargs 123
-  # si alguna tanda no halló nada; con pipefail eso apagaba la detección.
+  # Archivos nuevos: un grep por tanda (xargs), sin límite de tamaño; -I salta los binarios. Se guardan solo
+  # las líneas candidatas, no los nombres, para evaluar cada valor. Se mira la SALIDA: grep da 2 con un
+  # enlace roto aunque halle algo, y xargs 123 si una tanda no halló nada; antes eso apagaba la detección.
   hallados=$(mktemp) || bloquear_es "no se pudo crear un temporal"; trap 'rm -f "$diff" "$hallados"' EXIT
-  git ls-files -z --others --exclude-standard 2>/dev/null | xargs -0 -r grep -IliE "$patron_i" -- > "$hallados" 2>/dev/null
-  git ls-files -z --others --exclude-standard 2>/dev/null | xargs -0 -r grep -IlE "$patron" -- >> "$hallados" 2>/dev/null
-  [ -s "$hallados" ] && nuevo_con_secreto=1
+  git ls-files -z --others --exclude-standard 2>/dev/null | xargs -0 -r grep -IhiE "$patron_i" -- > "$hallados" 2>/dev/null
+  git ls-files -z --others --exclude-standard 2>/dev/null | xargs -0 -r grep -IhE "$patron" -- >> "$hallados" 2>/dev/null
+  revisar_coincidencias "$hallados"
 fi
 agregadas=$(mktemp) || bloquear_es "no se pudo crear un temporal"; trap 'rm -f "$diff" "${hallados:-}" "$agregadas"' EXIT
 grep -aE '^\+' -- "$diff" > "$agregadas"; [ $? -le 1 ] || bloquear_es "no se pudo leer el diff"   # 1 = sin líneas nuevas
-if [ "${nuevo_con_secreto:-0}" = 1 ] || grep -aiE "$patron_i" -- "$agregadas" >/dev/null || grep -aE "$patron" -- "$agregadas" >/dev/null; then
-  echo "$msg_secreto" >&2
-  exit 2
-fi
+revisar_coincidencias "$agregadas"
 exit 0

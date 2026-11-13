@@ -1,5 +1,8 @@
 # Changelog — Kit Chema
 
+## Sin publicar
+- **Anti-secretos:** un valor de prueba evidente (`solo-fixture`, `fixture-de-prueba`: minúsculas y guiones con `fixture` o `no-es-credencial` como palabra) ya no bloquea el commit; el 2026-11-10 bloqueó 2 commits de pi-harness por una `apiKey` con el valor `solo-fixture`. Se decide por valor (una llave real en el mismo renglón sigue bloqueando) y los formatos de llave nunca se eximen. El evaluador de valores solo corre si grep halló algo sospechoso; sin python3 el hook es conservador (cualquier «cd»/«-C» en el evento bloquea). Council del PR #110 (tres familias): sin subcadenas («fake», «changeme») ni `process.env`, que dejaban pasar credenciales.
+
 ## v1.35.3 — 2026-11-10
 Revierte v1.35.2 por decisión del dueño (flujo: PR + sello; gate de disparo por tocar el núcleo: 21/21, pasa).
 - **El núcleo y `hooks/kit-chema-contexto.sh` vuelven a como estaban en v1.35.1.** v1.35.2 integró el PR #94, un aporte

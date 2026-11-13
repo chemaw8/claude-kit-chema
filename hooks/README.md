@@ -103,9 +103,21 @@ si encuentra un patrón de credencial (clave API, token, llave
 privada), bloquea el comando con salida 2 y explica por qué en stderr, que
 Claude ve y puede corregir. Cualquier otro comando pasa sin tocarlo. Ojo: esto
 protege solo dentro de Claude Code (commits hechos a mano fuera de él no
-pasan por el hook) y solo escanea el diff staged del repo en el directorio de
-trabajo de la sesión — un `git commit` que apunte a otro repo (`cd /otro/repo
-&& git commit` o `git -C /otro/repo commit`) no queda escaneado.
+pasan por el hook). Un `git commit` que apunte a otro repo (`cd /otro/repo && git commit`, `git -C /otro/repo
+commit`) se revisa en ese repo; si no puede saber cuál es (`cd -`, `cd $(…)`, `GIT_DIR=`, o sin python3), bloquea.
+
+**Valores de prueba.** Un valor que se ve entero como de prueba no bloquea: solo minúsculas, dígitos y guiones, hasta
+48 caracteres, con `fixture` o `no-es-credencial` como palabra (el valor `solo-fixture` de una `apiKey`, o `fixture-de-prueba`). Se
+decide por valor, no por renglón: una credencial real en el mismo renglón sigue bloqueando. Los formatos de llave
+(`AKIA…`, `sk-…`, `ghp_…`, llaves privadas) nunca se eximen, aunque digan «fixture», y tras el valor no puede venir
+más expresión (`"solo-fixture" || "<llave>"`, `"solo-fixture""<llave>"` y `solo-fixture X=<llave>` bloquean). Sin
+comillas, el valor de prueba tiene que cerrar el renglón (en INI, YAML o dotenv lo que siga es parte del valor).
+Límite conocido: un escalar YAML partido en varios renglones (el valor de prueba en uno y la llave en el siguiente,
+más indentado) no se ve, porque se revisa renglón por renglón. El evaluador de valores (python3) solo corre si grep marcó algún
+renglón, y tiene que reconocer cada uno; si falla o no lo reconoce, bloquea. python3 también interpreta el comando al
+principio: sin él revisa el JSON entero del evento, y cualquier «cd», «pushd», «-C» o «GIT_» en él (también en una
+ruta como `/home/x/abcd`) bloquea. Sin python3 el hook es conservador: casi todo commit pide hacerse a mano. Costo aceptado, igual que antes:
+una `apiKey` asignada desde `process.env.OPENAI_API_KEY` bloquea (el hook no distingue una referencia de un literal).
 
 ## Eventos disponibles en Claude Code
 
