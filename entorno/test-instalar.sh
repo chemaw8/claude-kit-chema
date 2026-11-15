@@ -109,16 +109,16 @@ elif nombre == "npm":
     elif a[:1] == ["rm"] and "@earendil-works/pi-coding-agent" in a:
         if fallo == "npm-rm": sys.exit(1)
         (home / ".local/bin/pi").unlink(missing_ok=True)
-    elif "@earendil-works/pi-coding-agent@1.1.0" in a:
+    elif "@earendil-works/pi-coding-agent@1.5.0" in a:
         if "--ignore-scripts" not in a: sys.exit(87)
         instalar("pi")
-        (home / ".pi-instalado-1.1.0").touch()
+        (home / ".pi-instalado-1.5.0").touch()
     else: sys.exit(86)
 elif nombre == "uv":
     print("uv 0.8.0")
 elif nombre == "pi":
     if os.environ.get("TEST_PI_ROTO"): sys.exit(1)
-    print("1.1.0" if (home / ".pi-instalado-1.1.0").exists() else os.environ.get("TEST_PI_VERSION", "1.1.0"))
+    print("1.5.0" if (home / ".pi-instalado-1.5.0").exists() else os.environ.get("TEST_PI_VERSION", "1.5.0"))
 elif nombre == "claude":
     if a == ["--version"]: print("2.0.0 (Claude Code)")
     elif a[:2] == ["auth", "status"]:
@@ -395,7 +395,7 @@ class Instalador(unittest.TestCase):
         salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")])
         self.assertNotIn("✗", salida)
         self.assertIn("ya presente", salida)
-        self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
+        self.assertFalse(any("@earendil-works/pi-coding-agent@1.5.0" in a for a in self.llamadas("npm")))
         self.assertFalse((self.home / ".local/bin/pi").exists())
 
     def test_12c_pi_presente_roto_falla_cerrado(self):
@@ -406,7 +406,7 @@ class Instalador(unittest.TestCase):
         self.assertIn("no se instala otra copia", salida)
         self.assertIn("✗ | pi presente en", salida)   # no responde: no se duplica, pero tampoco queda en verde
         self.assertIn("no responde a --version", salida)
-        self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
+        self.assertFalse(any("@earendil-works/pi-coding-agent@1.5.0" in a for a in self.llamadas("npm")))
 
     def test_12d_pi_propio_viejo_se_actualiza(self):
         """El pi que este asistente dejó en ~/.local (versión vieja) sí se lleva a la versión fijada."""
@@ -414,7 +414,7 @@ class Instalador(unittest.TestCase):
         self.env["PATH"] = f"{self.home / '.local/bin'}:{self.bin}"
         self.env["TEST_PI_VERSION"] = "0.87.0"
         salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")])
-        self.assertTrue(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
+        self.assertTrue(any("@earendil-works/pi-coding-agent@1.5.0" in a for a in self.llamadas("npm")))
         self.assertNotIn("ya presente", salida)
 
     def test_12e_pi_propio_al_dia_no_se_reinstala(self):
@@ -422,10 +422,10 @@ class Instalador(unittest.TestCase):
         self.pi_propio()
         self.env["PATH"] = f"{self.home / '.local/bin'}:{self.bin}"
         self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")])
-        self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
+        self.assertFalse(any("@earendil-works/pi-coding-agent@1.5.0" in a for a in self.llamadas("npm")))
 
     def test_12f_node_por_debajo_de_pi(self):
-        """pi 1.1.0 pide Node >= 22.19.0: 22.18.0 se rechaza antes de npm; la frontera 22.19.0 pasa (default)."""
+        """pi 1.5.0 pide Node >= 22.19.0: 22.18.0 se rechaza antes de npm; la frontera 22.19.0 pasa (default)."""
         self.env["TEST_NODE"] = "22.18.0"
         salida = self.corre_tty([("Perfil", "colega"), ("pi opcional", "s"), ("Continuar", "s")], rc=1)
         self.assertIn("22.19.0", salida)
@@ -444,7 +444,7 @@ class Instalador(unittest.TestCase):
         self.assertTrue(any(a[:1] == ["rm"] for a in self.llamadas("npm")))
         self.assertIn("✓ | Sin un pi de este asistente en ~/.local", self.salida)
         self.assertFalse((self.home / ".local/bin/pi").exists())
-        self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
+        self.assertFalse(any("@earendil-works/pi-coding-agent@1.5.0" in a for a in self.llamadas("npm")))
 
     def test_14d_completo_retira_pi_propio_aunque_este_al_dia(self):
         """En completo el pi propio sobra aunque esté en PI_VERSION: el del entorno no debe depender de esa coincidencia."""
@@ -484,7 +484,7 @@ class Instalador(unittest.TestCase):
         # ~/.local/bin aún fuera del PATH: el plan lee ese pi por su ruta, no por el PATH (aviso del PR #100)
         self.assertIn("pi: ya hay uno (~/.local/bin/pi, versión 1.0.9)", salida)
         self.assertNotIn("ilegible", salida)
-        self.assertFalse(any("@earendil-works/pi-coding-agent@1.1.0" in a for a in self.llamadas("npm")))
+        self.assertFalse(any("@earendil-works/pi-coding-agent@1.5.0" in a for a in self.llamadas("npm")))
 
     def test_13_cancelacion(self):
         """Cancelar desde el TTY no deja archivos ni llama instaladores."""
