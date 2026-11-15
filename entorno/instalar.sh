@@ -5,7 +5,7 @@ set -euo pipefail
 URL_KIT=https://github.com/chemaw8/claude-kit-chema.git
 URL_ASISTENTE=https://raw.githubusercontent.com/chemaw8/claude-kit-chema/main/entorno/instalar.sh
 URL_UV=https://astral.sh/uv/install.sh
-PI_VERSION=1.1.0   # la misma que fija manifest/ del entorno privado (claude-entorno)
+PI_VERSION=1.5.0   # la misma que fija manifest/ del entorno privado (claude-entorno)
 PI_PAQUETE=@earendil-works/pi-coding-agent@$PI_VERSION
 perfil= entorno= si=0 dry=0 con_pi=0 con_proyectos=0
 flags=("$@")
@@ -269,7 +269,7 @@ main() {
   for herramienta in git curl python3 node npm gh; do
     command -v "$herramienta" >/dev/null 2>&1 || error "No quedó disponible el comando $herramienta."
   done
-  # pi 1.1.0 declara engines.node >=22.19.0 (el piso viejo de 20 lo dejaba pasar a medias); en completo lo instala el
+  # pi 1.5.0 declara engines.node >=22.19.0 (el piso viejo de 20 lo dejaba pasar a medias); en completo lo instala el
   # entorno privado, igual lo necesita.
   { [ "$con_pi" -eq 0 ] && [ "$perfil" != completo ]; } || minimo=22.19.0
   version_node=$(node -p 'process.versions.node') || error 'Node.js no funciona.'
