@@ -287,7 +287,11 @@ nuevo_repo; printf 'archivo: magis%s.img\n' 'k-patched-cotejado-30700' >> "$t/r/
 espera 0 "git commit -m x" "«sk-» dentro de una palabra (magisk-…) no debe bloquear"
 nuevo_repo; printf 'nota del ris%s pendiente\n' 'k-assessment-completo-2026-11' >> "$t/r/a.txt"; git -C "$t/r" add a.txt
 espera 0 "git commit -m x" "«sk-» dentro de una palabra (risk-…) no debe bloquear"
-for prefijo in '' 'k=' 'k: ' 'k="' "k='" 'usa ' '(' '`' 'x_'; do
+# Council del PR #112: tras un salto escapado («\n», «\r», «\t») o un byte codificado de URL («%3D») el carácter previo
+# es una letra o un dígito, y ahí sí puede ir una llave real (un .env metido en una cadena JSON, una URL con la llave).
+nuevo_repo; printf 'tabla de ries%s y de des%s\n' 'k-assessment-completo-2026-11' 'k-particionado-de-prueba-01' >> "$t/r/a.txt"; git -C "$t/r" add a.txt
+espera 0 "git commit -m x" "«sk-» tras una letra que no es escape sigue sin bloquear"
+for prefijo in '' 'k=' 'k: ' 'k="' "k='" 'usa ' '(' '`' 'x_' 'A=1\n' 'a\r' 'a\t' 'u?k%3D' 'u?k%3d'; do
   nuevo_repo; printf '%ssk-%s\n' "$prefijo" 'abcdefghij0123456789ABCD' >> "$t/r/a.txt"; git -C "$t/r" add a.txt
   espera 2 "git commit -m x" "llave sk- real tras «$prefijo» debe bloquear"
 done
