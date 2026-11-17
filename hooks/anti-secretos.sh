@@ -16,8 +16,12 @@ esac
 # Dos patrones: las palabras clave (`Password=`, `API_KEY:`) se buscan sin distinguir mayúsculas; los formatos de llave
 # (AKIA…, sk-…, ghp_…, BEGIN … PRIVATE KEY) tienen mayúsculas fijas y se buscan tal cual. Con `-i` sobre todo, cualquier
 # base64 grande (imágenes o fuentes incrustadas en un HTML) traía «aKia» + 16 alfanuméricos y bloqueaba sin razón.
+# «sk-» solo cuenta al inicio de una palabra: «magisk-patched-…» o «risk-assessment-…» seguidos de 20 caracteres o más no son llaves
+# (2026-11-17, dos commits legítimos bloqueados). Tras «=», «:», espacio, comilla, «_» o al inicio del renglón sí.
+# También tras un salto escapado («\n», «\r», «\t») o un byte de URL («%3D»): ahí el carácter previo es alfanumérico
+# y puede ir una llave real (un .env dentro de una cadena JSON, una URL codificada). Council del PR #112.
 patron_i='(api[_-]?key|secret|token|passw(or)?d)["'"'"']?[[:space:]]*[:=][[:space:]]*(["'"'"']?)([A-Za-z0-9_/+.-]{12,})'
-patron='AKIA[0-9A-Z]{16}|sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+patron='AKIA[0-9A-Z]{16}|(^|[^A-Za-z0-9]|\\[nrt]|%[0-9A-Fa-f]{2})sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
 # ¿Qué repo y qué incluye el commit? El hook corre ANTES del comando: lo que `-a`/`--all` (también en
 # grupos como `-am`) o un `git add` del mismo comando vayan a meter todavía no está en el índice, y con
 # `git -C <ruta>` el repo no es el directorio actual. Si python3 falla: escanear de más, en el actual.
