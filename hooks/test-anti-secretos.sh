@@ -281,5 +281,16 @@ espera 0 "git commit -m x" "diff limpio"
 nuevo_repo; printf 'k=%s\n' "$SECRETO" >> "$t/r/a.txt"; git -C "$t/r" add a.txt
 espera 0 "git status" "un comando que no es commit"
 
+# «sk-» dentro de una palabra más larga no es una llave (2026-11-17: un nombre de archivo «magisk-patched-…» bloqueó un commit
+# legítimo dos veces). Las cadenas se arman partidas para que este archivo no contenga el patrón que prueba. La llave real sigue bloqueando: al inicio del renglón, tras «=», «:», espacio o comilla.
+nuevo_repo; printf 'archivo: magis%s.img\n' 'k-patched-cotejado-30700' >> "$t/r/a.txt"; git -C "$t/r" add a.txt
+espera 0 "git commit -m x" "«sk-» dentro de una palabra (magisk-…) no debe bloquear"
+nuevo_repo; printf 'nota del ris%s pendiente\n' 'k-assessment-completo-2026-11' >> "$t/r/a.txt"; git -C "$t/r" add a.txt
+espera 0 "git commit -m x" "«sk-» dentro de una palabra (risk-…) no debe bloquear"
+for prefijo in '' 'k=' 'k: ' 'k="' "k='" 'usa ' '(' '`' 'x_'; do
+  nuevo_repo; printf '%ssk-%s\n' "$prefijo" 'abcdefghij0123456789ABCD' >> "$t/r/a.txt"; git -C "$t/r" add a.txt
+  espera 2 "git commit -m x" "llave sk- real tras «$prefijo» debe bloquear"
+done
+
 [ "$f" -eq 0 ] && echo "TODO OK"
 exit "$f"
