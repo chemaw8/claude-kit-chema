@@ -34,17 +34,23 @@ tipificar (reputación, calendario, economía) va como **juicio** escrito con su
 
 ## Proceso
 
+Proporcional al encargo: si se pide una sola respuesta (sin proyecto que continúe), las hipótesis pueden ir en tabla y
+el JSON con `coherencia.py` solo cuando haya tres o más; sin archivos de continuidad.
+
 1. **Brief**: qué decisión alimenta, para quién, qué no se puede usar (material confidencial, precios no autorizados).
 2. **Investigación con auditoría** (kit-research): frentes en paralelo y un auditor de otra familia que abre cada
    fuente. Microdatos oficiales cuando existan, calibrados contra lo publicado: si el script no reproduce la cifra
    oficial, sale con error.
-3. **Segmentos con números**: en B2C, desde lo que la economía le exige al cliente; alto valor contra volumen, CLTV
-   contra la regla del tercio y migración entre segmentos → `referencias/b2c-segmentos.md`.
+3. **Segmentos con números**: en B2C, desde lo que la economía le exige al cliente (incluido qué % ya gasta el precio
+   propuesto); alto valor contra volumen, CLTV contra la regla del tercio y migración entre segmentos →
+   `referencias/b2c-segmentos.md`.
 4. **Hipótesis completas**: 2 a 8 alternativas reales, cada una con los 9 bloques, los mapas de empatía y su chequeo de
-   coherencia. En B2B2C, un mapa por actor y la propuesta con escenarios de quién paga; la parte interna (actividades,
+   coherencia. En B2B2C, un mapa por actor y la economía de cada esquema de quién paga, también del que sea inviable
+   por ley o contrato; la parte interna (actividades,
    recursos, alianzas, costos) con plantilla fija → `referencias/b2b2c-y-parte-interna.md`.
 5. **Economía como «qué tendría que ser verdad»**: contribución por unidad, punto de equilibrio y % de la base que haría
-   falta; tres escenarios; comisiones de cobro incluidas.
+   falta; tres escenarios. La cifra base usa solo lo que trae el insumo: un costo que falta (comisión de cobro,
+   impuesto) se dice y va como sensibilidad aparte, no dentro de la base.
 6. **Recomendación** (kit-propuestas): opciones con costo, una recomendada, cómo revertirla, qué decide el usuario.
 7. **P&L y presentación**, solo con el canvas aprobado por bloque: scripts del proyecto (la skill da la estructura, no
    el código) → Excel con fórmulas → datos recalculados → presentación y acordeón de supuestos, sin cifras a mano → `referencias/pl-y-presentacion.md` (con kit-finanzas y

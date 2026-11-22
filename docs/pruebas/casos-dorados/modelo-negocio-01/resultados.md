@@ -1,8 +1,8 @@
 # Resultados — caso dorado modelo-negocio-01 (2026-11-22)
 
-**Conclusión: con el criterio fijado antes de correr, la skill no demostró mejora. El brazo con
+**Conclusión de la primera ronda: con el criterio fijado antes de correr, la skill no demostró mejora. El brazo con
 `kit-modelo-negocio` sacó 82.7 de media y el brazo sin ella 91.7 (−9.0).** Según `rubrica.md`, si B queda
-abajo, el PR se cierra.
+abajo, el PR se cierra. Se optó por corregir la skill y repetir el mismo caso: ver «Segunda ronda».
 
 ## Cómo se corrió
 - `claude plugin eval` 2.1.326, `--model opus`, 3 corridas por brazo, `--ablation none`, núcleo en
@@ -40,3 +40,32 @@ Los jueces no difirieron en más de 10 puntos en ninguna entrega.
 - **Costo.** B costó 2.9 veces más y tardó 2.5 veces más: hipótesis en JSON, script de economía, CONTINUAR.
 - **Qué no mide este caso.** Coherencia entre hipótesis en un caso largo de varias sesiones, P&L y presentación
   generados: el encargo era de un solo turno.
+
+## Segunda ronda, 2026-11-22 — skill corregida, mismo caso y misma rúbrica
+Cambios a la skill a partir de la primera ronda (genéricos, no del caso): la cifra base usa solo lo que trae el
+insumo y un costo que falta va como sensibilidad aparte; comparar el precio con lo que el segmento ya gasta;
+economía de cada esquema de pago aunque sea inviable; modo proporcional para encargos de una sola respuesta.
+Se repitieron 3 corridas del brazo con skill (C) y se volvieron a calificar junto con las 3 de A ya existentes, en una
+sola tanda cegada (letras nuevas), con los mismos dos jueces. Se quitaron de las entregas dos menciones a
+`coherencia.py` que delataban el brazo.
+
+| Corrida | Total codex | Total kimi |
+|---|---|---|
+| A1 | 96 | 100 |
+| A2 | 88 | 88 |
+| A3 | 89 | 93 |
+| C1 | 100 | 100 |
+| C2 | 100 | 100 |
+| C3 | 89 | 92 |
+
+| Brazo | Media codex | Media kimi | Media | Corridas con ≥ 5 de 7 trampas | Costo | Duración media |
+|---|---|---|---|---|---|---|
+| A (sin skill, recalificado) | 91.0 | 93.7 | 92.3 | 3 de 3 | $3.27 | 229 s |
+| C (skill corregida) | 96.3 | 97.3 | 96.8 | 3 de 3 | $7.87 | 519 s |
+
+**Lectura con el criterio fijado:** +4.5 puntos, entre 0 y 15 → no hay evidencia suficiente; el PR sigue en borrador.
+Advertencias: con 3 corridas por brazo la diferencia está dentro del ruido (A va de 88 a 100); la skill se corrigió
+después de ver los fallos de este mismo caso, así que esta ronda tiende a favorecerla; y el caso tiene techo (los
+dos brazos detectan casi todas las trampas). La primera ronda (−9.0) y esta (+4.5) juntas no muestran una mejora
+de 15 puntos. Lo que el caso no mide —coherencia en trabajo de varias sesiones, P&L y presentación generados— pide un
+caso dorado distinto, fijado antes de correr.

@@ -151,6 +151,7 @@ done
 # Los scripts de una skill que traen prueba deben pasarla: skills/*/scripts/test_*.py.
 for t in skills/*/scripts/test_*.py; do
   [ -e "$t" ] || continue
+  command -v python3 >/dev/null 2>&1 || { echo "INFO  sin python3: no se corre $t"; continue; }
   python3 "$t" >/dev/null 2>&1; chk "$t pasa" $?
 done
 
