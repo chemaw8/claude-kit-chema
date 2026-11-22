@@ -27,6 +27,12 @@ Convenciones:
 - Costos únicos (equipo, registro) una vez por alta; comisiones de cobro e impuestos especiales explícitos.
 - Una tasa mínima que Finanzas no confirmó se rotula «valor estimado».
 
+Antes de entregar el Excel:
+- Recalcularlo fuera de Python (LibreOffice sin interfaz, o la librería `formulas`) y reportar cero errores de celda.
+- Probar que responde: cambiar un supuesto clave en una copia y comprobar que el resultado se mueve.
+- Reportar al usuario las cifras clave del libro recalculado (utilidad acumulada, mes de equilibrio, aportación
+  máxima), no las de un cálculo aparte.
+
 ## Presentación desde los datos del P&L
 
 ```

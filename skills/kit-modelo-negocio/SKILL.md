@@ -55,7 +55,11 @@ el JSON con `coherencia.py` solo cuando haya tres o más; sin archivos de contin
 7. **P&L y presentación**, solo con el canvas aprobado por bloque: scripts del proyecto (la skill da la estructura, no
    el código) → Excel con fórmulas → datos recalculados → presentación y acordeón de supuestos, sin cifras a mano → `referencias/pl-y-presentacion.md` (con kit-finanzas y
    kit-presentaciones).
-8. **Verificación**: réplica independiente de las cifras, council de dos familias sobre la recomendación, lector
+8. **Actualizar un modelo que ya existe** (llega información nueva): leer la versión previa entera; listar qué cambió,
+   con fuente y fecha; quitar lo que quedó huérfano (canales, comisiones o promesas de un segmento descartado) y lo
+   que la información nueva contradice; volver a correr la coherencia y decir qué cifras se movieron y cuánto. La
+   versión previa no es evidencia: hereda sus errores si no se revisa.
+9. **Verificación**: réplica independiente de las cifras, council de dos familias sobre la recomendación, lector
    fresco del entregable.
 
 ## Errores típicos
@@ -66,6 +70,8 @@ el JSON con `coherencia.py` solo cuando haya tres o más; sin archivos de contin
 - Confiar en un «break even bastante bueno» sin preguntar quién paga, cuánto, cada cuándo y por qué.
 - Anotar la respuesta del responsable del negocio sin nombre y fecha: el supuesto queda sin dueño.
 - Leer con openpyxl un Excel generado con fórmulas: las celdas salen vacías; recalcular antes de extraer cifras.
+- Sumar los usuarios de un socio a los clientes propios en el P&L: van en filas y precios separados.
+- Un costo que cambia en una fecha (aumento, fin de promoción) escrito como constante: va como serie por mes.
 
 ## Entregables
 
