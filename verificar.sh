@@ -148,6 +148,12 @@ for t in hooks/test-*.sh; do
   bash "$t" "$h" >/dev/null 2>&1; chk "$h pasa $t" $?
 done
 
+# Los scripts de una skill que traen prueba deben pasarla: skills/*/scripts/test_*.py.
+for t in skills/*/scripts/test_*.py; do
+  [ -e "$t" ] || continue
+  python3 "$t" >/dev/null 2>&1; chk "$t pasa" $?
+done
+
 # hooks.json (vía plugin) y settings-fragment.json (vía instalador) deben declarar
 # los mismos hooks: con tres ya es fácil que uno gane una entrada y el otro no.
 if command -v python3 >/dev/null 2>&1; then
