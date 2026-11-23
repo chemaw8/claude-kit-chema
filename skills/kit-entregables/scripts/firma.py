@@ -32,17 +32,16 @@ VERBO = re.compile(r"(?<!\w)(\w{2,}(?:ó|ió|aron|ieron|amos|emos|arán|erán|ir
 CIFRA = re.compile(r"\d")
 # Muletillas de relleno (Wikipedia «Signs of AI writing», Kobak et al.): palabras del TEXTO, no del dato.
 RELLENO = re.compile(r"(it is important to note|plays a (key|crucial|pivotal) role|in today'?s .{0,20}landscape|delve|"
-                     r"seamless(ly)?|leverag(e|ing)|game.?changer|\b(robust|holistic|synerg(y|ies))\b|es importante (destacar|mencionar|señalar)|cabe (destacar|mencionar|señalar)|juega un papel (clave|fundamental|crucial)|"
-                     r"en resumen|en conclusión|en el panorama actual|no solo .{3,60} sino (tambi[eé]n )?|sin lugar a dudas|"
-                     r"\b(crucial|fundamental|robust[oa]s?|integral(es)?|sinergias?|holístic[oa]|potenciar|apalancar|disruptiv[oa])\b)", re.I)
+                     r"game.?changer|es importante (destacar|mencionar|señalar)|cabe (destacar|mencionar|señalar)|juega un papel (clave|fundamental|crucial)|"
+                     r"en resumen,|en conclusión,|en el panorama actual|sin lugar a dudas)", re.I)   # solo frases hechas (council)
 PETICION = re.compile(r"\b(pedimos|pido|solicit\w+|aprobar|aprueben|recomiendo|recomendamos|proponemos|propongo|decidir|siguiente paso|"
                       r"we ask|we propose|we recommend|approve|decide|start with|next step)\b", re.I)
 FECHA = re.compile(r"\b(20\d\d-\d\d-\d\d|(january|february|march|april|may|june|july|august|september|october|november|december) \d{1,2}|\d{1,2} (january|february|march|april|may|june|july|august|september|october|november|december)|\d{1,2} de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre))\b", re.I)
 ORIGEN = re.compile(r"^\s*(de d[oó]nde (sale|salen)|fuentes( y notas)?\s*$|fuentes de (las|cada) cifras?|origen de (las|cada) cifras?|"
                     r"every figure, where it comes from)", re.I)   # título de la lámina o sección de fuentes, no cualquier «fuente»
 NO_CONCLUIR = re.compile(r"(no se puede (concluir|afirmar)|lo que no (sabemos|se sabe)|qu[eé] decide|datos? (que )?deciden|l[ií]mites|"
-                         r"limitaciones|riesgos?|condiciones|cannot conclude|what we don'?t know|facts? decide|decide whether|"
-                         r"risks?|limitations|hinges on|unknown)", re.I)
+                         r"limitaciones|cannot conclude|what we don'?t know|facts? decide|decide whether|"
+                         r"limitations|hinges on)", re.I)   # sin «riesgos»/«condiciones» sueltos (council)
 SUPUESTOS = re.compile(r"(supuestos?|alternativas?|assumptions?|alternatives?)", re.I)
 RECOMIENDA = re.compile(r"\b(recomiend\w+|recomendaci[oó]n|propon\w+|propuesta|conviene|debemos|hay que|decisi[oó]n|pedimos|cerrar|aprobar|"
                         r"recommend\w*|propos\w+|we should|decision|we ask|approve|"
@@ -167,7 +166,9 @@ def revisar_estructura(texto: str, clave: str) -> list[dict]:
         i = next((j for j, t in enumerate(encabezados) if j not in usados and re.search(patron, t, re.I)), None)
         if i is not None: usados.add(i)
         if i is None:
-            out.append(h("seccion_faltante", "alta", nombre, f"falta «{nombre}» ({e['fuente']})"))
+            # council 2026-11-23: obligar todas las secciones fabrica relleno; solo la primera (la que abre) bloquea
+            grav = "alta" if nombre == e["secciones"][0][0] else "media"
+            out.append(h("seccion_faltante", grav, nombre, f"falta «{nombre}» ({e['fuente']}); si no aplica, ponla con «No aplica: <razón>»"))
         else:
             pos.append((nombre, i))
     for (a, i), (b, j) in zip(pos, pos[1:]):

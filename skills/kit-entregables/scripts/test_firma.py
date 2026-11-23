@@ -168,6 +168,16 @@ class Estructuras(unittest.TestCase):
         t = F.plantilla("estatus").replace("{{En una o dos oraciones: cómo va y qué se pide.}}", "Vamos en verde; se pide ampliar el plazo al 2027-01-15.")
         self.assertNotIn("conclusion_primero", [x["regla"] for x in F.revisar_documento(t)])
 
+    def test_council_texto_tecnico_legitimo_no_es_relleno(self):
+        t = "Es fundamental medir el costo integral del canal; el dato crucial es la conversión, no los riesgos."
+        self.assertEqual(F.relleno(t), [])
+
+    def test_council_seccion_faltante_no_bloquea_salvo_la_primera(self):
+        r = F.revisar_estructura("# Vamos en verde\n\n## Conclusión\nVamos en verde.\n## Semáforo\nverde\n## Logros\nx\n## Siguientes pasos\nOps\n", "estatus")
+        self.assertTrue(r and all(x["gravedad"] == "media" for x in r if x["regla"] == "seccion_faltante"))
+        r = F.revisar_estructura("# T\n\n## Semáforo\nverde\n", "estatus")
+        self.assertIn(("seccion_faltante", "alta"), [(x["regla"], x["gravedad"]) for x in r])
+
     def test_plantilla_generada_pasa_su_estructura(self):
         for k in F.ESTRUCTURAS:
             with self.subTest(k):

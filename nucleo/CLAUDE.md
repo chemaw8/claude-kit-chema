@@ -134,5 +134,4 @@ se anota en el CHANGELOG (ver GOBERNANZA.md).
 | Números, proyecciones, dinero | kit-finanzas |
 | Automatizar un proceso | kit-automatizacion |
 | Correo, minuta, memo, comunicado, documentación | kit-redaccion |
-| Estructura de un entregable (informe, estatus, one-pager, brief, propuesta, discurso) y quitarle el relleno | kit-entregables (junto con la del dominio) |
 | Repartir trabajo entre varios agentes, barrido amplio, "ultracode" | kit-orquestacion |
