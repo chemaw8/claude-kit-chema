@@ -336,11 +336,3 @@ council fijó como mínimo si el dueño insistía:
 - **Revisión** a más tardar el 2026-12-31, con o sin caso 03.
 - **No es precedente**: el congelamiento del 2026-08-29 sigue; esta entrada no abre una vía de excepción para otras
   adiciones. Evidencia y actas: `docs/pruebas/casos-dorados/modelo-negocio-0{1,2}/resultados.md`, entrada anterior.
-
-## 2026-11-23 — Se retira `kit-modelo-negocio` (criterio de retiro cumplido)
-
-Caso dorado 03 (Lumen, varias sesiones, 5 corridas por brazo, skill congelada): 87.27 con la skill y 87.27 sin ella
-(Δ 0.0); la regla fijada al integrarla era retirarla con Δ ≤ 0. El brazo con la skill costó 28% menos y entregó menos
-libros de Excel (2 de 5 contra 4 de 5). Tres casos, la misma señal: con Opus 5.5 y el kit actual, la skill no añade
-calidad medible en estos encargos. Se quedan los casos dorados 01–03 como banco y la prueba de scripts de skills en
-`verificar.sh`. Resultados: `docs/pruebas/casos-dorados/modelo-negocio-03/resultados.md`.

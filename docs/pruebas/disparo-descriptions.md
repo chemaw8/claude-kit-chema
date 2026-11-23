@@ -169,6 +169,3 @@ Corrida tras los cambios del council (description acotada a diseño; filas 36-37
 En el caso dorado 02 la skill no se activó en 3 de 3 corridas (cargó kit-finanzas). Se amplió la description y se
 agregó la fila 38. `python3 docs/pruebas/disparo.py --modelo sonnet` → código 0: núcleo 21/21, filas 31-38 8/8,
 0 confusiones. Suma de descriptions: 5,996.
-
-## 2026-11-23 — retiro de `kit-modelo-negocio`
-`python3 docs/pruebas/disparo.py --modelo sonnet` → código 0: núcleo 21/21, 0 confusiones de frontera; filas 31-38 retiradas con la skill.

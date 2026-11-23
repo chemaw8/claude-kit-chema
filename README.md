@@ -116,7 +116,7 @@ Hay dos vías y ambas funcionan; elige una:
 ## (A) Instalación como plugin de Claude Code
 
 Desde v1.2 el kit se distribuye también como plugin. El plugin empaqueta las
-9 skills de dominio, los 4 subagentes, los 5 comandos y los 5 hooks (contexto,
+10 skills de dominio, los 4 subagentes, los 5 comandos y los 5 hooks (contexto,
 anti-secretos, rutas-fantasma, backstop-cierre y sello-push, que solo actúa en repos
 con el gate activo). Dentro de Claude Code:
 
