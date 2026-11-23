@@ -172,3 +172,6 @@ agregó la fila 38. `python3 docs/pruebas/disparo.py --modelo sonnet` → códig
 
 ## 2026-11-23 — retiro de `kit-modelo-negocio`
 `python3 docs/pruebas/disparo.py --modelo sonnet` → código 0: núcleo 21/21, 0 confusiones de frontera; filas 31-38 retiradas con la skill.
+
+## 2026-11-23 — `kit-modelo-negocio` vuelve, permanente
+`python3 docs/pruebas/disparo.py --modelo sonnet` → código 0: núcleo 21/21, filas 40-47 8/8, 0 confusiones. Suma de descriptions: 5,996.
