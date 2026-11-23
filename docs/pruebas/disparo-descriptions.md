@@ -164,3 +164,8 @@ benignas 0, rc=0**; 30 de 30 filas coinciden con la skill esperada. Antes, sobre
 con kit-finanzas, kit-propuestas y kit-analisis-datos) 7/7; confusiones de frontera no benignas: 0. GATE DE DISPARO: PASA.
 Corrida tras los cambios del council (description acotada a diseño; filas 36-37 nuevas). Suma de descriptions: 5,953 de
 6,000 caracteres de aviso (margen de 47).
+
+## 2026-11-23 — `kit-modelo-negocio` cubre «actualizar el modelo y dar el P&L»
+En el caso dorado 02 la skill no se activó en 3 de 3 corridas (cargó kit-finanzas). Se amplió la description y se
+agregó la fila 38. `python3 docs/pruebas/disparo.py --modelo sonnet` → código 0: núcleo 21/21, filas 31-38 8/8,
+0 confusiones. Suma de descriptions: 5,996.

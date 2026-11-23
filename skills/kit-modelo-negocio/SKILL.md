@@ -1,7 +1,7 @@
 ---
 name: kit-modelo-negocio
 license: MIT
-description: 'Estándar Kit Chema para diseñar o evaluar un modelo de negocio (Business Model Generation): canvas de 9 bloques, mapa de empatía por segmento o actor, hipótesis cuya coherencia revisa un programa y, con el canvas aprobado, P&L y presentación generados por script. Úsala al pedir "modelo de negocio", "business model canvas", "mapa de empatía", "qué segmentos atacamos", "evalúa este negocio nuevo". Cuándo no: cotizar, margen o proyección suelta → kit-finanzas; elegir entre opciones ya armadas → kit-propuestas; datos existentes → kit-analisis-datos.'
+description: 'Estándar Kit Chema para diseñar, evaluar o actualizar un modelo de negocio (Business Model Generation): canvas de 9 bloques, mapas de empatía, hipótesis cuya coherencia revisa un programa y P&L del modelo y presentación generados por script. Úsala al pedir "modelo de negocio", "business model canvas", "mapa de empatía", "qué segmentos atacamos", "evalúa este negocio nuevo", "actualiza el modelo con lo nuevo y dame el P&L". Cuándo no: cotizar, margen o proyección sin modelo de negocio → kit-finanzas; elegir entre opciones ya armadas → kit-propuestas; datos existentes → kit-analisis-datos.'
 ---
 
 # Modelo de negocio: estándar Kit Chema
