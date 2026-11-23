@@ -158,3 +158,8 @@ frontera no benignas 0, rc=0**. Repetido el mismo día sobre 3b209bc con la sali
 (HEAD e57b6c3; el núcleo y las descriptions medidos son los finales) → **núcleo 21/21, confusiones de frontera no
 benignas 0, rc=0**; 30 de 30 filas coinciden con la skill esperada. Antes, sobre v1.35.0 + el commit de #94: también
 21/21 y PASA. El PR no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4), como pidió el council.
+
+## 2026-11-23 — kit-entregables (PR #114)
+Gate de disparo con la skill nueva: núcleo 21/21, fronteras 0 confusiones (incluidas 3 filas nuevas 31–33 para
+one-pager, brief y discurso, que van a kit-entregables), `disparo.py --modelo sonnet` rc 0. Estatus a dirección (24),
+informe con láminas (26) y propuesta (14, 27) siguen en su skill de dominio: la nueva no les roba el disparo.
