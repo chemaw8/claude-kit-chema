@@ -313,3 +313,14 @@ una medición muestra que Opus iguala.
   el kit: evita que un perfil de Claude Code reciba el contexto de otro. Queda el desfase conocido: el núcleo nombra
   `~/.claude/contexto/` y el hook lee el `contexto/` del perfil activo. Sin `CLAUDE_CONFIG_DIR`, que es el caso de las
   máquinas del dueño, los dos apuntan a la misma carpeta; alinear el texto del núcleo, si se quiere, lo hace el dueño.
+
+## 2026-11-23 — Council sobre integrar `kit-modelo-negocio` como excepción del dueño (PR #113)
+
+**Rechazada por unanimidad** (tres familias: anthropic, codex, kimi). Razones: cambiar la regla después de ver los
+resultados; las únicas mediciones con diseño fijado de antemano dan −9.0 y −1.2; costo mixto (caso 01 2.4× más caro,
+caso 02 20% más barato). **Hallazgo que cambia el diseño:** el umbral de +15 era inalcanzable en esos casos (bases de
+91.7 y 86.2: ni una entrega perfecta llegaba a +15); se corrige el criterio antes de volver a medir, no se salta.
+**Vía acordada:** el PR sigue en borrador, la rama se conserva; los casos 01 y 02 pasan a ser de entrenamiento (GEPA y
+verificación por código); la decisión se toma con un caso nuevo de varias sesiones, sin techo, ≥ 5 corridas por brazo,
+skill y description congeladas antes, contando las no activaciones, con umbral alcanzable fijado antes de correr.
+Revisión a más tardar el 2026-12-31; si da ≤ 0, se cierra el PR.
