@@ -348,7 +348,7 @@ calidad medible en estos encargos. Se quedan los casos dorados 01–03 como banc
 ## 2026-11-23 — El dueño deja `kit-modelo-negocio` en el kit de forma permanente
 
 **Decidido por el dueño**, después del retiro aplicado por el criterio prerregistrado (entrada anterior). La skill
-vuelve como parte estable del kit, al igual que `kit-entregables`. **Deja sin efecto el criterio de retiro**; no lo
+vuelve como parte estable del kit (la otra skill en camino, `kit-entregables`, va en el PR #114). **Deja sin efecto el criterio de retiro**; no lo
 cumple: en los tres casos dorados empató o quedó dentro del ruido (caso 01: −9.0 y +4.5 tras corregir; caso 02: −1.2
 y +5.8; caso 03: 0.0). A su favor: iguala la calidad del kit sin ella, costó menos en los casos 02 y 03, y aporta la
 verificación por código (`coherencia.py`, `revisar_pl.py`) y el método completo de modelo de negocio. El council del
