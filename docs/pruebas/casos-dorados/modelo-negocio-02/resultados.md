@@ -1,7 +1,10 @@
 # Resultados — caso dorado modelo-negocio-02 (2026-11-23)
 
-**Conclusión: con el criterio fijado antes de correr, no hay evidencia suficiente.** Con la skill activa, la media fue
-92.0 contra 86.2 sin ella (+5.8). El umbral era +15. Las tres corridas con la skill sacaron 20 de 20 en Excel.
+**Conclusión, por la letra del criterio fijado: el brazo B (commit `aaa35e5`) quedó en 85.0 contra 86.2 del brazo A
+(−1.2). La regla dice que si B queda abajo, el PR se cierra.** En esas corridas la skill no llegó a activarse, así
+que B midió la description, no el cuerpo de la skill. El brazo C se agregó **después** de ver ese resultado, con
+la description corregida: 92.0 contra 86.2 (+5.8), por debajo del +15 que pide el criterio. Las tres corridas de C
+sacaron 20 de 20 en Excel. Decide el dueño; ninguna de las dos lecturas justifica sacar el PR de borrador.
 
 ## Qué pasó
 1. **Brazo B (commit `aaa35e5`, congelado antes del caso): la skill no se activó en ninguna de las 3 corridas.** Las
