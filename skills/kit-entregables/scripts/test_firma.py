@@ -178,10 +178,12 @@ class Estructuras(unittest.TestCase):
         r = F.revisar_estructura("# T\n\n## Semáforo\nverde\n", "estatus")
         self.assertIn(("seccion_faltante", "alta"), [(x["regla"], x["gravedad"]) for x in r])
 
-    def test_plantilla_generada_pasa_su_estructura(self):
+    def test_plantilla_generada_pasa_su_estructura_pero_no_sin_llenar(self):
         for k in F.ESTRUCTURAS:
             with self.subTest(k):
-                self.assertEqual([x for x in F.revisar_estructura(F.plantilla(k), k) if x["regla"] in ("orden", "seccion_faltante")], [])
+                r = F.revisar_estructura(F.plantilla(k), k)
+                self.assertEqual([x for x in r if x["regla"] in ("orden", "seccion_faltante")], [])
+                self.assertIn("plantilla_sin_llenar", [x["regla"] for x in r])
 
 
 if __name__ == "__main__":

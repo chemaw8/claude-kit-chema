@@ -174,6 +174,9 @@ def revisar_estructura(texto: str, clave: str) -> list[dict]:
     for (a, i), (b, j) in zip(pos, pos[1:]):
         if j < i:
             out.append(h("orden", "alta", b, f"«{b}» va después de «{a}» en esta estructura ({e['fuente']})"))
+    huecos = re.findall(r"\{\{[^}]*\}\}", texto)
+    if huecos:   # una plantilla sin llenar no pasa (sello)
+        out.append(h("plantilla_sin_llenar", "alta", "documento", f"{len(huecos)} hueco(s) de plantilla sin llenar, p. ej. {huecos[0][:60]}"))
     n = palabras(texto)
     if n > e.get("max_palabras", 10**9):
         out.append(h("largo", "alta", "documento", f"{n} palabras (máximo {e['max_palabras']} para {clave})"))
