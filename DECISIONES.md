@@ -325,9 +325,9 @@ verificación por código); la decisión se toma con un caso nuevo de varias ses
 skill y description congeladas antes, contando las no activaciones, con umbral alcanzable fijado antes de correr.
 Revisión a más tardar el 2026-12-31; si da ≤ 0, se cierra el PR.
 
-## 2026-11-23 — José integra `kit-modelo-negocio` como experimental (excepción del dueño)
+## 2026-11-23 — El dueño integra `kit-modelo-negocio` como experimental (excepción del dueño)
 
-**Decidido por José**, con el council del mismo día en contra (unánime). Se integra con las condiciones que el propio
+**Decidido por el dueño**, con el council del mismo día en contra (unánime). Se integra con las condiciones que el propio
 council fijó como mínimo si el dueño insistía:
 - **Experimental**: así lo dicen la skill y el CHANGELOG; no cuenta como estándar probado.
 - **Criterio de retiro**: el caso dorado 03 (varias sesiones, sin techo, ≥ 5 corridas por brazo, skill y description

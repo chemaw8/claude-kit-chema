@@ -97,7 +97,10 @@ def revisar(libro: Path, supuesto: str | None, min_formulas: int):
                 except (KeyError, ValueError):
                     errores.append(("P5", f"--supuesto {celda[0]}!{celda[1]}: esa hoja o celda no existe"))
                     break
-                if not isinstance(v, (int, float)):
+                if not isinstance(v, (int, float)) or isinstance(v, bool):
+                    if supuesto:
+                        errores.append(("P5", f"--supuesto {celda[0]}!{celda[1]} no es un número fijo"))
+                        break
                     continue
                 wb2[celda[0]][celda[1]].value = v * 1.1 if v else 1
                 wb2.save(copia)
