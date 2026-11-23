@@ -33,9 +33,9 @@ Las secciones de cada una, en orden y con su guía: `python3 scripts/firma.py --
 
 ## Reglas comunes
 
-El script comprueba las secciones y su orden, el título, la conclusión primero (en lectura), el origen de las cifras
-(si la estructura lo lleva), la petición con fecha o responsable y el relleno; el relleno solo AVISA a partir de varias
-frases, así que la regla 6 también se revisa a ojo.
+El script comprueba las secciones y su orden, el título, la conclusión primero (si la estructura abre con ella), el
+origen de las cifras (si la estructura lo lleva), que haya una fecha absoluta (aviso) y el relleno (aviso a partir de
+varias frases). Que el cierre tenga responsable y que no haya relleno suelto se revisa además a ojo.
 
 1. El título es la conclusión, no el tema: «Cerrar la tienda X ahorra $1.2 M al año», no «Análisis de tiendas».
 2. Una idea por lámina proyectada (≤60 palabras); lo denso va a un documento de lectura (≤ ~6 páginas, anexos aparte).

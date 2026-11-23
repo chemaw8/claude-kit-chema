@@ -210,7 +210,9 @@ def main() -> int:
         r = revisar_estructura(e.get("texto") or "", e["estructura"])
         if ESTRUCTURAS[e["estructura"]]["modo"] == "lectura":
             pide_origen = any(ORIGEN.search(n) for n, _p, _g in ESTRUCTURAS[e["estructura"]]["secciones"])   # estatus y one-pager no la llevan (sello)
-            comunes = ("conclusion_primero", "titulo_conclusion", "relleno", "peticion") + (("origen_cifras",) if pide_origen else ())
+            # conclusión primero solo si la estructura ABRE con ella (académico abre con el resumen; la B2B, con el problema)
+            abre_con_conclusion = bool(re.search(r"recomend|conclusi|propuesta|mensajes clave", ESTRUCTURAS[e["estructura"]]["secciones"][0][0], re.I))
+            comunes = (("conclusion_primero",) if abre_con_conclusion else ()) + ("titulo_conclusion", "relleno", "peticion") + (("origen_cifras",) if pide_origen else ())
             r += [x for x in revisar_documento(e.get("texto") or "") if x["regla"] in comunes]
         else:
             r += [x for x in revisar_documento(e.get("texto") or "") if x["regla"] in ("titulo_conclusion", "relleno")]

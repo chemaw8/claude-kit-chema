@@ -147,6 +147,14 @@ class Estructuras(unittest.TestCase):
         finally: sys.argv = viejo; sys.stdin = sys.__stdin__
         self.assertIn("conclusion_primero", buf.getvalue())
 
+    def test_academico_no_exige_recomendacion_arriba(self):
+        import io, json, contextlib
+        t = F.plantilla("academico").replace("{{Pregunta, método, resultado y conclusión.}}", "Medimos X en 40 muestras; Y aumentó 12 %.")
+        sys.stdin = io.StringIO(json.dumps({"estructura": "academico", "texto": t})); buf = io.StringIO()
+        with contextlib.redirect_stdout(buf): F.main()
+        sys.stdin = sys.__stdin__
+        self.assertNotIn("conclusion_primero", buf.getvalue())
+
     def test_plantilla_generada_pasa_su_estructura(self):
         for k in F.ESTRUCTURAS:
             with self.subTest(k):
