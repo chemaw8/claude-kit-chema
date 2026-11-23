@@ -1,0 +1,51 @@
+{
+  "id": "H1",
+  "nombre": "Ejemplo ficticio: suscripción de café para oficinas con un socio de nómina (B2B2C)",
+  "tesis": "La empresa paga el beneficio, el empleado lo usa y el socio de nómina lo distribuye.",
+  "segmentos": [
+    {"id": "s_empresa", "nombre": "Empresa de 50 a 250 empleados", "rol": "pagador", "ev": "supuesto",
+     "empatia": {"dolores": [{"id": "d_rotacion", "t": "Rotación alta del personal operativo", "ev": "supuesto"}],
+                 "ganancias": [{"id": "g_beneficio", "t": "Un beneficio barato que el empleado note a diario", "ev": "supuesto"}],
+                 "paga_con": ["transferencia"], "paga_ev": "supuesto", "se_informa": ["socio_nomina"]}},
+    {"id": "s_empleado", "nombre": "Empleado de oficina", "rol": "usuario", "ev": "supuesto",
+     "empatia": {"dolores": [{"id": "d_cafe", "t": "El café de la oficina es malo", "ev": "supuesto"}],
+                 "ganancias": [{"id": "g_gratis", "t": "Café bueno sin pagarlo", "ev": "supuesto"}],
+                 "paga_con": [], "paga_ev": "no paga", "se_informa": ["app"]}}
+  ],
+  "restricciones": [
+    {"id": "m_sinplazo", "t": "La marca promete cero plazos forzosos", "requiere": ["oferta_sin_plazo"], "ev": "supuesto"}
+  ],
+  "bloques": {
+    "propuesta_valor": [
+      {"id": "pv_empresa", "t": "Beneficio de café por empleado, mes a mes", "para": ["s_empresa"], "atiende": ["d_rotacion", "g_beneficio"], "requiere": ["oferta_sin_plazo", "tostado"]},
+      {"id": "pv_empleado", "t": "Dos cafés al día sin costo", "para": ["s_empleado"], "atiende": ["d_cafe", "g_gratis"], "requiere": ["tostado", "app_canje"]}
+    ],
+    "canales": [
+      {"id": "c_socio", "t": "El socio de nómina lo ofrece a sus empresas", "para": ["s_empresa"], "alcanza": ["socio_nomina"], "requiere": ["acuerdo_socio"], "aporta": ["venta_b2b"]},
+      {"id": "c_app", "t": "App de canje", "para": ["s_empleado"], "alcanza": ["app"], "requiere": ["app_canje"], "aporta": []}
+    ],
+    "relaciones": [
+      {"id": "r_cuenta", "t": "Cuenta de empresa con autoservicio", "para": ["s_empresa"], "requiere": ["venta_b2b"]},
+      {"id": "r_app", "t": "Autoservicio en la app", "para": ["s_empleado"], "requiere": ["app_canje"]}
+    ],
+    "ingresos": [
+      {"id": "i_mensual", "t": "Cuota mensual por empleado", "paga": ["s_empresa"], "cobro": ["transferencia"], "requiere": []}
+    ],
+    "recursos": [
+      {"id": "re_tostador", "t": "Tostador propio", "aporta": ["tostado", "oferta_sin_plazo"], "costo": "k_fijos"}
+    ],
+    "actividades": [
+      {"id": "a_app", "t": "Operar la app de canje", "aporta": ["app_canje"], "costo": "k_fijos"}
+    ],
+    "socios": [
+      {"id": "so_nomina", "t": "Socio de nómina", "aporta": ["acuerdo_socio"], "costo": "k_comision"}
+    ],
+    "costos": [
+      {"id": "k_fijos", "t": "Tostador y app", "tipo": "fijo"},
+      {"id": "k_comision", "t": "Comisión al socio por empresa", "tipo": "variable"}
+    ]
+  },
+  "juicios": [
+    {"t": "Que la empresa renueve depende de que el empleado use el beneficio: medir canjes por empleado.", "ev": "supuesto"}
+  ]
+}

@@ -4,12 +4,15 @@ Este es el banco de referencia del gate de disparo: peticiones tipo, redactadas
 como las diría un colega no técnico y sin nombrar la skill, con la skill que
 debería cargar cada una. Cómo se corre está en `docs/pruebas/RUNBOOK.md`.
 
-Dos bloques:
+Tres bloques:
 
 - **Núcleo (1-21)** — 3 peticiones por dominio de las 7 skills originales; miden
   el acierto proporcional (criterio ≥ 19/21).
 - **Fronteras (22-30)** — peticiones adversarias sobre los bordes vecinos donde
   el juez tiende a dudar; miden que no haya confusiones nuevas.
+
+- **Modelo de negocio (31-38)** — 3 peticiones propias y 5 de frontera con finanzas, propuestas y análisis
+  de datos (alta de `kit-modelo-negocio`, 2026-11-22); el runner cuenta todas las filas > 21 en el criterio de fronteras.
 
 La columna "frontera?" marca las peticiones que viven en un borde ambiguo entre
 dos skills; el criterio de cero-confusiones se evalúa sobre ellas.
@@ -46,5 +49,13 @@ dos skills; el criterio de cero-confusiones se evalúa sobre ellas.
 | 28 | Escríbele un correo al director comercial de Farmacias X para proponerle nuestro servicio | kit-propuestas | sí (acercamiento a contacto ↔ correo) |
 | 29 | Mándale un mensaje al gerente de compras de la Aerolínea Z para agendar la demo del producto | kit-propuestas | sí (acercamiento a contacto ↔ correo) |
 | 30 | Escribe un correo al equipo con el estatus del proyecto de esta semana | kit-redaccion | sí (estatus interno ↔ acercamiento) |
+| 31 | Arma el modelo de negocio de la nueva línea de servicio: segmentos, canales y cómo cobramos | kit-modelo-negocio | no |
+| 32 | ¿Qué segmentos de clientes atacamos con el producto nuevo y qué les duele a cada uno? | kit-modelo-negocio | no |
+| 33 | Hazme el canvas y el mapa de empatía para ver si el negocio con el socio tiene sentido | kit-modelo-negocio | no |
+| 34 | ¿Cuánto le cobramos al socio por el paquete y qué margen nos queda? | kit-finanzas | sí (precio/margen ↔ modelo de negocio) |
+| 35 | Ya tenemos las dos opciones de socio armadas; prepárame el mensaje a dirección para que elijan | kit-propuestas | sí (aprobación ↔ modelo de negocio) |
+| 36 | Con este CSV de ventas, dime qué segmentos de clientes crecieron este año | kit-analisis-datos | sí (datos ↔ modelo de negocio) |
+| 37 | Hazme la proyección de ingresos y gastos a tres años del área de soporte | kit-finanzas | sí (proyección ↔ modelo de negocio) |
+| 38 | Llegaron cambios del socio y de finanzas; actualiza el modelo de negocio y dame el P&L a dos años | kit-modelo-negocio | sí (actualizar modelo ↔ finanzas) |
 
 Historia y análisis de fallos previos en `docs/pruebas/disparo-descriptions.md`.

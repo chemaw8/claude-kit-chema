@@ -2,3 +2,5 @@
 
 # resultados de claude plugin eval (docs/pruebas/piloto-plugin-eval.md)
 docs/pruebas/plugin-eval/results/
+__pycache__/
+*.pyc
