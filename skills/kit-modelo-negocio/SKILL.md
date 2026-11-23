@@ -6,6 +6,9 @@ description: 'Estándar Kit Chema para diseñar, evaluar o actualizar un modelo 
 
 # Modelo de negocio: estándar Kit Chema
 
+> **Experimental** (2026-11-23): entró como excepción del dueño; se retira si el caso dorado 03 no muestra mejora
+> (DECISIONES.md, 2026-11-23).
+
 El agente no llena un canvas: **propone hipótesis completas, prueba que concuerden, las compara y recomienda una**,
 con fundamentos. Lo que no tiene evidencia se dice; lo que no concuerda se señala. Método: Osterwalder y Pigneur,
 *Business Model Generation* (2010); se parafrasea y se cita el capítulo, no se copia texto ni imágenes del libro.

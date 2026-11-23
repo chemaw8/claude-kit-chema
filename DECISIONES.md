@@ -324,3 +324,15 @@ caso 02 20% más barato). **Hallazgo que cambia el diseño:** el umbral de +15 e
 verificación por código); la decisión se toma con un caso nuevo de varias sesiones, sin techo, ≥ 5 corridas por brazo,
 skill y description congeladas antes, contando las no activaciones, con umbral alcanzable fijado antes de correr.
 Revisión a más tardar el 2026-12-31; si da ≤ 0, se cierra el PR.
+
+## 2026-11-23 — José integra `kit-modelo-negocio` como experimental (excepción del dueño)
+
+**Decidido por José**, con el council del mismo día en contra (unánime). Se integra con las condiciones que el propio
+council fijó como mínimo si el dueño insistía:
+- **Experimental**: así lo dicen la skill y el CHANGELOG; no cuenta como estándar probado.
+- **Criterio de retiro**: el caso dorado 03 (varias sesiones, sin techo, ≥ 5 corridas por brazo, skill y description
+  congeladas antes, umbral alcanzable fijado antes de correr). Si da una diferencia ≤ 0 o sube el costo más de 50 % sin
+  ganar puntos, la skill se retira del kit con un PR que la quite.
+- **Revisión** a más tardar el 2026-12-31, con o sin caso 03.
+- **No es precedente**: el congelamiento del 2026-08-29 sigue; esta entrada no abre una vía de excepción para otras
+  adiciones. Evidencia y actas: `docs/pruebas/casos-dorados/modelo-negocio-0{1,2}/resultados.md`, entrada anterior.
