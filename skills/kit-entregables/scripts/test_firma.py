@@ -129,10 +129,18 @@ class Estructuras(unittest.TestCase):
 
     def test_conclusion_en_la_plantilla_y_cli_con_archivo(self):
         import tempfile, io, json, contextlib
-        t = F.plantilla("informe-decision").replace("{{Qué hacer, quién y para cuándo. Una o dos oraciones.}}", "El mercado se mueve rápido.")
-        r = F.revisar_documento(t)
-        self.assertIn("conclusion_primero", [x["regla"] for x in r])
-        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as f: f.write(t)
+        base = F.plantilla("informe-decision")
+        marca = "{{Qué hacer, quién y para cuándo. Una o dos oraciones.}}"
+        self.assertIn(marca, base)
+        # positivo: la recomendación pegada a su encabezado SÍ cuenta (antes se saltaba el bloque)
+        bueno = base.replace(marca, "Recomendamos cerrar la tienda X el 2027-01-15; responsable Operaciones.")
+        self.assertNotIn("conclusion_primero", [x["regla"] for x in F.revisar_documento(bueno)])
+        t = base.replace(marca, "El mercado se mueve rápido.")
+        self.assertIn("conclusion_primero", [x["regla"] for x in F.revisar_documento(t)])
+        d = tempfile.TemporaryDirectory(); self.addCleanup(d.cleanup)
+        ruta = d.name + "/e.md"
+        with open(ruta, "w") as f: f.write(t)
+        f = type("F", (), {"name": ruta})
         viejo = sys.argv; sys.argv = ["firma.py", "--estructura", "informe-decision", f.name]; buf = io.StringIO()
         try:
             with contextlib.redirect_stdout(buf): self.assertEqual(F.main(), 0)
