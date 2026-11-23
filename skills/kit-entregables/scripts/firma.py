@@ -45,7 +45,8 @@ NO_CONCLUIR = re.compile(r"(no se puede (concluir|afirmar)|lo que no (sabemos|se
                          r"risks?|limitations|hinges on|unknown)", re.I)
 SUPUESTOS = re.compile(r"(supuestos?|alternativas?|assumptions?|alternatives?)", re.I)
 RECOMIENDA = re.compile(r"\b(recomiend\w+|recomendaci[oó]n|propon\w+|propuesta|conviene|debemos|hay que|decisi[oó]n|pedimos|cerrar|aprobar|"
-                        r"recommend\w*|propos\w+|we should|decision|we ask|approve)\b", re.I)
+                        r"recommend\w*|propos\w+|we should|decision|we ask|approve|"
+                        r"se pide|vamos (en|al|bien|mal|tarde|a tiempo)|en verde|en [aá]mbar|en rojo|on track|at risk)\b", re.I)   # estatus (sello)
 
 
 def palabras(t: str) -> int:

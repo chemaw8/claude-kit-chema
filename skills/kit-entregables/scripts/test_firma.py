@@ -164,6 +164,10 @@ class Estructuras(unittest.TestCase):
         sys.stdin = sys.__stdin__
         self.assertNotIn("origen_cifras", buf.getvalue()); self.assertNotIn("conclusion_primero", buf.getvalue())
 
+    def test_estatus_con_su_propia_guia(self):
+        t = F.plantilla("estatus").replace("{{En una o dos oraciones: cómo va y qué se pide.}}", "Vamos en verde; se pide ampliar el plazo al 2027-01-15.")
+        self.assertNotIn("conclusion_primero", [x["regla"] for x in F.revisar_documento(t)])
+
     def test_plantilla_generada_pasa_su_estructura(self):
         for k in F.ESTRUCTURAS:
             with self.subTest(k):
