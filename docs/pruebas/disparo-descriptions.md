@@ -163,3 +163,6 @@ benignas 0, rc=0**; 30 de 30 filas coinciden con la skill esperada. Antes, sobre
 Gate de disparo con la skill nueva: núcleo 21/21, fronteras 0 confusiones (incluidas 3 filas nuevas 31–33 para
 one-pager, brief y discurso, que van a kit-entregables), `disparo.py --modelo sonnet` rc 0. Estatus a dirección (24),
 informe con láminas (26) y propuesta (14, 27) siguen en su skill de dominio: la nueva no les roba el disparo.
+- 2026-11-23 (tras el council): con la description de piloto («cuándo no usarla» → kit-propuestas) el gate falló 2
+  fronteras (31 y 32 se iban a kit-propuestas). Se nombró el formato en la description («brief de decisión o para un
+  comité»): núcleo 21/21, 0 confusiones, PASA.
