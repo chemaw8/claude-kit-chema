@@ -31,7 +31,11 @@ Las secciones de cada una, en orden y con su guía: `python3 scripts/firma.py --
 - **En vivo** (lo presentas): tensión; la solución va al final (Duarte, Monroe, Challenger). Si es para dirección, una
   línea con la conclusión arriba y luego la secuencia.
 
-## Reglas comunes (todas se verifican)
+## Reglas comunes
+
+El script comprueba las secciones y su orden, el título, la conclusión primero (en lectura), el origen de las cifras
+(si la estructura lo lleva), la petición con fecha o responsable y el relleno; el relleno solo AVISA a partir de varias
+frases, así que la regla 6 también se revisa a ojo.
 
 1. El título es la conclusión, no el tema: «Cerrar la tienda X ahorra $1.2 M al año», no «Análisis de tiendas».
 2. Una idea por lámina proyectada (≤60 palabras); lo denso va a un documento de lectura (≤ ~6 páginas, anexos aparte).
@@ -50,16 +54,16 @@ Una persona inventada o un «Imagina un mundo donde…» es el mismo relleno con
 
 1. Elige la estructura por el objetivo del encargo. Si duda entre dos, la de lectura si alguien lo leerá sin ti.
 2. Escribe con la plantilla: secciones en ese orden, con la guía de cada una.
-3. Verifica antes de entregar:
-   `echo '{"estructura":"estatus","texto":"<el texto>"}' | python3 scripts/firma.py`
-   Si algo sale con gravedad «alta», corrígelo y vuelve a verificar. Para láminas:
-   `{"formato":"presentacion","laminas":[{"titulo":…,"cuerpo":…}]}`.
+3. Guarda el texto en un archivo y verifícalo antes de entregar:
+   `python3 scripts/firma.py --estructura estatus entregable.md`
+   Si algo sale con gravedad «alta», corrígelo y vuelve a verificar. Las láminas se verifican por JSON en stdin:
+   `{"formato":"presentacion","laminas":[{"titulo":…,"cuerpo":…}]}` (ahí aplica el tope de 60 palabras por lámina).
 
 ## Checklist antes de entregar
 
 - [ ] Elegí UNA estructura del catálogo por el objetivo y la dije.
 - [ ] El verificador no marca nada «alta».
-- [ ] Ninguna frase de relleno; ningún caso o cifra inventados.
+- [ ] Revisé a ojo que no quede relleno (el script avisa solo cuando ya son varias frases); ningún caso o cifra inventados.
 
 ## Límites honestos
 

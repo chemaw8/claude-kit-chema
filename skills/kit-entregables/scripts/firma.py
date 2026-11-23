@@ -8,7 +8,7 @@ Reglas tomadas de la investigación de la spec (Minto, Zelazny, Duarte, Reynolds
 Entrada (stdin JSON): {"formato": "presentacion", "laminas": [...]} o {"formato": "documento", "texto": "..."}.
 """
 from __future__ import annotations
-import json, re, sys
+import io, json, re, sys
 
 # --- umbrales (el formato PRESENTACIÓN es para lámina proyectada; el denso va a DOCUMENTO) ---
 MAX_PALABRAS_LAMINA = 60       # formato PRESENTACIÓN: lámina proyectada, una idea (Duarte/Reynolds ≤40 como
@@ -104,7 +104,7 @@ def revisar_presentacion(laminas: list[dict]) -> list[dict]:
         out.append(h("origen_cifras", "alta", "deck", "hay cifras y no hay lámina de «de dónde sale cada cifra»"))
     if not any(NO_CONCLUIR.search(l.get("titulo", "") + " " + l.get("cuerpo", "")) for l in laminas):
         out.append(h("no_concluir", "media", "deck", "no hay lámina de lo que decide el caso o lo que no se puede concluir"))
-    # La petición va en alguna de las últimas láminas de contenido (después pueden ir creativos o anexos;
+    # La petición va en alguna de las últimas láminas de contenido (después pueden ir creativos o anexos; calibrado con
     # decks reales), con fecha absoluta o responsable.
     cola = [l for l in contenido if not ORIGEN.search(l.get("titulo", ""))][-4:]
     if not any(PETICION.search(t := l["titulo"] + " " + l["subtitulo"] + " " + l["cuerpo"]) and (FECHA.search(t) or re.search(r"responsab|owner|\bby (q[1-4]|end of)", t, re.I))
@@ -124,8 +124,12 @@ def revisar_documento(texto: str) -> list[dict]:
     titulo = secs[0][0] if secs else ""
     p = titulo_ok(titulo)
     if p: out.append(h("titulo_conclusion", "alta", "título", p))
-    cuerpo0 = re.sub(r"^#.*$", "", texto, count=1, flags=re.M).strip()
-    primero = next((b for b in re.split(r"\n\s*\n", cuerpo0) if b.strip() and not b.lstrip().startswith("#")), "")
+    cuerpo0 = re.sub(r"<!--[\s\S]*?-->", "", texto)   # el comentario de la plantilla no es contenido (sello)
+    cuerpo0 = re.sub(r"^#\s.*$", "", cuerpo0, count=1, flags=re.M).strip()
+    primero = ""
+    for b in re.split(r"\n\s*\n", cuerpo0):
+        lineas = [l for l in b.strip().splitlines() if not l.lstrip().startswith("#")]   # «## Recomendación\ntexto»: cuenta el texto
+        if lineas: primero = "\n".join(lineas); break
     if not RECOMIENDA.search(primero) or palabras(primero) > MAX_ANTES_DE_RECOMENDAR:
         out.append(h("conclusion_primero", "alta", "inicio", "el primer párrafo no es la recomendación (o pasa de "
                      f"{MAX_ANTES_DE_RECOMENDAR} palabras): «{primero[:80]}…»"))
@@ -179,7 +183,7 @@ def plantilla(clave: str) -> str:
     e = ESTRUCTURAS[clave]
     cab = f"# {{{{Título: la conclusión con su cifra}}}}\n\n<!-- Estructura «{clave}»: {e['uso']}. Fuente: {e['fuente']}. Modo: {e['modo']}"
     cab += " (conclusión primero)" if e["modo"] == "lectura" else " (tensión: la solución va al final)"
-    cab += f". Máximo {e['max_palabras']} palabras. Verificar: firma.py --estructura {clave} -->\n"
+    cab += f". Máximo {e['max_palabras']} palabras. Verificar: firma.py --estructura {clave} <archivo.md> -->\n"
     return cab + "".join(f"\n## {n}\n{{{{{g}}}}}\n" for n, _p, g in e["secciones"])
 
 
@@ -188,6 +192,10 @@ def main() -> int:
         if len(sys.argv) < 3 or sys.argv[2] not in ESTRUCTURAS:
             print(f"uso: firma.py --plantilla <estructura>; opciones: {', '.join(ESTRUCTURAS)}", file=sys.stderr); return 1
         print(plantilla(sys.argv[2])); return 0
+    if len(sys.argv) >= 2 and sys.argv[1] == "--estructura":   # firma.py --estructura <clave> <archivo.md>
+        if len(sys.argv) < 4 or sys.argv[2] not in ESTRUCTURAS:
+            print(f"uso: firma.py --estructura <estructura> <archivo.md>; opciones: {', '.join(ESTRUCTURAS)}", file=sys.stderr); return 1
+        sys.stdin = io.StringIO(json.dumps({"estructura": sys.argv[2], "texto": open(sys.argv[3], encoding="utf-8").read()}))
     if len(sys.argv) >= 2 and sys.argv[1] == "--catalogo":
         for k, v in ESTRUCTURAS.items(): print(f"{k:22} {v['modo']:8} {v['uso']} — {v['fuente']}")
         return 0
@@ -198,7 +206,7 @@ def main() -> int:
         r = revisar_estructura(e.get("texto") or "", e["estructura"])
         if ESTRUCTURAS[e["estructura"]]["modo"] == "lectura":
             pide_origen = any(ORIGEN.search(n) for n, _p, _g in ESTRUCTURAS[e["estructura"]]["secciones"])   # estatus y one-pager no la llevan (sello)
-            comunes = ("conclusion_primero", "titulo_conclusion", "relleno") + (("origen_cifras",) if pide_origen else ())
+            comunes = ("conclusion_primero", "titulo_conclusion", "relleno", "peticion") + (("origen_cifras",) if pide_origen else ())
             r += [x for x in revisar_documento(e.get("texto") or "") if x["regla"] in comunes]
         else:
             r += [x for x in revisar_documento(e.get("texto") or "") if x["regla"] in ("titulo_conclusion", "relleno")]
