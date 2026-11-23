@@ -27,7 +27,7 @@ Las dos se comprueban con un script, no a ojo.
 | `exposicion` | contrastar el hoy con lo posible | en vivo | Duarte (Resonate) |
 | `academico` | paper o reporte académico | lectura | IMRaD |
 
-Las secciones de cada una, en orden y con su guía: `python3 scripts/firma.py --plantilla <estructura>`.
+Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/kit-entregables/scripts/firma.py" --plantilla <estructura>`.
 
 **Dónde va la conclusión.** Los autores se contradicen y la contradicción se resuelve por modo:
 - **Lectura** (alguien lo lee sin ti): conclusión primero, en el título y en el primer párrafo (Minto, BLUF).
@@ -39,8 +39,8 @@ Las secciones de cada una, en orden y con su guía: `python3 scripts/firma.py --
 Una sección que no aplica se escribe «No aplica: <razón>»; nunca se inventa contenido para llenarla. Solo la sección
 que abre la estructura y el orden bloquean; las demás faltantes solo avisan. El script comprueba las secciones y su orden, el título, la conclusión primero (si la estructura abre con ella), el
 origen de las cifras (si la estructura lo lleva), que haya una fecha absoluta (aviso) y el relleno (aviso a partir de
-varias frases). En estructuras para presentar en vivo (propuesta-challenger, discurso, exposición) solo revisa
-secciones, orden, título y relleno. Que el cierre tenga responsable y que no haya relleno suelto se revisa además a ojo.
+varias frases). En estructuras para presentar en vivo (propuesta-challenger, discurso, exposición) revisa secciones, orden, título,
+largo, huecos de plantilla sin llenar y relleno. Que el cierre tenga responsable y que no haya relleno suelto se revisa además a ojo.
 
 1. El título es la conclusión, no el tema: «Cerrar la tienda X ahorra $1.2 M al año», no «Análisis de tiendas».
 2. Una idea por lámina proyectada (≤60 palabras); lo denso va a un documento de lectura (≤ ~6 páginas, anexos aparte).
@@ -60,7 +60,7 @@ Una persona inventada o un «Imagina un mundo donde…» es el mismo relleno con
 1. Elige la estructura por el objetivo del encargo. Si duda entre dos, la de lectura si alguien lo leerá sin ti.
 2. Escribe con la plantilla: secciones en ese orden, con la guía de cada una.
 3. Guarda el texto en un archivo y verifícalo antes de entregar:
-   `python3 scripts/firma.py --estructura estatus entregable.md`
+   `python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/kit-entregables/scripts/firma.py" --estructura estatus entregable.md`
    Si algo sale con gravedad «alta», corrígelo y vuelve a verificar. Las láminas se verifican por JSON en stdin:
    `{"formato":"presentacion","laminas":[{"titulo":…,"cuerpo":…}]}` (ahí aplica el tope de 60 palabras por lámina).
 
