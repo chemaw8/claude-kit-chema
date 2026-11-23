@@ -15,7 +15,8 @@ con fundamentos. Lo que no tiene evidencia se dice; lo que no concuerda se seña
 Los 9 bloques y los mapas de empatía tienen que concordar. Una hipótesis es un JSON (ejemplo ficticio en
 `scripts/ejemplo-hipotesis.json`) donde cada elemento declara qué **requiere**, qué **aporta** y qué **niega**, a quién va
 (`para`), quién paga (`paga`), cómo se cobra (`cobro`) y su evidencia (`ev`). Las promesas de marca, las leyes y las
-condiciones de los socios entran como `restricciones`. `python3 scripts/coherencia.py <hipótesis.json> --verificar`
+condiciones de los socios entran como `restricciones`, con lo que requieren (una promesa de horario requiere esa
+capacidad: si ningún recurso la aporta, C4 falla). `python3 scripts/coherencia.py <hipótesis.json> --verificar`
 sale con código 1 si algo choca (pruebas: `scripts/test_coherencia.py`):
 
 | Regla | Qué falla si no se cumple |
@@ -54,11 +55,13 @@ el JSON con `coherencia.py` solo cuando haya tres o más; sin archivos de contin
 6. **Recomendación** (kit-propuestas): opciones con costo, una recomendada, cómo revertirla, qué decide el usuario.
 7. **P&L y presentación**, solo con el canvas aprobado por bloque: scripts del proyecto (la skill da la estructura, no
    el código) → Excel con fórmulas → datos recalculados → presentación y acordeón de supuestos, sin cifras a mano → `referencias/pl-y-presentacion.md` (con kit-finanzas y
-   kit-presentaciones).
+   kit-presentaciones). Antes de entregar el libro: `python3 scripts/revisar_pl.py <libro>` (recalcula, cuenta
+   fórmulas y errores, avisa series pegadas y prueba que un supuesto mueve el resultado); con código ≠ 0 no se entrega.
 8. **Actualizar un modelo que ya existe** (llega información nueva): leer la versión previa entera; listar qué cambió,
    con fuente y fecha; quitar lo que quedó huérfano (canales, comisiones o promesas de un segmento descartado) y lo
    que la información nueva contradice; volver a correr la coherencia y decir qué cifras se movieron y cuánto. La
-   versión previa no es evidencia: hereda sus errores si no se revisa.
+   versión previa no es evidencia: hereda sus errores si no se revisa. Un segmento descartado se marca
+   `"estado": "descartado"` en el JSON: `coherencia.py` falla si algo lo sigue nombrando.
 9. **Verificación**: réplica independiente de las cifras, council de dos familias sobre la recomendación, lector
    fresco del entregable.
 

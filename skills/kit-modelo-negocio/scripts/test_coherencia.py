@@ -31,6 +31,7 @@ CASOS = {
     "C6": lambda h: b(h, "recursos").pop("costo"),
     "C7": lambda h: b(h, "ingresos").__setitem__("cobro", ["efectivo"]),
     "C8": lambda h: b(h, "relaciones").__setitem__("para", ["s_inexistente"]),
+    "C8 descartado": lambda h: h["segmentos"][1].__setitem__("estado", "descartado"),
     "C8 forma": lambda h: h["segmentos"][0].pop("nombre"),
     "C8 id-lista": lambda h: b(h, "recursos").__setitem__("id", ["re_tostador"]),
     "C8 paga_con-objeto": lambda h: h["segmentos"][0]["empatia"].__setitem__("paga_con", [{"x": 1}]),
@@ -41,7 +42,17 @@ CASOS = {
     "C8 aporta-objeto": lambda h: b(h, "recursos").__setitem__("aporta", [{"x": 1}]),
 }
 
+def descartado_limpio():
+    h = copy.deepcopy(BASE)
+    h["segmentos"][1]["estado"] = "descartado"
+    for blq in ("propuesta_valor", "canales", "relaciones"):
+        h["bloques"][blq] = [x for x in h["bloques"][blq] if "s_empleado" not in x["para"]]
+    return h
+
+
 fallas = 0
+if not revisar(descartado_limpio())["coherente"]:   # descartar bien (sin nada que lo nombre) no es error
+    print("FALLA descartado limpio: marcó error"); fallas += 1
 r = revisar(copy.deepcopy(BASE))
 if not r["coherente"] or r["avisos"]:
     print("FALLA ejemplo:", r["errores"], r["avisos"]); fallas += 1

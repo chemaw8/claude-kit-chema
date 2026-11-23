@@ -17,7 +17,7 @@ Reglas (errores = la hipótesis no es coherente; avisos = revisar):
       que nadie genera son avisos.
   C7  cómo paga el segmento pagador (empatía `paga_con`) coincide con algún medio de cobro del ingreso; y el segmento
       se entera por donde llegan sus canales (`se_informa` contra `alcanza`).
-  C8  forma mínima (ids, nombres y textos) y referencias a ids inexistentes (error); elementos que nadie usa (aviso).
+  C8  segmentos con "estado": "descartado" que algún elemento sigue nombrando (error); forma mínima (ids, nombres y textos) y referencias a ids inexistentes (error); elementos que nadie usa (aviso).
 Uso: python3 scripts/coherencia.py <hipotesis.json> [...] [--json salida.json] [--verificar]
      --verificar sale con código 1 si alguna hipótesis tiene errores.
 """
@@ -141,8 +141,20 @@ def _revisar(h):
         usados.add(eid)
         return True
 
+    # Segmentos descartados (`"estado": "descartado"`): no se les exige propuesta ni ingreso, y nada puede seguir
+    # dirigido a ellos. Es el error típico al actualizar un modelo: se descarta un segmento y su canal o su comisión se quedan.
+    descartados = {s["id"] for s in segs if s.get("estado") == "descartado"}
+    for blq in BLOQUES[1:]:
+        for x in b.get(blq, []):
+            for campo in ("para", "paga", "beneficia"):
+                for p in _lista(x.get(campo)):
+                    if p in descartados:
+                        err("C8", f"«{x['t']}» ({NOMBRE[blq]}) sigue dirigido al segmento descartado «{elementos[p][1]['nombre']}»: quítalo", [x["id"], p])
+
     # C2
     for s in segs:
+        if s["id"] in descartados:
+            continue
         rol = s.get("rol", "usuario")
         if rol in ("usuario", "ambos"):
             for blq in ("propuesta_valor", "canales", "relaciones"):
@@ -232,6 +244,8 @@ def _revisar(h):
             elif not paga or not cobro:
                 aviso("C7", f"falta declarar cómo paga «{s.get('nombre', p)}» o cómo se cobra «{x['t']}»", [p, x["id"]])
     for s in segs:
+        if s["id"] in descartados:
+            continue
         info = set(_lista(s.get("empatia", {}).get("se_informa")))
         alc = set()
         for c in b.get("canales", []):
