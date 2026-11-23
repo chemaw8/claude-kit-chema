@@ -81,7 +81,10 @@ def main(carpeta):
         mueve = "sin probar (no encontré el precio como valor fijo)"
         if cambiada:
             despues = valores(recalcular(copia, t / "sens"))
-            objetivo = filas_utilidad(x) or [k for k in base if isinstance(base[k], (int, float))]
+            # sin filas de utilidad, se comparan solo celdas con fórmula (nunca la celda que se acaba de cambiar)
+            wbf = openpyxl.load_workbook(x)
+            objetivo = filas_utilidad(x) or [(ws.title, c.coordinate) for ws in wbf for r in ws.iter_rows() for c in r
+                                             if isinstance(c.value, str) and c.value.startswith("=")]
             cambio = any(isinstance(base.get(k), (int, float)) and isinstance(despues.get(k), (int, float))
                          and abs(base[k] - despues[k]) > 1 for k in objetivo)
             mueve = f"sí (cambié {cambiada})" if cambio else f"no (cambié {cambiada} y la utilidad no se movió)"
