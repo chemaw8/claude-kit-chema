@@ -92,7 +92,11 @@ def revisar(libro: Path, supuesto: str | None, min_formulas: int):
                 copia = t / f"sens{i}.xlsx"
                 shutil.copy(x, copia)
                 wb2 = openpyxl.load_workbook(copia)
-                v = wb2[celda[0]][celda[1]].value
+                try:
+                    v = wb2[celda[0]][celda[1]].value
+                except (KeyError, ValueError):
+                    errores.append(("P5", f"--supuesto {celda[0]}!{celda[1]}: esa hoja o celda no existe"))
+                    break
                 if not isinstance(v, (int, float)):
                     continue
                 wb2[celda[0]][celda[1]].value = v * 1.1 if v else 1
