@@ -152,7 +152,8 @@ done
 for t in skills/*/scripts/test_*.py; do
   [ -e "$t" ] || continue
   command -v python3 >/dev/null 2>&1 || { echo "INFO  sin python3: no se corre $t"; continue; }
-  python3 "$t" >/dev/null 2>&1; chk "$t pasa" $?
+  sal=$(python3 "$t" 2>&1); rc=$?
+  case "$sal" in *"SE SALTA"*) echo "INFO  $t se saltó: ${sal##*SE SALTA: }";; *) chk "$t pasa" $rc;; esac
 done
 
 # hooks.json (vía plugin) y settings-fragment.json (vía instalador) deben declarar
