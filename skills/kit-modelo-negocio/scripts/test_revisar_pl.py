@@ -17,10 +17,10 @@ if openpyxl is None or not shutil.which("soffice"):
 from revisar_pl import revisar  # noqa: E402
 
 
-def libro(ruta, pegado=False, error=False):
+def libro(ruta, pegado=False, error=False, hoja="Supuestos"):
     wb = openpyxl.Workbook()
     s = wb.active
-    s.title = "Supuestos"
+    s.title = hoja
     s["A1"], s["B1"] = "Precio", 300
     s["A2"], s["B2"] = "Costo", 100
     p = wb.create_sheet("PyL")
@@ -30,8 +30,8 @@ def libro(ruta, pegado=False, error=False):
         if pegado:
             p[f"{col}1"], p[f"{col}2"] = 300, 200
         else:
-            p[f"{col}1"] = "=Supuestos!$B$1"
-            p[f"{col}2"] = f"={col}1-Supuestos!$B$2" if not error else f"={col}1/0"
+            p[f"{col}1"] = f"={hoja}!$B$1"
+            p[f"{col}2"] = f"={col}1-{hoja}!$B$2" if not error else f"={col}1/0"
         p[f"{col}3"] = f"=SUM($B$2:{col}2)"
     wb.save(ruta)
 
@@ -50,5 +50,11 @@ with tempfile.TemporaryDirectory() as t:
         if nombre == "pegado" and not any(r == "P4" for r, _ in avisos):
             print("FALLA pegado: no avisó la serie pegada (P4)")
             fallas += 1
+    x = t / "sin-supuestos.xlsx"                       # sin hoja de supuestos: no se aprueba en silencio
+    libro(x, hoja="Datos")
+    if "P5" not in {r for r, _ in revisar(x, None, 10)[0]}:
+        print("FALLA sin-supuestos: aprobó sin probar la sensibilidad"); fallas += 1
+    if "P5" in {r for r, _ in revisar(x, "Datos!B1", 10)[0]}:
+        print("FALLA sin-supuestos con --supuesto: no aceptó la celda indicada"); fallas += 1
 print("TODO OK" if not fallas else f"{fallas} falla(s)")
 sys.exit(1 if fallas else 0)

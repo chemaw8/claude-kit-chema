@@ -6,13 +6,15 @@ Comprueba lo que un lector no ve a simple vista:
   P2  los resultados salen de fórmulas (cuántas hay)                                              → error si < --min-formulas
   P3  hay una hoja de supuestos (nombre con «supuest», «input» o «parámetro»)                     → aviso si no
   P4  series pegadas: filas fuera de supuestos con ≥ 6 números fijos seguidos (valores pegados)   → aviso
-  P5  responde: cambiar un supuesto (--supuesto Hoja!B3, o el primer número de la hoja de
+  P5  responde (si no se puede probar, también es error): cambiar un supuesto (--supuesto Hoja!B3, o el primer número de la hoja de
       supuestos) en una copia mueve las filas de utilidad/flujo/acumulado                         → error si no se mueve
 Acepta .xlsx, .xml de hoja de cálculo 2003, .ods y .xls (los convierte a .xlsx con LibreOffice).
 
 Uso: python3 revisar_pl.py <libro> [--supuesto 'Supuestos!B3'] [--min-formulas 50] [--json]
 Sale con 1 si hay errores, 0 si no; 2 si falta openpyxl o soffice (no se puede revisar: se dice, no se aprueba).
 """
+from __future__ import annotations
+
 import argparse
 import json
 import shutil
@@ -82,8 +84,8 @@ def revisar(libro: Path, supuesto: str | None, min_formulas: int):
             celdas = [(h, c.coordinate) for h in sup for r in wb[h].iter_rows() for c in r
                       if isinstance(c.value, (int, float)) and not isinstance(c.value, bool) and c.value][:5]
         if not celdas or not objetivo:
-            avisos.append(("P5", "no se probó la sensibilidad: " + ("no encontré un supuesto numérico" if not celdas else
-                                                                     "no encontré filas de utilidad, flujo o acumulado con fórmulas")))
+            errores.append(("P5", "no se pudo probar que el libro responde: " + ("no encontré un supuesto numérico" if not celdas else
+                            "no encontré filas de utilidad, flujo o acumulado con fórmulas") + "; indica la celda con --supuesto Hoja!B3"))
         else:
             probadas = []
             for i, celda in enumerate(celdas):
