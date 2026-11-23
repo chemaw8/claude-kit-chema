@@ -155,6 +155,15 @@ class Estructuras(unittest.TestCase):
         sys.stdin = sys.__stdin__
         self.assertNotIn("conclusion_primero", buf.getvalue())
 
+    def test_brief_con_referencias_y_mensajes_descriptivos(self):
+        import io, json, contextlib
+        t = ("# La tasa de abandono cayó 12 % en 2026\n\n## Mensajes clave\nLa tasa cayó 12 % en el año.\n## Problema\nx\n## Hallazgos\nx\n"
+             "## Opciones\nx\n## Recomendaciones\nOps, 2027-01-15\n## Referencias\nEncuesta 2026.\n")
+        sys.stdin = io.StringIO(json.dumps({"estructura": "brief", "texto": t})); buf = io.StringIO()
+        with contextlib.redirect_stdout(buf): F.main()
+        sys.stdin = sys.__stdin__
+        self.assertNotIn("origen_cifras", buf.getvalue()); self.assertNotIn("conclusion_primero", buf.getvalue())
+
     def test_plantilla_generada_pasa_su_estructura(self):
         for k in F.ESTRUCTURAS:
             with self.subTest(k):
