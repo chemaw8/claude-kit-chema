@@ -70,6 +70,7 @@ el JSON con `coherencia.py` solo cuando haya tres o más; sin archivos de contin
 - Confiar en un «break even bastante bueno» sin preguntar quién paga, cuánto, cada cuándo y por qué.
 - Anotar la respuesta del responsable del negocio sin nombre y fecha: el supuesto queda sin dueño.
 - Leer con openpyxl un Excel generado con fórmulas: las celdas salen vacías; recalcular antes de extraer cifras.
+- Señalar una promesa que los recursos no cubren y dejarla en el canvas: se quita o se reescribe a lo que sí se cumple.
 - Sumar los usuarios de un socio a los clientes propios en el P&L: van en filas y precios separados.
 - Un costo que cambia en una fecha (aumento, fin de promoción) escrito como constante: va como serie por mes.
 
