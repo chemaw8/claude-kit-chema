@@ -44,6 +44,14 @@ def filas_utilidad(path):
 
 def main(carpeta):
     xs = sorted(Path(carpeta).rglob("*.xlsx"))
+    if not xs:  # hoja de cálculo XML 2003 u ODS: se convierte a .xlsx con LibreOffice
+        otros = sorted(p for p in Path(carpeta).rglob("*") if p.suffix.lower() in (".xml", ".ods", ".xls"))
+        if otros:
+            conv = Path(tempfile.mkdtemp())
+            subprocess.run(["soffice", "--headless", "--calc", "--convert-to", "xlsx", "--outdir", str(conv), str(otros[-1])],
+                           check=True, capture_output=True, timeout=180)
+            xs = sorted(conv.glob("*.xlsx"))
+            print(f"- Formato entregado: `{otros[-1].name}` (convertido a .xlsx con LibreOffice)")
     if not xs:
         print("- Excel: **no se entregó ningún .xlsx**")
         return

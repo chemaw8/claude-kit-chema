@@ -12,7 +12,8 @@
 3. Las 9 entregas (A, B y C) se calificaron juntas, cegadas con letras al azar, por dos jueces (codex y kimi).
 
 Ningún brazo podía instalar librerías: los nueve entregaron el libro en XML de hoja de cálculo 2003, que Excel abre.
-`revisar_excel.py` lo convirtió a `.xlsx` con LibreOffice antes de revisarlo.
+El extractor de la corrida lo convirtió a `.xlsx` con LibreOffice antes de pasarlo a `revisar_excel.py`, que desde
+este commit también hace esa conversión por su cuenta.
 
 ## Puntajes (codex / kimi)
 | Corrida | Skill activa | P1 huérfano | P2 24/7 | P5 comisión | Excel | Total codex | Total kimi |
