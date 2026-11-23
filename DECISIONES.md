@@ -336,3 +336,21 @@ council fijó como mínimo si el dueño insistía:
 - **Revisión** a más tardar el 2026-12-31, con o sin caso 03.
 - **No es precedente**: el congelamiento del 2026-08-29 sigue; esta entrada no abre una vía de excepción para otras
   adiciones. Evidencia y actas: `docs/pruebas/casos-dorados/modelo-negocio-0{1,2}/resultados.md`, entrada anterior.
+
+## 2026-11-23 — Se retira `kit-modelo-negocio` (criterio de retiro cumplido)
+
+Caso dorado 03 (Lumen, varias sesiones, 5 corridas por brazo, skill congelada): 87.27 con la skill y 87.27 sin ella
+(Δ 0.0); la regla fijada al integrarla era retirarla con Δ ≤ 0. El brazo con la skill costó 28% menos y entregó menos
+libros de Excel (2 de 5 contra 4 de 5). Tres casos, la misma señal: con Opus 5.5 y el kit actual, la skill no añade
+calidad medible en estos encargos. Se quedan los casos dorados 01–03 como banco y la prueba de scripts de skills en
+`verificar.sh`. Resultados: `docs/pruebas/casos-dorados/modelo-negocio-03/resultados.md`.
+
+## 2026-11-23 — El dueño deja `kit-modelo-negocio` en el kit de forma permanente
+
+**Decidido por el dueño**, después del retiro aplicado por el criterio prerregistrado (entrada anterior). La skill
+vuelve como parte estable del kit, al igual que `kit-entregables`. **Deja sin efecto el criterio de retiro**; no lo
+cumple: en los tres casos dorados empató o quedó dentro del ruido (caso 01: −9.0 y +4.5 tras corregir; caso 02: −1.2
+y +5.8; caso 03: 0.0). A su favor: iguala la calidad del kit sin ella, costó menos en los casos 02 y 03, y aporta la
+verificación por código (`coherencia.py`, `revisar_pl.py`) y el método completo de modelo de negocio. El council del
+2026-11-23 recomendó lo contrario; queda registrado. No abre una vía de excepción para otras adiciones bajo el
+congelamiento. Las filas del banco de disparo pasan a 40-47 para no chocar con `kit-entregables` (31-39).
