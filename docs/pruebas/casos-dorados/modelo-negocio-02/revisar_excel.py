@@ -48,6 +48,8 @@ def main(carpeta):
         print("- Excel: **no se entregó ningún .xlsx**")
         return
     x = xs[0]
+    if len(xs) > 1:
+        print(f"- Aviso: hay {len(xs)} .xlsx; se revisa `{x.name}`")
     wb = openpyxl.load_workbook(x)
     formulas = sum(1 for ws in wb for r in ws.iter_rows() for c in r if isinstance(c.value, str) and c.value.startswith("="))
     hojas = [ws.title for ws in wb]
