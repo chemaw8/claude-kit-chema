@@ -214,7 +214,7 @@ def fuera_del_insumo(texto: str, insumo: str, en_vivo: bool) -> list[dict]:
         kf = _claves_fecha(m.group(0))
         # una fecha con día exige su (mes, día); sin día, su (año, mes) o mes y año sueltos; «primera semana de…» siempre es nueva
         if re.match(r"(primera|segunda|tercera|cuarta|última) semana", m.group(0), re.I):
-            nueva = True
+            nueva = m.group(0).lower() not in insumo.lower()   # la misma frase del encargo sí vale (sello)
         elif any(x[0] == "md" for x in kf):
             nueva = not any(x in ki for x in kf if x[0] == "md") or not all(x in ki for x in kf if x[0] == "a")   # sello: el año también
         else:

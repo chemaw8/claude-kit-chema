@@ -266,6 +266,9 @@ class FueraDelInsumo(unittest.TestCase):
             self.assertIn("fecha_fuera_del_insumo", [x["regla"] for x in r])
         self.assertNotIn("fecha_fuera_del_insumo", [x["regla"] for x in F.fuera_del_insumo("el 15 de enero de 2027", "del 2027-01-15", True)])
 
+    def test_semana_del_encargo_pasa(self):
+        self.assertEqual(F.fuera_del_insumo("Cierren la primera semana de enero.", "El cierre es la primera semana de enero.", True), [])
+
     def test_documento_con_fecha_propuesta_pasa(self):
         r = F.fuera_del_insumo("Finanzas decide antes del 2026-12-11 (propuesta).", self.INS, False)
         self.assertEqual(r, [])
