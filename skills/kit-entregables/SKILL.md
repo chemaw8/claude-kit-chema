@@ -137,7 +137,7 @@ Una persona inventada o un «Imagina un mundo donde…» es el mismo relleno con
 - [ ] Elegí UNA estructura del catálogo por el objetivo y la dije.
 - [ ] El verificador (que incluye `muletillas.sh`) no marca nada «alta».
 - [ ] En un estatus, la decisión pendiente está en las dos primeras oraciones; en vivo, la petición se anuncia en la segunda.
-- [ ] La cifra decisiva está en la primera o segunda oración; el cierre tiene rol y fecha (propuesta, si hace falta).
+- [ ] La cifra decisiva está en la primera o segunda oración; el cierre tiene rol y fecha (propuesta, si hace falta; en un discurso, solo la fecha que trae el encargo).
 - [ ] Ningún dato, causa, promesa ni moneda que el insumo no traiga; ningún verbo que exagere la cifra.
 - [ ] Revisé a ojo que no quede relleno (una señal fuerte de `muletillas.sh` ya bloquea; las de densidad solo avisan); ningún caso o cifra inventados.
 
