@@ -29,6 +29,7 @@ pieza, dónde queda y cómo notas que actúa.
 | **kit-automatizacion** | `~/.claude/skills/kit-automatizacion/` | Automatizar un proceso: cron, integración, bot, flujo que corre solo | Define disparador, entradas y salidas antes de construir y deja escrito cómo apagarlo |
 | **kit-redaccion** | `~/.claude/skills/kit-redaccion/` | Correo, minuta/acta, memo, comunicado, documentación, estatus informativo | Claude estructura el correo con un pedido claro, o la minuta con acuerdos/responsables/fechas, en vez de prosa suelta |
 | **kit-orquestacion** | `~/.claude/skills/kit-orquestacion/` | Repartir trabajo entre varios agentes: barridos, auditorías, "ultracode", varios ángulos | Antes de lanzar agentes, Claude declara quién lee y quién escribe, cuántos agentes y cómo se verifica — o explica por qué no conviene repartir |
+| **kit-modelo-negocio** | `~/.claude/skills/kit-modelo-negocio/` | Diseñar, evaluar o actualizar un modelo de negocio: canvas, segmentos, mapa de empatía, P&L del modelo | Propone varias hipótesis y las revisa con `coherencia.py`; antes de entregar corre `economia_unitaria.py`, `revisar_promesas.py` y, si hay Excel, `revisar_pl.py` (en pi, la compuerta de verificadores lo exige) |
 | **Subagentes** (`agents/`) | `~/.claude/agents/` | Cuando Claude delega: verificar cifras, evaluar en council, leer un entregable como su destinatario, o integrar varios veredictos | Pides verificar un análisis y corre `verificador` (Sonnet) en vez del modelo principal; antes de mandar un deck, `lector-fresco` reporta qué no se entiende; tras un council, `sintetizador` integra los veredictos |
 | **Contexto** (`contexto/*.md`: empresa y personal) | `~/.claude/contexto/` (cada plantilla solo se instala si no existe) | Antes de cualquier trabajo sustantivo | Claude usa tu tono, glosario y marca sin que se lo repitas cada vez |
 | **Hook de contexto** (`hooks/kit-chema-contexto.sh`) | `~/.claude/hooks/` más una entrada `SessionStart` en `settings.json` (se instala por defecto) | Al abrir o reanudar cada sesión, antes del primer turno | Al iniciar una conversación nueva Claude ya conoce tu empresa, tono y proyectos sin que pegues nada; si te pregunta datos que están en `~/.claude/contexto/`, el hook no cargó (revisa la entrada `SessionStart` en `settings.json` y que exista `python3`). Si defines `CLAUDE_CONFIG_DIR`, el hook lee `$CLAUDE_CONFIG_DIR/contexto/` y nunca `~/.claude/contexto/`: en cada perfil inyecta solo la carpeta de ese perfil |
@@ -38,7 +39,7 @@ pieza, dónde queda y cómo notas que actúa.
 | **Hook sello-push** (`hooks/sello-push.sh`) | `~/.claude/hooks/` más una entrada `PreToolUse` (opt-in, `KIT_GATE=s`; se activa por repo con `sello-push.sh activar`) | Antes de un `git push` en un repo con el gate activo | El push sin sello de revisión se bloquea; `/revisar-antes-de-subir` produce el sello |
 | **COMO-PEDIR.md** | Se queda en el repo; no se instala en `~/.claude/` | Cuando tú redactas una petición | No cambia el comportamiento de Claude: te ayuda a ti a pedir mejor (anatomía de la petición, plantillas, palabras clave) |
 
-Las nueve skills viven en `~/.claude/skills/` y Claude elige cuál usar por su
+Las diez skills viven en `~/.claude/skills/` y Claude elige cuál usar por su
 `description`: no tienes que nombrarlas, basta con describir la tarea.
 
 Una nota sobre ese mecanismo: el listado de skills que Claude ve tiene un
@@ -150,7 +151,7 @@ Desde v1.2 el kit se puede instalar de dos formas, y ambas funcionan:
 
 - **(A) Como plugin de Claude Code.** Dentro de Claude Code:
   `/plugin marketplace add chemaw8/claude-kit-chema` y luego
-  `/plugin install kit-chema@kit-chema`. El plugin empaqueta las **9 skills**, los
+  `/plugin install kit-chema@kit-chema`. El plugin empaqueta las **10 skills**, los
   subagentes, los comandos y los **cinco hooks** (contexto, anti-secretos, rutas-fantasma,
   backstop-cierre y sello-push; el último solo actúa en repos con el gate activo).
   Con el plugin, las skills se invocan con namespace

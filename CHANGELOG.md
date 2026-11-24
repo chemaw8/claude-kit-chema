@@ -1,6 +1,10 @@
 # Changelog — Kit Chema
 
 ## Sin publicar
+
+## v1.36.2 — 2026-11-24
+`revisar_promesas.py` en `kit-modelo-negocio` y la skill documentada en el INSTRUCTIVO y en COMO-PEDIR.
+- **Documentación:** `kit-modelo-negocio` entra a la tabla de piezas del INSTRUCTIVO y tiene plantilla en COMO-PEDIR.
 - **`kit-modelo-negocio`:** `revisar_promesas.py` busca promesas absolutas afirmadas («24/7», «ilimitado», «atención inmediata»…) en el texto del entregable, sin necesidad del JSON de hipótesis; la skill lo declara como verificador (`@entregable`). Calibrado con las cuatro hojas del juez del caso 22: 4/4. En el A/B de la compuerta de pi (2026-11-24) la promesa «24/7» falló en todas las corridas porque C9 solo corría con JSON.
 
 ## v1.36.1 — 2026-11-24

@@ -109,6 +109,12 @@ tienes que usar todos; cuantos más completes, mejor sale.
 > Formato: [entregable: script corriendo / PR (propuesta de cambios lista para revisión) / explicación].
 > Está bien si [criterio, p. ej. pasa estos casos]. Fecha: [límite].
 
+**Modelo de negocio**
+> Arma [o actualiza] el modelo de negocio de [producto/línea] para decidir [con qué segmento y socio arrancamos / si da].
+> Contexto: [carpeta con notas de junta, costos, encuesta, contratos; versión previa si existe].
+> Formato: [canvas con hipótesis comparadas + economía por unidad + P&L en Excel + resumen para dirección].
+> Está bien si [criterio, p. ej. sé cuánto dinero hay que poner y qué supuesto validar primero]. Fecha: [límite].
+
 **Propuestas**
 > Prepara una propuesta de [qué] para [quién decide].
 > Contexto: [situación, restricciones, presupuesto].
