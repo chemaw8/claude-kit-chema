@@ -127,7 +127,7 @@ PROCESO = re.compile(r"^(#{1,6}\s*)?\**(antes de (subir|presentar|enviar|entrega
                      r"c[oó]mo lo (hice|verifiqu[eé]|calcul[eé])|(revis[é]|recalcul[é]|verifiqu[é]|comprob[é]) (todas )?(las )?(cifras|n[uú]meros|c[aá]lculos)\b|"
                      r"(abajo|aqu[ií]) (va|est[aá]|tienes) (el|la|tu) (guion|discurso|documento|borrador|versi[oó]n|one.?pager|brief|informe))", re.I | re.M)
 ACOTACION = re.compile(r"^\[\s*(pausa|silencio|aplausos?|risas|cambio de l[aá]mina|l[aá]mina|apertura|cierre|\d{1,2}:\d\d)", re.I)   # acotación escénica, no hueco
-PREAMBULO = re.compile(r"(el|la|tu|aqu[ií]|ya) [^\n#]{0,40}(ya )?(est[aá] (escrit|list)|qued[oó]|pas[oó] el verificador|va (abajo|a continuaci[oó]n))[^\n]*", re.I)
+PREAMBULO = re.compile(r"(el|la|tu|aqu[ií] (va|est[aá]) (el|la|tu)) (one.?pager|discurso|guion|brief|documento|informe|estatus|borrador|texto|versi[oó]n|exposici[oó]n)\b[^\n#]{0,40}(est[aá] (escrit|list)|qued[oó]|pas[oó] el verificador|va (abajo|a continuaci[oó]n))[^\n]*", re.I)   # sello: exige el nombre del entregable
 NO_CIERRE = re.compile(r"(de d[oó]nde|fuentes|referencias|anexo|origen de)", re.I)
 
 
