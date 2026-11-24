@@ -95,7 +95,7 @@ que abre la estructura y el orden bloquean; las demás faltantes solo avisan. El
 origen de las cifras (si la estructura lo lleva), que haya una fecha absoluta (aviso) y el relleno (aviso a partir de
 varias frases). En estructuras para presentar en vivo (propuesta-challenger, discurso, exposición) revisa secciones, orden, título,
 largo, huecos de plantilla sin llenar y relleno. En todas: cifra en las dos primeras oraciones, huecos entre corchetes
-o «por definir», notas de proceso dentro del entregable (alta) y fecha del cierre (aviso). Que el cierre tenga responsable y que no haya relleno suelto se revisa además a ojo.
+o «por definir», notas de proceso dentro del entregable (alta) y fecha del cierre (aviso; no en discurso ni académico). Que el cierre tenga responsable y que no haya relleno suelto se revisa además a ojo.
 
 1. El título es la conclusión, no el tema: «Cerrar la tienda X ahorra $1.2 M al año», no «Análisis de tiendas».
 2. Una idea por lámina proyectada (≤60 palabras); lo denso va a un documento de lectura (≤ ~6 páginas, anexos aparte).
@@ -133,7 +133,7 @@ Una persona inventada o un «Imagina un mundo donde…» es el mismo relleno con
 - [ ] En un estatus, la decisión pendiente está en las dos primeras oraciones; en vivo, la petición se anuncia en la segunda.
 - [ ] La cifra decisiva está en la primera o segunda oración; el cierre tiene rol y fecha (propuesta, si hace falta).
 - [ ] Ningún dato, causa, promesa ni moneda que el insumo no traiga; ningún verbo que exagere la cifra.
-- [ ] Revisé a ojo que no quede relleno (el script avisa solo cuando ya son varias frases); ningún caso o cifra inventados.
+- [ ] Revisé a ojo que no quede relleno (una señal fuerte de `muletillas.sh` ya bloquea; las de densidad solo avisan); ningún caso o cifra inventados.
 
 ## Límites honestos
 
