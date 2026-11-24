@@ -306,7 +306,7 @@ def main() -> int:
             r += [x for x in revisar_documento(e.get("texto") or "") if x["regla"] in comunes]
         else:
             r += [x for x in revisar_documento(e.get("texto") or "") if x["regla"] in ("titulo_conclusion", "relleno")]
-        r += revisar_arranque_cierre(e.get("texto") or "", academico=e["estructura"] == "academico")
+        r += revisar_arranque_cierre(e.get("texto") or "", academico=e["estructura"] in ("academico", "discurso"))   # discurso: la fecha que falta no se dice al público
         if not e.get("sin_muletillas"): r += muletillas(e.get("texto") or "")
         print(json.dumps({"hallazgos": r, "pasa": not any(x["gravedad"] == "alta" for x in r)}, ensure_ascii=False)); return 0
     f = (e.get("formato") or "").lower().replace("ó", "o")

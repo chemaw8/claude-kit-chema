@@ -57,7 +57,7 @@
       [
         "Conclusión",
         "conclusi|resumen ejecutivo|bottom line|bluf",
-        "En una o dos oraciones: cómo va y qué se pide."
+        "Dos oraciones. La primera: semáforo y el riesgo con su cifra («Ámbar: faltan 7 de 38 controles y la auditoría es el 2027-02-20»). La segunda: lo que se pide decidir y antes de cuándo («Pedimos decidir antes del … entre A y B»); si no hay decisión, dilo."
       ],
       [
         "Semáforo",
@@ -90,12 +90,12 @@
     "uso": "Una página para presentar una idea o propuesta",
     "modo": "lectura",
     "fuente": "Minto + lenguaje llano (digital.gov)",
-    "max_palabras": 500,
+    "max_palabras": 450,
     "secciones": [
       [
         "Propuesta",
         "propuesta|recomendaci|qu[eé] proponemos|proposal",
-        "La idea en una oración, con su cifra."
+        "La idea en una oración con el dato del insumo que la motiva (lo que hoy cuesta o duele, tal como viene); tu cálculo va en «Cifras». Todo el one-pager en ≤450 palabras."
       ],
       [
         "Problema",

@@ -36,7 +36,9 @@ Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_RO
 - **En vivo** (lo presentas): tensión; la solución se desarrolla al final (Duarte, Monroe, Challenger). Pero la
   petición se anuncia arriba: después del saludo, la primera oración da el logro o el problema con su cifra y la segunda
   dice qué vas a pedir («Hoy les vengo a pedir dos cosas: …»). El público que no oye la petición al principio no
-  escucha el resto como argumento. Al final se repite con fecha y responsable.
+  escucha el resto como argumento. Al final se repite con lo que hay que hacer y cómo. En un discurso no se dice al
+  público una fecha que el insumo no trae (no se puede marcar «propuesta» en voz alta): se pide la acción y se dice
+  cómo hacerla; la fecha que falta va en tu respuesta, fuera del discurso.
 
 ## Las fallas que más se repiten (A/B del 2026-11-23 y del 2026-11-24, con y sin esta skill)
 
@@ -57,7 +59,8 @@ Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_RO
    moneda, una normativa, «no habrá despidos», «es reversible», la causa de un dato, lo que la empresa «ya vende»).
    Todo dato sale del insumo. Si hace falta una estimación, va en «Supuestos» con su cálculo y marcada como estimación.
    Tampoco se exagera lo que sí está: +22 % no es «duplicar»; un título con verbo fuerte se comprueba contra la cifra.
-4. **El formato se desborda.** Un one-pager cabe en una página (≈500 palabras contando tablas) y no lleva secciones
+4. **El formato se desborda.** Un one-pager cabe en una página (apunta a 400 palabras; el verificador corta en 450,
+   contando tablas) y no lleva secciones
    extra; si sobra material, se queda fuera o va como anexo aparte, no dentro.
 5. **El cierre no tiene dueño.** La acción final nombra un responsable (un rol o área) y una fecha absoluta; «el comité
    decide», «en unas semanas», «fecha por definir» o un `[AAAA-MM-DD]` sin llenar no son cierre. Si el insumo no trae
