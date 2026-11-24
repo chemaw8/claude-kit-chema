@@ -166,7 +166,7 @@ class Estructuras(unittest.TestCase):
 
     def test_estatus_con_su_propia_guia(self):
         import re
-        t = re.sub(r"\{\{Dos oraciones\.[^}]*\}\}", "Vamos en verde; se pide ampliar el plazo al 2027-01-15.", F.plantilla("estatus"))
+        t = re.sub(r"\{\{En una o dos oraciones[^}]*\}\}", "Vamos en verde; se pide ampliar el plazo al 2027-01-15.", F.plantilla("estatus"))
         self.assertIn("se pide ampliar", t)   # la guía cambió en v7: la prueba debe reemplazarla de verdad
         self.assertNotIn("conclusion_primero", [x["regla"] for x in F.revisar_documento(t)])
 
