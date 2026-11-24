@@ -697,6 +697,7 @@ una sola copia de pi, v1.34.3). Vigilancia: v1.33 hasta 2027-01-07, v1.32 hasta 
       que exija sello del sha empujado (la «esclusa» con `pre-receive` de la spec 002, que no obedece `--no-verify`).
       Decide el dueño; (b) entra por PR + council.
 > bajo: - [ ] Vigilancia v1.33 hasta el 2027-01-07 (`reglas-vigiladas.json`, id `kit-v1.33-buscar-lo-hecho`): suspensión con 1
+      lectura fuera de las áreas de trabajo o 1 uso de datos de otro cliente; retiro con ≥2 reincorporaciones o falsas
       pérdidas que el dueño corrija en 30 días. Re-medir las trampas si cambia el modelo productor.
 - [ ] Vigilancia v1.32 hasta el 2026-11-07: clasificar a mano las correcciones «¿quedó o no?» que agrupe el juez; se
       retira con ≥2 confirmadas por el dueño.
