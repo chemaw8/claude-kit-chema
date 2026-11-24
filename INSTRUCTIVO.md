@@ -151,7 +151,7 @@ Desde v1.2 el kit se puede instalar de dos formas, y ambas funcionan:
 
 - **(A) Como plugin de Claude Code.** Dentro de Claude Code:
   `/plugin marketplace add chemaw8/claude-kit-chema` y luego
-  `/plugin install kit-chema@kit-chema`. El plugin empaqueta las **9 skills**, los
+  `/plugin install kit-chema@kit-chema`. El plugin empaqueta las **10 skills**, los
   subagentes, los comandos y los **cinco hooks** (contexto, anti-secretos, rutas-fantasma,
   backstop-cierre y sello-push; el último solo actúa en repos con el gate activo).
   Con el plugin, las skills se invocan con namespace
