@@ -214,6 +214,10 @@ class ArranqueYCierre(unittest.TestCase):
                 self.assertNotIn(("proceso_colado", "alta"), self.reglas(f"# T\n\nSube 3 %.\n\n{t}\n"))
         self.assertIn(("proceso_colado", "alta"), self.reglas("# T\n\nSube 3 %.\n\nAbajo va el guion.\n"))
 
+    def test_preambulo_antes_del_entregable_es_proceso(self):
+        self.assertIn(("proceso_colado", "alta"), self.reglas("El one-pager ya está escrito y pasó el verificador.\n\n# T\n\nSube 3 %.\n"))
+        self.assertNotIn(("proceso_colado", "alta"), self.reglas("# La meta ya está escrita: 85 puntos\n\nSube 3 %.\n"))
+
     def test_proceso_colado_es_alta(self):
         self.assertIn(("proceso_colado", "alta"), self.reglas("# T\n\nSube 3 %.\n\n## Antes de subir al escenario\nRevisé las cifras.\n"))
 

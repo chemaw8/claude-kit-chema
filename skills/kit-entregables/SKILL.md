@@ -42,10 +42,16 @@ Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_RO
    decisión **y la cifra que la sostiene**: «Recomiendo cambiar de paquetería: el costo por envío baja de $41 a $33». La
    recomendación sola, sin su número, no basta; el número aparte en una tabla más abajo, tampoco. Fue la falla más
    frecuente aun con la skill puesta: casi siempre la cifra decisiva estaba en la **tercera** oración, o la que abría
-   era otra cifra (la fecha, el contexto). Elige la cifra que haría cambiar de opinión al lector y ponla en la primera.
+   era otra cifra (la fecha, el contexto). La cifra que abre es la **del insumo** que motiva la decisión, tal como viene
+   (la demanda contra la capacidad, el antes y el después del piloto), no un cálculo tuyo: «Recomiendo X: pedimos 2,300 y
+   cabemos 2,000»; tu cálculo (costo comparado, punto de equilibrio) va después. En un estatus, las dos primeras oraciones
+   dicen cómo va **y** qué hay que decidir; la decisión en la tercera oración ya no cuenta.
 2. **Se cuela el proceso.** El entregable empieza con el contenido. Nada de «abajo va el guion», «recalculé con un
-   script», notas del verificador, estados de trabajo ni metacomentarios: eso va en tu respuesta, fuera del entregable.
-3. **Se agregan datos que el insumo no trae** (fases, fechas «por ejemplo», rangos de costo, distancias, nombres, la
+   script», notas del verificador, estados de trabajo ni metacomentarios. Si tu respuesta ES el entregable (no lo guardas
+   en un archivo para el usuario), no le antepongas nada: ni «el one-pager ya está escrito» ni advertencias para quien
+   lo pidió, ni «Notas para ti» al final. Las advertencias que importan al lector van dentro («Lo que no se puede
+   concluir», riesgos); las que solo importan a quien lo pidió no van. Un preámbulo también cuenta para el largo.
+3. **Se agregan datos que el insumo no trae** (una fuente que no nombra, como «según el reporte del proyecto»; fases, fechas «por ejemplo», rangos de costo, distancias, nombres, la
    moneda, una normativa, «no habrá despidos», «es reversible», la causa de un dato, lo que la empresa «ya vende»).
    Todo dato sale del insumo. Si hace falta una estimación, va en «Supuestos» con su cálculo y marcada como estimación.
    Tampoco se exagera lo que sí está: +22 % no es «duplicar»; un título con verbo fuerte se comprueba contra la cifra.
@@ -99,7 +105,8 @@ Una persona inventada o un «Imagina un mundo donde…» es el mismo relleno con
 
 1. Elige la estructura por el objetivo del encargo. Si duda entre dos, la de lectura si alguien lo leerá sin ti.
 2. Escribe con la plantilla: secciones en ese orden, con la guía de cada una.
-3. Guarda el texto en un archivo y verifícalo antes de entregar:
+3. Guarda el texto en un archivo de tu carpeta de trabajo (no en `/tmp`, que puede estar fuera de tus permisos) y
+   verifícalo antes de entregar:
    `python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/kit-entregables/scripts/firma.py" --estructura estatus entregable.md`
    Si algo sale con gravedad «alta», corrígelo y vuelve a verificar. Además de secciones y orden, marca `cifra_arranque`
    (las dos primeras oraciones sin cifra), `hueco_sin_llenar`, `proceso_colado` (notas para ti dentro del entregable)

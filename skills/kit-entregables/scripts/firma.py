@@ -127,6 +127,7 @@ PROCESO = re.compile(r"^(#{1,6}\s*)?\**(antes de (subir|presentar|enviar|entrega
                      r"c[oó]mo lo (hice|verifiqu[eé]|calcul[eé])|(revis[é]|recalcul[é]|verifiqu[é]|comprob[é]) (todas )?(las )?(cifras|n[uú]meros|c[aá]lculos)\b|"
                      r"(abajo|aqu[ií]) (va|est[aá]|tienes) (el|la|tu) (guion|discurso|documento|borrador|versi[oó]n|one.?pager|brief|informe))", re.I | re.M)
 ACOTACION = re.compile(r"^\[\s*(pausa|silencio|aplausos?|risas|cambio de l[aá]mina|l[aá]mina|apertura|cierre|\d{1,2}:\d\d)", re.I)   # acotación escénica, no hueco
+PREAMBULO = re.compile(r"(el|la|tu|aqu[ií]|ya) [^\n#]{0,40}(ya )?(est[aá] (escrit|list)|qued[oó]|pas[oó] el verificador|va (abajo|a continuaci[oó]n))[^\n]*", re.I)
 NO_CIERRE = re.compile(r"(de d[oó]nde|fuentes|referencias|anexo|origen de)", re.I)
 
 
@@ -153,7 +154,7 @@ def revisar_arranque_cierre(texto: str, academico: bool = False) -> list[dict]:
     m = next((x for x in HUECO.finditer(texto) if not ACOTACION.search(x.group(0))), None)
     if m:
         out.append(h("hueco_sin_llenar", "alta", "documento", f"hueco sin llenar «{m.group(0)[:40]}»: pon un responsable (rol) y una fecha propuesta marcada «(propuesta)»"))
-    m = PROCESO.search(texto)
+    m = PROCESO.search(texto) or PREAMBULO.match(texto.lstrip())
     if m:
         out.append(h("proceso_colado", "alta", "documento", f"«{m.group(0).strip()[:50]}»: notas de proceso o para quien presenta van en tu respuesta, fuera del entregable"))
     if not academico:
