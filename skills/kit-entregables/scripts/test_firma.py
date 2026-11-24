@@ -139,7 +139,7 @@ class Estructuras(unittest.TestCase):
         self.assertIn("conclusion_primero", [x["regla"] for x in F.revisar_documento(t)])
         d = tempfile.TemporaryDirectory(); self.addCleanup(d.cleanup)
         ruta = d.name + "/e.md"
-        with open(ruta, "w") as f: f.write(t)
+        with open(ruta, "w", encoding="utf-8") as f: f.write(t)
         f = type("F", (), {"name": ruta})
         viejo = sys.argv; sys.argv = ["firma.py", "--estructura", "informe-decision", f.name]; buf = io.StringIO()
         try:
