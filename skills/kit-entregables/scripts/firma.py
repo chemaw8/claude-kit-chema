@@ -121,10 +121,11 @@ def secciones(texto: str) -> list[tuple[str, str]]:
 MESES = r"(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)"
 FECHA_CIERRE = re.compile(FECHA.pattern + r"|\b" + MESES + r"( de)? 20\d\d\b|\b(semana|trimestre) \d", re.I)
 SALUDO = re.compile(r"^(buen[oa]s? (d[ií]as|tardes|noches)|hola|gracias|muchas gracias|good (morning|afternoon|evening))\b[^.!?]*[.!?]?\s*", re.I)
-HUECO = re.compile(r"\[[^\]\n]{2,}\](?!\()|\b(por (definir|confirmar|asignar)|a definir|tbd|aaaa-mm-dd|dd/mm)\b", re.I)
+# hueco de plantilla: corchete con letras que no es enlace ([t](u), [t][1]), nota ([^1]) ni cita ([12], [Pérez 2020]) (sello)
+HUECO = re.compile(r"(?<!\])\[(?!\^)(?![^\]\n]*\b(1[5-9]|20)\d\d\])(?=[^\]\n]*[A-Za-zÁÉÍÓÚÑáéíóúñ])[^\]\n]{2,}\](?![(\[])|\b(por (definir|confirmar|asignar)|a definir|tbd|aaaa-mm-dd|dd/mm)\b", re.I)
 PROCESO = re.compile(r"^(#{1,6}\s*)?\**(antes de (subir|presentar|enviar|entregar)|notas? (para|del|de la) (ti|quien|presentador|orador|verificador|autor)|"
-                     r"c[oó]mo lo (hice|verifiqu[eé]|calcul[eé])|(revis[eé]|recalcul[eé]|verifiqu[eé]|comprob[eé]) (todas )?(las )?(cifras|n[uú]meros|el)|"
-                     r"abajo (va|est[aá]|tienes)|aqu[ií] (va|est[aá]|tienes))", re.I | re.M)
+                     r"c[oó]mo lo (hice|verifiqu[eé]|calcul[eé])|(revis[é]|recalcul[é]|verifiqu[é]|comprob[é]) (todas )?(las )?(cifras|n[uú]meros|c[aá]lculos)\b|"
+                     r"(abajo|aqu[ií]) (va|est[aá]|tienes) (el|la|tu) (guion|discurso|documento|borrador|versi[oó]n|one.?pager|brief|informe))", re.I | re.M)
 ACOTACION = re.compile(r"^\[\s*(pausa|silencio|aplausos?|risas|cambio de l[aá]mina|l[aá]mina|apertura|cierre|\d{1,2}:\d\d)", re.I)   # acotación escénica, no hueco
 NO_CIERRE = re.compile(r"(de d[oó]nde|fuentes|referencias|anexo|origen de)", re.I)
 

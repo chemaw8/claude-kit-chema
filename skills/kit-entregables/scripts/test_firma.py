@@ -204,6 +204,16 @@ class ArranqueYCierre(unittest.TestCase):
         r = self.reglas("# T\n\nSube 3 %. [Pausa] Ver [fuente](http://x).\n\n## Paso\nOps, 15 de enero de 2027.\n")
         self.assertEqual(r, set())
 
+    def test_citas_y_notas_no_son_hueco(self):
+        r = self.reglas("# T\n\nSube 12 % [12] y 3 % [1, 2] [Pérez 2020] [^1] [texto][1].\n\n## Paso\nOps, 15 de enero de 2027.\n")
+        self.assertNotIn(("hueco_sin_llenar", "alta"), r)
+
+    def test_frase_normal_no_es_proceso(self):
+        for t in ("Aquí está la diferencia: 18 % contra 24 %.", "Revisé el estado de resultados de 2026.", "Revise el contrato."):
+            with self.subTest(t):
+                self.assertNotIn(("proceso_colado", "alta"), self.reglas(f"# T\n\nSube 3 %.\n\n{t}\n"))
+        self.assertIn(("proceso_colado", "alta"), self.reglas("# T\n\nSube 3 %.\n\nAbajo va el guion.\n"))
+
     def test_proceso_colado_es_alta(self):
         self.assertIn(("proceso_colado", "alta"), self.reglas("# T\n\nSube 3 %.\n\n## Antes de subir al escenario\nRevisé las cifras.\n"))
 

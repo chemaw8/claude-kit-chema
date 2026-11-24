@@ -37,7 +37,7 @@ Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_RO
 ## Las fallas que más se repiten (A/B del 2026-11-23 y del 2026-11-24, con y sin esta skill)
 
 1. **El arranque no trae el porqué.** Las dos primeras oraciones (después del saludo, si es un discurso) dicen la
-   decisión **y la cifra que la sostiene**: «Recomiendo abrir WhatsApp: la recuperación subió de 18.4 % a 24.1 %». La
+   decisión **y la cifra que la sostiene**: «Recomiendo cambiar de paquetería: el costo por envío baja de $41 a $33». La
    recomendación sola, sin su número, no basta; el número aparte en una tabla más abajo, tampoco. Fue la falla más
    frecuente aun con la skill puesta: casi siempre la cifra decisiva estaba en la **tercera** oración, o la que abría
    era otra cifra (la fecha, el contexto). Elige la cifra que haría cambiar de opinión al lector y ponla en la primera.
@@ -61,12 +61,12 @@ discursos y exposiciones. Estas construcciones se quitan aunque suenen «retóri
 
 | Construcción | Ejemplo | En su lugar |
 |---|---|---|
-| Negación y corrección | «Eso no fue suerte. Fue cada ruta.» · «No les pido un aplauso. Les pido un compromiso.» | Di solo lo que sí es: «Lo lograron 120 rutas.» |
-| Eslogan «X, no Y» | «Traigo fechas, no promesas.» | «Traigo dos fechas: febrero y abril de 2027.» |
+| Negación y corrección | «Eso no fue suerte. Fue trabajo.» · «No les pido un aplauso. Les pido un compromiso.» | Di solo lo que sí es: «Lo lograron 40 sucursales.» |
+| Eslogan «X, no Y» | «Traigo fechas, no promesas.» | «Traigo dos fechas: 3 de marzo y 2 de junio.» |
 | Fragmento enfático | «Dos.» · «De verdad.» · «Así de simple.» | Intégralo en la oración anterior o bórralo. |
 | Anáfora de tres | «Piensen en… Piensen en… Y piensen en…» | Una oración con los tres datos, o una lista. |
-| Tríada de adjetivos o cierre épico | «rápido, simple y seguro» · «Vamos por los 500,000.» | El dato que lo prueba; cierra con la petición. |
-| Palabra de folleto | robusto, integral, potenciar, ecosistema, sinergia, transformador, clave | El verbo o la cifra concretos. |
+| Tríada de adjetivos o cierre épico | «rápido, simple y seguro» · «¡Vamos por la meta!» | El dato que lo prueba; cierra con la petición. |
+| Palabra de folleto | robusto, potenciar, sinergia, transformador, holístico, de manera integral | El verbo o la cifra concretos. |
 
 Una figura retórica suelta puede servir en vivo; el problema es la densidad: si hay más de una por minuto de discurso, ya
 es plantilla. El revisor `muletillas.sh` marca las cuatro primeras (F13, F14, D6, D7) y el vocabulario (D1).
