@@ -34,6 +34,20 @@ Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_RO
 - **En vivo** (lo presentas): tensión; la solución va al final (Duarte, Monroe, Challenger). Si es para dirección, una
   línea con la conclusión arriba y luego la secuencia.
 
+## Las cinco fallas que más se repiten (A/B del 2026-11-23, con y sin esta skill)
+
+1. **El arranque no trae el porqué.** Las dos primeras oraciones (después del saludo, si es un discurso) dicen la
+   decisión **y la cifra que la sostiene**: «Recomiendo abrir WhatsApp: la recuperación subió de 18.4 % a 24.1 %». La
+   recomendación sola, sin su número, no basta; el número aparte en una tabla más abajo, tampoco.
+2. **Se cuela el proceso.** El entregable empieza con el contenido. Nada de «abajo va el guion», «recalculé con un
+   script», notas del verificador, estados de trabajo ni metacomentarios: eso va en tu respuesta, fuera del entregable.
+3. **Se agregan datos que el insumo no trae** (fases, fechas «por ejemplo», rangos de costo, distancias, nombres). Todo
+   dato sale del insumo. Si hace falta una estimación, va en «Supuestos» con su cálculo y marcada como estimación.
+4. **El formato se desborda.** Un one-pager cabe en una página (≈500 palabras contando tablas) y no lleva secciones
+   extra; si sobra material, se queda fuera o va como anexo aparte, no dentro.
+5. **El cierre no tiene dueño.** La acción final nombra un responsable (un rol o área) y una fecha absoluta; «el comité
+   decide» o «en unas semanas» no son cierre.
+
 ## Reglas comunes
 
 Una sección que no aplica se escribe «No aplica: <razón>»; nunca se inventa contenido para llenarla. Solo la sección
