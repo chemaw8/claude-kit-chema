@@ -2,6 +2,7 @@
 > Estado vivo de sesión. Hechos estables en README.md, GOBERNANZA.md y CLAUDE.md; registro histórico en docs/bitacora.md.
 
 ## Dónde vamos
+v1.36.1 en main e instalada en las dos máquinas (2026-11-24): `/cierre` exige y comprueba la línea `Vault:`
 (PR #118, council 3 familias con cambios aplicados). La auditoría del núcleo (`docs/auditoria-nucleo-2026-10-19.md`)
 sigue vigente: lo que falla en la práctica es afirmar sin respaldo.
 
