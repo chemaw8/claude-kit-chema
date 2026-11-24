@@ -167,6 +167,6 @@ informe con láminas (26) y propuesta (14, 27) siguen en su skill de dominio: la
   fronteras (31 y 32 se iban a kit-propuestas). Se nombró el formato en la description («brief de decisión o para un
   comité»): núcleo 21/21, 0 confusiones, PASA.
 - 2026-11-24 (description de v3, d954f96: se carga junto con la del dominio): disparo real con `disparo.sh`
-  (núcleo instalado v1.36.1 —la de main, publicada el 2026-11-24; esta rama aún sale de v1.35.3— vía `DISPARO_NUCLEO`, plugin de esta rama, opus, 3 corridas): kit-entregables 3/3 en 31–33
+  (núcleo instalado v1.36.1 vía `DISPARO_NUCLEO`, plugin de esta rama, opus, 3 corridas): kit-entregables 3/3 en 31–33
   y no aparece en ninguna fila ajena; total 83/99. Las filas 1 y 11 bajan sin cargar ninguna skill (no es confusión con
   la nueva). Gate de `disparo.py --modelo sonnet` con esta description (2026-11-24): núcleo 21/21, 0 confusiones, PASA.
