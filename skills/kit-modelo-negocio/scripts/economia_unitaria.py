@@ -96,7 +96,9 @@ def main(argv=None):
     else:
         print(f"{r['unidad'] or 'unidad'}: precio sin IVA ${r['precio_sin_iva']:,.2f} · contribución ${r['contribucion']:,.2f} · "
               f"equilibrio ${r['precio_equilibrio']:,.2f} {'con IVA' if r['precio_equilibrio_con_iva'] else 'sin IVA'}"
-              + (f" · CLTV ${r['cltv']:,.2f}" if "cltv" in r else ""))
+              + (f" · CLTV ${r['cltv']:,.2f}" if "cltv" in r else "")
+              + (f" · CAC ${r['cac_total']:,.2f} (comisión de alta ${r['comision_alta']:,.2f})" if "cac_total" in r else "")
+              + (f" · recupera en {r['meses_recuperar_cac']} meses" if r.get("meses_recuperar_cac") else ""))
         for c, m in errores:
             print(f"  ✗ {c} {m}")
         for c, m in avisos:
