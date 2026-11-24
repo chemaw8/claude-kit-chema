@@ -6,7 +6,7 @@ description: 'Estándar Kit Chema para diseñar, evaluar o actualizar un modelo 
 
 # Modelo de negocio: estándar Kit Chema
 
-<!-- pih-verificadores: scripts/economia_unitaria.py@cifras scripts/revisar_pl.py@libro scripts/coherencia.py@json -->
+<!-- pih-verificadores: scripts/economia_unitaria.py@cifras scripts/revisar_pl.py@libro scripts/coherencia.py@json scripts/revisar_promesas.py@entregable -->
 
 
 El agente no llena un canvas: **propone hipótesis completas, prueba que concuerden, las compara y recomienda una**,
@@ -33,6 +33,9 @@ sale con código 1 si algo choca (pruebas: `scripts/test_coherencia.py`):
 | C7 | El cliente paga o se informa por un medio que los cobros o canales no cubren |
 | C8 | Forma mínima (ids, nombres, textos), referencias rotas y duplicados; un elemento huérfano es aviso |
 | C9 | Una promesa absoluta (24/7, ilimitado, garantizado, siempre) sin la capacidad «capacidad_…» que la cumple |
+
+En el texto del entregable, sin JSON: `python3 scripts/revisar_promesas.py <entregable.md>` falla si queda una promesa
+absoluta afirmada (quitarla, reescribirla a lo que sí se cumple o declarar la capacidad en la misma línea).
 
 Si una hipótesis no concuerda, se dice qué choca y se propone la variante que lo resuelve. Lo que no se puede
 tipificar (reputación, calendario, economía) va como **juicio** escrito con su evidencia.
