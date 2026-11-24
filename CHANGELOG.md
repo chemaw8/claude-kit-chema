@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- `/cierre` ya no deja el vault a criterio sin rastro: `CONTINUAR.md` lleva siempre la línea `Vault: actualizado` (con la ruta de la nota entre backticks) o `Vault: sin cambios — <razón>`. Subcomando nuevo `rotar-continuar.sh vault` lo comprueba (la nota existe, está commiteada en `~/vault` y es de la fecha del cierre) y `backstop-cierre` bloquea una vez al salir si el cierre no lo resolvió. No escribe notas. Motivo: medido el 2026-11-24, 11 de 19 proyectos con commits en el mes tenían la nota del vault más vieja que su último commit.
+
 ## v1.36.0 — 2026-11-23
 Skill nueva `kit-modelo-negocio` (permanente por decisión del dueño) y arreglos de anti-secretos y del instalador del entorno.
 - **`kit-modelo-negocio` vuelve al kit de forma permanente** por decisión del dueño (DECISIONES 2026-11-23), que deja sin efecto el criterio de retiro: en el caso dorado 03 empató con el kit sin ella (87.27 contra 87.27) y costó 28% menos. Ya no es experimental. Sus filas del banco de disparo pasan a 40-47.
