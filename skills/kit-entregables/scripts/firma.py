@@ -251,6 +251,8 @@ def main() -> int:
             with open(sys.argv[3], encoding="utf-8") as f: texto = f.read()
         except OSError as e:
             print(f"no pude leer {sys.argv[3]}: {e.strerror}", file=sys.stderr); return 1
+        except UnicodeDecodeError:
+            print(f"no pude leer {sys.argv[3]}: no está en UTF-8", file=sys.stderr); return 1
         sys.stdin = io.StringIO(json.dumps({"estructura": sys.argv[2], "texto": texto}))
     if len(sys.argv) >= 2 and sys.argv[1] == "--catalogo":
         for k, v in ESTRUCTURAS.items(): print(f"{k:22} {v['modo']:8} {v['uso']} — {v['fuente']}")
