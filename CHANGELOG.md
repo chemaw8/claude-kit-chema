@@ -21,7 +21,7 @@
   encargo no trae (alta en discurso y exposición) y avisa de cifras que no salen tal cual en vivo; el discurso no inventa
   plazos, mecanismos ni anécdotas.
 - **`kit-entregables` v9:** estructuras `postmortem` (sin culpables, Google SRE cap. 15 y apéndice D) y `pr-faq`
-  (Amazon, *Working Backwards*). `muletillas.sh` suma D10 (calcos y errores de norma: «en base a», «a nivel de»,
+  (Amazon, *Working Backwards*). `muletillas.sh` suma D10 (calcos y errores de norma: «en base a»,
   «impactar», «es por eso que», dequeísmo, quesuismo), D11 (pasiva con «por») y D12 (gerundio al final), según el
   *Libro de estilo* de la UAM; en los 270 entregables de los A/B no aparecieron: son guardia, no mejora medida.
 - **Anti-secretos, falso positivo de `sk-`:** el formato de llave `sk-…` solo cuenta al inicio de una palabra. Un nombre con un «sk-» interior seguido de 20 caracteres o más (por ejemplo `magisk-patched-…`) bloqueaba commits sin credenciales. La llave real sigue bloqueando al inicio del renglón y tras `=`, `:`, espacio, comilla, paréntesis o `_` (pruebas nuevas en `hooks/test-anti-secretos.sh`). También bloquea tras un salto escapado (`\n`, `\r`, `\t`) o un byte codificado de URL (`%3D`), hueco que señaló el council del PR. El patrón de asignaciones no cambia.
