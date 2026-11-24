@@ -81,6 +81,8 @@ espera "sin vault (rc 3) → no bloquea" "$(BACKSTOP_VAULT='exit 3' corre "$PROY
 espera "helper viejo sin el subcomando (rc 2) → no bloquea" "$(BACKSTOP_VAULT='exit 2' corre "$PROY" false 0)" ""
 export SID="v3"; : > "$TR"
 espera "sin trabajo en la sesión no pide vault" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" ""
+export SID="v4"; cont "$PROY" > "$TR"
+espera "solo se editó CONTINUAR (sin trabajo real) → no pide vault" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" ""
 
 echo "integración con el helper REAL (repo git temporal):"
 if [ -x "$ROTAR_REAL" ] && command -v git >/dev/null; then
