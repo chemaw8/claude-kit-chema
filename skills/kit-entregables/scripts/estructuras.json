@@ -1,0 +1,416 @@
+{
+  "_nota": "Kit Chema, kit-entregables: estructura por tipo × objetivo, de autores reconocidos. Cada sección: nombre, patrón para reconocer su encabezado (es/en) y guía. El ORDEN es parte de la regla. «lectura» = conclusión primero (BLUF); «en_vivo» = tensión, conclusión al final. Precedencia: la skill del dominio manda (kit-propuestas para pedir aprobación o vender; kit-redaccion para estatus que solo informa). Una sección que no aplica se escribe «No aplica: <razón>»; solo la primera sección y el orden bloquean.",
+  "informe-decision": {
+    "uso": "Informe que lleva a dirección una decisión ya recomendada (para pedir aprobación con opciones y reversibilidad, kit-propuestas manda)",
+    "modo": "lectura",
+    "fuente": "Minto (pirámide, SCQ); BLUF (AR 25-50)",
+    "max_palabras": 3000,
+    "secciones": [
+      [
+        "Recomendación",
+        "recomendaci|conclusi|recommend|bottom line",
+        "Qué hacer, quién y para cuándo. Una o dos oraciones."
+      ],
+      [
+        "Situación y complicación",
+        "situaci|contexto y problema|complicaci|situation|complication",
+        "Lo que todos aceptan y lo que cambió; en 3–5 líneas."
+      ],
+      [
+        "Por qué",
+        "por qu[eé]|razones|why|reasons",
+        "Razones agrupadas, sin traslape, de la más fuerte a la más débil, cada una con su cifra."
+      ],
+      [
+        "Opciones",
+        "opciones|alternativas consideradas|options",
+        "Al menos dos reales, con costo, beneficio y riesgo."
+      ],
+      [
+        "Supuestos y alternativas",
+        "supuestos|assumptions",
+        "Cada elección del insumo y qué cambiaría con la otra."
+      ],
+      [
+        "Lo que no se puede concluir",
+        "no se puede concluir|l[ií]mites|limitaciones|cannot conclude|limitations",
+        "Qué no sostiene el dato y por qué."
+      ],
+      [
+        "Siguiente paso",
+        "siguiente paso|pr[oó]ximos pasos|next step",
+        "Acción · responsable · fecha absoluta."
+      ],
+      [
+        "De dónde sale cada cifra",
+        "de d[oó]nde sale|fuentes|origen de|where it comes from|sources",
+        "Cifra: fuente y fecha de corte."
+      ]
+    ]
+  },
+  "estatus": {
+    "uso": "Avance o estatus a dirección",
+    "modo": "lectura",
+    "fuente": "BLUF (AR 25-50); semáforo: práctica de gestión de proyectos",
+    "max_palabras": 900,
+    "secciones": [
+      [
+        "Conclusión",
+        "conclusi|resumen ejecutivo|bottom line|bluf",
+        "En una o dos oraciones: cómo va y qué se pide decidir, con su cifra. Si hay una decisión pendiente, va en la primera o la segunda oración, no después."
+      ],
+      [
+        "Semáforo",
+        "sem[aá]foro|estado por frente|status",
+        "Verde/ámbar/rojo por frente; cada ámbar o rojo con causa."
+      ],
+      [
+        "Logros",
+        "logros|avances|lo que se hizo|done|progress",
+        "Lo que se cerró desde el último reporte, con cifra."
+      ],
+      [
+        "Riesgos",
+        "riesgos|bloqueos|risks|blockers",
+        "Cada riesgo con causa, acción y responsable."
+      ],
+      [
+        "Decisiones pendientes",
+        "decisiones|se pide|pendiente de decidir|decisions",
+        "Si alguna decisión de otro frena el avance, cuál y para cuándo; «ninguna» si no hay. Pedir aprobar algo nuevo es una propuesta (kit-propuestas)."
+      ],
+      [
+        "Siguientes pasos",
+        "siguiente|pr[oó]ximos pasos|next steps",
+        "Acción · responsable · fecha."
+      ]
+    ]
+  },
+  "one-pager": {
+    "uso": "Una página para presentar una idea o propuesta",
+    "modo": "lectura",
+    "fuente": "Minto + lenguaje llano (digital.gov)",
+    "max_palabras": 450,
+    "secciones": [
+      [
+        "Propuesta",
+        "propuesta|recomendaci|qu[eé] proponemos|proposal",
+        "La idea en una oración con el dato del insumo que la motiva (lo que hoy cuesta o duele, tal como viene); tu cálculo va en «Cifras». Todo el one-pager en ≤450 palabras."
+      ],
+      [
+        "Problema",
+        "problema|oportunidad|problem|opportunity",
+        "Qué duele hoy y a quién, con un caso concreto."
+      ],
+      [
+        "Cómo funciona",
+        "c[oó]mo funciona|soluci[oó]n|how it works|solution",
+        "En 3 pasos o menos."
+      ],
+      [
+        "Cifras",
+        "cifras|n[uú]meros|impacto|numbers|impact",
+        "2 o 3 cifras con su base."
+      ],
+      [
+        "Qué pedimos",
+        "pedimos|qu[eé] pedimos|siguiente paso|the ask|next step",
+        "Acción · responsable · fecha."
+      ]
+    ]
+  },
+  "brief": {
+    "uso": "Brief de política o de decisión",
+    "modo": "lectura",
+    "fuente": "IDRC; r4d (SNSF), ≤1,500 palabras",
+    "max_palabras": 1500,
+    "secciones": [
+      [
+        "Mensajes clave",
+        "mensajes clave|resumen|key messages|summary",
+        "3 o menos, cada uno una oración."
+      ],
+      [
+        "Problema",
+        "problema|problem",
+        "Qué pasa y por qué importa ahora."
+      ],
+      [
+        "Hallazgos",
+        "hallazgos|evidencia|findings|evidence",
+        "Con su fuente."
+      ],
+      [
+        "Opciones",
+        "opciones|options",
+        "Al menos dos, con costo y riesgo."
+      ],
+      [
+        "Recomendaciones",
+        "recomendaci|recommend",
+        "Cada una con actor y plazo."
+      ],
+      [
+        "Fuentes",
+        "fuentes|referencias|sources|references",
+        "Las que sostienen los hallazgos."
+      ]
+    ]
+  },
+  "propuesta-challenger": {
+    "uso": "Propuesta comercial que replantea el problema del cliente",
+    "modo": "en_vivo",
+    "fuente": "Dixon y Adamson, The Challenger Sale (challengerinc.com)",
+    "max_palabras": 2500,
+    "secciones": [
+      [
+        "Lo que sabemos de su industria",
+        "lo que sabemos|su industria|industria|warmer|what we know",
+        "Credibilidad: retos que vemos en clientes como él, sin hablar de nosotros."
+      ],
+      [
+        "El problema visto de otra forma",
+        "replante|otra forma|reframe|lo que no se ve",
+        "La idea que cambia cómo ve su problema."
+      ],
+      [
+        "Lo que cuesta",
+        "lo que cuesta|costo de no actuar|cuesta hoy|rational|cost",
+        "El costo con datos y fuente."
+      ],
+      [
+        "Lo que significa para alguien como usted",
+        "para alguien como|impacto|historia|emotional|for someone like",
+        "Un caso concreto, no inventado."
+      ],
+      [
+        "Una forma nueva",
+        "forma nueva|nueva forma|a new way|c[oó]mo resolverlo",
+        "Cómo se resuelve, todavía sin producto."
+      ],
+      [
+        "Nuestra solución",
+        "nuestra soluci|solution|propuesta de valor|lo que ofrecemos",
+        "Aquí aparece el producto, con inversión y siguiente paso."
+      ]
+    ]
+  },
+  "propuesta-b2b": {
+    "uso": "Propuesta comercial formal por escrito",
+    "modo": "lectura",
+    "fuente": "síntesis de SPIN (Rackham) y Challenger; sin autor canónico",
+    "max_palabras": 2500,
+    "secciones": [
+      [
+        "Problema",
+        "problema|reto|problem|challenge",
+        "El problema del cliente en sus palabras."
+      ],
+      [
+        "Costo de no actuar",
+        "costo de no actuar|lo que cuesta|cost of inaction|implicaci",
+        "Cuantificado, con fuente."
+      ],
+      [
+        "Solución",
+        "soluci[oó]n|propuesta|solution",
+        "Qué hacemos y cómo."
+      ],
+      [
+        "Prueba",
+        "prueba|casos|evidencia|proof|case stud",
+        "Casos o datos con fuente."
+      ],
+      [
+        "Inversión",
+        "inversi[oó]n|precio|investment|pricing",
+        "Monto explícito y qué incluye."
+      ],
+      [
+        "Siguiente paso",
+        "siguiente paso|pr[oó]ximos pasos|next step",
+        "Acción · responsable · fecha."
+      ]
+    ]
+  },
+  "discurso": {
+    "uso": "Discurso o exposición para mover a la acción",
+    "modo": "en_vivo",
+    "fuente": "Monroe's Motivated Sequence (gvsu.edu)",
+    "max_palabras": 2500,
+    "secciones": [
+      [
+        "Atención",
+        "atenci[oó]n|apertura|attention|hook",
+        "Un dato, caso o pregunta que importe a esta audiencia."
+      ],
+      [
+        "Necesidad",
+        "necesidad|problema|need|problem",
+        "Por qué no se puede seguir igual, con cifra."
+      ],
+      [
+        "Solución",
+        "soluci[oó]n|satisfacci|plan|solution",
+        "El plan, paso a paso."
+      ],
+      [
+        "Visualización",
+        "visualizaci|c[oó]mo se ve|con y sin|visualization|imagine",
+        "El resultado con y sin la solución, con la misma métrica."
+      ],
+      [
+        "Acción",
+        "acci[oó]n|llamado|pedimos|action|call to action",
+        "Qué hacer, quién y cuándo."
+      ]
+    ]
+  },
+  "exposicion": {
+    "uso": "Exposición o keynote que contrasta el hoy con lo posible",
+    "modo": "en_vivo",
+    "fuente": "Duarte, Resonate (sparkline; duarte.com)",
+    "max_palabras": 2500,
+    "secciones": [
+      [
+        "Lo que es hoy",
+        "lo que es|hoy|what is|today",
+        "El estado actual que la audiencia reconoce."
+      ],
+      [
+        "Lo que podría ser",
+        "lo que podr[ií]a ser|podr[ií]a|what could be|could be",
+        "El contraste, con la misma métrica; alternar al menos dos veces."
+      ],
+      [
+        "Llamado a la acción",
+        "llamado|acci[oó]n|pedimos|call to action",
+        "Qué hacer ahora."
+      ],
+      [
+        "Cómo se ve el futuro",
+        "futuro|c[oó]mo se ve|el resultado|future",
+        "Cierre con la visión, no con «¿preguntas?»."
+      ]
+    ]
+  },
+  "academico": {
+    "uso": "Paper o reporte académico",
+    "modo": "lectura",
+    "fuente": "IMRaD (Sollaci y Pereira 2004)",
+    "max_palabras": 8000,
+    "secciones": [
+      [
+        "Resumen",
+        "resumen|abstract",
+        "Pregunta, método, resultado y conclusión."
+      ],
+      [
+        "Introducción",
+        "introducci|introduction",
+        "Pregunta y por qué importa."
+      ],
+      [
+        "Métodos",
+        "m[eé]todo|methods|metodolog",
+        "Cómo se hizo, reproducible."
+      ],
+      [
+        "Resultados",
+        "resultados|results",
+        "Lo que salió, sin interpretar."
+      ],
+      [
+        "Discusión",
+        "discusi[oó]n|discussion",
+        "Qué significa, límites y objeciones."
+      ],
+      [
+        "Referencias",
+        "referencias|bibliograf|references",
+        "Fuentes citadas."
+      ]
+    ]
+  },
+  "postmortem": {
+    "uso": "Postmortem sin culpables de un incidente o de un proyecto que salió mal",
+    "modo": "lectura",
+    "fuente": "Google SRE, cap. 15 y apéndice D (sre.google/sre-book/example-postmortem)",
+    "max_palabras": 2000,
+    "secciones": [
+      [
+        "Resumen",
+        "resumen|summary",
+        "Una o dos oraciones: qué falló, cuánto duró y a quién afectó, con su cifra."
+      ],
+      [
+        "Impacto",
+        "impacto|impact|afectaci",
+        "A quién y cuánto, con las cifras del encargo; lo que no se midió se dice."
+      ],
+      [
+        "Causas",
+        "causa|root cause|ra[ií]z",
+        "Causas contribuyentes del sistema o del proceso, no de personas: sin culpables (sin nombres de quien se equivocó)."
+      ],
+      [
+        "Detonante",
+        "detonante|disparador|trigger",
+        "Qué lo desató, si se distingue de la causa; si no, «No aplica: <razón>»."
+      ],
+      [
+        "Resolución",
+        "resoluci|mitigaci|resolution",
+        "Qué se hizo para contenerlo y para resolverlo."
+      ],
+      [
+        "Detección",
+        "detecci|detection",
+        "Cómo y cuándo se supo; si tardó, por qué."
+      ],
+      [
+        "Acciones",
+        "acciones|action items|pendientes",
+        "Tabla: acción, tipo (mitigar/prevenir/proceso), responsable (rol) y fecha. Ninguna sin dueño."
+      ],
+      [
+        "Lecciones",
+        "lecciones|lessons|aprendizaj",
+        "Qué salió bien, qué salió mal y dónde tuvimos suerte."
+      ],
+      [
+        "Cronología",
+        "cronolog|l[ií]nea de tiempo|timeline",
+        "Hechos con fecha y hora del encargo, en orden; sin inventar horas."
+      ]
+    ]
+  },
+  "pr-faq": {
+    "uso": "Proponer un producto o iniciativa escribiendo su comunicado de lanzamiento y las preguntas antes de construirlo",
+    "modo": "lectura",
+    "fuente": "Amazon «Working Backwards» (Bryar y Carr 2021); commoncog.com/putting-amazons-pr-faq-to-practice",
+    "max_palabras": 2500,
+    "secciones": [
+      [
+        "Comunicado",
+        "comunicado|press release|anuncio",
+        "Una página como si ya se lanzara: titular con el beneficio para el cliente, quién es el cliente, su problema, la solución y una cita del cliente marcada «(ilustrativa)». Sin cifras que el encargo no traiga."
+      ],
+      [
+        "Preguntas del cliente",
+        "preguntas (del cliente|externas)|faq externo|external faq",
+        "Lo que preguntaría el cliente: precio, disponibilidad, cómo funciona, qué no hace."
+      ],
+      [
+        "Preguntas internas",
+        "preguntas internas|faq interno|internal faq",
+        "Lo que preguntaría dirección: costo, riesgos, qué falta saber, por qué ahora, qué decidimos no hacer."
+      ],
+      [
+        "Qué pedimos",
+        "qu[eé] pedimos|siguiente paso|petici[oó]n|decisi",
+        "La decisión que se pide, con responsable y fecha."
+      ]
+    ]
+  }
+}

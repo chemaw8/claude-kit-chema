@@ -49,6 +49,11 @@ dos skills; el criterio de cero-confusiones se evalúa sobre ellas.
 | 28 | Escríbele un correo al director comercial de Farmacias X para proponerle nuestro servicio | kit-propuestas | sí (acercamiento a contacto ↔ correo) |
 | 29 | Mándale un mensaje al gerente de compras de la Aerolínea Z para agendar la demo del producto | kit-propuestas | sí (acercamiento a contacto ↔ correo) |
 | 30 | Escribe un correo al equipo con el estatus del proyecto de esta semana | kit-redaccion | sí (estatus interno ↔ acercamiento) |
+| 31 | Necesito un one-pager de la idea para pasárselo al comité | kit-entregables | sí (one-pager ↔ deck/redacción) |
+| 32 | Ármame el brief de decisión sobre si abrimos el canal de WhatsApp | kit-entregables | sí (brief ↔ propuesta) |
+| 33 | Escríbeme el discurso para el evento con los distribuidores | kit-entregables | sí (discurso ↔ deck) |
+| 34 | Escribe el postmortem de la caída del sistema de pagos del martes | kit-entregables | sí (postmortem ↔ código/redacción) |
+| 35 | Arma el PR/FAQ de la nueva app para comercios antes de construirla | kit-entregables | sí (PR/FAQ ↔ propuesta) |
 | 40 | Arma el modelo de negocio de la nueva línea de servicio: segmentos, canales y cómo cobramos | kit-modelo-negocio | no |
 | 41 | ¿Qué segmentos de clientes atacamos con el producto nuevo y qué les duele a cada uno? | kit-modelo-negocio | no |
 | 42 | Hazme el canvas y el mapa de empatía para ver si el negocio con el socio tiene sentido | kit-modelo-negocio | no |

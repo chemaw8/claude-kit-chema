@@ -2,6 +2,33 @@
 
 ## Sin publicar
 
+## v1.37.0 — 2026-11-24
+Skill `kit-entregables` (estructura del entregable por objetivo y sin relleno de IA) y `muletillas.sh` ampliado. Flujo:
+PR #114 + council + gate de disparo (21/21, 0 confusiones) + A/B prerregistrados en casos nuevos (v2→v9).
+- **Skill `kit-entregables`** (PR #114, adoptada): estructura del entregable por objetivo (11 estructuras con autor) y quita el
+  relleno típico de IA. Fuera de la tabla del núcleo (se carga por su description). A/B prerregistrado v2 (9 casos, 3 fuera de muestra): +10 criterios
+  de 135 y +1 caso; cumple la regla. Su verificador `firma.py` revisa secciones, orden, título-conclusión, cifra en las dos
+  primeras oraciones, huecos sin llenar, notas de proceso dentro del entregable y fecha del cierre.
+- **`muletillas.sh`, relleno de construcción:** F13 negación y corrección («No fue suerte. Fue…»), F14 anáfora de tres,
+  D6 eslogan «X, no Y» y D7 fragmentos enfáticos («Dos.»), medidos en los discursos del A/B; sin aciertos en informes,
+  briefs ni estatus de las mismas corridas.
+  F9 ya no marca la raya de una celda vacía de tabla (19 falsos en las corridas del A/B).
+- **`kit-entregables` v6:** `firma.py --estructura <e> -` lee el texto por stdin y corre `muletillas.sh` en la misma
+  llamada; en vivo, la petición se anuncia en la segunda oración; negritas y flechas en la tabla de relleno.
+  `muletillas.sh` suma D8 (negritas de más, umbral 10 por cada 1,000 palabras) y D9 (flechas «→» en la prosa).
+- **`kit-entregables` v7:** one-pager a ≤450 palabras con el dato del insumo en la propuesta; la conclusión del estatus
+  en dos oraciones con patrón (riesgo con cifra; qué decidir y antes de cuándo); en un discurso no se inventa una fecha
+  para el público y el verificador no la pide.
+  La guía de la conclusión del estatus vuelve a la de v6 (el patrón de dos oraciones de v7 empeoró el estatus de 3/3 a
+  0/3 en el A/B: la decisión quedaba en la tercera oración).
+- **`kit-entregables` v8:** `firma.py` compara con el encargo si se pega tras `=== INSUMO ===`: marca las fechas que el
+  encargo no trae (alta en discurso y exposición) y avisa de cifras que no salen tal cual en vivo; el discurso no inventa
+  plazos, mecanismos ni anécdotas.
+- **`kit-entregables` v9:** estructuras `postmortem` (sin culpables, Google SRE cap. 15 y apéndice D) y `pr-faq`
+  (Amazon, *Working Backwards*). `muletillas.sh` suma D10 (calcos y errores de norma: «en base a»,
+  «impactar», «es por eso que», dequeísmo, quesuismo), D11 (pasiva con «por») y D12 (gerundio al final), según el
+  *Libro de estilo* de la UAM; en los 270 entregables de los A/B no aparecieron: son guardia, no mejora medida.
+
 ## v1.36.2 — 2026-11-24
 `revisar_promesas.py` en `kit-modelo-negocio` y la skill documentada en el INSTRUCTIVO y en COMO-PEDIR.
 - **Documentación:** `kit-modelo-negocio` entra a la tabla de piezas del INSTRUCTIVO y tiene plantilla en COMO-PEDIR.

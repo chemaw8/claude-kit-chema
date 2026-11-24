@@ -45,10 +45,12 @@ F = [
   "certeza o cobertura de más", "pon la evidencia, o «puede»"),
  ("F8", r"\bse (erige|posiciona|consolida|presenta) como (un[ao]? )?(referente|solución|herramienta|pilar|opción|aliado)\b|\bfunge como\b|\bsirve como (un[ao]? )?(pilar|puente|catalizador|testimonio)\b",
   "evita el «es»", "«es» o «tiene»"),
- ("F9", r"\S \u2014 \S|\S \u2014$",
+ ("F9", r"[^\s|] \u2014 [^\s|]|[^\s|] \u2014$",
   "raya al estilo inglés (espacio a ambos lados)", "inciso pegado «—así—», o punto o coma"),
  ("F10", r"^\s*(#{1,6}\s*|[-*+]\s+|\d+[.)]\s+)(?![\U0001F7E0-\U0001F7EB\u2705\u274C\u26A0\u2B50])[\U0001F300-\U0001FAFF\u2600-\u27BF]",
   "emoji decorativo", "quítalo (los semáforos 🟢🟡🔴 y ✅❌⚠ no cuentan)"),
+ ("F13", r"\bno (fue|es|era|son|eran|se trata de|(?:les |te |le |nos )?(?:pido|pedimos|vendo|vendemos|busco|buscamos|vengo a|venimos a|ofrezco|ofrecemos))\b[^.!?\n]{1,80}[.!?]\s+\1\b",
+  "negación y corrección en dos oraciones («No fue suerte. Fue…»)", "di solo lo que sí es, con el dato"),
  ("F12", r"(?<![\w/.\-])(multi|auto|pre|post|pos|anti|co|re|sub|super|inter|intra|micro|macro|semi|ex|pro|contra|extra|infra|mini|mega|ultra|hiper|neo|pseudo|seudo|bi|tri|sobre|meta|omni|tele|ciber)-(?-i:[a-záéíóúñ]{3,})(?![\w/\-]|\.\w)",
   "prefijo con guion (calco del inglés)", "se escribe junto: «multiagente», «reejecutar»; el guion solo va ante sigla, número o mayúscula («anti-OTAN», «sub-21»); un nombre de archivo va entre `comillas de código`"),
 ]
@@ -64,9 +66,23 @@ D = [
   "viñeta con encabezado en negritas y dos puntos", 6.0),
  ("D5", r"\u2014",
   "rayas (aun bien puestas)", 5.0),
+ ("D6", r"(?<![\w-])[a-záéíóúñ]+(?: [a-záéíóúñ]+)?, no [a-záéíóúñ]+(?: [a-záéíóúñ]+)?[.!](?=\s|$)",
+  "eslogan «X, no Y» («fechas, no promesas»)", 2.0),
+ ("D7", r"(?:^|(?<=[.!?…])\s+)(?:[¡¿]?[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*(?: [a-záéíóúñ]+)?[.!])(?=\s|$)",
+  "fragmento enfático de una o dos palabras («Dos.», «De verdad.»)", 4.0),
+ ("D8", r"\*\*[^*\n]+\*\*",
+  "negritas de más (resaltar todo es no resaltar nada)", 10.0),
+ ("D9", r"(?<=\w) \u2192 (?=\w)",
+  "flecha «→» en la prosa en lugar de un verbo", 2.0),
+ ("D10", r"\ben base a\b|\bes por eso que\b|\bes por ello que\b|\bimpact(a|an|ó|aron|ará|arán|ar)\b(?! (de|del|en el|en la|ambiental))|\baplic(a|ar|ó|aron)r? (a|para) (un |el |la )?(puesto|vacante|beca|empleo|trabajo|programa)\b|\b(pienso|creo|dijo|dicen|resulta|es seguro) de que\b|\bque su (objetivo|nombre|apellido|función|misión|meta)\b",
+  "calco del inglés o error de norma («en base a», «impactar», «aplicar a un puesto», «es por eso que», dequeísmo, quesuismo; «a nivel de» cuenta en D3; UAM, Libro de estilo, 2020)", 1.0),
+ ("D11", r"\b(fue|fueron|será|serán|ha sido|han sido|es|son) (\w+[ae]?d[oa]s?) por (el|la|los|las|un|una)\b",
+  "pasiva con «por» (calco del inglés; mejor activa)", 3.0),
+ ("D12", r",\s(?!(siendo|teniendo|considerando|tomando|dado|cuando|comando|mando|bando)\b)(?-i:[a-záéíóúñ])\w+(ando|iendo)\b[^.\n]{0,60}\.",
+  "gerundio al final de la oración (a menudo de posterioridad: «firmó, ganando el cliente»)", 4.0),
 ]
 CF = [(i, re.compile(p, I), q, s) for i, p, q, s in F]
-CD = [(i, re.compile(p, I if i != "D2" else re.M), q, u) for i, p, q, u in D]
+CD = [(i, re.compile(p, I if i not in ("D2", "D7") else re.M), q, u) for i, p, q, u in D]
 
 def titulo_ingles(linea):
     m = re.match(r"^\s*#{1,6}\s+(.+?)\s*#*\s*$", linea)
@@ -80,6 +96,7 @@ def titulo_ingles(linea):
 args = sys.argv[1:]
 if args and args[0] == "reglas":
     for i, p, q, s in F: print(f"{i}\t{q}\t→ {s}")
+    print("F14\tanáfora de tres: tres oraciones seguidas que abren con la misma palabra\t→ una oración con los tres datos, o una lista")
     for i, p, q, u in D: print(f"{i}\t{q}\tumbral {u:g} por 1,000 palabras")
     print("F11\ttítulo con mayúsculas a la inglesa (Title Case), candidata: se reporta pero no cambia la salida\t→ solo la primera palabra y los nombres propios")
     sys.exit(0)
@@ -103,6 +120,13 @@ for ruta in args:
             for m in rx.finditer(limpia):
                 senal_total += 1
                 print(f"{ruta}:{n}: {i} {q} «{m.group(0).strip()}» → {s}")
+        ors = [o for o in re.split(r"(?<=[.!?])\s+", re.sub(r"^\s*([-*+]|\d+[.)]|#{1,6})\s+", "", limpia)) if o.strip()]
+        ini = [re.sub(r"^(y|e)\s+", "", re.sub(r"^[^\wÁÉÍÓÚÑáéíóúñ]+", "", o), flags=re.I).split(" ")[0].lower() for o in ors]
+        for k in range(len(ini) - 2):
+            if len(ini[k]) >= 3 and ini[k] not in ("el", "la", "los", "las", "un", "una", "unos", "unas", "the") and ini[k] == ini[k + 1] == ini[k + 2]:
+                senal_total += 1
+                print(f"{ruta}:{n}: F14 anáfora de tres («{ini[k].capitalize()}… {ini[k]}… {ini[k]}…») → una oración con los tres datos, o una lista")
+                break
         t = titulo_ingles(limpia)
         if t:
             print(f"{ruta}:{n}: F11 (candidata) título con mayúsculas a la inglesa «{t}» → solo la primera palabra y los nombres propios; en contratos los términos definidos sí van así")
@@ -168,6 +192,19 @@ EOF
   motor "$tmp/no-existe.md" >/dev/null 2>&1; chk "archivo inexistente sale con 2" "$?" 2
   out="$(printf 'Cabe mencionar esto.\n' | motor - 2>/dev/null)"; chk "lee de stdin" "$(hay "$out" F1)" si
   out="$(printf '¿Quieres que profundice en esto?\n' | motor - 2>/dev/null)"; chk "detecta la oferta de chatbot con «¿»" "$(hay "$out" F5)" si
+  out="$(printf 'Eso no fue suerte. Fue trabajo de cada ruta.\n' | motor - 2>/dev/null)"; chk "detecta F13 (negación y corrección)" "$(hay "$out" F13)" si
+  out="$(printf 'Piensen en el pedido. Piensen en la cuenta. Y piensen en diciembre.\n' | motor - 2>/dev/null)"; chk "detecta F14 (anáfora de tres)" "$(hay "$out" F14)" si
+  printf 'No hubo quejas en marzo. Las ventas subieron 4 %%.\nSon 3 tiendas. Las otras cerraron.\nNo es posible cerrar en marzo. Son 3 tiendas con contrato.\n' | motor - >/dev/null 2>&1; chk "F13/F14 no marcan prosa normal" "$?" 0
+  printf '| Caso | Dato |\n|---|---|\n| A | — |\n' | motor - >/dev/null 2>&1; chk "F9 no marca la raya de celda vacía en una tabla" "$?" 0
+  local negras; negras="$(printf 'Las ventas del **trimestre** subieron en **tres** tiendas y bajaron en dos. %.0s' $(seq 1 14))"
+  out="$(printf '%s\n' "$negras" | motor - 2>/dev/null)"; chk "D8 marca la densidad de negritas" "$(hay "$out" D8)" si
+  out="$(printf '%s Pasamos de 5 días → 2 días y de 3 → 1 y de 9 → 4.\n' "$base" | motor - 2>/dev/null)"; chk "D9 marca las flechas en la prosa" "$(hay "$out" D9)" si
+  out="$(printf '%s En base a los datos y a nivel de ventas, esto impacta el margen. Es por eso que pensamos de que conviene.\n' "$base" | motor - 2>/dev/null)"; chk "D10 marca calcos y errores de norma" "$(hay "$out" D10)" si
+  out="$(printf '%s El plan fue aprobado por el comité. La meta fue fijada por la dirección. El cambio será revisado por el área. La compra fue autorizada por finanzas.\n' "$base" | motor - 2>/dev/null)"; chk "D11 marca la pasiva con «por»" "$(hay "$out" D11)" si
+  local ger; ger="$(printf 'Lo firmamos, cuando llegue el pedido. Lo vimos ayer, Fernando. Lo vemos, cuando haya datos. %.0s' $(seq 1 12))"
+  printf '%s\n' "$ger" | motor - >/dev/null 2>&1; chk "D12 no marca «cuando» ni nombres propios" "$?" 0
+  out="$(printf '%s Firmó el contrato, ganando el cliente. Cerró la venta, logrando la meta. Abrió la tienda, vendiendo todo. Bajó el precio, subiendo la venta. Pagó la deuda, liberando caja.\n' "$base" | motor - 2>/dev/null)"; chk "D12 marca el gerundio de posterioridad" "$(hay "$out" D12)" si
+  printf 'El impacto ambiental es bajo. El impacto de la medida fue claro. Aplicó la regla.\n' | motor - >/dev/null 2>&1; chk "D10 no marca «impacto» sustantivo ni «aplicó la regla»" "$?" 0
   [ "$fallas" -eq 0 ] && echo "autotest: todo en verde" || echo "autotest: $fallas falla(s)"
   return "$fallas"
 }

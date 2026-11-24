@@ -354,3 +354,14 @@ y +5.8; caso 03: 0.0). A su favor: iguala la calidad del kit sin ella, costó me
 verificación por código (`coherencia.py`, `revisar_pl.py`) y el método completo de modelo de negocio. El council del
 2026-11-23 recomendó lo contrario; queda registrado. No abre una vía de excepción para otras adiciones bajo el
 congelamiento. Las filas del banco de disparo pasan a 40-47 para no chocar con `kit-entregables` (31-39).
+
+## 2026-11-24 — `kit-entregables` adoptada (v1.37.0, PR #114)
+Decisión del dueño: integrar la skill y usarla en el día a día. Evidencia: A/B prerregistrados en casos sintéticos
+nuevos en cada ronda (repo privado evals-entregables): v2 87→97/135 (cumple), v3 63→78/90, v4 75→81/90, v5 81→73
+(perdió, revertida), v6 63→72/90, v7 72→80/90, v8 74→82/90, v9 16→73/90 (postmortem y PR/FAQ; la v8 no cargaba en esos
+formatos). Gate de disparo tras unir con main v1.36.2: núcleo 21/21, 0 confusiones. Fuera de la tabla del núcleo: se
+carga por su description. Qué aprendimos: lo que delata un texto de IA ya no es el vocabulario (<1 por 1,000 palabras)
+sino la forma (negritas, viñetas con etiqueta, flechas, giros «No fue X. Fue Y.»); un chequeo mecánico que el agente
+puede esquivar empeora el resultado (v5); el verificador debe recibir el texto por stdin para correr siempre.
+Pendientes: la suma de descriptions (6,976) rebasa el aviso de 6,000; firma.py sale con 0 aunque «pasa» sea false.
+Alternativa descartada: dejarla como plantillas sin skill (el A/B v9 muestra que sin la skill no se usa la estructura).

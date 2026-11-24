@@ -109,6 +109,12 @@ tienes que usar todos; cuantos más completes, mejor sale.
 > Formato: [entregable: script corriendo / PR (propuesta de cambios lista para revisión) / explicación].
 > Está bien si [criterio, p. ej. pasa estos casos]. Fecha: [límite].
 
+**Entregable con formato (one-pager, brief, estatus, informe, discurso, exposición, postmortem, PR/FAQ)**
+> Escríbeme un [formato] para [quién] sobre [tema]; quiero que [decida / apruebe / entienda / actúe en] [qué].
+> Contexto: [los datos tal cual, con sus fechas y cifras; lo que no sabemos].
+> Formato: [formato] (la skill elige la estructura y revisa el texto contra relleno de IA y contra los datos).
+> Está bien si [criterio, p. ej. la cifra que decide va en la primera oración y el cierre tiene responsable]. Fecha: [límite].
+
 **Modelo de negocio**
 > Arma [o actualiza] el modelo de negocio de [producto/línea] para decidir [con qué segmento y socio arrancamos / si da].
 > Contexto: [carpeta con notas de junta, costos, encuesta, contratos; versión previa si existe].

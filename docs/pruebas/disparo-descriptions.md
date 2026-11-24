@@ -175,3 +175,20 @@ agregó la fila 38. `python3 docs/pruebas/disparo.py --modelo sonnet` → códig
 
 ## 2026-11-23 — `kit-modelo-negocio` vuelve, permanente
 `python3 docs/pruebas/disparo.py --modelo sonnet` → código 0: núcleo 21/21, filas 40-47 8/8, 0 confusiones. Suma de descriptions: 5,996.
+
+## 2026-11-23 — kit-entregables (PR #114)
+Gate de disparo con la skill nueva: núcleo 21/21, fronteras 0 confusiones (incluidas 3 filas nuevas 31–33 para
+one-pager, brief y discurso, que van a kit-entregables), `disparo.py --modelo sonnet` rc 0. Estatus a dirección (24),
+informe con láminas (26) y propuesta (14, 27) siguen en su skill de dominio: la nueva no les roba el disparo.
+- 2026-11-23 (tras el council): con la description de piloto («cuándo no usarla» → kit-propuestas) el gate falló 2
+  fronteras (31 y 32 se iban a kit-propuestas). Se nombró el formato en la description («brief de decisión o para un
+  comité»): núcleo 21/21, 0 confusiones, PASA.
+- 2026-11-24 (description de v3, d954f96: se carga junto con la del dominio): disparo real con `disparo.sh`
+  (núcleo instalado v1.36.1 —la de main, publicada el 2026-11-24; la rama se unió con main v1.36.2 el mismo día— vía `DISPARO_NUCLEO`, plugin de esta rama, opus, 3 corridas): kit-entregables 3/3 en 31–33
+  y no aparece en ninguna fila ajena; total 83/99. Las filas 1 y 11 bajan sin cargar ninguna skill (no es confusión con
+  la nueva). Gate de `disparo.py --modelo sonnet` con esta description (2026-11-24): núcleo 21/21, 0 confusiones, PASA.
+- 2026-11-24 (description de v9, 2afffa1: nombra postmortem y PR/FAQ; filas nuevas 34 y 35): `disparo.py --modelo
+  sonnet`: núcleo 21/21, 0 confusiones, 35/35 filas con su skill, PASA.
+- 2026-11-24 (rama unida con main v1.36.2, v1.37.0: banco con las filas de kit-entregables 31-35 y de
+  kit-modelo-negocio 40-47): `disparo.py --modelo sonnet`: núcleo 21/21, 0 confusiones, PASA. Suma de descriptions
+  6,976 (aviso sobre 6,000, no bloquea).

@@ -1,0 +1,285 @@
+"""kit-entregables: verificador determinista. Textos INVENTADOS aquí, no entregables de clientes."""
+import sys, unittest
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent)); sys.dont_write_bytecode = True
+import firma as F
+
+BUENA = [
+    {"titulo": "Cerrar la tienda X ahorra $1.2 M al año sin perder clientes", "cuerpo": "La tienda X pierde $100 mil al mes. El 80 % de sus clientes compra también en la tienda Y, a 2 km."},
+    {"titulo": "Cuatro datos deciden si el caso se sostiene", "cuerpo": "Costo de cierre. Contrato de renta. Traspaso de clientes. Plantilla."},
+    {"titulo": "Pedimos aprobar el cierre el 15 de enero y medir el traspaso 3 meses", "cuerpo": "Responsable: Operaciones. Fecha: 2027-01-15."},
+    {"titulo": "De dónde sale cada cifra", "cuerpo": "$100 mil al mes: estado de resultados 2026. 80 %: base de clientes."},
+]
+
+
+class Presentacion(unittest.TestCase):
+    def test_buena_pasa(self):
+        r = F.revisar_presentacion(BUENA)
+        self.assertEqual([x for x in r if x["gravedad"] == "alta"], [], r)
+
+    def test_titulo_tema_falla(self):
+        r = F.revisar_presentacion([{"titulo": "Contexto", "cuerpo": "x"}] + BUENA[1:])
+        self.assertIn("titulo_conclusion", [x["regla"] for x in r])
+
+    def test_lamina_cargada_falla(self):
+        r = F.revisar_presentacion([{"titulo": BUENA[0]["titulo"], "cuerpo": "palabra " * 90}] + BUENA[1:])
+        self.assertIn("una_idea", [x["regla"] for x in r])
+
+    def test_sin_origen_de_cifras_ni_peticion(self):
+        reglas = [x["regla"] for x in F.revisar_presentacion(BUENA[:2])]
+        self.assertIn("origen_cifras", reglas); self.assertIn("peticion", reglas)
+
+    def test_casos_del_sello(self):
+        self.assertIsNotNone(F.titulo_ok("Visión general de la empresa"))
+        r = F.revisar_presentacion([{"titulo": "Las fuentes de ingreso caen 20 %", "cuerpo": "p " * 200}])
+        self.assertIn("una_idea", [x["regla"] for x in r]); self.assertIn("origen_cifras", [x["regla"] for x in r])
+        r = F.revisar_presentacion(BUENA[:2] + [{"titulo": "Pasos que siguen el próximo trimestre", "cuerpo": "Responsable: por definir"}] + BUENA[3:])
+        self.assertIn("peticion", [x["regla"] for x in r])
+
+    def test_mas_casos_del_sello(self):
+        self.assertIsNotNone(F.titulo_ok("Ingeniería de datos del área"))
+        F.revisar_presentacion([{"titulo": None, "cuerpo": None}])   # no revienta
+        import io, json, contextlib
+        for fmt, rc in (("presentación", 0), ("documento", 0), ("otra", 1)):
+            sys.stdin = io.StringIO(json.dumps({"formato": fmt, "laminas": [], "texto": ""}))
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(F.main(), rc, fmt)
+        sys.stdin = sys.__stdin__
+
+    def test_etiqueta_mas_subtitulo_conclusion(self):
+        self.assertIsNone(F.titulo_ok(F.titulo_efectivo("Quiénes somos", "Operamos 8 años y duplicamos la base de clientes")))
+        self.assertIsNotNone(F.titulo_ok(F.titulo_efectivo("Quiénes somos", "Nuestra historia")))
+
+    def test_ingles(self):
+        deck = [{"titulo": "Base case: ~$107M a year in revenue", "cuerpo": "x"},
+                {"titulo": "Four facts decide whether the case holds", "cuerpo": "x"},
+                {"titulo": "Start with phase 1; decide on phase 2 by March 15", "cuerpo": "We ask to approve the pilot. Responsible: Ops."},
+                {"titulo": "Every figure, where it comes from", "cuerpo": "x"}]
+        self.assertEqual([x for x in F.revisar_presentacion(deck) if x["gravedad"] == "alta"], [])
+        self.assertIsNotNone(F.titulo_ok("Overview"))
+        self.assertIsNone(F.titulo_ok("Margin grows next year"))   # 4 palabras: pasa por el verbo inglés
+        self.assertTrue(F.FECHA.search("decide by 15 March"))
+        self.assertTrue(F.relleno("It is important to note that this plays a key role and is a game-changer."))
+
+    def test_muletillas_de_relleno(self):
+        r = F.revisar_presentacion([{"titulo": BUENA[0]["titulo"], "cuerpo": "Es importante destacar que juega un papel clave. En resumen, es fundamental y crucial."}] + BUENA[1:])
+        self.assertIn("relleno", [x["regla"] for x in r])
+
+
+DOC_BUENO = """# Cerrar la tienda X ahorra $1.2 M al año
+
+**Recomendación:** cerrar la tienda X el 2027-01-15; Operaciones mide el traspaso de clientes durante 3 meses.
+
+## Por qué
+La tienda X pierde $100 mil al mes desde marzo. El 80 % de sus clientes compra también en la tienda Y.
+
+## Supuestos y alternativas
+Usé el estado de resultados 2026; con el presupuesto la pérdida sería $80 mil al mes.
+
+## Lo que no se puede concluir
+Con seis meses de datos no se sabe si la caída es de temporada.
+
+## De dónde sale cada cifra
+$100 mil: estado de resultados 2026. 80 %: base de clientes.
+"""
+
+
+class Documento(unittest.TestCase):
+    def test_bueno_pasa(self):
+        self.assertEqual([x for x in F.revisar_documento(DOC_BUENO) if x["gravedad"] == "alta"], [])
+
+    def test_sin_conclusion_arriba(self):
+        r = F.revisar_documento("# Análisis\n\nEn este documento se presenta el contexto del proyecto.\n\n" + DOC_BUENO)
+        self.assertIn("conclusion_primero", [x["regla"] for x in r])
+
+    def test_sin_secciones_obligatorias(self):
+        reglas = [x["regla"] for x in F.revisar_documento("# Cerrar X ahorra $1 M\n\n**Recomendación:** cerrar X el 2027-01-15.\n")]
+        self.assertIn("supuestos", reglas); self.assertIn("no_concluir", reglas); self.assertIn("origen_cifras", reglas)
+
+    def test_largo(self):
+        self.assertIn("largo", [x["regla"] for x in F.revisar_documento(DOC_BUENO + ("palabra " * 3500))])
+
+
+
+class Estructuras(unittest.TestCase):
+    def test_catalogo_cargado(self):
+        self.assertGreaterEqual(len(F.ESTRUCTURAS), 9)
+
+    def test_orden_correcto_pasa_y_desordenado_falla(self):
+        bien = "# Cerrar X ahorra $1 M\n\n## Problema\nx\n## Costo de no actuar\nx\n## Solución\nx\n## Prueba\nx\n## Inversión\n$1 M\n## Siguiente paso\nOps, 2027-01-15\n"
+        self.assertEqual(F.revisar_estructura(bien, "propuesta-b2b"), [])
+        mal = bien.replace("## Solución\nx\n", "").replace("## Problema", "## Solución\nx\n## Problema")
+        self.assertIn("orden", [x["regla"] for x in F.revisar_estructura(mal, "propuesta-b2b")])
+
+    def test_falta_seccion(self):
+        r = F.revisar_estructura("# T\n\n## Problema\nx\n", "propuesta-b2b")
+        self.assertIn("seccion_faltante", [x["regla"] for x in r])
+
+    def test_challenger_no_muestra_el_producto_antes(self):
+        t = "# T\n## Lo que sabemos de su industria\n## Nuestra solución\n## El problema visto de otra forma\n## Lo que cuesta\n## Lo que significa para alguien como usted\n## Una forma nueva\n"
+        self.assertIn("orden", [x["regla"] for x in F.revisar_estructura(t, "propuesta-challenger")])
+
+    def test_estatus_con_cifras_no_exige_seccion_de_origen(self):
+        t = "# Vamos al 80 % del plan\n\n## Conclusión\nRecomendación: seguir; pedimos aprobar el presupuesto el 2027-01-15.\n## Semáforo\nverde\n## Logros\n3 de 4 frentes\n## Riesgos\nninguno\n## Decisiones pedidas\naprobar presupuesto\n## Siguientes pasos\nOps 2027-01-15\n"
+        import io, json, contextlib
+        sys.stdin = io.StringIO(json.dumps({"estructura": "estatus", "texto": t})); buf = io.StringIO()
+        with contextlib.redirect_stdout(buf): F.main()
+        sys.stdin = sys.__stdin__
+        self.assertNotIn("origen_cifras", buf.getvalue())
+
+    def test_conclusion_en_la_plantilla_y_cli_con_archivo(self):
+        import tempfile, io, json, contextlib
+        base = F.plantilla("informe-decision")
+        marca = "{{Qué hacer, quién y para cuándo. Una o dos oraciones.}}"
+        self.assertIn(marca, base)
+        # positivo: la recomendación pegada a su encabezado SÍ cuenta (antes se saltaba el bloque)
+        bueno = base.replace(marca, "Recomendamos cerrar la tienda X el 2027-01-15; responsable Operaciones.")
+        self.assertNotIn("conclusion_primero", [x["regla"] for x in F.revisar_documento(bueno)])
+        t = base.replace(marca, "El mercado se mueve rápido.")
+        self.assertIn("conclusion_primero", [x["regla"] for x in F.revisar_documento(t)])
+        d = tempfile.TemporaryDirectory(); self.addCleanup(d.cleanup)
+        ruta = d.name + "/e.md"
+        with open(ruta, "w", encoding="utf-8") as f: f.write(t)
+        f = type("F", (), {"name": ruta})
+        viejo = sys.argv; sys.argv = ["firma.py", "--estructura", "informe-decision", f.name]; buf = io.StringIO()
+        try:
+            with contextlib.redirect_stdout(buf): self.assertEqual(F.main(), 0)
+        finally: sys.argv = viejo; sys.stdin = sys.__stdin__
+        self.assertIn("conclusion_primero", buf.getvalue())
+
+    def test_academico_no_exige_recomendacion_arriba(self):
+        import io, json, contextlib
+        t = F.plantilla("academico").replace("{{Pregunta, método, resultado y conclusión.}}", "Medimos X en 40 muestras; Y aumentó 12 %.")
+        sys.stdin = io.StringIO(json.dumps({"estructura": "academico", "texto": t})); buf = io.StringIO()
+        with contextlib.redirect_stdout(buf): F.main()
+        sys.stdin = sys.__stdin__
+        self.assertNotIn("conclusion_primero", buf.getvalue())
+
+    def test_brief_con_referencias_y_mensajes_descriptivos(self):
+        import io, json, contextlib
+        t = ("# La tasa de abandono cayó 12 % en 2026\n\n## Mensajes clave\nLa tasa cayó 12 % en el año.\n## Problema\nx\n## Hallazgos\nx\n"
+             "## Opciones\nx\n## Recomendaciones\nOps, 2027-01-15\n## Referencias\nEncuesta 2026.\n")
+        sys.stdin = io.StringIO(json.dumps({"estructura": "brief", "texto": t})); buf = io.StringIO()
+        with contextlib.redirect_stdout(buf): F.main()
+        sys.stdin = sys.__stdin__
+        self.assertNotIn("origen_cifras", buf.getvalue()); self.assertNotIn("conclusion_primero", buf.getvalue())
+
+    def test_estatus_con_su_propia_guia(self):
+        import re
+        t = re.sub(r"\{\{En una o dos oraciones[^}]*\}\}", "Vamos en verde; se pide ampliar el plazo al 2027-01-15.", F.plantilla("estatus"))
+        self.assertIn("se pide ampliar", t)   # la guía cambió en v7: la prueba debe reemplazarla de verdad
+        self.assertNotIn("conclusion_primero", [x["regla"] for x in F.revisar_documento(t)])
+
+    def test_council_texto_tecnico_legitimo_no_es_relleno(self):
+        t = "Es fundamental medir el costo integral del canal; el dato crucial es la conversión, no los riesgos."
+        self.assertEqual(F.relleno(t), [])
+
+    def test_council_seccion_faltante_no_bloquea_salvo_la_primera(self):
+        r = F.revisar_estructura("# Vamos en verde\n\n## Conclusión\nVamos en verde.\n## Semáforo\nverde\n## Logros\nx\n## Siguientes pasos\nOps\n", "estatus")
+        self.assertTrue(r and all(x["gravedad"] == "media" for x in r if x["regla"] == "seccion_faltante"))
+        r = F.revisar_estructura("# T\n\n## Semáforo\nverde\n", "estatus")
+        self.assertIn(("seccion_faltante", "alta"), [(x["regla"], x["gravedad"]) for x in r])
+
+    def test_plantilla_generada_pasa_su_estructura_pero_no_sin_llenar(self):
+        for k in F.ESTRUCTURAS:
+            with self.subTest(k):
+                r = F.revisar_estructura(F.plantilla(k), k)
+                self.assertEqual([x for x in r if x["regla"] in ("orden", "seccion_faltante")], [])
+                self.assertIn("plantilla_sin_llenar", [x["regla"] for x in r])
+
+
+class ArranqueYCierre(unittest.TestCase):
+    """Fallas medidas en el A/B v2 (2026-11-24)."""
+    def reglas(self, t, **k):
+        return {(x["regla"], x["gravedad"]) for x in F.revisar_arranque_cierre(t, **k)}
+
+    def test_arranque_sin_cifra_es_alta_y_con_cifra_pasa(self):
+        self.assertIn(("cifra_arranque", "alta"), self.reglas("# T\n\nBuenas tardes. Recomiendo abrir WhatsApp. Funcionó bien.\n"))
+        self.assertNotIn(("cifra_arranque", "alta"), self.reglas("# T\n\nBuenas tardes a todos.\n\nRecomiendo abrir WhatsApp: subió de 18.4 % a 24.1 %.\n"))
+
+    def test_nota_en_cursiva_no_cuenta_como_arranque(self):
+        self.assertIn(("cifra_arranque", "alta"), self.reglas("# T\n\n*Son 755 palabras.*\n\nRecomiendo abrir WhatsApp. Ya.\n"))
+
+    def test_hueco_alta_pero_acotacion_y_enlace_no(self):
+        self.assertIn(("hueco_sin_llenar", "alta"), self.reglas("# T\n\nSube 3 %.\n\n## Paso\nDirección confirma el [AAAA-MM-DD].\n"))
+        self.assertIn(("hueco_sin_llenar", "alta"), self.reglas("# T\n\nSube 3 %.\n\n## Paso\nFecha por definir.\n"))
+        r = self.reglas("# T\n\nSube 3 %. [Pausa] Ver [fuente](http://x).\n\n## Paso\nOps, 15 de enero de 2027.\n")
+        self.assertEqual(r, set())
+
+    def test_citas_y_notas_no_son_hueco(self):
+        r = self.reglas("# T\n\nSube 12 % [12] y 3 % [1, 2] [Pérez 2020] [^1] [texto][1].\n\n## Paso\nOps, 15 de enero de 2027.\n")
+        self.assertNotIn(("hueco_sin_llenar", "alta"), r)
+
+    def test_frase_normal_no_es_proceso(self):
+        for t in ("Aquí está la diferencia: 18 % contra 24 %.", "Revisé el estado de resultados de 2026.", "Revise el contrato."):
+            with self.subTest(t):
+                self.assertNotIn(("proceso_colado", "alta"), self.reglas(f"# T\n\nSube 3 %.\n\n{t}\n"))
+        self.assertIn(("proceso_colado", "alta"), self.reglas("# T\n\nSube 3 %.\n\nAbajo va el guion.\n"))
+
+    def test_preambulo_antes_del_entregable_es_proceso(self):
+        self.assertIn(("proceso_colado", "alta"), self.reglas("El one-pager ya está escrito y pasó el verificador.\n\n# T\n\nSube 3 %.\n"))
+        self.assertNotIn(("proceso_colado", "alta"), self.reglas("# La meta ya está escrita: 85 puntos\n\nSube 3 %.\n"))
+        for t in ("El piloto quedó en 92 % de avance; pedimos 2 personas.\n", "La migración ya está lista al 90 %.\n", "El estatus del proyecto quedó en ámbar: 2 semanas.\n"):
+            self.assertNotIn(("proceso_colado", "alta"), self.reglas(t))
+
+    def test_proceso_colado_es_alta(self):
+        self.assertIn(("proceso_colado", "alta"), self.reglas("# T\n\nSube 3 %.\n\n## Antes de subir al escenario\nRevisé las cifras.\n"))
+
+    def test_cierre_sin_fecha_avisa_y_academico_no(self):
+        t = "# T\n\nSube 3 %.\n\n## Siguiente paso\nEl comité decide.\n"
+        self.assertIn(("cierre_sin_fecha", "media"), self.reglas(t))
+        self.assertNotIn(("cierre_sin_fecha", "media"), self.reglas(t, academico=True))
+        self.assertNotIn(("cierre_sin_fecha", "media"), self.reglas("# T\n\nSube 3 %.\n\n## Paso\nOps arranca en febrero de 2027.\n"))
+
+
+class StdinYMuletillas(unittest.TestCase):
+    def test_estructura_lee_stdin_con_guion(self):
+        import subprocess
+        r = subprocess.run([sys.executable, str(Path(__file__).with_name("firma.py")), "--estructura", "estatus", "-"],
+                           input="# Vamos en verde: 3 de 3 entregas\n\nVamos en verde: 3 de 3.\n", capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0)
+        self.assertIn("hallazgos", r.stdout)
+
+    def test_muletillas_desde_el_verificador(self):
+        r = F.muletillas("# T\n\nEso no fue suerte. Fue trabajo de 3 equipos.\n")
+        self.assertIn(("relleno_F13", "alta"), [(x["regla"], x["gravedad"]) for x in r])
+        self.assertEqual([x for x in F.muletillas("# T\n\nLas ventas subieron 3 % en marzo.\n") if x["gravedad"] == "alta"], [])
+
+
+class FueraDelInsumo(unittest.TestCase):
+    INS = "Meta 2027: $470 M. CRM nuevo desde enero. Inscripción del 2027-01-08 al 2027-01-31."
+
+    def test_discurso_con_fecha_inventada_es_alta(self):
+        r = F.fuera_del_insumo("Les pido que antes del 29 de enero carguen su meta. El CRM llega en enero.", self.INS, True)
+        self.assertIn(("fecha_fuera_del_insumo", "alta"), [(x["regla"], x["gravedad"]) for x in r])
+
+    def test_fecha_del_insumo_pasa(self):
+        r = F.fuera_del_insumo("Inscríbanse antes del 2027-01-31: vamos por $470 M. El CRM llega en enero de 2027.", self.INS, True)
+        self.assertNotIn("fecha_fuera_del_insumo", [x["regla"] for x in r])
+
+    def test_misma_fecha_en_otro_formato_y_subcadena(self):
+        self.assertEqual(F.fuera_del_insumo("Inscríbanse antes del 31 de enero.", "Inscripción hasta el 2027-01-31.", True), [])
+        r = F.fuera_del_insumo("Les pido cargar su meta el 1 de marzo.", "Cierre el 11 de marzo.", True)
+        self.assertIn("fecha_fuera_del_insumo", [x["regla"] for x in r])
+        for t in ("Inscríbanse antes del 15 de enero de 2028.", "Inscríbanse antes del 2028-01-31."):
+            r = F.fuera_del_insumo(t, "Inscripción del 2027-01-15 al 2027-01-31.", True)
+            self.assertIn("fecha_fuera_del_insumo", [x["regla"] for x in r])
+        self.assertNotIn("fecha_fuera_del_insumo", [x["regla"] for x in F.fuera_del_insumo("el 15 de enero de 2027", "del 2027-01-15", True)])
+
+    def test_semana_del_encargo_pasa(self):
+        self.assertEqual(F.fuera_del_insumo("Cierren la primera semana de enero.", "El cierre es la primera semana de enero.", True), [])
+
+    def test_documento_con_fecha_propuesta_pasa(self):
+        r = F.fuera_del_insumo("Finanzas decide antes del 2026-12-11 (propuesta).", self.INS, False)
+        self.assertEqual(r, [])
+
+    def test_stdin_con_separador(self):
+        import subprocess
+        txt = "# 470 M en 2027\n\nBuenas tardes. Vendimos 412 M y vamos por 470 M; les pido cargar su meta el 29 de enero.\n"
+        r = subprocess.run([sys.executable, str(Path(__file__).with_name("firma.py")), "--estructura", "discurso", "-"],
+                           input=txt + "=== INSUMO ===\n" + self.INS, capture_output=True, text=True)
+        self.assertIn("fecha_fuera_del_insumo", r.stdout)
+
+
+if __name__ == "__main__":
+    unittest.main()
