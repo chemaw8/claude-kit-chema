@@ -34,19 +34,42 @@ Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_RO
 - **En vivo** (lo presentas): tensión; la solución va al final (Duarte, Monroe, Challenger). Si es para dirección, una
   línea con la conclusión arriba y luego la secuencia.
 
-## Las cinco fallas que más se repiten (A/B del 2026-11-23, con y sin esta skill)
+## Las fallas que más se repiten (A/B del 2026-11-23 y del 2026-11-24, con y sin esta skill)
 
 1. **El arranque no trae el porqué.** Las dos primeras oraciones (después del saludo, si es un discurso) dicen la
    decisión **y la cifra que la sostiene**: «Recomiendo abrir WhatsApp: la recuperación subió de 18.4 % a 24.1 %». La
-   recomendación sola, sin su número, no basta; el número aparte en una tabla más abajo, tampoco.
+   recomendación sola, sin su número, no basta; el número aparte en una tabla más abajo, tampoco. Fue la falla más
+   frecuente aun con la skill puesta: casi siempre la cifra decisiva estaba en la **tercera** oración, o la que abría
+   era otra cifra (la fecha, el contexto). Elige la cifra que haría cambiar de opinión al lector y ponla en la primera.
 2. **Se cuela el proceso.** El entregable empieza con el contenido. Nada de «abajo va el guion», «recalculé con un
    script», notas del verificador, estados de trabajo ni metacomentarios: eso va en tu respuesta, fuera del entregable.
-3. **Se agregan datos que el insumo no trae** (fases, fechas «por ejemplo», rangos de costo, distancias, nombres). Todo
-   dato sale del insumo. Si hace falta una estimación, va en «Supuestos» con su cálculo y marcada como estimación.
+3. **Se agregan datos que el insumo no trae** (fases, fechas «por ejemplo», rangos de costo, distancias, nombres, la
+   moneda, una normativa, «no habrá despidos», «es reversible», la causa de un dato, lo que la empresa «ya vende»).
+   Todo dato sale del insumo. Si hace falta una estimación, va en «Supuestos» con su cálculo y marcada como estimación.
+   Tampoco se exagera lo que sí está: +22 % no es «duplicar»; un título con verbo fuerte se comprueba contra la cifra.
 4. **El formato se desborda.** Un one-pager cabe en una página (≈500 palabras contando tablas) y no lleva secciones
    extra; si sobra material, se queda fuera o va como anexo aparte, no dentro.
 5. **El cierre no tiene dueño.** La acción final nombra un responsable (un rol o área) y una fecha absoluta; «el comité
-   decide» o «en unas semanas» no son cierre.
+   decide», «en unas semanas», «fecha por definir» o un `[AAAA-MM-DD]` sin llenar no son cierre. Si el insumo no trae
+   fecha, **propón una** y márcala «(propuesta)»: eso no es inventar un dato, es la petición; dejar el hueco sí reprueba.
+   El cierre también dice qué **no** se puede concluir con estos datos.
+
+## Relleno de construcción (lo que suena a IA aunque no tenga palabras raras)
+
+El vocabulario típico casi desapareció con la skill; lo que quedó fue la forma de las oraciones, sobre todo en
+discursos y exposiciones. Estas construcciones se quitan aunque suenen «retóricas»:
+
+| Construcción | Ejemplo | En su lugar |
+|---|---|---|
+| Negación y corrección | «Eso no fue suerte. Fue cada ruta.» · «No les pido un aplauso. Les pido un compromiso.» | Di solo lo que sí es: «Lo lograron 120 rutas.» |
+| Eslogan «X, no Y» | «Traigo fechas, no promesas.» | «Traigo dos fechas: febrero y abril de 2027.» |
+| Fragmento enfático | «Dos.» · «De verdad.» · «Así de simple.» | Intégralo en la oración anterior o bórralo. |
+| Anáfora de tres | «Piensen en… Piensen en… Y piensen en…» | Una oración con los tres datos, o una lista. |
+| Tríada de adjetivos o cierre épico | «rápido, simple y seguro» · «Vamos por los 500,000.» | El dato que lo prueba; cierra con la petición. |
+| Palabra de folleto | robusto, integral, potenciar, ecosistema, sinergia, transformador, clave | El verbo o la cifra concretos. |
+
+Una figura retórica suelta puede servir en vivo; el problema es la densidad: si hay más de una por minuto de discurso, ya
+es plantilla. El revisor `muletillas.sh` marca las cuatro primeras (F13, F14, D6, D7) y el vocabulario (D1).
 
 ## Reglas comunes
 
@@ -75,13 +98,18 @@ Una persona inventada o un «Imagina un mundo donde…» es el mismo relleno con
 2. Escribe con la plantilla: secciones en ese orden, con la guía de cada una.
 3. Guarda el texto en un archivo y verifícalo antes de entregar:
    `python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/kit-entregables/scripts/firma.py" --estructura estatus entregable.md`
-   Si algo sale con gravedad «alta», corrígelo y vuelve a verificar. Las láminas se verifican por JSON en stdin:
+   Si algo sale con gravedad «alta», corrígelo y vuelve a verificar. Además de secciones y orden, marca `cifra_arranque`
+   (las dos primeras oraciones sin cifra), `hueco_sin_llenar`, `proceso_colado` (notas para ti dentro del entregable)
+   y avisa `cierre_sin_fecha`. Luego corre `muletillas.sh revisar` y quita toda señal F. **No entregues sin correr los
+   dos**: en el A/B, la mitad de las corridas no los corrió y ahí se concentraron las fallas. Las láminas se verifican por JSON en stdin:
    `{"formato":"presentacion","laminas":[{"titulo":…,"cuerpo":…}]}` (ahí aplica el tope de 60 palabras por lámina).
 
 ## Checklist antes de entregar
 
 - [ ] Elegí UNA estructura del catálogo por el objetivo y la dije.
-- [ ] El verificador no marca nada «alta».
+- [ ] El verificador no marca nada «alta» y `muletillas.sh` no marca ninguna señal F.
+- [ ] La cifra decisiva está en la primera o segunda oración; el cierre tiene rol y fecha (propuesta, si hace falta).
+- [ ] Ningún dato, causa, promesa ni moneda que el insumo no traiga; ningún verbo que exagere la cifra.
 - [ ] Revisé a ojo que no quede relleno (el script avisa solo cuando ya son varias frases); ningún caso o cifra inventados.
 
 ## Límites honestos

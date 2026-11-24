@@ -186,5 +186,33 @@ class Estructuras(unittest.TestCase):
                 self.assertIn("plantilla_sin_llenar", [x["regla"] for x in r])
 
 
+class ArranqueYCierre(unittest.TestCase):
+    """Fallas medidas en el A/B v2 (2026-11-24)."""
+    def reglas(self, t, **k):
+        return {(x["regla"], x["gravedad"]) for x in F.revisar_arranque_cierre(t, **k)}
+
+    def test_arranque_sin_cifra_es_alta_y_con_cifra_pasa(self):
+        self.assertIn(("cifra_arranque", "alta"), self.reglas("# T\n\nBuenas tardes. Recomiendo abrir WhatsApp. Funcionó bien.\n"))
+        self.assertNotIn(("cifra_arranque", "alta"), self.reglas("# T\n\nBuenas tardes a todos.\n\nRecomiendo abrir WhatsApp: subió de 18.4 % a 24.1 %.\n"))
+
+    def test_nota_en_cursiva_no_cuenta_como_arranque(self):
+        self.assertIn(("cifra_arranque", "alta"), self.reglas("# T\n\n*Son 755 palabras.*\n\nRecomiendo abrir WhatsApp. Ya.\n"))
+
+    def test_hueco_alta_pero_acotacion_y_enlace_no(self):
+        self.assertIn(("hueco_sin_llenar", "alta"), self.reglas("# T\n\nSube 3 %.\n\n## Paso\nDirección confirma el [AAAA-MM-DD].\n"))
+        self.assertIn(("hueco_sin_llenar", "alta"), self.reglas("# T\n\nSube 3 %.\n\n## Paso\nFecha por definir.\n"))
+        r = self.reglas("# T\n\nSube 3 %. [Pausa] Ver [fuente](http://x).\n\n## Paso\nOps, 15 de enero de 2027.\n")
+        self.assertEqual(r, set())
+
+    def test_proceso_colado_es_alta(self):
+        self.assertIn(("proceso_colado", "alta"), self.reglas("# T\n\nSube 3 %.\n\n## Antes de subir al escenario\nRevisé las cifras.\n"))
+
+    def test_cierre_sin_fecha_avisa_y_academico_no(self):
+        t = "# T\n\nSube 3 %.\n\n## Siguiente paso\nEl comité decide.\n"
+        self.assertIn(("cierre_sin_fecha", "media"), self.reglas(t))
+        self.assertNotIn(("cierre_sin_fecha", "media"), self.reglas(t, academico=True))
+        self.assertNotIn(("cierre_sin_fecha", "media"), self.reglas("# T\n\nSube 3 %.\n\n## Paso\nOps arranca en febrero de 2027.\n"))
+
+
 if __name__ == "__main__":
     unittest.main()

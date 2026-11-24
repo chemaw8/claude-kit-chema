@@ -49,6 +49,8 @@ F = [
   "raya al estilo inglés (espacio a ambos lados)", "inciso pegado «—así—», o punto o coma"),
  ("F10", r"^\s*(#{1,6}\s*|[-*+]\s+|\d+[.)]\s+)(?![\U0001F7E0-\U0001F7EB\u2705\u274C\u26A0\u2B50])[\U0001F300-\U0001FAFF\u2600-\u27BF]",
   "emoji decorativo", "quítalo (los semáforos 🟢🟡🔴 y ✅❌⚠ no cuentan)"),
+ ("F13", r"\bno (?:fue|es|era|son|eran|se trata de|(?:les |te |le |nos )?(?:pido|pedimos|vendo|vendemos|busco|buscamos|vengo a|venimos a|ofrezco|ofrecemos))\b[^.!?\n]{1,80}[.!?]\s+(?:fue|es|era|son|eran|se trata de|(?:les |te |le |nos )?(?:pido|pedimos|vendo|vendemos|busco|buscamos|vengo a|venimos a|ofrezco|ofrecemos))\b",
+  "negación y corrección en dos oraciones («No fue suerte. Fue…»)", "di solo lo que sí es, con el dato"),
  ("F12", r"(?<![\w/.\-])(multi|auto|pre|post|pos|anti|co|re|sub|super|inter|intra|micro|macro|semi|ex|pro|contra|extra|infra|mini|mega|ultra|hiper|neo|pseudo|seudo|bi|tri|sobre|meta|omni|tele|ciber)-(?-i:[a-záéíóúñ]{3,})(?![\w/\-]|\.\w)",
   "prefijo con guion (calco del inglés)", "se escribe junto: «multiagente», «reejecutar»; el guion solo va ante sigla, número o mayúscula («anti-OTAN», «sub-21»); un nombre de archivo va entre `comillas de código`"),
 ]
@@ -64,6 +66,10 @@ D = [
   "viñeta con encabezado en negritas y dos puntos", 6.0),
  ("D5", r"\u2014",
   "rayas (aun bien puestas)", 5.0),
+ ("D6", r"(?<![\w-])[a-záéíóúñ]+(?: [a-záéíóúñ]+)?, no [a-záéíóúñ]+(?: [a-záéíóúñ]+)?[.!](?=\s|$)",
+  "eslogan «X, no Y» («fechas, no promesas»)", 2.0),
+ ("D7", r"(?:^|(?<=[.!?…])\s+)(?:[¡¿]?[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*(?: [a-záéíóúñ]+)?[.!])(?=\s|$)",
+  "fragmento enfático de una o dos palabras («Dos.», «De verdad.»)", 4.0),
 ]
 CF = [(i, re.compile(p, I), q, s) for i, p, q, s in F]
 CD = [(i, re.compile(p, I if i != "D2" else re.M), q, u) for i, p, q, u in D]
@@ -80,6 +86,7 @@ def titulo_ingles(linea):
 args = sys.argv[1:]
 if args and args[0] == "reglas":
     for i, p, q, s in F: print(f"{i}\t{q}\t→ {s}")
+    print("F14\tanáfora de tres: tres oraciones seguidas que abren con la misma palabra\t→ una oración con los tres datos, o una lista")
     for i, p, q, u in D: print(f"{i}\t{q}\tumbral {u:g} por 1,000 palabras")
     print("F11\ttítulo con mayúsculas a la inglesa (Title Case), candidata: se reporta pero no cambia la salida\t→ solo la primera palabra y los nombres propios")
     sys.exit(0)
@@ -103,6 +110,13 @@ for ruta in args:
             for m in rx.finditer(limpia):
                 senal_total += 1
                 print(f"{ruta}:{n}: {i} {q} «{m.group(0).strip()}» → {s}")
+        ors = [o for o in re.split(r"(?<=[.!?])\s+", re.sub(r"^\s*([-*+]|\d+[.)]|#{1,6})\s+", "", limpia)) if o.strip()]
+        ini = [re.sub(r"^(y|e)\s+", "", re.sub(r"^[^\wÁÉÍÓÚÑáéíóúñ]+", "", o), flags=re.I).split(" ")[0].lower() for o in ors]
+        for k in range(len(ini) - 2):
+            if len(ini[k]) >= 3 and ini[k] not in ("el", "la", "los", "las", "un", "una", "unos", "unas", "the") and ini[k] == ini[k + 1] == ini[k + 2]:
+                senal_total += 1
+                print(f"{ruta}:{n}: F14 anáfora de tres («{ini[k].capitalize()}… {ini[k]}… {ini[k]}…») → una oración con los tres datos, o una lista")
+                break
         t = titulo_ingles(limpia)
         if t:
             print(f"{ruta}:{n}: F11 (candidata) título con mayúsculas a la inglesa «{t}» → solo la primera palabra y los nombres propios; en contratos los términos definidos sí van así")
@@ -168,6 +182,9 @@ EOF
   motor "$tmp/no-existe.md" >/dev/null 2>&1; chk "archivo inexistente sale con 2" "$?" 2
   out="$(printf 'Cabe mencionar esto.\n' | motor - 2>/dev/null)"; chk "lee de stdin" "$(hay "$out" F1)" si
   out="$(printf '¿Quieres que profundice en esto?\n' | motor - 2>/dev/null)"; chk "detecta la oferta de chatbot con «¿»" "$(hay "$out" F5)" si
+  out="$(printf 'Eso no fue suerte. Fue trabajo de cada ruta.\n' | motor - 2>/dev/null)"; chk "detecta F13 (negación y corrección)" "$(hay "$out" F13)" si
+  out="$(printf 'Piensen en el pedido. Piensen en la cuenta. Y piensen en diciembre.\n' | motor - 2>/dev/null)"; chk "detecta F14 (anáfora de tres)" "$(hay "$out" F14)" si
+  printf 'No hubo quejas en marzo. Las ventas subieron 4 %%.\nSon 3 tiendas. Las otras cerraron.\n' | motor - >/dev/null 2>&1; chk "F13/F14 no marcan prosa normal" "$?" 0
   [ "$fallas" -eq 0 ] && echo "autotest: todo en verde" || echo "autotest: $fallas falla(s)"
   return "$fallas"
 }
