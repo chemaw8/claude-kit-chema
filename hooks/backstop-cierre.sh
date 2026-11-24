@@ -37,7 +37,7 @@ res=$(grep -F '"tool_use"' "$tr" 2>/dev/null | python3 -c '
 import json,sys,os,re
 raiz=sys.argv[1].rstrip("/")
 PAPELEO={"CONTINUAR.md","DECISIONES.md","CLAUDE.md","bitacora.md"}
-idx=0; ultimo_cont=-1; trabajo=[]; commits=0
+idx=0; ultimo_cont=-1; trabajo=[]; commits=0; rotado=False
 for line in sys.stdin:
     try: d=json.loads(line)
     except Exception: continue
@@ -52,22 +52,28 @@ for line in sys.stdin:
             b=os.path.basename(p)
             if b=="CONTINUAR.md": ultimo_cont=idx
             elif b not in PAPELEO: trabajo.append(idx)
+        elif name=="Bash" and re.search(r"rotar-continuar\.sh\S*\s+rotar\b", i.get("command") or ""):
+            ultimo_cont=idx; rotado=True       # /cierre reemplaza CONTINUAR.md con `rotar`, no con Edit
         elif name=="Bash" and re.search(r"\bgit\b.*\bcommit\b", i.get("command") or ""):
             commits+=1
 posteriores=[t for t in trabajo if t>ultimo_cont]
 cerrado = ultimo_cont>=0 and not posteriores
-print(len(posteriores)); print(commits); print("1" if cerrado else "0"); print(ultimo_cont); print(len(trabajo))' "$cwd" 2>/dev/null) || exit 0
+print(len(posteriores)); print(commits); print("1" if cerrado else "0"); print(ultimo_cont); print(len(trabajo)); print("1" if rotado else "0")' "$cwd" 2>/dev/null) || exit 0
 n=$(sed -n 1p <<<"$res"); commits=$(sed -n 2p <<<"$res"); cerrado=$(sed -n 3p <<<"$res"); ultimo_cont=$(sed -n 4p <<<"$res")
 total=$(sed -n 5p <<<"$res")
+rotado=$(sed -n 6p <<<"$res")
 # Con el cierre ya escrito, lo que cuenta para pedir el vault es el trabajo de toda la
 # sesión (después del cierre puede no haber nada, y eso es lo normal).
 [ "$cerrado" = "1" ] && n_umbral=${total:-0} || n_umbral=${n:-0}
 [ "$n_umbral" -ge "$MIN_ESCRITURAS" ] 2>/dev/null || [ "${commits:-0}" -ge 1 ] 2>/dev/null || exit 0
-# Cerrado: falta comprobar la única parte del cierre que no tenía verificación, el vault.
+# Cerrado con /cierre: falta comprobar la única parte del cierre sin verificación, el vault.
 # `rotar-continuar.sh vault` dice si CONTINUAR.md dejó escrita la decisión («Vault:
 # actualizado `nota.md`» o «Vault: sin cambios — razón») y si la nota citada está
 # commiteada. Solo su código 1 bloquea, una vez por cierre; 2, 3 o un helper viejo sin el
 # subcomando dejan pasar. BACKSTOP_VAULT inyecta el veredicto en la prueba.
+# Solo un cierre hecho con /cierre (`rotar`) pide el vault: una edición directa de
+# CONTINUAR.md (p. ej. /proyecto-init) no lo exige.
+[ "$cerrado" = "1" ] && [ "$rotado" != "1" ] && exit 0
 if [ "$cerrado" = "1" ]; then
   if [ -n "${BACKSTOP_VAULT:-}" ]; then vmot=$(bash -c "$BACKSTOP_VAULT" 2>&1); vrc=$?
   else vmot=$(bash "$ROTAR" vault "$cwd" 2>&1); vrc=$?; fi

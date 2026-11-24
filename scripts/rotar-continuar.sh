@@ -308,13 +308,15 @@ bajo = val.lower()
 if bajo.startswith("sin cambios"):
     razon = re.sub(r"^sin cambios\W*", "", val, flags=re.I).strip()
     if len(razon) < 10:
-        print("✗ «Vault: sin cambios» necesita la razón (p. ej. «solo avance del día, va en CONTINUAR»)", file=sys.stderr); sys.exit(1)
+        print("✗ «Vault: sin cambios» necesita la razón concreta de esta sesión (por qué lo de hoy no sirve fuera del proyecto)", file=sys.stderr); sys.exit(1)
     print("✓ vault: sin cambios, con razón"); sys.exit(0)
 if not bajo.startswith("actualizad"):
     print(f"✗ la línea Vault no se entiende («{val[:60]}»): {FORMA}", file=sys.stderr); sys.exit(1)
 notas = re.findall(r"`([^`]+\.md)`", val)
 if not notas:
     print("✗ «Vault: actualizado» debe citar la nota entre backticks, relativa a ~/vault", file=sys.stderr); sys.exit(1)
+if not fecha:
+    print("✗ la cabecera de CONTINUAR.md no trae «cierre AAAA-MM-DD»: sin ella no se puede saber si la nota es de este cierre (genérala con `anclar`)", file=sys.stderr); sys.exit(1)
 mal = []
 for n in notas:
     if not os.path.isfile(os.path.join(vault, n)):
@@ -322,10 +324,13 @@ for n in notas:
     sucia = subprocess.run(["git", "-C", vault, "status", "--porcelain", "--", n], capture_output=True, text=True).stdout.strip()
     if sucia:
         mal.append(f"{n}: tiene cambios sin commitear en el vault"); continue
-    ult = subprocess.run(["git", "-C", vault, "log", "-1", "--format=%cs", "--", n], capture_output=True, text=True).stdout.strip()
+    # Fecha del commit en la zona LOCAL, la misma de `date +%F` con que `anclar` fecha el cierre
+    # (%cs usa la zona de quien commitea y discrepa si el vault se commitea desde otra zona).
+    ult = subprocess.run(["git", "-C", vault, "log", "-1", "--date=format-local:%Y-%m-%d", "--format=%cd", "--", n],
+                         capture_output=True, text=True).stdout.strip()
     if not ult:
         mal.append(f"{n}: nunca se commiteó"); continue
-    if fecha and ult < fecha:
+    if ult < fecha:
         mal.append(f"{n}: su último commit es del {ult}, antes del cierre ({fecha})")
 for m in mal:
     print(f"✗ {m}", file=sys.stderr)
@@ -1031,6 +1036,8 @@ EOF
   git -C "$vv" checkout -q -- proyectos/demo/demo.md
   printf "# CONTINUAR — demo  ·  cierre 2999-01-01\n\n## Dónde vamos\na\n\nVault: actualizado \`proyectos/demo/demo.md\`\n" > "$pv/CONTINUAR.md"
   KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: nota más vieja que el cierre debió fallar"; f=1; }
+  printf "# CONTINUAR — demo\n\n## Dónde vamos\na\n\nVault: actualizado \`proyectos/demo/demo.md\`\n" > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: sin fecha de cierre en la cabecera no debe pasar"; f=1; }
   printf "$base\n---\n## Detalle vivo\nVault: sin cambios — esto está bajo la línea y no cuenta\n" > "$pv/CONTINUAR.md"
   KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: la línea bajo '---' no debe contar"; f=1; }
   printf '\xff\xfe basura\nVault: sin cambios — razón suficientemente larga\n' > "$pv/CONTINUAR.md"

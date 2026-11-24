@@ -165,7 +165,7 @@ Debe pasar. El tope de ~40 líneas es **blando**: si el estado genuino no cabe,
 líneas, el diagnóstico es otro: son demasiados frentes y conviene proponer partir
 el proyecto.
 
-`vault` también debe pasar: comprueba que la línea `Vault:` exista y, si dice
+`vault` también debe pasar (si responde que no hay vault en la máquina, código 3, no aplica): comprueba que la línea `Vault:` exista y, si dice
 `actualizado`, que la nota citada exista, esté commiteada en `~/vault` y sea de la
 fecha del cierre. No escribe notas por ti ni decide si toca nota: eso sigue siendo
 tuyo (paso 2). Si falla, arregla la causa (commitea la nota, cita la ruta o da la
