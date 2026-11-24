@@ -41,7 +41,7 @@ def revisar(f):
         if not c.get("fuente"):
             errores.append(("E3", f"el costo «{c.get('concepto')}» no dice de dónde sale («fuente»)"))
         costos += float(c.get("monto", 0))
-    pct_com = 0.0
+    pct_com, pct_alta = 0.0, 0.0
     for c in f.get("comisiones", []):
         if not isinstance(c.get("recurrente"), bool):
             errores.append(("E2", f"la comisión «{c.get('concepto')}» no dice si se cobra en cada cobro o solo en el alta"))
@@ -49,6 +49,8 @@ def revisar(f):
             errores.append(("E3", f"la comisión «{c.get('concepto')}» no dice de dónde sale («fuente»)"))
         if c.get("recurrente") is True:
             pct_com += float(c.get("pct", 0))
+        elif c.get("recurrente") is False:
+            pct_alta += float(c.get("pct", 0))
     merma = 0.0
     if f.get("merma_pct") is not None:
         if f.get("valor_unidad") is None:
@@ -62,12 +64,15 @@ def revisar(f):
     eq_publico = eq_neto * (1 + iva) if f.get("iva_incluido") else eq_neto
     r = {"unidad": f.get("unidad"), "precio_sin_iva": round(neto, 2), "comision_recurrente": round(comision, 2),
          "costos": round(costos, 2), "merma": round(merma, 2), "contribucion": round(contribucion, 2),
-         "precio_equilibrio": round(eq_publico, 2), "precio_equilibrio_con_iva": bool(f.get("iva_incluido"))}
+         "precio_equilibrio": round(eq_publico, 2), "precio_equilibrio_con_iva": bool(f.get("iva_incluido")),
+         "comision_alta": round(pct_alta * neto, 2)}
     ch = f.get("churn_mensual")
     if ch:
         r["cltv"] = round(contribucion / float(ch), 2)
-        if f.get("cac"):
-            r["meses_recuperar_cac"] = round(float(f["cac"]) / contribucion, 1) if contribucion > 0 else None
+        if f.get("cac") or pct_alta:
+            cac = float(f.get("cac") or 0) + pct_alta * neto          # la comisión de alta se suma al costo de adquirir
+            r["cac_total"] = round(cac, 2)
+            r["meses_recuperar_cac"] = round(cac / contribucion, 1) if contribucion > 0 else None
             if contribucion <= 0:
                 avisos.append(("A1", "con contribución ≤ 0 el costo de adquisición nunca se recupera"))
     if f.get("viable") is True and contribucion <= 0:

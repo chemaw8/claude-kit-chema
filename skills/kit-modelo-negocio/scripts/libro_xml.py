@@ -17,7 +17,8 @@ import re
 import sys
 from xml.sax.saxutils import escape
 
-A1 = re.compile(r"(?:(?P<hoja>'[^']+'|[A-Za-zÁÉÍÓÚáéíóúñÑ_][\w.]*)!)?(?P<c>\$?[A-Z]{1,3})(?P<f>\$?\d+)")
+# Referencia A1: no puede venir pegada a otra palabra ni ser el nombre de una función (LOG10(, ATAN2().
+A1 = re.compile(r"(?<![\w.])(?:(?P<hoja>'[^']+'|[A-Za-zÁÉÍÓÚáéíóúñÑ_][\w.]*)!)?(?P<c>\$?[A-Z]{1,3})(?P<f>\$?\d+)(?![\w(])")
 
 
 def col_num(letras):

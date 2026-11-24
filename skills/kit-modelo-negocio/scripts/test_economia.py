@@ -44,6 +44,12 @@ for nombre, mut, codigo in (
     if codigo not in {c for c, _ in revisar(f)[1]}:
         falla(f"{nombre}: no marcó {codigo}")
 
+alta = dict(copy.deepcopy(BASE), precio=2000, cac=900, comisiones=[{"concepto": "escuela", "pct": 0.1, "recurrente": False, "fuente": "x"}])
+ra = revisar(alta)[0]
+if abs(ra["cac_total"] - (900 + 0.1 * 2000 / 1.16)) > 0.01:
+    falla(f"comisión de alta no suma al CAC: {ra}")
+if a_r1c1("=LOG10(B1)+ATAN2(A1,B2)", 1, 3) != "=LOG10(RC[-1])+ATAN2(RC[-2],R[1]C[-1])":
+    falla(f"funciones tomadas como celdas: {a_r1c1('=LOG10(B1)+ATAN2(A1,B2)', 1, 3)}")
 # libro_xml: traducción A1 → R1C1 y, si hay LibreOffice, que recalcule
 if a_r1c1("=B1-Supuestos!$B$2", 2, 2) != "=R[-1]C-Supuestos!R2C2":
     falla(f"R1C1: {a_r1c1('=B1-Supuestos!$B$2', 2, 2)}")
