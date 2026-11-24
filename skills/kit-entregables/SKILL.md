@@ -38,7 +38,10 @@ Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_RO
   dice qué vas a pedir («Hoy les vengo a pedir dos cosas: …»). El público que no oye la petición al principio no
   escucha el resto como argumento. Al final se repite con lo que hay que hacer y cómo. En un discurso no se dice al
   público una fecha que el insumo no trae (no se puede marcar «propuesta» en voz alta): se pide la acción y se dice
-  cómo hacerla; la fecha que falta va en tu respuesta, fuera del discurso.
+  cómo hacerla; la fecha que falta va en tu respuesta, fuera del discurso. Tampoco se inventan detalles para que suene
+  concreto: ni plazos («la primera semana de enero»), ni cómo funciona un beneficio más allá de lo que dice el
+  encargo, ni procesos, promesas o anécdotas. Lo emotivo sale de las cifras del encargo dichas a escala humana, no de
+  datos nuevos.
 
 ## Las fallas que más se repiten (A/B del 2026-11-23 y del 2026-11-24, con y sin esta skill)
 
@@ -116,7 +119,10 @@ Una persona inventada o un «Imagina un mundo donde…» es el mismo relleno con
 2. Escribe con la plantilla: secciones en ese orden, con la guía de cada una.
 3. Verifícalo antes de entregar pasándole el texto por stdin (no hace falta escribir un archivo, que puede pedir permiso):
    `python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/kit-entregables/scripts/firma.py" --estructura estatus - <<'EOF'`
-   seguido del texto y `EOF`. También acepta un archivo en lugar de `-`.
+   seguido del texto y `EOF`. También acepta un archivo en lugar de `-`. **Pega el encargo después del texto**, en una
+   línea `=== INSUMO ===` y luego el encargo tal como llegó: así marca las fechas que el encargo no trae (alta en
+   discurso y exposición; aviso en lo demás si no van marcadas «propuesta») y, en vivo, avisa de las cifras que no
+   salen tal cual.
    Si algo sale con gravedad «alta», corrígelo y vuelve a verificar. Además de secciones y orden, marca `cifra_arranque`
    (las dos primeras oraciones sin cifra), `hueco_sin_llenar`, `proceso_colado` (notas para ti dentro del entregable)
    y avisa `cierre_sin_fecha`. **Además corre el revisor de relleno** (`muletillas.sh`) y devuelve sus señales: las
