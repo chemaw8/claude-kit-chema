@@ -285,6 +285,12 @@ cmd_vault() {
   [ -d "$v/.git" ] || { err "no hay vault con git en $v: no se puede comprobar"; return 3; }
   python3 - "$f" "$v" "$p" <<'PY'
 import os, re, subprocess, sys
+# Un error interno (CONTINUAR no UTF-8, git ausente) es «no se pudo comprobar» (3), nunca
+# «no cumple» (1): el backstop bloquea con 1 y citaría una razón falsa.
+def _no_se_pudo(tipo, valor, tb):
+    print(f"no se pudo comprobar el vault: {tipo.__name__}: {valor}", file=sys.stderr)
+    os._exit(3)
+sys.excepthook = _no_se_pudo
 doc, vault, proy = sys.argv[1], sys.argv[2], sys.argv[3]
 if os.path.realpath(proy) == os.path.realpath(vault):
     print("✓ el proyecto es el propio vault"); sys.exit(0)
@@ -1027,6 +1033,9 @@ EOF
   KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: nota más vieja que el cierre debió fallar"; f=1; }
   printf "$base\n---\n## Detalle vivo\nVault: sin cambios — esto está bajo la línea y no cuenta\n" > "$pv/CONTINUAR.md"
   KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: la línea bajo '---' no debe contar"; f=1; }
+  printf '\xff\xfe basura\nVault: sin cambios — razón suficientemente larga\n' > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 3 ] || { err "autotest vault: un error interno (no UTF-8) debe dar 3, no 'no cumple'; dio $rcg"; f=1; }
   KIT_VAULT="$t/no-hay" cmd_vault "$pv" >/dev/null 2>&1; rcg=$?
   [ "$rcg" -eq 3 ] || { err "autotest vault: sin vault debió dar 3, dio $rcg"; f=1; }
   KIT_VAULT="$vv" cmd_vault "$vv" >/dev/null 2>&1; rcg=$?
