@@ -1,7 +1,7 @@
 ---
 name: kit-entregables
 license: MIT
-description: 'Estándar Kit Chema para la ESTRUCTURA de un entregable según su objetivo, tomada de autores reconocidos, y para quitarle el relleno típico de IA («slop»): informe o memo de decisión, estatus a dirección, one-pager, brief, propuesta comercial, pitch que replantea el problema, discurso, exposición y entregable académico. PILOTO: úsala cuando el encargo nombre el FORMATO one-pager, brief (también de decisión o para un comité), discurso, exposición en vivo, estatus o informe para dirección, o entregable académico; si el encargo además pide aprobar algo o lleva números, cárgala JUNTO con kit-propuestas o kit-finanzas, no en su lugar: esta pone el esqueleto y el revisor de relleno, la del dominio manda en el fondo (opciones, reversibilidad, cifras). Cuándo no usarla: un correo, minuta o mensaje sin uno de esos formatos (kit-redaccion o kit-propuestas solas); deck con identidad visual (kit-presentaciones). No decide el diseño visual.'
+description: 'Estándar Kit Chema para la ESTRUCTURA de un entregable según su objetivo, tomada de autores reconocidos, y para quitarle el relleno típico de IA («slop»): informe o memo de decisión, estatus a dirección, one-pager, brief, postmortem, PR/FAQ, propuesta comercial, pitch que replantea el problema, discurso, exposición y entregable académico. PILOTO: úsala cuando el encargo nombre el FORMATO one-pager, brief (también de decisión o para un comité), postmortem, PR/FAQ, discurso, exposición en vivo, estatus o informe para dirección, o entregable académico; si el encargo además pide aprobar algo o lleva números, cárgala JUNTO con kit-propuestas o kit-finanzas, no en su lugar: esta pone el esqueleto y el revisor de relleno, la del dominio manda en el fondo (opciones, reversibilidad, cifras). Cuándo no usarla: un correo, minuta o mensaje sin uno de esos formatos (kit-redaccion o kit-propuestas solas); deck con identidad visual (kit-presentaciones). No decide el diseño visual.'
 ---
 
 # Entregables: estructura correcta y sin relleno
@@ -28,6 +28,8 @@ Las dos se comprueban con un script, no a ojo.
 | `discurso` | mover a la acción en vivo | en vivo | Monroe |
 | `exposicion` | contrastar el hoy con lo posible | en vivo | Duarte (Resonate) |
 | `academico` | paper o reporte académico | lectura | IMRaD |
+| `postmortem` | incidente o proyecto que salió mal, sin culpables | lectura | Google SRE (cap. 15, apéndice D) |
+| `pr-faq` | proponer un producto o iniciativa antes de construirla | lectura | Amazon, *Working Backwards* |
 
 Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/kit-entregables/scripts/firma.py" --plantilla <estructura>`.
 

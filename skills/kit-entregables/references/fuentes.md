@@ -11,6 +11,9 @@
 | Brief ≤1,500 palabras | IDRC; r4d (SNSF), Cummings 2019 | alta |
 | Lenguaje llano, voz activa | digital.gov/guides/plain-language/writing/ | alta |
 | Nominalizaciones | Joseph Williams, *Style* (vía ux.byu.edu) | media |
+| Postmortem sin culpables: resumen, impacto, causas, detonante, resolución, detección, acciones con dueño, lecciones (bien/mal/suerte), cronología | Lunney y Lueder, Google SRE cap. 15; ejemplo en sre.google/sre-book/example-postmortem (consultado 2026-11-24) | alta |
+| PR/FAQ: comunicado de 1 página + FAQ externo + FAQ interno; la mayoría no se aprueba y eso es la función | Bryar y Carr, *Working Backwards* (2021), vía commoncog.com/putting-amazons-pr-faq-to-practice (consultado 2026-11-24) | alta |
+| Calcos y errores de norma: gerundio de posterioridad, «a nivel de», «es por eso que», pasiva, dequeísmo, quesuismo | UAM, *Libro de estilo* (2020), pp. 65-71 (consultado 2026-11-24) | alta |
 | IMRaD | Sollaci y Pereira 2004, PMC442179 | alta |
 | Challenger: 6 pasos | Dixon y Adamson — challengerinc.com/what-is-challenger-sales-methodology/ | alta |
 | SPIN | Neil Rackham (vía salesforce.com) | media |

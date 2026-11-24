@@ -331,5 +331,86 @@
         "Fuentes citadas."
       ]
     ]
+  },
+  "postmortem": {
+    "uso": "Postmortem sin culpables de un incidente o de un proyecto que salió mal",
+    "modo": "lectura",
+    "fuente": "Google SRE, cap. 15 y apéndice D (sre.google/sre-book/example-postmortem)",
+    "max_palabras": 2000,
+    "secciones": [
+      [
+        "Resumen",
+        "resumen|summary",
+        "Una o dos oraciones: qué falló, cuánto duró y a quién afectó, con su cifra."
+      ],
+      [
+        "Impacto",
+        "impacto|impact|afectaci",
+        "A quién y cuánto, con las cifras del encargo; lo que no se midió se dice."
+      ],
+      [
+        "Causas",
+        "causa|root cause|ra[ií]z",
+        "Causas contribuyentes del sistema o del proceso, no de personas: sin culpables (sin nombres de quien se equivocó)."
+      ],
+      [
+        "Detonante",
+        "detonante|disparador|trigger",
+        "Qué lo desató, si se distingue de la causa; si no, «No aplica: <razón>»."
+      ],
+      [
+        "Resolución",
+        "resoluci|mitigaci|resolution",
+        "Qué se hizo para contenerlo y para resolverlo."
+      ],
+      [
+        "Detección",
+        "detecci|detection",
+        "Cómo y cuándo se supo; si tardó, por qué."
+      ],
+      [
+        "Acciones",
+        "acciones|action items|pendientes",
+        "Tabla: acción, tipo (mitigar/prevenir/proceso), responsable (rol) y fecha. Ninguna sin dueño."
+      ],
+      [
+        "Lecciones",
+        "lecciones|lessons|aprendizaj",
+        "Qué salió bien, qué salió mal y dónde tuvimos suerte."
+      ],
+      [
+        "Cronología",
+        "cronolog|l[ií]nea de tiempo|timeline",
+        "Hechos con fecha y hora del encargo, en orden; sin inventar horas."
+      ]
+    ]
+  },
+  "pr-faq": {
+    "uso": "Proponer un producto o iniciativa escribiendo su comunicado de lanzamiento y las preguntas antes de construirlo",
+    "modo": "lectura",
+    "fuente": "Amazon «Working Backwards» (Bryar y Carr 2021); commoncog.com/putting-amazons-pr-faq-to-practice",
+    "max_palabras": 2500,
+    "secciones": [
+      [
+        "Comunicado",
+        "comunicado|press release|anuncio",
+        "Una página como si ya se lanzara: titular con el beneficio para el cliente, quién es el cliente, su problema, la solución y una cita del cliente marcada «(ilustrativa)». Sin cifras que el encargo no traiga."
+      ],
+      [
+        "Preguntas del cliente",
+        "preguntas (del cliente|externas)|faq externo|external faq",
+        "Lo que preguntaría el cliente: precio, disponibilidad, cómo funciona, qué no hace."
+      ],
+      [
+        "Preguntas internas",
+        "preguntas internas|faq interno|internal faq",
+        "Lo que preguntaría dirección: costo, riesgos, qué falta saber, por qué ahora, qué decidimos no hacer."
+      ],
+      [
+        "Qué pedimos",
+        "qu[eé] pedimos|siguiente paso|petici[oó]n|decisi",
+        "La decisión que se pide, con responsable y fecha."
+      ]
+    ]
   }
 }

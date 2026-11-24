@@ -49,5 +49,7 @@ dos skills; el criterio de cero-confusiones se evalúa sobre ellas.
 | 31 | Necesito un one-pager de la idea para pasárselo al comité | kit-entregables | sí (one-pager ↔ deck/redacción) |
 | 32 | Ármame el brief de decisión sobre si abrimos el canal de WhatsApp | kit-entregables | sí (brief ↔ propuesta) |
 | 33 | Escríbeme el discurso para el evento con los distribuidores | kit-entregables | sí (discurso ↔ deck) |
+| 34 | Escribe el postmortem de la caída del sistema de pagos del martes | kit-entregables | sí (postmortem ↔ código/redacción) |
+| 35 | Arma el PR/FAQ de la nueva app para comercios antes de construirla | kit-entregables | sí (PR/FAQ ↔ propuesta) |
 
 Historia y análisis de fallos previos en `docs/pruebas/disparo-descriptions.md`.
