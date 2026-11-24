@@ -6,8 +6,8 @@ description: 'Estándar Kit Chema para la ESTRUCTURA de un entregable según su 
 
 # Entregables: estructura correcta y sin relleno
 
-> **Piloto (council 2026-11-23, PR #114):** fuera de la tabla del núcleo hasta medirla con un A/B prerregistrado contra
-> el kit vigente. La skill del dominio manda; esta solo aporta el esqueleto.
+> **Piloto (council 2026-11-23, PR #114):** fuera de la tabla del núcleo. El A/B prerregistrado v2 (2026-11-24) cumplió su regla (+10
+> criterios de 135); entra a la tabla solo si lo aprueba el dueño. La skill del dominio manda; esta solo aporta el esqueleto.
 
 La forma de un entregable no es decoración: decide si la audiencia entiende y actúa. Esta skill hace dos cosas. Elige la
 estructura que corresponde al objetivo (no la misma para todo) y quita el relleno que delata un texto hecho sin pensar.
@@ -77,7 +77,8 @@ Una sección que no aplica se escribe «No aplica: <razón>»; nunca se inventa 
 que abre la estructura y el orden bloquean; las demás faltantes solo avisan. El script comprueba las secciones y su orden, el título, la conclusión primero (si la estructura abre con ella), el
 origen de las cifras (si la estructura lo lleva), que haya una fecha absoluta (aviso) y el relleno (aviso a partir de
 varias frases). En estructuras para presentar en vivo (propuesta-challenger, discurso, exposición) revisa secciones, orden, título,
-largo, huecos de plantilla sin llenar y relleno. Que el cierre tenga responsable y que no haya relleno suelto se revisa además a ojo.
+largo, huecos de plantilla sin llenar y relleno. En todas: cifra en las dos primeras oraciones, huecos entre corchetes
+o «por definir», notas de proceso dentro del entregable (alta) y fecha del cierre (aviso). Que el cierre tenga responsable y que no haya relleno suelto se revisa además a ojo.
 
 1. El título es la conclusión, no el tema: «Cerrar la tienda X ahorra $1.2 M al año», no «Análisis de tiendas».
 2. Una idea por lámina proyectada (≤60 palabras); lo denso va a un documento de lectura (≤ ~6 páginas, anexos aparte).

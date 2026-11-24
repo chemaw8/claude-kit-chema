@@ -72,7 +72,7 @@ D = [
   "fragmento enfático de una o dos palabras («Dos.», «De verdad.»)", 4.0),
 ]
 CF = [(i, re.compile(p, I), q, s) for i, p, q, s in F]
-CD = [(i, re.compile(p, I if i != "D2" else re.M), q, u) for i, p, q, u in D]
+CD = [(i, re.compile(p, I if i not in ("D2", "D7") else re.M), q, u) for i, p, q, u in D]
 
 def titulo_ingles(linea):
     m = re.match(r"^\s*#{1,6}\s+(.+?)\s*#*\s*$", linea)
