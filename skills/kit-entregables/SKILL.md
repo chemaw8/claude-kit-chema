@@ -117,7 +117,8 @@ Una persona inventada o un «Imagina un mundo donde…» es el mismo relleno con
    Si algo sale con gravedad «alta», corrígelo y vuelve a verificar. Además de secciones y orden, marca `cifra_arranque`
    (las dos primeras oraciones sin cifra), `hueco_sin_llenar`, `proceso_colado` (notas para ti dentro del entregable)
    y avisa `cierre_sin_fecha`. **Además corre el revisor de relleno** (`muletillas.sh`) y devuelve sus señales: las
-   fuertes como `relleno_F…` (alta) y las de densidad como aviso. Un solo comando revisa todo; no entregues sin correrlo.
+   fuertes como `relleno_F…` (alta) y las de densidad como aviso. Un solo comando revisa todo; no entregues sin correrlo. Si avisa `relleno_sin_revisar`, el revisor no
+   corrió: revisa el relleno a ojo con la tabla de arriba.
    Corrige el texto, nunca el dato: si el verificador pide algo que el insumo no trae, no lo inventes ni quites una
    decisión real para que pase; déjalo y dilo en tu respuesta. Las láminas se verifican por JSON en stdin:
    `{"formato":"presentacion","laminas":[{"titulo":…,"cuerpo":…}]}` (ahí aplica el tope de 60 palabras por lámina).

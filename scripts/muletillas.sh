@@ -49,7 +49,7 @@ F = [
   "raya al estilo inglés (espacio a ambos lados)", "inciso pegado «—así—», o punto o coma"),
  ("F10", r"^\s*(#{1,6}\s*|[-*+]\s+|\d+[.)]\s+)(?![\U0001F7E0-\U0001F7EB\u2705\u274C\u26A0\u2B50])[\U0001F300-\U0001FAFF\u2600-\u27BF]",
   "emoji decorativo", "quítalo (los semáforos 🟢🟡🔴 y ✅❌⚠ no cuentan)"),
- ("F13", r"\bno (?:fue|es|era|son|eran|se trata de|(?:les |te |le |nos )?(?:pido|pedimos|vendo|vendemos|busco|buscamos|vengo a|venimos a|ofrezco|ofrecemos))\b[^.!?\n]{1,80}[.!?]\s+(?:fue|es|era|son|eran|se trata de|(?:les |te |le |nos )?(?:pido|pedimos|vendo|vendemos|busco|buscamos|vengo a|venimos a|ofrezco|ofrecemos))\b",
+ ("F13", r"\bno (fue|es|era|son|eran|se trata de|(?:les |te |le |nos )?(?:pido|pedimos|vendo|vendemos|busco|buscamos|vengo a|venimos a|ofrezco|ofrecemos))\b[^.!?\n]{1,80}[.!?]\s+\1\b",
   "negación y corrección en dos oraciones («No fue suerte. Fue…»)", "di solo lo que sí es, con el dato"),
  ("F12", r"(?<![\w/.\-])(multi|auto|pre|post|pos|anti|co|re|sub|super|inter|intra|micro|macro|semi|ex|pro|contra|extra|infra|mini|mega|ultra|hiper|neo|pseudo|seudo|bi|tri|sobre|meta|omni|tele|ciber)-(?-i:[a-záéíóúñ]{3,})(?![\w/\-]|\.\w)",
   "prefijo con guion (calco del inglés)", "se escribe junto: «multiagente», «reejecutar»; el guion solo va ante sigla, número o mayúscula («anti-OTAN», «sub-21»); un nombre de archivo va entre `comillas de código`"),
@@ -188,7 +188,7 @@ EOF
   out="$(printf '¿Quieres que profundice en esto?\n' | motor - 2>/dev/null)"; chk "detecta la oferta de chatbot con «¿»" "$(hay "$out" F5)" si
   out="$(printf 'Eso no fue suerte. Fue trabajo de cada ruta.\n' | motor - 2>/dev/null)"; chk "detecta F13 (negación y corrección)" "$(hay "$out" F13)" si
   out="$(printf 'Piensen en el pedido. Piensen en la cuenta. Y piensen en diciembre.\n' | motor - 2>/dev/null)"; chk "detecta F14 (anáfora de tres)" "$(hay "$out" F14)" si
-  printf 'No hubo quejas en marzo. Las ventas subieron 4 %%.\nSon 3 tiendas. Las otras cerraron.\n' | motor - >/dev/null 2>&1; chk "F13/F14 no marcan prosa normal" "$?" 0
+  printf 'No hubo quejas en marzo. Las ventas subieron 4 %%.\nSon 3 tiendas. Las otras cerraron.\nNo es posible cerrar en marzo. Son 3 tiendas con contrato.\n' | motor - >/dev/null 2>&1; chk "F13/F14 no marcan prosa normal" "$?" 0
   printf '| Caso | Dato |\n|---|---|\n| A | — |\n' | motor - >/dev/null 2>&1; chk "F9 no marca la raya de celda vacía en una tabla" "$?" 0
   local negras; negras="$(printf 'Las ventas del **trimestre** subieron en **tres** tiendas y bajaron en dos. %.0s' $(seq 1 14))"
   out="$(printf '%s\n' "$negras" | motor - 2>/dev/null)"; chk "D8 marca la densidad de negritas" "$(hay "$out" D8)" si
