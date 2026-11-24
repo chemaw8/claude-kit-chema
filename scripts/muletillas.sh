@@ -45,7 +45,7 @@ F = [
   "certeza o cobertura de más", "pon la evidencia, o «puede»"),
  ("F8", r"\bse (erige|posiciona|consolida|presenta) como (un[ao]? )?(referente|solución|herramienta|pilar|opción|aliado)\b|\bfunge como\b|\bsirve como (un[ao]? )?(pilar|puente|catalizador|testimonio)\b",
   "evita el «es»", "«es» o «tiene»"),
- ("F9", r"\S \u2014 \S|\S \u2014$",
+ ("F9", r"[^\s|] \u2014 [^\s|]|[^\s|] \u2014$",
   "raya al estilo inglés (espacio a ambos lados)", "inciso pegado «—así—», o punto o coma"),
  ("F10", r"^\s*(#{1,6}\s*|[-*+]\s+|\d+[.)]\s+)(?![\U0001F7E0-\U0001F7EB\u2705\u274C\u26A0\u2B50])[\U0001F300-\U0001FAFF\u2600-\u27BF]",
   "emoji decorativo", "quítalo (los semáforos 🟢🟡🔴 y ✅❌⚠ no cuentan)"),
@@ -185,6 +185,7 @@ EOF
   out="$(printf 'Eso no fue suerte. Fue trabajo de cada ruta.\n' | motor - 2>/dev/null)"; chk "detecta F13 (negación y corrección)" "$(hay "$out" F13)" si
   out="$(printf 'Piensen en el pedido. Piensen en la cuenta. Y piensen en diciembre.\n' | motor - 2>/dev/null)"; chk "detecta F14 (anáfora de tres)" "$(hay "$out" F14)" si
   printf 'No hubo quejas en marzo. Las ventas subieron 4 %%.\nSon 3 tiendas. Las otras cerraron.\n' | motor - >/dev/null 2>&1; chk "F13/F14 no marcan prosa normal" "$?" 0
+  printf '| Caso | Dato |\n|---|---|\n| A | — |\n' | motor - >/dev/null 2>&1; chk "F9 no marca la raya de celda vacía en una tabla" "$?" 0
   [ "$fallas" -eq 0 ] && echo "autotest: todo en verde" || echo "autotest: $fallas falla(s)"
   return "$fallas"
 }
