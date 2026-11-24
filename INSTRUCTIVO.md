@@ -39,7 +39,7 @@ pieza, dónde queda y cómo notas que actúa.
 | **Hook sello-push** (`hooks/sello-push.sh`) | `~/.claude/hooks/` más una entrada `PreToolUse` (opt-in, `KIT_GATE=s`; se activa por repo con `sello-push.sh activar`) | Antes de un `git push` en un repo con el gate activo | El push sin sello de revisión se bloquea; `/revisar-antes-de-subir` produce el sello |
 | **COMO-PEDIR.md** | Se queda en el repo; no se instala en `~/.claude/` | Cuando tú redactas una petición | No cambia el comportamiento de Claude: te ayuda a ti a pedir mejor (anatomía de la petición, plantillas, palabras clave) |
 
-Las nueve skills viven en `~/.claude/skills/` y Claude elige cuál usar por su
+Las diez skills viven en `~/.claude/skills/` y Claude elige cuál usar por su
 `description`: no tienes que nombrarlas, basta con describir la tarea.
 
 Una nota sobre ese mecanismo: el listado de skills que Claude ve tiene un
