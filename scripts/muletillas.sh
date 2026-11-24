@@ -70,6 +70,10 @@ D = [
   "eslogan «X, no Y» («fechas, no promesas»)", 2.0),
  ("D7", r"(?:^|(?<=[.!?…])\s+)(?:[¡¿]?[A-ZÁÉÍÓÚÑ][a-záéíóúñ]*(?: [a-záéíóúñ]+)?[.!])(?=\s|$)",
   "fragmento enfático de una o dos palabras («Dos.», «De verdad.»)", 4.0),
+ ("D8", r"\*\*[^*\n]+\*\*",
+  "negritas de más (resaltar todo es no resaltar nada)", 10.0),
+ ("D9", r"(?<=\w) \u2192 (?=\w)",
+  "flecha «→» en la prosa en lugar de un verbo", 2.0),
 ]
 CF = [(i, re.compile(p, I), q, s) for i, p, q, s in F]
 CD = [(i, re.compile(p, I if i not in ("D2", "D7") else re.M), q, u) for i, p, q, u in D]
@@ -186,6 +190,9 @@ EOF
   out="$(printf 'Piensen en el pedido. Piensen en la cuenta. Y piensen en diciembre.\n' | motor - 2>/dev/null)"; chk "detecta F14 (anáfora de tres)" "$(hay "$out" F14)" si
   printf 'No hubo quejas en marzo. Las ventas subieron 4 %%.\nSon 3 tiendas. Las otras cerraron.\n' | motor - >/dev/null 2>&1; chk "F13/F14 no marcan prosa normal" "$?" 0
   printf '| Caso | Dato |\n|---|---|\n| A | — |\n' | motor - >/dev/null 2>&1; chk "F9 no marca la raya de celda vacía en una tabla" "$?" 0
+  local negras; negras="$(printf 'Las ventas del **trimestre** subieron en **tres** tiendas y bajaron en dos. %.0s' $(seq 1 14))"
+  out="$(printf '%s\n' "$negras" | motor - 2>/dev/null)"; chk "D8 marca la densidad de negritas" "$(hay "$out" D8)" si
+  out="$(printf '%s Pasamos de 5 días → 2 días y de 3 → 1 y de 9 → 4.\n' "$base" | motor - 2>/dev/null)"; chk "D9 marca las flechas en la prosa" "$(hay "$out" D9)" si
   [ "$fallas" -eq 0 ] && echo "autotest: todo en verde" || echo "autotest: $fallas falla(s)"
   return "$fallas"
 }

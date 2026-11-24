@@ -33,8 +33,10 @@ Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_RO
 
 **Dónde va la conclusión.** Los autores se contradicen y la contradicción se resuelve por modo:
 - **Lectura** (alguien lo lee sin ti): conclusión primero, en el título y en el primer párrafo (Minto, BLUF).
-- **En vivo** (lo presentas): tensión; la solución va al final (Duarte, Monroe, Challenger). Si es para dirección, una
-  línea con la conclusión arriba y luego la secuencia.
+- **En vivo** (lo presentas): tensión; la solución se desarrolla al final (Duarte, Monroe, Challenger). Pero la
+  petición se anuncia arriba: después del saludo, la primera oración da el logro o el problema con su cifra y la segunda
+  dice qué vas a pedir («Hoy les vengo a pedir dos cosas: …»). El público que no oye la petición al principio no
+  escucha el resto como argumento. Al final se repite con fecha y responsable.
 
 ## Las fallas que más se repiten (A/B del 2026-11-23 y del 2026-11-24, con y sin esta skill)
 
@@ -75,9 +77,13 @@ discursos y exposiciones. Estas construcciones se quitan aunque suenen «retóri
 | Anáfora de tres | «Piensen en… Piensen en… Y piensen en…» | Una oración con los tres datos, o una lista. |
 | Tríada de adjetivos o cierre épico | «rápido, simple y seguro» · «¡Vamos por la meta!» | El dato que lo prueba; cierra con la petición. |
 | Palabra de folleto | robusto, potenciar, sinergia, transformador, holístico, de manera integral | El verbo o la cifra concretos. |
+| Negritas en todo | **Etiqueta:** en cada viñeta; tres o cuatro negritas por párrafo | Una negrita por sección como máximo, para la cifra que no se debe perder. |
+| Flecha en la prosa | «de 5 días → 2 días» | «bajó de 5 a 2 días». En una tabla o diagrama sí va. |
 
 Una figura retórica suelta puede servir en vivo; el problema es la densidad: si hay más de una por minuto de discurso, ya
-es plantilla. El revisor `muletillas.sh` marca las cuatro primeras (F13, F14, D6, D7) y el vocabulario (D1).
+es plantilla. El revisor `muletillas.sh` marca las cuatro primeras (F13, F14, D6, D7), el vocabulario (D1), las
+negritas de más (D8) y las flechas en la prosa (D9). En el A/B del 2026-11-24, el vocabulario casi no apareció: lo que
+delataba los textos era la forma (negritas a 15 por cada 1,000 palabras de mediana, viñetas con etiqueta en negritas).
 
 ## Reglas comunes
 
@@ -105,19 +111,22 @@ Una persona inventada o un «Imagina un mundo donde…» es el mismo relleno con
 
 1. Elige la estructura por el objetivo del encargo. Si duda entre dos, la de lectura si alguien lo leerá sin ti.
 2. Escribe con la plantilla: secciones en ese orden, con la guía de cada una.
-3. Guarda el texto en un archivo de tu carpeta de trabajo (no en `/tmp`, que puede estar fuera de tus permisos) y
-   verifícalo antes de entregar:
-   `python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/kit-entregables/scripts/firma.py" --estructura estatus entregable.md`
+3. Verifícalo antes de entregar pasándole el texto por stdin (no hace falta escribir un archivo, que puede pedir permiso):
+   `python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/kit-entregables/scripts/firma.py" --estructura estatus - <<'EOF'`
+   seguido del texto y `EOF`. También acepta un archivo en lugar de `-`.
    Si algo sale con gravedad «alta», corrígelo y vuelve a verificar. Además de secciones y orden, marca `cifra_arranque`
    (las dos primeras oraciones sin cifra), `hueco_sin_llenar`, `proceso_colado` (notas para ti dentro del entregable)
-   y avisa `cierre_sin_fecha`. Luego corre `muletillas.sh revisar` y quita toda señal F. **No entregues sin correr los
-   dos**: en el A/B, la mitad de las corridas no los corrió y ahí se concentraron las fallas. Las láminas se verifican por JSON en stdin:
+   y avisa `cierre_sin_fecha`. **Además corre el revisor de relleno** (`muletillas.sh`) y devuelve sus señales: las
+   fuertes como `relleno_F…` (alta) y las de densidad como aviso. Un solo comando revisa todo; no entregues sin correrlo.
+   Corrige el texto, nunca el dato: si el verificador pide algo que el insumo no trae, no lo inventes ni quites una
+   decisión real para que pase; déjalo y dilo en tu respuesta. Las láminas se verifican por JSON en stdin:
    `{"formato":"presentacion","laminas":[{"titulo":…,"cuerpo":…}]}` (ahí aplica el tope de 60 palabras por lámina).
 
 ## Checklist antes de entregar
 
 - [ ] Elegí UNA estructura del catálogo por el objetivo y la dije.
-- [ ] El verificador no marca nada «alta» y `muletillas.sh` no marca ninguna señal F.
+- [ ] El verificador (que incluye `muletillas.sh`) no marca nada «alta».
+- [ ] En un estatus, la decisión pendiente está en las dos primeras oraciones; en vivo, la petición se anuncia en la segunda.
 - [ ] La cifra decisiva está en la primera o segunda oración; el cierre tiene rol y fecha (propuesta, si hace falta).
 - [ ] Ningún dato, causa, promesa ni moneda que el insumo no traiga; ningún verbo que exagere la cifra.
 - [ ] Revisé a ojo que no quede relleno (el script avisa solo cuando ya son varias frases); ningún caso o cifra inventados.

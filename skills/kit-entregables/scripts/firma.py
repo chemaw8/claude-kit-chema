@@ -145,6 +145,35 @@ def oraciones_arranque(texto: str, n: int = 2) -> str:
     return " ".join(ors[:n])
 
 
+def muletillas(texto: str) -> list[dict]:
+    """Corre el revisor de relleno del kit (muletillas.sh) y devuelve sus señales fuertes como «alta». En el A/B
+    llamarlo aparte pedía aprobación y nunca corría; desde aquí corre con el verificador."""
+    import shutil, subprocess, tempfile
+    aqui = _P(__file__).resolve().parent
+    rutas = [aqui / "muletillas.sh", aqui.parent.parent.parent / "scripts" / "muletillas.sh"]
+    m = next((r for r in rutas if r.is_file()), None)
+    bash = shutil.which("bash")
+    if not m or not bash:
+        return [h("relleno_sin_revisar", "media", "documento", "no encontré muletillas.sh: revisa el relleno a ojo")]
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
+        f.write(texto); ruta = f.name
+    try:
+        r = subprocess.run([bash, str(m), "revisar", ruta], capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return [h("relleno_sin_revisar", "media", "documento", "muletillas.sh no corrió: revisa el relleno a ojo")]
+    finally:
+        _P(ruta).unlink(missing_ok=True)
+    if r.returncode not in (0, 1):   # 2 = no pudo leer o el motor falló: no se da por limpio (sello)
+        return [h("relleno_sin_revisar", "media", "documento", f"muletillas.sh salió con {r.returncode}: revisa el relleno a ojo")]
+    out = []
+    for l in r.stdout.splitlines():
+        mm = re.search(r":(\d+)?:? (F\d+|D\d+) (.*)", l)
+        if mm:
+            out.append(h("relleno_" + mm.group(2), "alta" if mm.group(2).startswith("F") and mm.group(2) != "F11" else "media",
+                         f"línea {mm.group(1)}" if mm.group(1) else "documento", mm.group(3)[:160]))
+    return out
+
+
 def revisar_arranque_cierre(texto: str, academico: bool = False) -> list[dict]:
     """Medidas del A/B v2 (2026-11-24): las fallas que más se repitieron con la skill puesta."""
     out = []
@@ -246,9 +275,12 @@ def main() -> int:
         print(plantilla(sys.argv[2])); return 0
     if len(sys.argv) >= 2 and sys.argv[1] == "--estructura":   # firma.py --estructura <clave> <archivo.md>
         if len(sys.argv) < 4 or sys.argv[2] not in ESTRUCTURAS:
-            print(f"uso: firma.py --estructura <estructura> <archivo.md>; opciones: {', '.join(ESTRUCTURAS)}", file=sys.stderr); return 1
+            print(f"uso: firma.py --estructura <estructura> <archivo.md | ->; opciones: {', '.join(ESTRUCTURAS)}", file=sys.stderr); return 1
         try:
-            with open(sys.argv[3], encoding="utf-8") as f: texto = f.read()
+            if sys.argv[3] == "-":   # texto por stdin: no hace falta escribir un archivo (en el A/B escribirlo pedía aprobación)
+                texto = sys.stdin.read()
+            else:
+                with open(sys.argv[3], encoding="utf-8") as f: texto = f.read()
         except OSError as e:
             print(f"no pude leer {sys.argv[3]}: {e.strerror}", file=sys.stderr); return 1
         except UnicodeDecodeError:
@@ -275,6 +307,7 @@ def main() -> int:
         else:
             r += [x for x in revisar_documento(e.get("texto") or "") if x["regla"] in ("titulo_conclusion", "relleno")]
         r += revisar_arranque_cierre(e.get("texto") or "", academico=e["estructura"] == "academico")
+        if not e.get("sin_muletillas"): r += muletillas(e.get("texto") or "")
         print(json.dumps({"hallazgos": r, "pasa": not any(x["gravedad"] == "alta" for x in r)}, ensure_ascii=False)); return 0
     f = (e.get("formato") or "").lower().replace("ó", "o")
     if f not in ("presentacion", "documento"):

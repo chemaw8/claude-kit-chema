@@ -230,5 +230,19 @@ class ArranqueYCierre(unittest.TestCase):
         self.assertNotIn(("cierre_sin_fecha", "media"), self.reglas("# T\n\nSube 3 %.\n\n## Paso\nOps arranca en febrero de 2027.\n"))
 
 
+class StdinYMuletillas(unittest.TestCase):
+    def test_estructura_lee_stdin_con_guion(self):
+        import subprocess
+        r = subprocess.run([sys.executable, str(Path(__file__).with_name("firma.py")), "--estructura", "estatus", "-"],
+                           input="# Vamos en verde: 3 de 3 entregas\n\nVamos en verde: 3 de 3.\n", capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0)
+        self.assertIn("hallazgos", r.stdout)
+
+    def test_muletillas_desde_el_verificador(self):
+        r = F.muletillas("# T\n\nEso no fue suerte. Fue trabajo de 3 equipos.\n")
+        self.assertIn(("relleno_F13", "alta"), [(x["regla"], x["gravedad"]) for x in r])
+        self.assertEqual([x for x in F.muletillas("# T\n\nLas ventas subieron 3 % en marzo.\n") if x["gravedad"] == "alta"], [])
+
+
 if __name__ == "__main__":
     unittest.main()
