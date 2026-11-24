@@ -74,11 +74,11 @@ D = [
   "negritas de más (resaltar todo es no resaltar nada)", 10.0),
  ("D9", r"(?<=\w) \u2192 (?=\w)",
   "flecha «→» en la prosa en lugar de un verbo", 2.0),
- ("D10", r"\ben base a\b|\ba nivel de\b|\bes por eso que\b|\bes por ello que\b|\bimpact(a|an|ó|aron|ará|arán|ar)\b(?! (de|del|en el|en la|ambiental))|\baplic(a|ar|ó|aron)r? (a|para) (un |el |la )?(puesto|vacante|beca|empleo|trabajo|programa)\b|\b(pienso|creo|dijo|dicen|resulta|es seguro) de que\b|\bque su (objetivo|nombre|apellido|función|misión|meta)\b",
+ ("D10", r"\ben base a\b|\bes por eso que\b|\bes por ello que\b|\bimpact(a|an|ó|aron|ará|arán|ar)\b(?! (de|del|en el|en la|ambiental))|\baplic(a|ar|ó|aron)r? (a|para) (un |el |la )?(puesto|vacante|beca|empleo|trabajo|programa)\b|\b(pienso|creo|dijo|dicen|resulta|es seguro) de que\b|\bque su (objetivo|nombre|apellido|función|misión|meta)\b",
   "calco del inglés o error de norma («en base a», «a nivel de», «impactar», «aplicar a un puesto», «es por eso que», dequeísmo, quesuismo; UAM, Libro de estilo, 2020)", 1.0),
  ("D11", r"\b(fue|fueron|será|serán|ha sido|han sido|es|son) (\w+[ae]?d[oa]s?) por (el|la|los|las|un|una)\b",
   "pasiva con «por» (calco del inglés; mejor activa)", 3.0),
- ("D12", r",\s(?!(siendo|teniendo|considerando|tomando|dado)\b)\w+(ando|iendo)\b[^.\n]{0,60}\.",
+ ("D12", r",\s(?!(siendo|teniendo|considerando|tomando|dado|cuando|comando|mando|bando)\b)(?-i:[a-záéíóúñ])\w+(ando|iendo)\b[^.\n]{0,60}\.",
   "gerundio al final de la oración (a menudo de posterioridad: «firmó, ganando el cliente»)", 4.0),
 ]
 CF = [(i, re.compile(p, I), q, s) for i, p, q, s in F]
@@ -201,6 +201,9 @@ EOF
   out="$(printf '%s Pasamos de 5 días → 2 días y de 3 → 1 y de 9 → 4.\n' "$base" | motor - 2>/dev/null)"; chk "D9 marca las flechas en la prosa" "$(hay "$out" D9)" si
   out="$(printf '%s En base a los datos y a nivel de ventas, esto impacta el margen. Es por eso que pensamos de que conviene.\n' "$base" | motor - 2>/dev/null)"; chk "D10 marca calcos y errores de norma" "$(hay "$out" D10)" si
   out="$(printf '%s El plan fue aprobado por el comité. La meta fue fijada por la dirección. El cambio será revisado por el área. La compra fue autorizada por finanzas.\n' "$base" | motor - 2>/dev/null)"; chk "D11 marca la pasiva con «por»" "$(hay "$out" D11)" si
+  local ger; ger="$(printf 'Lo firmamos, cuando llegue el pedido. Lo vemos con Fernando, cuando haya datos. %.0s' $(seq 1 12))"
+  printf '%s\n' "$ger" | motor - >/dev/null 2>&1; chk "D12 no marca «cuando» ni nombres propios" "$?" 0
+  out="$(printf '%s Firmó el contrato, ganando el cliente. Cerró la venta, logrando la meta. Abrió la tienda, vendiendo todo. Bajó el precio, subiendo la venta. Pagó la deuda, liberando caja.\n' "$base" | motor - 2>/dev/null)"; chk "D12 marca el gerundio de posterioridad" "$(hay "$out" D12)" si
   printf 'El impacto ambiental es bajo. El impacto de la medida fue claro. Aplicó la regla.\n' | motor - >/dev/null 2>&1; chk "D10 no marca «impacto» sustantivo ni «aplicó la regla»" "$?" 0
   [ "$fallas" -eq 0 ] && echo "autotest: todo en verde" || echo "autotest: $fallas falla(s)"
   return "$fallas"

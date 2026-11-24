@@ -170,3 +170,5 @@ informe con láminas (26) y propuesta (14, 27) siguen en su skill de dominio: la
   (núcleo instalado v1.36.1 —la de main, publicada el 2026-11-24; esta rama aún sale de v1.35.3— vía `DISPARO_NUCLEO`, plugin de esta rama, opus, 3 corridas): kit-entregables 3/3 en 31–33
   y no aparece en ninguna fila ajena; total 83/99. Las filas 1 y 11 bajan sin cargar ninguna skill (no es confusión con
   la nueva). Gate de `disparo.py --modelo sonnet` con esta description (2026-11-24): núcleo 21/21, 0 confusiones, PASA.
+- 2026-11-24 (description de v9, 2afffa1: nombra postmortem y PR/FAQ; filas nuevas 34 y 35): `disparo.py --modelo
+  sonnet`: núcleo 21/21, 0 confusiones, 35/35 filas con su skill, PASA.
