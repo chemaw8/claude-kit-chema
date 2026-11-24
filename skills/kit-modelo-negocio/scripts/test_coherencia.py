@@ -31,6 +31,8 @@ CASOS = {
     "C6": lambda h: b(h, "recursos").pop("costo"),
     "C7": lambda h: b(h, "ingresos").__setitem__("cobro", ["efectivo"]),
     "C8": lambda h: b(h, "relaciones").__setitem__("para", ["s_inexistente"]),
+    "C9 promesa": lambda h: b(h, "propuesta_valor").__setitem__("t", "Café disponible 24/7 en cada piso"),
+    "C9 promesa marca": lambda h: h["restricciones"][0].__setitem__("t", "La marca garantiza entrega inmediata"),
     "C8 descartado": lambda h: h["segmentos"][1].__setitem__("estado", "descartado"),
     "C8 forma": lambda h: h["segmentos"][0].pop("nombre"),
     "C8 id-lista": lambda h: b(h, "recursos").__setitem__("id", ["re_tostador"]),
@@ -50,7 +52,17 @@ def descartado_limpio():
     return h
 
 
+def promesa_con_capacidad():   # la misma promesa, con la capacidad declarada y aportada: no es error
+    h = copy.deepcopy(BASE)
+    b(h, "propuesta_valor")["t"] = "Café disponible 24/7 en cada piso"
+    b(h, "propuesta_valor")["requiere"].append("capacidad_horario_24_7")
+    b(h, "recursos")["aporta"].append("capacidad_horario_24_7")
+    return h
+
+
 fallas = 0
+if not revisar(promesa_con_capacidad())["coherente"]:
+    print("FALLA promesa con capacidad: marcó error"); fallas += 1
 if not revisar(descartado_limpio())["coherente"]:   # descartar bien (sin nada que lo nombre) no es error
     print("FALLA descartado limpio: marcó error"); fallas += 1
 r = revisar(copy.deepcopy(BASE))

@@ -1,6 +1,7 @@
 # Changelog — Kit Chema
 
 ## Sin publicar
+- **`kit-modelo-negocio`, reglas por código:** `coherencia.py` suma C9 (promesa absoluta sin capacidad declarada); `economia_unitaria.py` revisa la ficha por unidad (IVA declarado, comisiones recurrentes o de alta, fuente de cada costo, merma, viabilidad con contribución negativa) y calcula equilibrio, CLTV y recuperación; `libro_xml.py` es el plan B del libro con fórmulas cuando la terminal no puede escribir. La skill declara sus verificadores con `<!-- pih-verificadores: … -->`, que la compuerta de pi (pi-harness, `extensiones/verificadores`) exige antes de entregar.
 
 - `/cierre` ya no deja el vault a criterio sin rastro: `CONTINUAR.md` lleva siempre la línea `Vault: actualizado` (con la ruta de la nota entre backticks) o `Vault: sin cambios — <razón>`. Subcomando nuevo `rotar-continuar.sh vault` lo comprueba (la nota existe, está commiteada en `~/vault` y es de la fecha del cierre) y `backstop-cierre` bloquea una vez al salir si el cierre no lo resolvió. Solo lo exige un cierre hecho con `rotar` (/cierre), no una edición directa de CONTINUAR. Ojo: el primer /cierre de cada proyecto tras actualizar bloqueará una vez hasta que escriba la línea. No escribe notas. Motivo: medido el 2026-11-24, 11 de 19 proyectos con commits en el mes tenían la nota del vault más vieja que su último commit.
 
