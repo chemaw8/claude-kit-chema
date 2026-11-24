@@ -184,23 +184,46 @@ def _norm_num(x: str) -> str:
     return x.replace(",", "").rstrip("0").rstrip(".") if "." in x else x.replace(",", "")
 
 
+MESES_N = {m: i + 1 for i, m in enumerate("enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre".split())}
+
+
+def _claves_fecha(t: str) -> set:
+    """Formas canónicas de las fechas de un texto: (mes, día), (año, mes), año y mes sueltos. Así «31 de enero» casa
+    con 2027-01-31 (sello) y «1 de marzo» no casa con «11 de marzo»."""
+    k = set()
+    for a, m, d in re.findall(r"\b(20\d\d)-(\d\d)(?:-(\d\d))?\b", t):
+        k |= {("am", int(a), int(m)), ("m", int(m)), ("a", int(a))} | ({("md", int(m), int(d))} if d else set())
+    for d, m in re.findall(r"\b(\d{1,2}) de " + MES + r"\b", t, re.I):
+        k |= {("md", MESES_N[m.lower()], int(d)), ("m", MESES_N[m.lower()])}
+    for m, a in re.findall(r"\b" + MES + r"(?: de)? (20\d\d)\b", t, re.I):
+        k |= {("am", int(a), MESES_N[m.lower()]), ("m", MESES_N[m.lower()]), ("a", int(a))}
+    for m in re.findall(r"\b" + MES + r"\b", t, re.I):
+        k.add(("m", MESES_N[m.lower()]))
+    for a in re.findall(r"\b(20\d\d)\b", t):
+        k.add(("a", int(a)))
+    return k
+
+
 def fuera_del_insumo(texto: str, insumo: str, en_vivo: bool) -> list[dict]:
     """Fechas del entregable que el insumo no trae (A/B v7: el discurso inventaba plazos). En vivo es «alta»: en voz alta
     no se puede marcar «(propuesta)». Las cifras solo avisan: un cálculo propio es legítimo si se declara."""
     out = []
-    ins = insumo.lower()
-    ins_fechas = {m.group(0).lower() for m in FECHAS.finditer(insumo)}
+    ki = _claves_fecha(insumo)
     nuevas = []
     for m in FECHAS.finditer(texto):
-        f = m.group(0).lower()
-        mm = re.fullmatch(MES + r"( de)? (20\d\d)", f)
-        if mm and mm.group(1) in ins and mm.group(3) in ins:   # «marzo de 2027» cuando el encargo dice «marzo» y «2027»
+        kf = _claves_fecha(m.group(0))
+        # una fecha con día exige su (mes, día); sin día, su (año, mes) o mes y año sueltos; «primera semana de…» siempre es nueva
+        if re.match(r"(primera|segunda|tercera|cuarta|última) semana", m.group(0), re.I):
+            nueva = True
+        elif any(x[0] == "md" for x in kf):
+            nueva = not any(x in ki for x in kf if x[0] == "md")
+        else:
+            nueva = not all(x in ki for x in kf if x[0] in ("m", "a"))
+        if not nueva:
             continue
-        if f not in ins_fechas and f not in ins:
-            cola = texto[m.end():m.end() + 30].lower()
-            if not en_vivo and "propuest" in cola:
-                continue
-            nuevas.append(m.group(0))
+        if not en_vivo and "propuest" in texto[m.end():m.end() + 30].lower():
+            continue
+        nuevas.append(m.group(0))
     if nuevas:
         out.append(h("fecha_fuera_del_insumo", "alta" if en_vivo else "media", "documento",
                      "fechas que el encargo no trae: " + ", ".join(sorted(set(nuevas))[:5]) +
