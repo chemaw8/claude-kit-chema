@@ -2,7 +2,6 @@
 > Estado vivo de sesión. Hechos estables en README.md, GOBERNANZA.md y CLAUDE.md; registro histórico en docs/bitacora.md.
 
 ## Dónde vamos
-v1.36.1 en main e instalada (esta máquina y chema-desktop, 2026-11-24): `/cierre` exige y comprueba la línea `Vault:`
 (PR #118, council 3 familias con cambios aplicados). La auditoría del núcleo (`docs/auditoria-nucleo-2026-10-19.md`)
 sigue vigente: lo que falla en la práctica es afirmar sin respaldo.
 
@@ -58,4 +57,3 @@ Vault: actualizado `proyectos/claude-kit-chema/claude-kit-chema.md`
 - Si el revisor del sello da «no disponible» con `duration_api_ms: 0`, probar `claude -p`: la causa del 2026-11-24 fue
   la sesión OAuth de Claude Code vencida (se arregla con `/login`).
 - Repo público: no copiar casos, ids privados de clientes, recibos de modelos, cifras de negocio ni rutas de una sola máquina.
-- La desktop (`ssh chema-desktop`) usa fish: mandar comandos con `bash -s <<'EOF'`.
