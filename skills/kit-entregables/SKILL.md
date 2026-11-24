@@ -1,10 +1,12 @@
 ---
 name: kit-entregables
 license: MIT
-description: 'Estándar Kit Chema para la ESTRUCTURA de un entregable según su objetivo, tomada de autores reconocidos, y para quitarle el relleno típico de IA («slop»): informe o memo de decisión, estatus a dirección, one-pager, brief, propuesta comercial, pitch que replantea el problema, discurso, exposición y entregable académico. PILOTO: úsala cuando el encargo nombre el FORMATO one-pager, brief (también de decisión o para un comité), discurso, exposición en vivo o entregable académico, o pida la estructura de un informe para dirección. Cuándo no usarla: un mensaje, correo o propuesta para que aprueben, autoricen o compren algo (kit-propuestas manda: opciones antes de la recomendación y reversibilidad); estatus que solo informa, correo o minuta (kit-redaccion manda); deck con identidad visual (kit-presentaciones). Si la carga junto con otra skill, la del dominio manda. No decide el diseño visual.'
+description: 'Estándar Kit Chema para la ESTRUCTURA de un entregable según su objetivo, tomada de autores reconocidos, y para quitarle el relleno típico de IA («slop»): informe o memo de decisión, estatus a dirección, one-pager, brief, propuesta comercial, pitch que replantea el problema, discurso, exposición y entregable académico. PILOTO: úsala cuando el encargo nombre el FORMATO one-pager, brief (también de decisión o para un comité), discurso, exposición en vivo, estatus o informe para dirección, o entregable académico; si el encargo además pide aprobar algo o lleva números, cárgala JUNTO con kit-propuestas o kit-finanzas, no en su lugar: esta pone el esqueleto y el revisor de relleno, la del dominio manda en el fondo (opciones, reversibilidad, cifras). Cuándo no usarla: un correo, minuta o mensaje sin uno de esos formatos (kit-redaccion o kit-propuestas solas); deck con identidad visual (kit-presentaciones). No decide el diseño visual.'
 ---
 
 # Entregables: estructura correcta y sin relleno
+
+<!-- pih-verificadores: scripts/firma.py@entregable -->
 
 > **Piloto (council 2026-11-23, PR #114):** fuera de la tabla del núcleo. El A/B prerregistrado v2 (2026-11-24) cumplió su regla (+10
 > criterios de 135); entra a la tabla solo si lo aprueba el dueño. La skill del dominio manda; esta solo aporta el esqueleto.
