@@ -11,11 +11,13 @@ PROY="$T/proyecto"; mkdir -p "$PROY"; printf '# CONTINUAR — x\n' > "$PROY/CONT
 SIN="$T/sin-continuar"; mkdir -p "$SIN"
 TR="$T/transcript.jsonl"
 export BACKSTOP_MARCAS="$T/marcas"
+export BACKSTOP_VAULT="exit 0"   # por defecto el vault cumple; los casos de vault lo cambian
 
 tool() { printf '{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t","name":"%s","input":%s}]}}\n' "$1" "$2"; }
 w()    { tool Write "{\"file_path\":\"$1\",\"content\":\"x\"}"; }              # una escritura
 w3()   { w "$1/a.py"; w "$1/b.py"; w "$1/c.py"; }                             # trabajo real (umbral)
 cont() { tool Edit "{\"file_path\":\"$1/CONTINUAR.md\",\"old_string\":\"a\",\"new_string\":\"b\"}"; }
+rota() { tool Bash "{\"command\":\"bash ~/.claude/scripts/rotar-continuar.sh rotar $1 /tmp/borrador.md\"}"; }  # cierre de /cierre
 evento() { printf '{"session_id":"%s","cwd":"%s","transcript_path":"%s","stop_hook_active":%s}' "${SID:-s1}" "$1" "$TR" "${2:-false}"; }
 corre()  { BACKSTOP_RECONCILIAR="echo '✗ motivo de prueba' >&2; exit $3" bash "$HOOK" <<<"$(evento "$1" "$2")" 2>/dev/null; }
 BLOCK='"decision"[[:space:]]*:[[:space:]]*"block"'
@@ -62,6 +64,35 @@ export SID="s5"; tool Bash '{"command":"git commit -m x"}' > "$TR";        esper
 export SID="s6"; tool Bash '{"command":"git -C /x/repo commit -q -m y"}' > "$TR"; espera "git -C repo commit" "$(corre "$PROY" false 1)" "$BLOCK"
 echo "el mensaje no lleva nombres propios:"
 export SID="s7"; w3 "$PROY" > "$TR"; espera "sin 'José' en la razón" "$(corre "$PROY" false 1 | grep -ci 'josé')" "^0$"
+
+echo "al cerrar, exige la decisión sobre el vault (una vez):"
+export SID="v1"; { w3 "$PROY"; rota "$PROY"; } > "$TR"
+out=$(BACKSTOP_VAULT="echo '✗ falta la línea Vault' >&2; exit 1" corre "$PROY" false 0)
+espera "cerrado pero vault sin resolver → block" "$out" "$BLOCK"
+espera "la razón cita el motivo del helper de vault" "$out" "falta la línea Vault"
+espera "la razón explica las dos salidas" "$out" "sin cambios"
+out2=$(BACKSTOP_VAULT="exit 1" corre "$PROY" false 0)
+espera "segunda vez mismo cierre → solo aviso" "$out2" '"systemMessage"'
+espera "…y no vuelve a bloquear" "$out2" ""
+{ w3 "$PROY"; rota "$PROY"; w3 "$PROY"; rota "$PROY"; } > "$TR"
+espera "un cierre nuevo (otro CONTINUAR) re-arma el bloqueo" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" "$BLOCK"
+export SID="v2"; { w3 "$PROY"; rota "$PROY"; } > "$TR"
+espera "vault cumple (rc 0) → no bloquea" "$(BACKSTOP_VAULT='exit 0' corre "$PROY" false 0)" ""
+espera "sin vault (rc 3) → no bloquea" "$(BACKSTOP_VAULT='exit 3' corre "$PROY" false 0)" ""
+espera "helper viejo sin el subcomando (rc 2) → no bloquea" "$(BACKSTOP_VAULT='exit 2' corre "$PROY" false 0)" ""
+export SID="v3"; : > "$TR"
+espera "sin trabajo en la sesión no pide vault" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" ""
+export SID="v4"; rota "$PROY" > "$TR"
+espera "solo se editó CONTINUAR (sin trabajo real) → no pide vault" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" ""
+
+export SID="v5"; { w3 "$PROY"; cont "$PROY"; } > "$TR"
+espera "CONTINUAR editado a mano (p. ej. /proyecto-init), sin rotar → no pide vault" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" ""
+export SID="v7"; { w3 "$PROY"; tool Bash "{\"command\":\"bash \\\"\$ROTAR\\\" rotar $PROY /tmp/b.md\"}"; } > "$TR"
+espera "cierre con la forma documentada bash \"\$ROTAR\" rotar → comprueba el vault" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" "$BLOCK"
+export SID="v8"; { w3 "$PROY"; tool Bash "{\"command\":\"bash \\\"\$ROTAR\\\" rotar $PROY /tmp/b.md --dry-run\"}"; } > "$TR"
+espera "rotar --dry-run no cuenta como cierre" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" ""
+export SID="v6"; { w3 "$PROY"; rota "$PROY"; } > "$TR"
+espera "cierre con rotar y reconciliar fresco → igual comprueba el vault" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" "$BLOCK"
 
 echo "integración con el helper REAL (repo git temporal):"
 if [ -x "$ROTAR_REAL" ] && command -v git >/dev/null; then

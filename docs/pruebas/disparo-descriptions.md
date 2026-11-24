@@ -159,6 +159,23 @@ frontera no benignas 0, rc=0**. Repetido el mismo día sobre 3b209bc con la sali
 benignas 0, rc=0**; 30 de 30 filas coinciden con la skill esperada. Antes, sobre v1.35.0 + el commit de #94: también
 21/21 y PASA. El PR no toca descriptions; el gate se corrió porque toca el núcleo (GOBERNANZA §4), como pidió el council.
 
+## 2026-11-22 — alta de `kit-modelo-negocio` (rama skill/kit-modelo-negocio)
+`python3 docs/pruebas/disparo.py --modelo sonnet` → código 0. Núcleo 21/21; filas nuevas 31-37 (3 propias, 4 de frontera
+con kit-finanzas, kit-propuestas y kit-analisis-datos) 7/7; confusiones de frontera no benignas: 0. GATE DE DISPARO: PASA.
+Corrida tras los cambios del council (description acotada a diseño; filas 36-37 nuevas). Suma de descriptions: 5,953 de
+6,000 caracteres de aviso (margen de 47).
+
+## 2026-11-23 — `kit-modelo-negocio` cubre «actualizar el modelo y dar el P&L»
+En el caso dorado 02 la skill no se activó en 3 de 3 corridas (cargó kit-finanzas). Se amplió la description y se
+agregó la fila 38. `python3 docs/pruebas/disparo.py --modelo sonnet` → código 0: núcleo 21/21, filas 31-38 8/8,
+0 confusiones. Suma de descriptions: 5,996.
+
+## 2026-11-23 — retiro de `kit-modelo-negocio`
+`python3 docs/pruebas/disparo.py --modelo sonnet` → código 0: núcleo 21/21, 0 confusiones de frontera; filas 31-38 retiradas con la skill.
+
+## 2026-11-23 — `kit-modelo-negocio` vuelve, permanente
+`python3 docs/pruebas/disparo.py --modelo sonnet` → código 0: núcleo 21/21, filas 40-47 8/8, 0 confusiones. Suma de descriptions: 5,996.
+
 ## 2026-11-23 — kit-entregables (PR #114)
 Gate de disparo con la skill nueva: núcleo 21/21, fronteras 0 confusiones (incluidas 3 filas nuevas 31–33 para
 one-pager, brief y discurso, que van a kit-entregables), `disparo.py --modelo sonnet` rc 0. Estatus a dirección (24),

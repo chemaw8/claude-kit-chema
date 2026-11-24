@@ -8,8 +8,9 @@ description: 'Estándar Kit Chema para la ESTRUCTURA de un entregable según su 
 
 <!-- pih-verificadores: scripts/firma.py@entregable -->
 
-> **Piloto (council 2026-11-23, PR #114):** fuera de la tabla del núcleo. El A/B prerregistrado v2 (2026-11-24) cumplió su regla (+10
-> criterios de 135); entra a la tabla solo si lo aprueba el dueño. La skill del dominio manda; esta solo aporta el esqueleto.
+> **Estado (2026-11-24, PR #114):** adoptada tras A/B prerregistrados en casos nuevos (v2→v9, cada versión adoptada
+> ganó a la anterior). Fuera de la tabla del núcleo: se carga por su description. La skill del dominio manda en el fondo;
+> esta aporta el esqueleto y la revisión del texto.
 
 La forma de un entregable no es decoración: decide si la audiencia entiende y actúa. Esta skill hace dos cosas. Elige la
 estructura que corresponde al objetivo (no la misma para todo) y quita el relleno que delata un texto hecho sin pensar.

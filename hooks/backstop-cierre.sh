@@ -37,7 +37,9 @@ res=$(grep -F '"tool_use"' "$tr" 2>/dev/null | python3 -c '
 import json,sys,os,re
 raiz=sys.argv[1].rstrip("/")
 PAPELEO={"CONTINUAR.md","DECISIONES.md","CLAUDE.md","bitacora.md"}
-idx=0; ultimo_cont=-1; trabajo=[]; commits=0
+# /cierre corre `bash "$ROTAR" rotar …` (o con la ruta literal); --dry-run no es cierre.
+ROTA=re.compile(r"""(?:rotar-continuar\.sh|\$\{?ROTAR\}?)["\x27]?\s+rotar\b""")
+idx=0; ultimo_cont=-1; trabajo=[]; commits=0; rotado=False
 for line in sys.stdin:
     try: d=json.loads(line)
     except Exception: continue
@@ -52,14 +54,46 @@ for line in sys.stdin:
             b=os.path.basename(p)
             if b=="CONTINUAR.md": ultimo_cont=idx
             elif b not in PAPELEO: trabajo.append(idx)
+        elif name=="Bash" and ROTA.search(i.get("command") or "") and "--dry-run" not in (i.get("command") or ""):
+            ultimo_cont=idx; rotado=True       # /cierre reemplaza CONTINUAR.md con `rotar`, no con Edit
         elif name=="Bash" and re.search(r"\bgit\b.*\bcommit\b", i.get("command") or ""):
             commits+=1
 posteriores=[t for t in trabajo if t>ultimo_cont]
 cerrado = ultimo_cont>=0 and not posteriores
-print(len(posteriores)); print(commits); print("1" if cerrado else "0"); print(ultimo_cont)' "$cwd" 2>/dev/null) || exit 0
+print(len(posteriores)); print(commits); print("1" if cerrado else "0"); print(ultimo_cont); print(len(trabajo)); print("1" if rotado else "0")' "$cwd" 2>/dev/null) || exit 0
 n=$(sed -n 1p <<<"$res"); commits=$(sed -n 2p <<<"$res"); cerrado=$(sed -n 3p <<<"$res"); ultimo_cont=$(sed -n 4p <<<"$res")
-[ "${n:-0}" -ge "$MIN_ESCRITURAS" ] 2>/dev/null || [ "${commits:-0}" -ge 1 ] 2>/dev/null || exit 0
-[ "$cerrado" = "1" ] && exit 0
+total=$(sed -n 5p <<<"$res")
+rotado=$(sed -n 6p <<<"$res")
+# Con el cierre ya escrito, lo que cuenta para pedir el vault es el trabajo de toda la
+# sesión (después del cierre puede no haber nada, y eso es lo normal).
+[ "$cerrado" = "1" ] && n_umbral=${total:-0} || n_umbral=${n:-0}
+[ "$n_umbral" -ge "$MIN_ESCRITURAS" ] 2>/dev/null || [ "${commits:-0}" -ge 1 ] 2>/dev/null || exit 0
+# Cerrado con /cierre: falta comprobar la única parte del cierre sin verificación, el vault.
+# `rotar-continuar.sh vault` dice si CONTINUAR.md dejó escrita la decisión («Vault:
+# actualizado `nota.md`» o «Vault: sin cambios — razón») y si la nota citada está
+# commiteada. Solo su código 1 bloquea, una vez por cierre; 2, 3 o un helper viejo sin el
+# subcomando dejan pasar. BACKSTOP_VAULT inyecta el veredicto en la prueba.
+# Solo un cierre hecho con /cierre (`rotar`) pide el vault: una edición directa de
+# CONTINUAR.md (p. ej. /proyecto-init) no lo exige.
+[ "$cerrado" = "1" ] && [ "$rotado" != "1" ] && exit 0
+if [ "$cerrado" = "1" ]; then
+  if [ -n "${BACKSTOP_VAULT:-}" ]; then vmot=$(bash -c "$BACKSTOP_VAULT" 2>&1); vrc=$?
+  else vmot=$(bash "$ROTAR" vault "$cwd" 2>&1); vrc=$?; fi
+  [ "$vrc" -eq 1 ] || exit 0
+  vmot=$(printf '%s\n' "$vmot" | grep -m1 '✗' | sed 's/^[^✗]*✗ *//' | cut -c1-220)
+  proy=$(basename "$cwd")
+  mkdir -p "$MARCAS" 2>/dev/null || exit 0
+  marca="$MARCAS/${sid:-sin-sesion}.vault"
+  if [ -f "$marca" ] && [ "$(cat "$marca" 2>/dev/null)" = "${ultimo_cont:--1}" ]; then
+    python3 -c 'import json,sys; print(json.dumps({"systemMessage": sys.argv[1]}, ensure_ascii=False))' \
+      "Kit Chema: el cierre de '$proy' sigue sin resolver el vault (ya se avisó una vez): ${vmot:-falta la línea Vault}."
+    exit 0
+  fi
+  printf '%s' "${ultimo_cont:--1}" > "$marca" 2>/dev/null || exit 0
+  python3 -c 'import json,sys; print(json.dumps({"decision":"block","reason": sys.argv[1]}, ensure_ascii=False))' \
+    "Kit Chema: el cierre de '$proy' no resolvió el vault: ${vmot:-falta la línea Vault en CONTINUAR.md}. Decide si lo aprendido sirve fuera de este proyecto: si sí, escribe la nota (al final, con fecha), commitéala en ~/vault y pon «Vault: actualizado \`ruta/nota.md\`»; si no, pon «Vault: sin cambios — <razón>». Si el usuario prefiere dejarlo así, dilo y termina."
+  exit 0
+fi
 
 # ¿El estado quedó rancio? 0 fresco · 1 rancio · 2 sin CONTINUAR · 3 no se puede
 # reconciliar (sin ancla, ancla fuera del historial). Solo el 1 bloquea, y la razón
