@@ -5,8 +5,8 @@
 ## v1.37.0 — 2026-11-24
 Skill `kit-entregables` (estructura del entregable por objetivo y sin relleno de IA) y `muletillas.sh` ampliado. Flujo:
 PR #114 + council + gate de disparo (21/21, 0 confusiones) + A/B prerregistrados en casos nuevos (v2→v9).
-- **Skill piloto `kit-entregables`** (PR #114): estructura del entregable por objetivo (9 estructuras con autor) y quita el
-  relleno típico de IA. Fuera de la tabla del núcleo. A/B prerregistrado v2 (9 casos, 3 fuera de muestra): +10 criterios
+- **Skill `kit-entregables`** (PR #114, adoptada): estructura del entregable por objetivo (11 estructuras con autor) y quita el
+  relleno típico de IA. Fuera de la tabla del núcleo (se carga por su description). A/B prerregistrado v2 (9 casos, 3 fuera de muestra): +10 criterios
   de 135 y +1 caso; cumple la regla. Su verificador `firma.py` revisa secciones, orden, título-conclusión, cifra en las dos
   primeras oraciones, huecos sin llenar, notas de proceso dentro del entregable y fecha del cierre.
 - **`muletillas.sh`, relleno de construcción:** F13 negación y corrección («No fue suerte. Fue…»), F14 anáfora de tres,
