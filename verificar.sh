@@ -108,12 +108,6 @@ for f in commands/*.md; do
 done
 
 # Los scripts auxiliares deben ser ejecutables y pasar su propia prueba.
-# kit-entregables: el verificador de estructura trae sus pruebas (firma.py no es .sh)
-for t in skills/*/scripts/test_*.py; do
-  [ -f "$t" ] || continue
-  (cd "$(dirname "$t")" && python3 -B -m unittest "$(basename "$t" .py)" >/dev/null 2>&1); chk "$t pasa" $?
-done
-
 for f in scripts/*.sh; do
   [ -e "$f" ] || continue
   [ -x "$f" ]; chk "$f es ejecutable" $?

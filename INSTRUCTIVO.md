@@ -40,7 +40,7 @@ pieza, dónde queda y cómo notas que actúa.
 | **Hook sello-push** (`hooks/sello-push.sh`) | `~/.claude/hooks/` más una entrada `PreToolUse` (opt-in, `KIT_GATE=s`; se activa por repo con `sello-push.sh activar`) | Antes de un `git push` en un repo con el gate activo | El push sin sello de revisión se bloquea; `/revisar-antes-de-subir` produce el sello |
 | **COMO-PEDIR.md** | Se queda en el repo; no se instala en `~/.claude/` | Cuando tú redactas una petición | No cambia el comportamiento de Claude: te ayuda a ti a pedir mejor (anatomía de la petición, plantillas, palabras clave) |
 
-Las diez skills viven en `~/.claude/skills/` y Claude elige cuál usar por su
+Las once skills viven en `~/.claude/skills/` y Claude elige cuál usar por su
 `description`: no tienes que nombrarlas, basta con describir la tarea.
 
 Una nota sobre ese mecanismo: el listado de skills que Claude ve tiene un
@@ -152,7 +152,7 @@ Desde v1.2 el kit se puede instalar de dos formas, y ambas funcionan:
 
 - **(A) Como plugin de Claude Code.** Dentro de Claude Code:
   `/plugin marketplace add chemaw8/claude-kit-chema` y luego
-  `/plugin install kit-chema@kit-chema`. El plugin empaqueta las **10 skills**, los
+  `/plugin install kit-chema@kit-chema`. El plugin empaqueta las **11 skills**, los
   subagentes, los comandos y los **cinco hooks** (contexto, anti-secretos, rutas-fantasma,
   backstop-cierre y sello-push; el último solo actúa en repos con el gate activo).
   Con el plugin, las skills se invocan con namespace
