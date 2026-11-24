@@ -6,6 +6,8 @@ description: 'Estándar Kit Chema para diseñar, evaluar o actualizar un modelo 
 
 # Modelo de negocio: estándar Kit Chema
 
+<!-- pih-verificadores: scripts/economia_unitaria.py@cifras scripts/revisar_pl.py@libro scripts/coherencia.py@json -->
+
 
 El agente no llena un canvas: **propone hipótesis completas, prueba que concuerden, las compara y recomienda una**,
 con fundamentos. Lo que no tiene evidencia se dice; lo que no concuerda se señala. Método: Osterwalder y Pigneur,
