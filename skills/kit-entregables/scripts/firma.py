@@ -176,7 +176,7 @@ def muletillas(texto: str) -> list[dict]:
 
 SEP_INSUMO = "=== INSUMO ==="
 MES = r"(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)"
-FECHAS = re.compile(r"\b20\d\d-\d\d(-\d\d)?\b|\b\d{1,2} de " + MES + r"\b|\b" + MES + r"( de)? 20\d\d\b|\b(primera|segunda|tercera|cuarta|última) semana de " + MES + r"\b", re.I)
+FECHAS = re.compile(r"\b20\d\d-\d\d(-\d\d)?\b|\b\d{1,2} de " + MES + r"(?: de 20\d\d)?\b|\b" + MES + r"( de)? 20\d\d\b|\b(primera|segunda|tercera|cuarta|última) semana de " + MES + r"\b", re.I)
 NUM = re.compile(r"\d[\d,]*(?:\.\d+)?")
 
 
@@ -193,8 +193,8 @@ def _claves_fecha(t: str) -> set:
     k = set()
     for a, m, d in re.findall(r"\b(20\d\d)-(\d\d)(?:-(\d\d))?\b", t):
         k |= {("am", int(a), int(m)), ("m", int(m)), ("a", int(a))} | ({("md", int(m), int(d))} if d else set())
-    for d, m in re.findall(r"\b(\d{1,2}) de " + MES + r"\b", t, re.I):
-        k |= {("md", MESES_N[m.lower()], int(d)), ("m", MESES_N[m.lower()])}
+    for d, m, a in re.findall(r"\b(\d{1,2}) de " + MES + r"(?: de (20\d\d))?\b", t, re.I):
+        k |= {("md", MESES_N[m.lower()], int(d)), ("m", MESES_N[m.lower()])} | ({("a", int(a))} if a else set())
     for m, a in re.findall(r"\b" + MES + r"(?: de)? (20\d\d)\b", t, re.I):
         k |= {("am", int(a), MESES_N[m.lower()]), ("m", MESES_N[m.lower()]), ("a", int(a))}
     for m in re.findall(r"\b" + MES + r"\b", t, re.I):
@@ -216,7 +216,7 @@ def fuera_del_insumo(texto: str, insumo: str, en_vivo: bool) -> list[dict]:
         if re.match(r"(primera|segunda|tercera|cuarta|última) semana", m.group(0), re.I):
             nueva = True
         elif any(x[0] == "md" for x in kf):
-            nueva = not any(x in ki for x in kf if x[0] == "md")
+            nueva = not any(x in ki for x in kf if x[0] == "md") or not all(x in ki for x in kf if x[0] == "a")   # sello: el año también
         else:
             nueva = not all(x in ki for x in kf if x[0] in ("m", "a"))
         if not nueva:
