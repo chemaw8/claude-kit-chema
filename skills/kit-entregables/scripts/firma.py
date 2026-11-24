@@ -174,6 +174,45 @@ def muletillas(texto: str) -> list[dict]:
     return out
 
 
+SEP_INSUMO = "=== INSUMO ==="
+MES = r"(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)"
+FECHAS = re.compile(r"\b20\d\d-\d\d(-\d\d)?\b|\b\d{1,2} de " + MES + r"\b|\b" + MES + r"( de)? 20\d\d\b|\b(primera|segunda|tercera|cuarta|última) semana de " + MES + r"\b", re.I)
+NUM = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
+
+def _norm_num(x: str) -> str:
+    return x.replace(",", "").rstrip("0").rstrip(".") if "." in x else x.replace(",", "")
+
+
+def fuera_del_insumo(texto: str, insumo: str, en_vivo: bool) -> list[dict]:
+    """Fechas del entregable que el insumo no trae (A/B v7: el discurso inventaba plazos). En vivo es «alta»: en voz alta
+    no se puede marcar «(propuesta)». Las cifras solo avisan: un cálculo propio es legítimo si se declara."""
+    out = []
+    ins = insumo.lower()
+    ins_fechas = {m.group(0).lower() for m in FECHAS.finditer(insumo)}
+    nuevas = []
+    for m in FECHAS.finditer(texto):
+        f = m.group(0).lower()
+        mm = re.fullmatch(MES + r"( de)? (20\d\d)", f)
+        if mm and mm.group(1) in ins and mm.group(3) in ins:   # «marzo de 2027» cuando el encargo dice «marzo» y «2027»
+            continue
+        if f not in ins_fechas and f not in ins:
+            cola = texto[m.end():m.end() + 30].lower()
+            if not en_vivo and "propuest" in cola:
+                continue
+            nuevas.append(m.group(0))
+    if nuevas:
+        out.append(h("fecha_fuera_del_insumo", "alta" if en_vivo else "media", "documento",
+                     "fechas que el encargo no trae: " + ", ".join(sorted(set(nuevas))[:5]) +
+                     ("; en un discurso no se dice una fecha inventada" if en_vivo else "; márcalas «(propuesta)» o quítalas")))
+    ins_nums = {_norm_num(x) for x in NUM.findall(insumo)}
+    sueltas = sorted({x for x in NUM.findall(texto) if _norm_num(x) not in ins_nums and len(_norm_num(x)) >= 2})
+    if en_vivo and sueltas:
+        out.append(h("cifra_fuera_del_insumo", "media", "documento",
+                     "cifras que no están tal cual en el encargo (revisa que sean cálculos tuyos y que se entiendan así): " + ", ".join(sueltas[:8])))
+    return out
+
+
 def revisar_arranque_cierre(texto: str, academico: bool = False) -> list[dict]:
     """Medidas del A/B v2 (2026-11-24): las fallas que más se repitieron con la skill puesta."""
     out = []
@@ -281,11 +320,14 @@ def main() -> int:
                 texto = sys.stdin.read()
             else:
                 with open(sys.argv[3], encoding="utf-8") as f: texto = f.read()
+            insumo = None
+            if SEP_INSUMO in texto:   # «texto\n=== INSUMO ===\ninsumo»: compara fechas y cifras con el encargo
+                texto, insumo = texto.split(SEP_INSUMO, 1)
         except OSError as e:
             print(f"no pude leer {sys.argv[3]}: {e.strerror}", file=sys.stderr); return 1
         except UnicodeDecodeError:
             print(f"no pude leer {sys.argv[3]}: no está en UTF-8", file=sys.stderr); return 1
-        sys.stdin = io.StringIO(json.dumps({"estructura": sys.argv[2], "texto": texto}))
+        sys.stdin = io.StringIO(json.dumps({"estructura": sys.argv[2], "texto": texto, "insumo": insumo}))
     if len(sys.argv) >= 2 and sys.argv[1] == "--catalogo":
         for k, v in ESTRUCTURAS.items(): print(f"{k:22} {v['modo']:8} {v['uso']} — {v['fuente']}")
         return 0
@@ -308,6 +350,7 @@ def main() -> int:
             r += [x for x in revisar_documento(e.get("texto") or "") if x["regla"] in ("titulo_conclusion", "relleno")]
         r += revisar_arranque_cierre(e.get("texto") or "", academico=e["estructura"] in ("academico", "discurso"))   # discurso: la fecha que falta no se dice al público
         if not e.get("sin_muletillas"): r += muletillas(e.get("texto") or "")
+        if e.get("insumo"): r += fuera_del_insumo(e.get("texto") or "", e["insumo"], e["estructura"] in ("discurso", "exposicion"))
         print(json.dumps({"hallazgos": r, "pasa": not any(x["gravedad"] == "alta" for x in r)}, ensure_ascii=False)); return 0
     f = (e.get("formato") or "").lower().replace("ó", "o")
     if f not in ("presentacion", "documento"):

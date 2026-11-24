@@ -246,5 +246,28 @@ class StdinYMuletillas(unittest.TestCase):
         self.assertEqual([x for x in F.muletillas("# T\n\nLas ventas subieron 3 % en marzo.\n") if x["gravedad"] == "alta"], [])
 
 
+class FueraDelInsumo(unittest.TestCase):
+    INS = "Meta 2027: $470 M. CRM nuevo desde enero. Inscripción del 2027-01-08 al 2027-01-31."
+
+    def test_discurso_con_fecha_inventada_es_alta(self):
+        r = F.fuera_del_insumo("Les pido que antes del 29 de enero carguen su meta. El CRM llega en enero.", self.INS, True)
+        self.assertIn(("fecha_fuera_del_insumo", "alta"), [(x["regla"], x["gravedad"]) for x in r])
+
+    def test_fecha_del_insumo_pasa(self):
+        r = F.fuera_del_insumo("Inscríbanse antes del 2027-01-31: vamos por $470 M. El CRM llega en enero de 2027.", self.INS, True)
+        self.assertNotIn("fecha_fuera_del_insumo", [x["regla"] for x in r])
+
+    def test_documento_con_fecha_propuesta_pasa(self):
+        r = F.fuera_del_insumo("Finanzas decide antes del 2026-12-11 (propuesta).", self.INS, False)
+        self.assertEqual(r, [])
+
+    def test_stdin_con_separador(self):
+        import subprocess
+        txt = "# 470 M en 2027\n\nBuenas tardes. Vendimos 412 M y vamos por 470 M; les pido cargar su meta el 29 de enero.\n"
+        r = subprocess.run([sys.executable, str(Path(__file__).with_name("firma.py")), "--estructura", "discurso", "-"],
+                           input=txt + "=== INSUMO ===\n" + self.INS, capture_output=True, text=True)
+        self.assertIn("fecha_fuera_del_insumo", r.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
