@@ -44,7 +44,7 @@ for nombre, mut, codigo in (
     if codigo not in {c for c, _ in revisar(f)[1]}:
         falla(f"{nombre}: no marcó {codigo}")
 
-alta = dict(copy.deepcopy(BASE), precio=2000, cac=900, comisiones=[{"concepto": "escuela", "pct": 0.1, "recurrente": False, "fuente": "x"}])
+alta = dict(copy.deepcopy(BASE), churn_mensual=None, precio=2000, cac=900, comisiones=[{"concepto": "escuela", "pct": 0.1, "recurrente": False, "fuente": "x"}])
 ra = revisar(alta)[0]
 if abs(ra["cac_total"] - (900 + 0.1 * 2000 / 1.16)) > 0.01:
     falla(f"comisión de alta no suma al CAC: {ra}")

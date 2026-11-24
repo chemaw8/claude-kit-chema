@@ -69,12 +69,12 @@ def revisar(f):
     ch = f.get("churn_mensual")
     if ch:
         r["cltv"] = round(contribucion / float(ch), 2)
-        if f.get("cac") or pct_alta:
-            cac = float(f.get("cac") or 0) + pct_alta * neto          # la comisión de alta se suma al costo de adquirir
-            r["cac_total"] = round(cac, 2)
-            r["meses_recuperar_cac"] = round(cac / contribucion, 1) if contribucion > 0 else None
-            if contribucion <= 0:
-                avisos.append(("A1", "con contribución ≤ 0 el costo de adquisición nunca se recupera"))
+    if f.get("cac") or pct_alta:
+        cac = float(f.get("cac") or 0) + pct_alta * neto              # la comisión de alta se suma al costo de adquirir
+        r["cac_total"] = round(cac, 2)
+        r["meses_recuperar_cac"] = round(cac / contribucion, 1) if contribucion > 0 else None
+        if contribucion <= 0:
+            avisos.append(("A1", "con contribución ≤ 0 el costo de adquisición nunca se recupera"))
     if f.get("viable") is True and contribucion <= 0:
         errores.append(("E5", f"se presenta como viable con contribución de {contribucion:,.2f} por {f.get('unidad') or 'unidad'}"))
     return r, errores, avisos
