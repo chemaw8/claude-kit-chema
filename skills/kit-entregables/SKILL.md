@@ -92,8 +92,8 @@ delataba los textos era la forma (negritas a 15 por cada 1,000 palabras de media
 
 Una sección que no aplica se escribe «No aplica: <razón>»; nunca se inventa contenido para llenarla. Solo la sección
 que abre la estructura y el orden bloquean; las demás faltantes solo avisan. El script comprueba las secciones y su orden, el título, la conclusión primero (si la estructura abre con ella), el
-origen de las cifras (si la estructura lo lleva), que haya una fecha absoluta (aviso) y el relleno (aviso a partir de
-varias frases). En estructuras para presentar en vivo (propuesta-challenger, discurso, exposición) revisa secciones, orden, título,
+origen de las cifras (si la estructura lo lleva), que haya una fecha absoluta (aviso) y el relleno (una señal fuerte bloquea; la densidad avisa
+a partir de su umbral). En estructuras para presentar en vivo (propuesta-challenger, discurso, exposición) revisa secciones, orden, título,
 largo, huecos de plantilla sin llenar y relleno. En todas: cifra en las dos primeras oraciones, huecos entre corchetes
 o «por definir», notas de proceso dentro del entregable (alta) y fecha del cierre (aviso; no en discurso ni académico). Que el cierre tenga responsable y que no haya relleno suelto se revisa además a ojo.
 
