@@ -1,6 +1,7 @@
 # Changelog — Kit Chema
 
 ## Sin publicar
+- **`kit-modelo-negocio`, reglas por código:** `coherencia.py` suma C9 (promesa absoluta sin capacidad declarada); `economia_unitaria.py` revisa la ficha por unidad (IVA declarado, comisiones recurrentes o de alta, fuente de cada costo, merma, viabilidad con contribución negativa) y calcula equilibrio, CLTV y recuperación; `libro_xml.py` es el plan B del libro con fórmulas cuando la terminal no puede escribir. La skill declara sus verificadores con `<!-- pih-verificadores: … -->`, que la compuerta de pi (pi-harness, `extensiones/verificadores`) exige antes de entregar.
 
 ## v1.36.0 — 2026-11-23
 Skill nueva `kit-modelo-negocio` (permanente por decisión del dueño) y arreglos de anti-secretos y del instalador del entorno.
