@@ -46,7 +46,7 @@ Las once skills viven en `~/.claude/skills/` y Claude elige cuál usar por su
 Una nota sobre ese mecanismo: el listado de skills que Claude ve tiene un
 presupuesto global (~16,000 caracteres sumando todas las skills instaladas, del
 kit y ajenas); al rebasarlo, algunas skills se vuelven invisibles sin aviso. Las
-del kit suman ~4,000 —lejos del tope— y `verificar.sh` vigila que esa suma no
+del kit suman ~7,000 (2026-11-24; ya pasan el aviso de 6,000) y `verificar.sh` vigila que esa suma no
 engorde, pero si un día una skill deja de dispararse, sospecha primero de
 cuántas skills tienes instaladas en total, no solo de las del kit.
 
