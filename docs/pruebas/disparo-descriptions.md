@@ -189,3 +189,6 @@ informe con láminas (26) y propuesta (14, 27) siguen en su skill de dominio: la
   la nueva). Gate de `disparo.py --modelo sonnet` con esta description (2026-11-24): núcleo 21/21, 0 confusiones, PASA.
 - 2026-11-24 (description de v9, 2afffa1: nombra postmortem y PR/FAQ; filas nuevas 34 y 35): `disparo.py --modelo
   sonnet`: núcleo 21/21, 0 confusiones, 35/35 filas con su skill, PASA.
+- 2026-11-24 (rama unida con main v1.36.2, v1.37.0: banco con las filas de kit-entregables 31-35 y de
+  kit-modelo-negocio 40-47): `disparo.py --modelo sonnet`: núcleo 21/21, 0 confusiones, PASA. Suma de descriptions
+  6,976 (aviso sobre 6,000, no bloquea).
