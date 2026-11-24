@@ -37,6 +37,8 @@ res=$(grep -F '"tool_use"' "$tr" 2>/dev/null | python3 -c '
 import json,sys,os,re
 raiz=sys.argv[1].rstrip("/")
 PAPELEO={"CONTINUAR.md","DECISIONES.md","CLAUDE.md","bitacora.md"}
+# /cierre corre `bash "$ROTAR" rotar …` (o con la ruta literal); --dry-run no es cierre.
+ROTA=re.compile(r"""(?:rotar-continuar\.sh|\$\{?ROTAR\}?)["\x27]?\s+rotar\b""")
 idx=0; ultimo_cont=-1; trabajo=[]; commits=0; rotado=False
 for line in sys.stdin:
     try: d=json.loads(line)
@@ -52,7 +54,7 @@ for line in sys.stdin:
             b=os.path.basename(p)
             if b=="CONTINUAR.md": ultimo_cont=idx
             elif b not in PAPELEO: trabajo.append(idx)
-        elif name=="Bash" and re.search(r"rotar-continuar\.sh\S*\s+rotar\b", i.get("command") or ""):
+        elif name=="Bash" and ROTA.search(i.get("command") or "") and "--dry-run" not in (i.get("command") or ""):
             ultimo_cont=idx; rotado=True       # /cierre reemplaza CONTINUAR.md con `rotar`, no con Edit
         elif name=="Bash" and re.search(r"\bgit\b.*\bcommit\b", i.get("command") or ""):
             commits+=1

@@ -87,6 +87,10 @@ espera "solo se editó CONTINUAR (sin trabajo real) → no pide vault" "$(BACKST
 
 export SID="v5"; { w3 "$PROY"; cont "$PROY"; } > "$TR"
 espera "CONTINUAR editado a mano (p. ej. /proyecto-init), sin rotar → no pide vault" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" ""
+export SID="v7"; { w3 "$PROY"; tool Bash "{\"command\":\"bash \\\"\$ROTAR\\\" rotar $PROY /tmp/b.md\"}"; } > "$TR"
+espera "cierre con la forma documentada bash \"\$ROTAR\" rotar → comprueba el vault" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" "$BLOCK"
+export SID="v8"; { w3 "$PROY"; tool Bash "{\"command\":\"bash \\\"\$ROTAR\\\" rotar $PROY /tmp/b.md --dry-run\"}"; } > "$TR"
+espera "rotar --dry-run no cuenta como cierre" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" ""
 export SID="v6"; { w3 "$PROY"; rota "$PROY"; } > "$TR"
 espera "cierre con rotar y reconciliar fresco → igual comprueba el vault" "$(BACKSTOP_VAULT='exit 1' corre "$PROY" false 0)" "$BLOCK"
 
