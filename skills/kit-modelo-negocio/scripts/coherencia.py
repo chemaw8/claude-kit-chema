@@ -17,11 +17,13 @@ Reglas (errores = la hipótesis no es coherente; avisos = revisar):
       que nadie genera son avisos.
   C7  cómo paga el segmento pagador (empatía `paga_con`) coincide con algún medio de cobro del ingreso; y el segmento
       se entera por donde llegan sus canales (`se_informa` contra `alcanza`).
+  C9  promesa absoluta (24/7, ilimitado, garantizado, siempre…) sin una capacidad «capacidad_…» declarada (error).
   C8  segmentos con "estado": "descartado" que algún elemento sigue nombrando (error); forma mínima (ids, nombres y textos) y referencias a ids inexistentes (error); elementos que nadie usa (aviso).
 Uso: python3 scripts/coherencia.py <hipotesis.json> [...] [--json salida.json] [--verificar]
      --verificar sale con código 1 si alguna hipótesis tiene errores.
 """
 import argparse
+import re
 import json
 import sys
 from pathlib import Path
@@ -46,14 +48,14 @@ def revisar(h):
         return _revisar(h)
     except (TypeError, AttributeError, KeyError) as e:
         return {"id": h.get("id") if isinstance(h, dict) else None, "nombre": h.get("nombre") if isinstance(h, dict) else None,
-                "coherente": False, "avisos": [], "reglas_ok": 0, "reglas_total": 8, "elementos": 0,
+                "coherente": False, "avisos": [], "reglas_ok": 0, "reglas_total": 9, "elementos": 0,
                 "errores": [{"regla": "C8", "msg": f"estructura inválida ({type(e).__name__}: {e})", "ids": []}]}
 
 
 def _revisar(h):
     errores, avisos = [], []
     if not isinstance(h, dict) or not isinstance(h.get("bloques", {}), dict) or not isinstance(h.get("segmentos", []), list):
-        return {"id": None, "nombre": None, "coherente": False, "avisos": [], "reglas_ok": 0, "reglas_total": 8, "elementos": 0,
+        return {"id": None, "nombre": None, "coherente": False, "avisos": [], "reglas_ok": 0, "reglas_total": 9, "elementos": 0,
                 "errores": [{"regla": "C8", "msg": "estructura inválida: se espera un objeto con «segmentos» (lista) y «bloques» (objeto)", "ids": []}]}
 
     def err(regla, msg, ids=()):
@@ -96,7 +98,7 @@ def _revisar(h):
                     forma.append(f"«{e['id']}»: «costo» debe ser el id de una partida (texto)")
     if forma:
         return {"id": h.get("id"), "nombre": h.get("nombre"), "coherente": False, "avisos": [], "reglas_ok": 0,
-                "reglas_total": 8, "elementos": 0, "errores": [{"regla": "C8", "msg": m, "ids": []} for m in forma]}
+                "reglas_total": 9, "elementos": 0, "errores": [{"regla": "C8", "msg": m, "ids": []} for m in forma]}
 
     b = h.get("bloques", {})
     segs = h.get("segmentos", [])
@@ -257,6 +259,18 @@ def _revisar(h):
         elif not info & alc:
             err("C7", f"«{s['nombre']}» se informa por {', '.join(sorted(info))} y sus canales solo llegan a {', '.join(sorted(alc))}", [s["id"]])
 
+    # C9 promesas absolutas: «24/7», «ilimitado», «garantizado», «siempre», «inmediato»… en una propuesta o una restricción
+    # de marca exigen una capacidad declarada (`requiere` con algo que empiece por «capacidad_») que algún recurso,
+    # actividad o socio aporte. En los casos dorados fue la trampa que nadie corrigió: se señalaba y se dejaba.
+    ABSOLUTA = re.compile(r"24\s*/\s*7|24 horas|ilimitad|garantiz|siempre|inmediat|sin l[ií]mite|todos los d[ií]as", re.I)
+    for blq, lista in (("propuesta_valor", b.get("propuesta_valor", [])), ("restricciones", h.get("restricciones", []))):
+        for x in lista:
+            if ABSOLUTA.search(x.get("t", "")):
+                caps = [r for r in _lista(x.get("requiere")) if str(r).startswith("capacidad_")]
+                if not caps:
+                    err("C9", f"«{x['t']}» promete algo absoluto sin declarar la capacidad que lo cumple "
+                              f"(añade a «requiere» algo como «capacidad_horario_24_7» y quién la aporta, o reescribe la promesa)", [x["id"]])
+
     # C8 huérfanos
     for eid, (blq, e) in elementos.items():
         if blq in HABILITADORES[:3] and eid not in usados and not _lista(e.get("aporta")):
@@ -264,7 +278,7 @@ def _revisar(h):
         if blq in HABILITADORES[:3] and _lista(e.get("aporta")) and eid not in usados:
             aviso("C8", f"«{e['t']}» ({NOMBRE[blq]}) aporta {', '.join(_lista(e['aporta']))}, pero nadie lo requiere", [eid])
 
-    total = 8
+    total = 9
     reglas_con_error = {x["regla"] for x in errores}
     return {"id": h.get("id"), "nombre": h.get("nombre"), "coherente": not errores, "errores": errores, "avisos": avisos,
             "reglas_ok": total - len(reglas_con_error), "reglas_total": total,

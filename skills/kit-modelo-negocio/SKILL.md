@@ -30,6 +30,7 @@ sale con código 1 si algo choca (pruebas: `scripts/test_coherencia.py`):
 | C6 | Recursos, actividades o socios sin partida de costo (una partida que nadie genera es aviso) |
 | C7 | El cliente paga o se informa por un medio que los cobros o canales no cubren |
 | C8 | Forma mínima (ids, nombres, textos), referencias rotas y duplicados; un elemento huérfano es aviso |
+| C9 | Una promesa absoluta (24/7, ilimitado, garantizado, siempre) sin la capacidad «capacidad_…» que la cumple |
 
 Si una hipótesis no concuerda, se dice qué choca y se propone la variante que lo resuelve. Lo que no se puede
 tipificar (reputación, calendario, economía) va como **juicio** escrito con su evidencia.
@@ -39,7 +40,9 @@ tipificar (reputación, calendario, economía) va como **juicio** escrito con su
 Proporcional al encargo: si se pide una sola respuesta (sin proyecto que continúe), las hipótesis pueden ir en tabla y
 el JSON con `coherencia.py` solo cuando haya tres o más; sin archivos de continuidad.
 
-1. **Brief**: qué decisión alimenta, para quién, qué no se puede usar (material confidencial, precios no autorizados).
+1. **Brief e insumos**: qué decisión alimenta, para quién, qué no se puede usar. Antes de calcular, revisar los insumos
+   con las herramientas del entorno si existen (`perfil_carpeta`, `auditar_datos`): decisiones que se sustituyen
+   (manda la más reciente), unidades (miles contra unidades), periodos incompletos y filas duplicadas.
 2. **Investigación con auditoría** (kit-research): frentes en paralelo y un auditor de otra familia que abre cada
    fuente. Microdatos oficiales cuando existan, calibrados contra lo publicado: si el script no reproduce la cifra
    oficial, sale con error.
@@ -52,12 +55,18 @@ el JSON con `coherencia.py` solo cuando haya tres o más; sin archivos de contin
    recursos, alianzas, costos) con plantilla fija → `referencias/b2b2c-y-parte-interna.md`.
 5. **Economía como «qué tendría que ser verdad»**: contribución por unidad, punto de equilibrio y % de la base que haría
    falta; tres escenarios. La cifra base usa solo lo que trae el insumo: un costo que falta (comisión de cobro,
-   impuesto) se dice y va como sensibilidad aparte, no dentro de la base.
-6. **Recomendación** (kit-propuestas): opciones con costo, una recomendada, cómo revertirla, qué decide el usuario.
+   impuesto) se dice y va como sensibilidad aparte, no dentro de la base. **Ficha por unidad obligatoria**:
+   `python3 scripts/economia_unitaria.py ficha.json` (IVA declarado, comisiones recurrentes o de alta, merma, fuente
+   de cada costo, precio de equilibrio); con código ≠ 0 no se presenta la economía.
+6. **Recomendación** (kit-propuestas): opciones con costo, una recomendada, cómo revertirla, qué decide el usuario, y
+   los tres supuestos más riesgosos, cada uno con el experimento que lo prueba y la decisión que cambiaría.
+   Alternativas que considerar: los patrones de modelo (plataforma de varios lados, freemium, cola larga, desagregado).
 7. **P&L y presentación**, solo con el canvas aprobado por bloque: scripts del proyecto (la skill da la estructura, no
    el código) → Excel con fórmulas → datos recalculados → presentación y acordeón de supuestos, sin cifras a mano → `referencias/pl-y-presentacion.md` (con kit-finanzas y
    kit-presentaciones). Antes de entregar el libro: `python3 scripts/revisar_pl.py <libro>` (recalcula, cuenta
    fórmulas y errores, avisa series pegadas y prueba que un supuesto mueve el resultado); con código ≠ 0 no se entrega.
+   Si la terminal no puede escribir archivos o no hay openpyxl, plan B: `python3 scripts/libro_xml.py libro.json`
+   imprime el libro con fórmulas en XML de Excel 2003 y se guarda con la herramienta de escritura como `.xml`.
 8. **Actualizar un modelo que ya existe** (llega información nueva): leer la versión previa entera; listar qué cambió,
    con fuente y fecha; quitar lo que quedó huérfano (canales, comisiones o promesas de un segmento descartado) y lo
    que la información nueva contradice; volver a correr la coherencia y decir qué cifras se movieron y cuánto. La
