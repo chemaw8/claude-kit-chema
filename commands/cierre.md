@@ -46,7 +46,8 @@ solo donde haya algo:
 |---|---|
 | cambió el stack, un comando o apareció una trampa nueva | actualiza `CLAUDE.md` (la ficha) |
 | hubo una decisión cara o difícil de revertir | añade entrada a `DECISIONES.md` con fecha absoluta, razones y alternativas descartadas |
-| se produjo algo notable para el conocimiento | deja nota enlazada en el vault con `basic-memory` |
+| se produjo algo notable para el conocimiento (sirve fuera de este proyecto, se midió algo, se cerró una decisión que se vuelve a discutir, una trampa costó tiempo) | deja nota enlazada en el vault (al final, con fecha), **commitéala en `~/vault`** y escribe en CONTINUAR `Vault: actualizado` con la ruta de la nota entre backticks |
+| el vault no cambia | escribe en CONTINUAR `Vault: sin cambios — <razón>`; la línea Vault va **siempre**, porque sin ella no se distingue la decisión del olvido |
 | no cambió ninguna de las anteriores | no toques esos archivos ni preguntes por ellos |
 
 ## 3. Escribe el estado nuevo en un borrador
@@ -83,6 +84,8 @@ abajo lo recortable:
 
 ## Última decisión relevante
 - <YYYY-MM-DD>  <qué>  → DECISIONES.md
+
+Vault: actualizado `proyectos/<proyecto>/<proyecto>.md`      (o «Vault: sin cambios — <razón>»)
 
 ---
 ## Detalle vivo
@@ -154,12 +157,20 @@ un bloqueador vivo ni una pregunta abierta.
 
 ```bash
 bash "$ROTAR" contrato <proyecto>
+bash "$ROTAR" vault <proyecto>
 ```
 
 Debe pasar. El tope de ~40 líneas es **blando**: si el estado genuino no cabe,
 **dilo** en vez de recortar el contrato. Y si el contrato *solo* ya pasa de 40
 líneas, el diagnóstico es otro: son demasiados frentes y conviene proponer partir
 el proyecto.
+
+`vault` también debe pasar (si responde que no hay vault en la máquina, código 3, no aplica): comprueba que la línea `Vault:` exista y, si dice
+`actualizado`, que la nota citada exista, esté commiteada en `~/vault` y sea de la
+fecha del cierre. No escribe notas por ti ni decide si toca nota: eso sigue siendo
+tuyo (paso 2). Si falla, arregla la causa (commitea la nota, cita la ruta o da la
+razón); no cambies la línea para que pase. Si al salir el backstop te bloquea por el
+vault, es esta misma comprobación.
 
 ## 6. Cero residuos
 

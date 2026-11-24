@@ -14,6 +14,10 @@
 #                              3 = no se puede reconciliar (sin ancla, ancla fuera del
 #                              historial, o cierre anclado en otra rama).
 #   contrato <proyecto>        ¿CONTINUAR.md cumple el contrato mínimo?
+#   vault <proyecto>           ¿el cierre decidió sobre el vault y lo cumplió? CONTINUAR.md
+#                              lleva «Vault: actualizado `<nota>.md`» (existe, commiteada,
+#                              de la fecha del cierre o después) o «Vault: sin cambios —
+#                              <razón>». 0 = cumple · 1 = no · 2 = sin CONTINUAR · 3 = sin vault.
 #   autotest                   se prueba a sí mismo con datos sintéticos.
 #
 # Opciones: --dry-run (no escribe nada, solo dice qué haría)
@@ -267,6 +271,73 @@ cmd_reconciliar() {
 
   ok "estado fresco (desde el ancla $commit_esc solo se movió el papeleo del cierre)"
   return 0
+}
+
+# ── vault ─────────────────────────────────────────────────────────────────
+# El paso «deja nota en el vault» era el único del cierre sin comprobación: medido el
+# 2026-11-24, 11 de 19 proyectos con commits en el mes tenían la nota más vieja que su
+# último commit, y no había forma de saber si fue decisión («nada notable») u olvido.
+# Esto no escribe notas: obliga a dejar la decisión por escrito y verifica la parte
+# comprobable (la nota citada existe, está commiteada y es de la fecha del cierre).
+cmd_vault() {
+  local p="${1:-.}" f="${1:-.}/CONTINUAR.md" v="${KIT_VAULT:-$HOME/vault}"
+  [ -f "$f" ] || { err "no hay CONTINUAR.md en $p"; return 2; }
+  [ -d "$v/.git" ] || { err "no hay vault con git en $v: no se puede comprobar"; return 3; }
+  python3 - "$f" "$v" "$p" <<'PY'
+import os, re, subprocess, sys
+# Un error interno (CONTINUAR no UTF-8, git ausente) es «no se pudo comprobar» (3), nunca
+# «no cumple» (1): el backstop bloquea con 1 y citaría una razón falsa.
+def _no_se_pudo(tipo, valor, tb):
+    print(f"no se pudo comprobar el vault: {tipo.__name__}: {valor}", file=sys.stderr)
+    os._exit(3)
+sys.excepthook = _no_se_pudo
+doc, vault, proy = sys.argv[1], sys.argv[2], sys.argv[3]
+if os.path.realpath(proy) == os.path.realpath(vault):
+    print("✓ el proyecto es el propio vault"); sys.exit(0)
+lineas = open(doc, encoding="utf-8").read().split("\n")
+arriba = lineas[:lineas.index("---")] if "---" in lineas else lineas
+fecha = re.search(r"cierre (\d{4}-\d{2}-\d{2})", lineas[0])
+fecha = fecha.group(1) if fecha else ""
+VAULT = re.compile(r"^\s*[-*]?\s*\**vault\**\s*:\s*(.*)$", re.I)
+valores = [m.group(1).strip() for l in arriba for m in [VAULT.match(l)] if m]
+FORMA = "escribe arriba de '---' una línea «Vault: actualizado `ruta/nota.md`» o «Vault: sin cambios — <razón>»"
+if not valores:
+    print(f"✗ CONTINUAR.md no dice qué se hizo con el vault: {FORMA}", file=sys.stderr); sys.exit(1)
+val = valores[-1]
+bajo = val.lower()
+if bajo.startswith("sin cambios"):
+    razon = re.sub(r"^sin cambios\W*", "", val, flags=re.I).strip()
+    if len(razon) < 10:
+        print("✗ «Vault: sin cambios» necesita la razón concreta de esta sesión (por qué lo de hoy no sirve fuera del proyecto)", file=sys.stderr); sys.exit(1)
+    print("✓ vault: sin cambios, con razón"); sys.exit(0)
+if not bajo.startswith("actualizad"):
+    print(f"✗ la línea Vault no se entiende («{val[:60]}»): {FORMA}", file=sys.stderr); sys.exit(1)
+notas = re.findall(r"`([^`]+\.md)`", val)
+if not notas:
+    print("✗ «Vault: actualizado» debe citar la nota entre backticks, relativa a ~/vault", file=sys.stderr); sys.exit(1)
+if not fecha:
+    print("✗ la cabecera de CONTINUAR.md no trae «cierre AAAA-MM-DD»: sin ella no se puede saber si la nota es de este cierre (genérala con `anclar`)", file=sys.stderr); sys.exit(1)
+mal = []
+for n in notas:
+    if not os.path.isfile(os.path.join(vault, n)):
+        mal.append(f"{n}: no existe en el vault"); continue
+    sucia = subprocess.run(["git", "-C", vault, "status", "--porcelain", "--", n], capture_output=True, text=True).stdout.strip()
+    if sucia:
+        mal.append(f"{n}: tiene cambios sin commitear en el vault"); continue
+    # Fecha del commit en la zona LOCAL, la misma de `date +%F` con que `anclar` fecha el cierre
+    # (%cs usa la zona de quien commitea y discrepa si el vault se commitea desde otra zona).
+    ult = subprocess.run(["git", "-C", vault, "log", "-1", "--date=format-local:%Y-%m-%d", "--format=%cd", "--", n],
+                         capture_output=True, text=True).stdout.strip()
+    if not ult:
+        mal.append(f"{n}: nunca se commiteó"); continue
+    if ult < fecha:
+        mal.append(f"{n}: su último commit es del {ult}, antes del cierre ({fecha})")
+for m in mal:
+    print(f"✗ {m}", file=sys.stderr)
+if mal:
+    sys.exit(1)
+print(f"✓ vault actualizado: {', '.join(notas)}")
+PY
 }
 
 # ── contrato ──────────────────────────────────────────────────────────────
@@ -940,6 +1011,43 @@ EOF
   cmd_rotar "$t/soy-archivo/hijo" "$t/nuevo-rotar.md" >/dev/null 2>&1; rcg=$?
   [ "$rcg" -ne 0 ] && [ -f "$t/nuevo-rotar.md" ] || { err "autotest: rotar sin poder crear el destino debe fallar y conservar el borrador, dio $rcg"; f=1; }
 
+  # ── vault: el cierre deja escrita su decisión sobre el vault y se comprueba ──
+  local vv="$t/vault-demo" pv="$t/proyecto-vault"; mkdir -p "$vv/proyectos/demo" "$pv"
+  ( cd "$vv" && git init -q && git config user.email t@t && git config user.name t \
+    && printf '# demo\n' > proyectos/demo/demo.md && git add -A && git commit -qm nota )
+  local hoy; hoy=$(git -C "$vv" log -1 --format=%cs)
+  local base="# CONTINUAR — demo  ·  cierre $hoy\n\n## Dónde vamos\na\n\n## Siguiente paso\n- [ ] x\n\n## Cómo retomar\n- Correr: make\n\n## Bloqueadores / esperas\n- Ninguno\n"
+  printf "$base" > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 1 ] || { err "autotest vault: sin línea Vault debió dar 1, dio $rcg"; f=1; }
+  printf "$base\nVault: sin cambios\n" > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: 'sin cambios' sin razón debió fallar"; f=1; }
+  printf "$base\nVault: sin cambios — solo avance del día, va en CONTINUAR\n" > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 || { err "autotest vault: 'sin cambios' con razón debió pasar"; f=1; }
+  printf "$base\nVault: actualizado \`proyectos/demo/demo.md\`\n" > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 || { err "autotest vault: nota commiteada hoy debió pasar"; f=1; }
+  printf "$base\nVault: actualizado la nota del proyecto\n" > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: 'actualizado' sin ruta debió fallar"; f=1; }
+  printf "$base\nVault: actualizado \`proyectos/demo/no-existe.md\`\n" > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: nota inexistente debió fallar"; f=1; }
+  printf '# demo\nmás\n' > "$vv/proyectos/demo/demo.md"
+  printf "$base\nVault: actualizado \`proyectos/demo/demo.md\`\n" > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: nota sin commitear debió fallar"; f=1; }
+  git -C "$vv" checkout -q -- proyectos/demo/demo.md
+  printf "# CONTINUAR — demo  ·  cierre 2999-01-01\n\n## Dónde vamos\na\n\nVault: actualizado \`proyectos/demo/demo.md\`\n" > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: nota más vieja que el cierre debió fallar"; f=1; }
+  printf "# CONTINUAR — demo\n\n## Dónde vamos\na\n\nVault: actualizado \`proyectos/demo/demo.md\`\n" > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: sin fecha de cierre en la cabecera no debe pasar"; f=1; }
+  printf "$base\n---\n## Detalle vivo\nVault: sin cambios — esto está bajo la línea y no cuenta\n" > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1 && { err "autotest vault: la línea bajo '---' no debe contar"; f=1; }
+  printf '\xff\xfe basura\nVault: sin cambios — razón suficientemente larga\n' > "$pv/CONTINUAR.md"
+  KIT_VAULT="$vv" cmd_vault "$pv" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 3 ] || { err "autotest vault: un error interno (no UTF-8) debe dar 3, no 'no cumple'; dio $rcg"; f=1; }
+  KIT_VAULT="$t/no-hay" cmd_vault "$pv" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 3 ] || { err "autotest vault: sin vault debió dar 3, dio $rcg"; f=1; }
+  KIT_VAULT="$vv" cmd_vault "$vv" >/dev/null 2>&1; rcg=$?
+  [ "$rcg" -eq 2 ] || { err "autotest vault: el vault sin CONTINUAR debe dar 2, dio $rcg"; f=1; }
+
   [ "$f" -eq 0 ] && ok "autotest: rotación sin pérdida, contrato y reconciliación funcionan"
   return $f
 }
@@ -949,6 +1057,7 @@ case "$CMD" in
   anclar)      shift; cmd_anclar "$@" ;;
   reconciliar) shift; cmd_reconciliar "$@" ;;
   contrato)    shift; cmd_contrato "$@" ;;
+  vault)       shift; cmd_vault "$@" ;;
   autotest)    cmd_autotest ;;
-  *) sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
+  *) sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'; exit 2 ;;
 esac
