@@ -217,7 +217,7 @@ class ArranqueYCierre(unittest.TestCase):
     def test_preambulo_antes_del_entregable_es_proceso(self):
         self.assertIn(("proceso_colado", "alta"), self.reglas("El one-pager ya está escrito y pasó el verificador.\n\n# T\n\nSube 3 %.\n"))
         self.assertNotIn(("proceso_colado", "alta"), self.reglas("# La meta ya está escrita: 85 puntos\n\nSube 3 %.\n"))
-        for t in ("El piloto quedó en 92 % de avance; pedimos 2 personas.\n", "La migración ya está lista al 90 %.\n"):
+        for t in ("El piloto quedó en 92 % de avance; pedimos 2 personas.\n", "La migración ya está lista al 90 %.\n", "El estatus del proyecto quedó en ámbar: 2 semanas.\n"):
             self.assertNotIn(("proceso_colado", "alta"), self.reglas(t))
 
     def test_proceso_colado_es_alta(self):
