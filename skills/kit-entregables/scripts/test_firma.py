@@ -165,7 +165,9 @@ class Estructuras(unittest.TestCase):
         self.assertNotIn("origen_cifras", buf.getvalue()); self.assertNotIn("conclusion_primero", buf.getvalue())
 
     def test_estatus_con_su_propia_guia(self):
-        t = F.plantilla("estatus").replace("{{En una o dos oraciones: cómo va y qué se pide.}}", "Vamos en verde; se pide ampliar el plazo al 2027-01-15.")
+        import re
+        t = re.sub(r"\{\{Dos oraciones\.[^}]*\}\}", "Vamos en verde; se pide ampliar el plazo al 2027-01-15.", F.plantilla("estatus"))
+        self.assertIn("se pide ampliar", t)   # la guía cambió en v7: la prueba debe reemplazarla de verdad
         self.assertNotIn("conclusion_primero", [x["regla"] for x in F.revisar_documento(t)])
 
     def test_council_texto_tecnico_legitimo_no_es_relleno(self):
