@@ -177,6 +177,8 @@ def muletillas(texto: str) -> list[dict]:
         return [h("relleno_sin_revisar", "media", "documento", "muletillas.sh no corrió: revisa el relleno a ojo")]
     finally:
         _P(ruta).unlink(missing_ok=True)
+    if r.returncode not in (0, 1):   # 2 = no pudo leer o el motor falló: no se da por limpio (sello)
+        return [h("relleno_sin_revisar", "media", "documento", f"muletillas.sh salió con {r.returncode}: revisa el relleno a ojo")]
     out = []
     for l in r.stdout.splitlines():
         mm = re.search(r":(\d+)?:? (F\d+|D\d+) (.*)", l)
