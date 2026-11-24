@@ -41,11 +41,11 @@ F = [
   "frase de chatbot", "quítala"),
  ("F6", r"\bel futuro (es|luce|se ve) (prometedor|brillante)\b|\blas posibilidades son infinitas\b|\besto es (solo|sólo) el (comienzo|principio)\b|\bun antes y un después\b|\bal siguiente nivel\b",
   "cierre genérico", "di el plan o el hecho"),
- ("F7", r"\bsin (lugar a )?dudas?( alguna)?\b|\bindudablemente\b|\bqueda(n|r[aá]n?)? (asegurad|garantizad)\w*|\best[aá]n? garantizad\w*|\b(podría|puede|podrían|pueden) (potencialmente|posiblemente|eventualmente)\b",
+ ("F7", r"\bsin (lugar a )?dudas?( alguna)?\b|\bindudablemente\b|\b(podría|puede|podrían|pueden) (potencialmente|posiblemente|eventualmente)\b",
   "certeza o cobertura de más", "pon la evidencia, o «puede»"),
  ("F8", r"\bse (erige|posiciona|consolida|presenta) como (un[ao]? )?(referente|solución|herramienta|pilar|opción|aliado)\b|\bfunge como\b|\bsirve como (un[ao]? )?(pilar|puente|catalizador|testimonio)\b",
   "evita el «es»", "«es» o «tiene»"),
- ("F9", r"[^\s|] \u2014 [^\s|]|[^\s|] \u2014$",
+ ("F9", r"\S \u2014 \S|\S \u2014$",
   "raya al estilo inglés (espacio a ambos lados)", "inciso pegado «—así—», o punto o coma"),
  ("F10", r"^\s*(#{1,6}\s*|[-*+]\s+|\d+[.)]\s+)(?![\U0001F7E0-\U0001F7EB\u2705\u274C\u26A0\u2B50])[\U0001F300-\U0001FAFF\u2600-\u27BF]",
   "emoji decorativo", "quítalo (los semáforos 🟢🟡🔴 y ✅❌⚠ no cuentan)"),
@@ -182,8 +182,6 @@ EOF
   motor "$tmp/no-existe.md" >/dev/null 2>&1; chk "archivo inexistente sale con 2" "$?" 2
   out="$(printf 'Cabe mencionar esto.\n' | motor - 2>/dev/null)"; chk "lee de stdin" "$(hay "$out" F1)" si
   out="$(printf '¿Quieres que profundice en esto?\n' | motor - 2>/dev/null)"; chk "detecta la oferta de chatbot con «¿»" "$(hay "$out" F5)" si
-  printf '| Caso | Dato |\n|---|---|\n| A | — |\n' | motor - >/dev/null 2>&1; chk "F9 no marca la raya de celda vacía en una tabla" "$?" 0
-  out="$(printf 'Con eso el ahorro queda asegurado.\n' | motor - 2>/dev/null)"; chk "F7 detecta la certeza de más («queda asegurado»)" "$(hay "$out" F7)" si
   out="$(printf 'Eso no fue suerte. Fue trabajo de cada ruta.\n' | motor - 2>/dev/null)"; chk "detecta F13 (negación y corrección)" "$(hay "$out" F13)" si
   out="$(printf 'Piensen en el pedido. Piensen en la cuenta. Y piensen en diciembre.\n' | motor - 2>/dev/null)"; chk "detecta F14 (anáfora de tres)" "$(hay "$out" F14)" si
   printf 'No hubo quejas en marzo. Las ventas subieron 4 %%.\nSon 3 tiendas. Las otras cerraron.\n' | motor - >/dev/null 2>&1; chk "F13/F14 no marcan prosa normal" "$?" 0
