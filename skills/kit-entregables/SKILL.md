@@ -44,7 +44,9 @@ Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_RO
    frecuente aun con la skill puesta: casi siempre la cifra decisiva estaba en la **tercera** oración, o la que abría
    era otra cifra (la fecha, el contexto). La cifra que abre es la **del insumo** que motiva la decisión, tal como viene
    (la demanda contra la capacidad, el antes y el después del piloto), no un cálculo tuyo: «Recomiendo X: pedimos 2,300 y
-   cabemos 2,000»; tu cálculo (costo comparado, punto de equilibrio) va después. En un estatus, las dos primeras oraciones
+   cabemos 2,000»; tu cálculo (costo comparado, punto de equilibrio) va después. Aunque la recomendación salga de tu
+   comparación (comprar contra arrendar), la primera oración lleva el dato del insumo que obliga a decidir (lo que
+   subió, lo que falta, lo que se vence) y la segunda, tu comparación. En un estatus, las dos primeras oraciones
    dicen cómo va **y** qué hay que decidir; la decisión en la tercera oración ya no cuenta.
 2. **Se cuela el proceso.** El entregable empieza con el contenido. Nada de «abajo va el guion», «recalculé con un
    script», notas del verificador, estados de trabajo ni metacomentarios. Si tu respuesta ES el entregable (no lo guardas
@@ -55,6 +57,8 @@ Las secciones de cada una, en orden y con su guía: `python3 "${CLAUDE_PLUGIN_RO
    moneda, una normativa, «no habrá despidos», «es reversible», la causa de un dato, lo que la empresa «ya vende»).
    Todo dato sale del insumo. Si hace falta una estimación, va en «Supuestos» con su cálculo y marcada como estimación.
    Tampoco se exagera lo que sí está: +22 % no es «duplicar»; un título con verbo fuerte se comprueba contra la cifra.
+   Una estimación tuya nunca va con certeza («queda asegurado», «garantiza»): va con su condición («si las otras
+   bodegas consumen igual, el ahorro sería…»).
 4. **El formato se desborda.** Un one-pager cabe en una página (≈500 palabras contando tablas) y no lleva secciones
    extra; si sobra material, se queda fuera o va como anexo aparte, no dentro.
 5. **El cierre no tiene dueño.** La acción final nombra un responsable (un rol o área) y una fecha absoluta; «el comité
@@ -110,8 +114,10 @@ Una persona inventada o un «Imagina un mundo donde…» es el mismo relleno con
    `python3 "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/kit-entregables/scripts/firma.py" --estructura estatus entregable.md`
    Si algo sale con gravedad «alta», corrígelo y vuelve a verificar. Además de secciones y orden, marca `cifra_arranque`
    (las dos primeras oraciones sin cifra), `hueco_sin_llenar`, `proceso_colado` (notas para ti dentro del entregable)
-   y avisa `cierre_sin_fecha`. Luego corre `muletillas.sh revisar` y quita toda señal F. **No entregues sin correr los
-   dos**: en el A/B, la mitad de las corridas no los corrió y ahí se concentraron las fallas. Las láminas se verifican por JSON en stdin:
+   y avisa `cierre_sin_fecha`; en un estatus con decisión pendiente, marca `decision_arriba` si las dos primeras
+   oraciones no la piden. **También corre el revisor de relleno** (`muletillas.sh`) y devuelve sus señales fuertes como
+   `relleno_F…` de gravedad alta: con un solo comando revisas todo. No entregues sin correrlo: en el A/B las fallas se
+   concentraron en las corridas que no verificaron. Las láminas se verifican por JSON en stdin:
    `{"formato":"presentacion","laminas":[{"titulo":…,"cuerpo":…}]}` (ahí aplica el tope de 60 palabras por lámina).
 
 ## Checklist antes de entregar

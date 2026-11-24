@@ -145,6 +145,47 @@ def oraciones_arranque(texto: str, n: int = 2) -> str:
     return " ".join(ors[:n])
 
 
+DECIDE = re.compile(r"\b(decid\w*|decisi[oó]n|elegir|elija|escoger|aprob\w*|autoriz\w*|definir entre|optar)\b", re.I)
+NO_APLICA = re.compile(r"^\s*no aplica", re.I)
+
+
+def decision_arriba(texto: str) -> list[dict]:
+    """Estatus: si hay decisiones pendientes, las dos primeras oraciones lo dicen (A/B v4: quedaba en la tercera)."""
+    pend = next((c for t, c in secciones(texto) if re.search(r"decisi", t, re.I)), None)
+    if pend is None or not pend.strip() or NO_APLICA.search(pend):
+        return []
+    if not DECIDE.search(oraciones_arranque(texto)):
+        return [h("decision_arriba", "alta", "inicio", "hay una decisión pendiente y las dos primeras oraciones no la piden")]
+    return []
+
+
+def muletillas(texto: str) -> list[dict]:
+    """Corre el revisor de relleno del kit (muletillas.sh) y devuelve sus señales fuertes como «alta». En el A/B
+    llamarlo aparte pedía aprobación y nunca corría; desde aquí corre con el verificador."""
+    import shutil, subprocess, tempfile
+    aqui = _P(__file__).resolve().parent
+    rutas = [aqui / "muletillas.sh", aqui.parent.parent.parent / "scripts" / "muletillas.sh"]
+    m = next((r for r in rutas if r.is_file()), None)
+    bash = shutil.which("bash")
+    if not m or not bash:
+        return [h("relleno_sin_revisar", "media", "documento", "no encontré muletillas.sh: revisa el relleno a ojo")]
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
+        f.write(texto); ruta = f.name
+    try:
+        r = subprocess.run([bash, str(m), "revisar", ruta], capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return [h("relleno_sin_revisar", "media", "documento", "muletillas.sh no corrió: revisa el relleno a ojo")]
+    finally:
+        _P(ruta).unlink(missing_ok=True)
+    out = []
+    for l in r.stdout.splitlines():
+        mm = re.search(r":(\d+)?:? (F\d+|D\d+) (.*)", l)
+        if mm:
+            out.append(h("relleno_" + mm.group(2), "alta" if mm.group(2).startswith("F") and mm.group(2) != "F11" else "media",
+                         f"línea {mm.group(1)}" if mm.group(1) else "documento", mm.group(3)[:160]))
+    return out
+
+
 def revisar_arranque_cierre(texto: str, academico: bool = False) -> list[dict]:
     """Medidas del A/B v2 (2026-11-24): las fallas que más se repitieron con la skill puesta."""
     out = []
@@ -275,6 +316,8 @@ def main() -> int:
         else:
             r += [x for x in revisar_documento(e.get("texto") or "") if x["regla"] in ("titulo_conclusion", "relleno")]
         r += revisar_arranque_cierre(e.get("texto") or "", academico=e["estructura"] == "academico")
+        if e["estructura"] == "estatus": r += decision_arriba(e.get("texto") or "")
+        if not e.get("sin_muletillas"): r += muletillas(e.get("texto") or "")
         print(json.dumps({"hallazgos": r, "pasa": not any(x["gravedad"] == "alta" for x in r)}, ensure_ascii=False)); return 0
     f = (e.get("formato") or "").lower().replace("ó", "o")
     if f not in ("presentacion", "documento"):

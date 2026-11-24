@@ -230,5 +230,18 @@ class ArranqueYCierre(unittest.TestCase):
         self.assertNotIn(("cierre_sin_fecha", "media"), self.reglas("# T\n\nSube 3 %.\n\n## Paso\nOps arranca en febrero de 2027.\n"))
 
 
+class DecisionYMuletillas(unittest.TestCase):
+    def test_estatus_con_decision_pendiente_la_pide_arriba(self):
+        t = "# Vamos en ámbar\n\nEl lanzamiento sigue. Pagos listos.\n\nHay que decidir.\n\n## Decisiones pendientes\nA o B.\n"
+        self.assertEqual([x["regla"] for x in F.decision_arriba(t)], ["decision_arriba"])
+        self.assertEqual(F.decision_arriba(t.replace("El lanzamiento sigue.", "Pedimos decidir hoy entre A y B.")), [])
+        self.assertEqual(F.decision_arriba(t.replace("A o B.", "No aplica: nada pendiente.")), [])
+
+    def test_muletillas_desde_el_verificador(self):
+        r = F.muletillas("# T\n\nEso no fue suerte. Fue trabajo de 3 equipos.\n")
+        self.assertIn(("relleno_F13", "alta"), [(x["regla"], x["gravedad"]) for x in r])
+        self.assertEqual([x for x in F.muletillas("# T\n\nLas ventas subieron 3 % en marzo.\n") if x["gravedad"] == "alta"], [])
+
+
 if __name__ == "__main__":
     unittest.main()
