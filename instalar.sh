@@ -133,6 +133,29 @@ json.dump(s, open(destino, "w"), indent=2, ensure_ascii=False)
 PY
 }
 
+# 4z. Espacio para la lista de skills. Claude Code reserva el 1 % de la ventana para los nombres y descriptions
+# de todas las skills (skillListingBudgetFraction, 0.01); si no caben, a las de menor prioridad les quita la
+# description y el agente ya no sabe cuándo usarlas (2026-11-24: 26-35 skills sin description; kit-entregables cargó
+# 9/15 en el disparo real, 13/15 con 0.02). Se sube a 0.02 solo si no hay valor o es menor; KIT_LISTA=n lo omite.
+if [ "${KIT_LISTA:-s}" != "n" ] && command -v python3 >/dev/null 2>&1; then
+  python3 - "$DIR/settings.json" <<'PY'
+import json, os, sys
+p = sys.argv[1]
+s = json.load(open(p)) if os.path.exists(p) else {}
+v = s.get("skillListingBudgetFraction")
+try:   # un número guardado como texto («"0.05"») cuenta por su valor; un booleano no es fracción (sello)
+    n = None if isinstance(v, bool) else float(v)
+except (TypeError, ValueError):
+    n = None
+if n is None or n < 0.02:
+    s["skillListingBudgetFraction"] = 0.02
+    json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
+    print("lista de skills: skillListingBudgetFraction = 0.02 (antes " + ("sin valor" if v is None else str(v)) + ")")
+else:
+    print(f"lista de skills: skillListingBudgetFraction ya vale {v}, no se toca")
+PY
+fi
+
 # 4a. Hook de contexto (SessionStart): por defecto. Es de bajo riesgo (solo
 # inyecta texto al arrancar) y alto valor (Claude arranca con tu contexto).
 if command -v python3 >/dev/null 2>&1; then
