@@ -83,7 +83,7 @@ grep -q 'DIR/agents' instalar.sh; chk "instalar.sh instala agents/" $?
 # 3c. Comandos y scripts: mismo riesgo que los agentes — el kit puede publicar
 # comandos que el instalador nunca copia (pasó con /revisar-salud hasta v1.13).
 grep -q 'DIR/commands' instalar.sh; chk "instalar.sh instala commands/" $?
-grep -q 'skillListingBudgetFraction' instalar.sh; chk "instalar.sh da espacio a la lista de skills (skillListingBudgetFraction)" $?
+bash scripts/test-lista-skills.sh >/dev/null 2>&1; chk "instalar.sh da espacio a la lista de skills (scripts/test-lista-skills.sh)" $?
 grep -q 'DIR/scripts' instalar.sh;  chk "instalar.sh instala scripts/" $?
 
 for f in commands/*.md; do

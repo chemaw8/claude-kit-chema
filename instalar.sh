@@ -143,7 +143,11 @@ import json, os, sys
 p = sys.argv[1]
 s = json.load(open(p)) if os.path.exists(p) else {}
 v = s.get("skillListingBudgetFraction")
-if not isinstance(v, (int, float)) or v < 0.02:
+try:   # un número guardado como texto («"0.05"») cuenta por su valor; un booleano no es fracción (sello)
+    n = None if isinstance(v, bool) else float(v)
+except (TypeError, ValueError):
+    n = None
+if n is None or n < 0.02:
     s["skillListingBudgetFraction"] = 0.02
     json.dump(s, open(p, "w"), indent=2, ensure_ascii=False)
     print("lista de skills: skillListingBudgetFraction = 0.02 (antes " + ("sin valor" if v is None else str(v)) + ")")
