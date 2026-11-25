@@ -1,6 +1,10 @@
 # Changelog — Kit Chema
 
 ## Sin publicar
+- **Instalador, lista de skills:** `instalar.sh` sube `skillListingBudgetFraction` a 0.02 en `settings.json` (solo si no
+  hay valor o es menor; `KIT_LISTA=n` lo omite). Claude Code reserva el 1 % de la ventana para la lista de skills y, si
+  no cabe, quita la description a las de menor prioridad: el 2026-11-24 había 26-35 skills sin description y
+  kit-entregables cargó 9/15 en el disparo real; con 0.02, ninguna sin description y 13/15 (115/129 en total).
 
 ## v1.37.0 — 2026-11-24
 Skill `kit-entregables` (estructura del entregable por objetivo y sin relleno de IA) y `muletillas.sh` ampliado. Flujo:
